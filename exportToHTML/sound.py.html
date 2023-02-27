@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>sound.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+sound.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.sound 
+ 
+Playing a soundfile and waiting for it to finish. You'll need the 
+pygame.mixer module for this to work. Note how in this simple example 
+we don't even bother loading all of the pygame package. 
+Just pick the mixer for sound and time for the delay function. 
+ 
+Optional command line argument: audio file name 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">os</span>
+<span class="s3">import </span><span class="s1">sys</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+
+<span class="s1">main_dir = os.path.split(os.path.abspath(__file__))[</span><span class="s4">0</span><span class="s1">]</span>
+
+
+<span class="s3">def </span><span class="s1">main(file_path=</span><span class="s3">None</span><span class="s1">):</span>
+    <span class="s2">&quot;&quot;&quot;Play an audio file as a buffered sound sample 
+ 
+    :param str file_path: audio file (default data/secosmic_low.wav) 
+    &quot;&quot;&quot;</span>
+    <span class="s0"># choose a desired audio format</span>
+    <span class="s1">pg.mixer.init(</span><span class="s4">11025</span><span class="s1">)  </span><span class="s0"># raises exception on fail</span>
+
+    <span class="s0"># load the sound</span>
+    <span class="s1">sound = pg.mixer.Sound(file_path)</span>
+
+    <span class="s0"># start playing</span>
+    <span class="s1">print(</span><span class="s5">&quot;Playing Sound...&quot;</span><span class="s1">)</span>
+    <span class="s1">channel = sound.play()</span>
+
+    <span class="s0"># poll until finished</span>
+    <span class="s3">while </span><span class="s1">channel.get_busy():  </span><span class="s0"># still playing</span>
+        <span class="s1">print(</span><span class="s5">&quot;  ...still going...&quot;</span><span class="s1">)</span>
+        <span class="s1">pg.time.wait(</span><span class="s4">1000</span><span class="s1">)</span>
+    <span class="s1">print(</span><span class="s5">&quot;...Finished&quot;</span><span class="s1">)</span>
+    <span class="s1">pg.quit()</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s5">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s3">if </span><span class="s1">len(sys.argv) &gt; </span><span class="s4">1</span><span class="s1">:</span>
+        <span class="s1">main(sys.argv[</span><span class="s4">1</span><span class="s1">])</span>
+    <span class="s3">else</span><span class="s1">:</span>
+        <span class="s1">main(os.path.join(main_dir</span><span class="s3">, </span><span class="s5">&quot;data&quot;</span><span class="s3">, </span><span class="s5">&quot;secosmic_lo.wav&quot;</span><span class="s1">))</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<html>
+<head>
+<title>__main__.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #629755; font-style: italic;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #6a8759;}
+.s4 { color: #6897bb;}
+.s5 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+__main__.py</font>
+</center></td></tr></table>
+<pre><span class="s0">&quot;&quot;&quot;Load and run the Pygame test suite 
+ 
+python -c &quot;import pygame.tests.go&quot; [&lt;test options&gt;] 
+ 
+or 
+ 
+python test/go.py [&lt;test options&gt;] 
+ 
+Command line option --help displays a command line usage message. 
+ 
+run_tests.py in the main distribution directory is an alternative to test.go 
+ 
+&quot;&quot;&quot;</span>
+
+<span class="s2">import </span><span class="s1">sys</span>
+
+<span class="s2">if </span><span class="s1">__name__ == </span><span class="s3">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s2">import </span><span class="s1">os</span>
+
+    <span class="s1">pkg_dir = os.path.split(os.path.abspath(__file__))[</span><span class="s4">0</span><span class="s1">]</span>
+    <span class="s1">parent_dir</span><span class="s2">, </span><span class="s1">pkg_name = os.path.split(pkg_dir)</span>
+    <span class="s1">is_pygame_pkg = pkg_name == </span><span class="s3">&quot;tests&quot; </span><span class="s2">and </span><span class="s1">os.path.split(parent_dir)[</span><span class="s4">1</span><span class="s1">] == </span><span class="s3">&quot;pygame&quot;</span>
+    <span class="s2">if not </span><span class="s1">is_pygame_pkg:</span>
+        <span class="s1">sys.path.insert(</span><span class="s4">0</span><span class="s2">, </span><span class="s1">parent_dir)</span>
+<span class="s2">else</span><span class="s1">:</span>
+    <span class="s1">is_pygame_pkg = __name__.startswith(</span><span class="s3">&quot;pygame.tests.&quot;</span><span class="s1">)</span>
+
+<span class="s2">if </span><span class="s1">is_pygame_pkg:</span>
+    <span class="s2">from </span><span class="s1">pygame.tests.test_utils.run_tests </span><span class="s2">import </span><span class="s1">run_and_exit</span>
+    <span class="s2">from </span><span class="s1">pygame.tests.test_utils.test_runner </span><span class="s2">import </span><span class="s1">opt_parser</span>
+<span class="s2">else</span><span class="s1">:</span>
+    <span class="s2">from </span><span class="s1">test.test_utils.run_tests </span><span class="s2">import </span><span class="s1">run_and_exit</span>
+    <span class="s2">from </span><span class="s1">test.test_utils.test_runner </span><span class="s2">import </span><span class="s1">opt_parser</span>
+
+<span class="s2">if </span><span class="s1">is_pygame_pkg:</span>
+    <span class="s1">test_pkg_name = </span><span class="s3">&quot;pygame.tests&quot;</span>
+<span class="s2">else</span><span class="s1">:</span>
+    <span class="s1">test_pkg_name = </span><span class="s3">&quot;test&quot;</span>
+<span class="s1">program_name = sys.argv[</span><span class="s4">0</span><span class="s1">]</span>
+<span class="s2">if </span><span class="s1">program_name == </span><span class="s3">&quot;-c&quot;</span><span class="s1">:</span>
+    <span class="s1">program_name = </span><span class="s3">f'python -c &quot;import </span><span class="s2">{</span><span class="s1">test_pkg_name</span><span class="s2">}</span><span class="s3">.go&quot;'</span>
+
+<span class="s5">###########################################################################</span>
+<span class="s5"># Set additional command line options</span>
+<span class="s5">#</span>
+<span class="s5"># Defined in test_runner.py as it shares options, added to here</span>
+
+<span class="s1">opt_parser.set_usage(</span>
+    <span class="s3">f&quot;&quot;&quot;</span>
+
+<span class="s3">Runs all or some of the </span><span class="s2">{</span><span class="s1">test_pkg_name</span><span class="s2">}</span><span class="s3">.xxxx_test tests.</span>
+
+<span class="s3">$ </span><span class="s2">{</span><span class="s1">program_name</span><span class="s2">} </span><span class="s3">sprite threads -sd</span>
+
+<span class="s3">Runs the sprite and threads module tests isolated in subprocesses, dumping</span>
+<span class="s3">all failing tests info in the form of a dict.</span>
+
+<span class="s3">&quot;&quot;&quot;</span>
+<span class="s1">)</span>
+
+<span class="s1">opt_parser.add_option(</span>
+    <span class="s3">&quot;-d&quot;</span><span class="s2">, </span><span class="s3">&quot;--dump&quot;</span><span class="s2">, </span><span class="s1">action=</span><span class="s3">&quot;store_true&quot;</span><span class="s2">, </span><span class="s1">help=</span><span class="s3">&quot;dump results as dict ready to eval&quot;</span>
+<span class="s1">)</span>
+
+<span class="s1">opt_parser.add_option(</span><span class="s3">&quot;-F&quot;</span><span class="s2">, </span><span class="s3">&quot;--file&quot;</span><span class="s2">, </span><span class="s1">help=</span><span class="s3">&quot;dump results to a file&quot;</span><span class="s1">)</span>
+
+<span class="s1">opt_parser.add_option(</span>
+    <span class="s3">&quot;-m&quot;</span><span class="s2">,</span>
+    <span class="s3">&quot;--multi_thread&quot;</span><span class="s2">,</span>
+    <span class="s1">metavar=</span><span class="s3">&quot;THREADS&quot;</span><span class="s2">,</span>
+    <span class="s1">type=</span><span class="s3">&quot;int&quot;</span><span class="s2">,</span>
+    <span class="s1">help=</span><span class="s3">&quot;run subprocessed tests in x THREADS&quot;</span><span class="s2">,</span>
+<span class="s1">)</span>
+
+<span class="s1">opt_parser.add_option(</span>
+    <span class="s3">&quot;-t&quot;</span><span class="s2">,</span>
+    <span class="s3">&quot;--time_out&quot;</span><span class="s2">,</span>
+    <span class="s1">metavar=</span><span class="s3">&quot;SECONDS&quot;</span><span class="s2">,</span>
+    <span class="s1">type=</span><span class="s3">&quot;int&quot;</span><span class="s2">,</span>
+    <span class="s1">help=</span><span class="s3">&quot;kill stalled subprocessed tests after SECONDS&quot;</span><span class="s2">,</span>
+<span class="s1">)</span>
+
+<span class="s1">opt_parser.add_option(</span>
+    <span class="s3">&quot;-f&quot;</span><span class="s2">, </span><span class="s3">&quot;--fake&quot;</span><span class="s2">, </span><span class="s1">metavar=</span><span class="s3">&quot;DIR&quot;</span><span class="s2">, </span><span class="s1">help=</span><span class="s3">&quot;run fake tests in run_tests__tests/$DIR&quot;</span>
+<span class="s1">)</span>
+
+<span class="s1">opt_parser.add_option(</span>
+    <span class="s3">&quot;-p&quot;</span><span class="s2">,</span>
+    <span class="s3">&quot;--python&quot;</span><span class="s2">,</span>
+    <span class="s1">metavar=</span><span class="s3">&quot;PYTHON&quot;</span><span class="s2">,</span>
+    <span class="s1">help=</span><span class="s3">&quot;path to python executable to run subproccesed tests</span><span class="s2">\n</span><span class="s3">&quot;</span>
+    <span class="s3">&quot;default (sys.executable): %s&quot; </span><span class="s1">% sys.executable</span><span class="s2">,</span>
+<span class="s1">)</span>
+
+<span class="s1">opt_parser.add_option(</span>
+    <span class="s3">&quot;-I&quot;</span><span class="s2">,</span>
+    <span class="s3">&quot;--interactive&quot;</span><span class="s2">,</span>
+    <span class="s1">action=</span><span class="s3">&quot;store_true&quot;</span><span class="s2">,</span>
+    <span class="s1">help=</span><span class="s3">&quot;include tests requiring user input&quot;</span><span class="s2">,</span>
+<span class="s1">)</span>
+
+<span class="s1">opt_parser.add_option(</span><span class="s3">&quot;-S&quot;</span><span class="s2">, </span><span class="s3">&quot;--seed&quot;</span><span class="s2">, </span><span class="s1">type=</span><span class="s3">&quot;int&quot;</span><span class="s2">, </span><span class="s1">help=</span><span class="s3">&quot;Randomisation seed&quot;</span><span class="s1">)</span>
+
+<span class="s5">###########################################################################</span>
+<span class="s5"># Set run() keyword arguments according to command line arguments.</span>
+<span class="s5"># args will be the test module list, passed as positional argumemts.</span>
+
+<span class="s1">options</span><span class="s2">, </span><span class="s1">args = opt_parser.parse_args()</span>
+<span class="s1">kwds = {}</span>
+<span class="s2">if </span><span class="s1">options.incomplete:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;incomplete&quot;</span><span class="s1">] = </span><span class="s2">True</span>
+<span class="s2">if </span><span class="s1">options.usesubprocess:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;usesubprocess&quot;</span><span class="s1">] = </span><span class="s2">True</span>
+<span class="s2">else</span><span class="s1">:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;usesubprocess&quot;</span><span class="s1">] = </span><span class="s2">False</span>
+<span class="s2">if </span><span class="s1">options.dump:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;dump&quot;</span><span class="s1">] = </span><span class="s2">True</span>
+<span class="s2">if </span><span class="s1">options.file:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;file&quot;</span><span class="s1">] = options.file</span>
+<span class="s2">if </span><span class="s1">options.exclude:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;exclude&quot;</span><span class="s1">] = options.exclude</span>
+<span class="s2">if </span><span class="s1">options.unbuffered:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;unbuffered&quot;</span><span class="s1">] = </span><span class="s2">True</span>
+<span class="s2">if </span><span class="s1">options.randomize:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;randomize&quot;</span><span class="s1">] = </span><span class="s2">True</span>
+<span class="s2">if </span><span class="s1">options.seed </span><span class="s2">is not None</span><span class="s1">:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;seed&quot;</span><span class="s1">] = options.seed</span>
+<span class="s2">if </span><span class="s1">options.multi_thread </span><span class="s2">is not None</span><span class="s1">:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;multi_thread&quot;</span><span class="s1">] = options.multi_thread</span>
+<span class="s2">if </span><span class="s1">options.time_out </span><span class="s2">is not None</span><span class="s1">:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;time_out&quot;</span><span class="s1">] = options.time_out</span>
+<span class="s2">if </span><span class="s1">options.fake:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;fake&quot;</span><span class="s1">] = options.fake</span>
+<span class="s2">if </span><span class="s1">options.python:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;python&quot;</span><span class="s1">] = options.python</span>
+<span class="s2">if </span><span class="s1">options.interactive:</span>
+    <span class="s1">kwds[</span><span class="s3">&quot;interactive&quot;</span><span class="s1">] = </span><span class="s2">True</span>
+<span class="s1">kwds[</span><span class="s3">&quot;verbosity&quot;</span><span class="s1">] = options.verbosity </span><span class="s2">if </span><span class="s1">options.verbosity </span><span class="s2">is not None else </span><span class="s4">1</span>
+
+
+<span class="s5">###########################################################################</span>
+<span class="s5"># Run the test suite.</span>
+<span class="s1">run_and_exit(*args</span><span class="s2">, </span><span class="s1">**kwds)</span>
+</pre>
+</body>
+</html>

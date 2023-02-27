@@ -1,0 +1,178 @@
+<html>
+<head>
+<title>doctools.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #cc7832;}
+.s4 { color: #629755; font-style: italic;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+doctools.js</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+ * doctools.js 
+ * ~~~~~~~~~~~ 
+ * 
+ * Base JavaScript utilities for all Sphinx HTML documentation. 
+ * 
+ * :copyright: Copyright 2007-2023 by the Sphinx team, see AUTHORS. 
+ * :license: BSD, see LICENSE for details. 
+ * 
+ */</span>
+<span class="s2">&quot;use strict&quot;</span><span class="s3">;</span>
+
+<span class="s3">const </span><span class="s1">BLACKLISTED_KEY_CONTROL_ELEMENTS = </span><span class="s3">new </span><span class="s1">Set([</span>
+  <span class="s2">&quot;TEXTAREA&quot;</span><span class="s3">,</span>
+  <span class="s2">&quot;INPUT&quot;</span><span class="s3">,</span>
+  <span class="s2">&quot;SELECT&quot;</span><span class="s3">,</span>
+  <span class="s2">&quot;BUTTON&quot;</span><span class="s3">,</span>
+<span class="s1">])</span><span class="s3">;</span>
+
+<span class="s3">const </span><span class="s1">_ready = (callback) =&gt; {</span>
+  <span class="s3">if </span><span class="s1">(document.readyState !== </span><span class="s2">&quot;loading&quot;</span><span class="s1">) {</span>
+    <span class="s1">callback()</span><span class="s3">;</span>
+  <span class="s1">} </span><span class="s3">else </span><span class="s1">{</span>
+    <span class="s1">document.addEventListener(</span><span class="s2">&quot;DOMContentLoaded&quot;</span><span class="s3">, </span><span class="s1">callback)</span><span class="s3">;</span>
+  <span class="s1">}</span>
+<span class="s1">}</span><span class="s3">;</span>
+
+<span class="s4">/**</span>
+ <span class="s4">* Small JavaScript module for the documentation.</span>
+ <span class="s4">*/</span>
+<span class="s3">const </span><span class="s1">Documentation = {</span>
+  <span class="s1">init: () =&gt; {</span>
+    <span class="s1">Documentation.initDomainIndexTable()</span><span class="s3">;</span>
+    <span class="s1">Documentation.initOnKeyListeners()</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s4">/**</span>
+   <span class="s4">* i18n support</span>
+   <span class="s4">*/</span>
+  <span class="s1">TRANSLATIONS: {}</span><span class="s3">,</span>
+  <span class="s1">PLURAL_EXPR: (n) =&gt; (n === </span><span class="s5">1 </span><span class="s1">? </span><span class="s5">0 </span><span class="s1">: </span><span class="s5">1</span><span class="s1">)</span><span class="s3">,</span>
+  <span class="s1">LOCALE: </span><span class="s2">&quot;unknown&quot;</span><span class="s3">,</span>
+
+  <span class="s0">// gettext and ngettext don't access this so that the functions</span>
+  <span class="s0">// can safely bound to a different name (_ = Documentation.gettext)</span>
+  <span class="s1">gettext: (string) =&gt; {</span>
+    <span class="s3">const </span><span class="s1">translated = Documentation.TRANSLATIONS[string]</span><span class="s3">;</span>
+    <span class="s3">switch </span><span class="s1">(</span><span class="s3">typeof </span><span class="s1">translated) {</span>
+      <span class="s3">case </span><span class="s2">&quot;undefined&quot;</span><span class="s1">:</span>
+        <span class="s3">return </span><span class="s1">string</span><span class="s3">; </span><span class="s0">// no translation</span>
+      <span class="s3">case </span><span class="s2">&quot;string&quot;</span><span class="s1">:</span>
+        <span class="s3">return </span><span class="s1">translated</span><span class="s3">; </span><span class="s0">// translation exists</span>
+      <span class="s3">default</span><span class="s1">:</span>
+        <span class="s3">return </span><span class="s1">translated[</span><span class="s5">0</span><span class="s1">]</span><span class="s3">; </span><span class="s0">// (singular, plural) translation tuple exists</span>
+    <span class="s1">}</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s1">ngettext: (singular</span><span class="s3">, </span><span class="s1">plural</span><span class="s3">, </span><span class="s1">n) =&gt; {</span>
+    <span class="s3">const </span><span class="s1">translated = Documentation.TRANSLATIONS[singular]</span><span class="s3">;</span>
+    <span class="s3">if </span><span class="s1">(</span><span class="s3">typeof </span><span class="s1">translated !== </span><span class="s2">&quot;undefined&quot;</span><span class="s1">)</span>
+      <span class="s3">return </span><span class="s1">translated[Documentation.PLURAL_EXPR(n)]</span><span class="s3">;</span>
+    <span class="s3">return </span><span class="s1">n === </span><span class="s5">1 </span><span class="s1">? singular : plural</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s1">addTranslations: (catalog) =&gt; {</span>
+    <span class="s1">Object.assign(Documentation.TRANSLATIONS</span><span class="s3">, </span><span class="s1">catalog.messages)</span><span class="s3">;</span>
+    <span class="s1">Documentation.PLURAL_EXPR = </span><span class="s3">new </span><span class="s1">Function(</span>
+      <span class="s2">&quot;n&quot;</span><span class="s3">,</span>
+      <span class="s2">`return (</span><span class="s1">${catalog.plural_expr}</span><span class="s2">)`</span>
+    <span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">Documentation.LOCALE = catalog.locale</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s4">/**</span>
+   <span class="s4">* helper function to focus on search bar</span>
+   <span class="s4">*/</span>
+  <span class="s1">focusSearchBar: () =&gt; {</span>
+    <span class="s1">document.querySelectorAll(</span><span class="s2">&quot;input[name=q]&quot;</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">]?.focus()</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s4">/**</span>
+   <span class="s4">* Initialise the domain index toggle buttons</span>
+   <span class="s4">*/</span>
+  <span class="s1">initDomainIndexTable: () =&gt; {</span>
+    <span class="s3">const </span><span class="s1">toggler = (el) =&gt; {</span>
+      <span class="s3">const </span><span class="s1">idNumber = el.id.substr(</span><span class="s5">7</span><span class="s1">)</span><span class="s3">;</span>
+      <span class="s3">const </span><span class="s1">toggledRows = document.querySelectorAll(</span><span class="s2">`tr.cg-</span><span class="s1">${idNumber}</span><span class="s2">`</span><span class="s1">)</span><span class="s3">;</span>
+      <span class="s3">if </span><span class="s1">(el.src.substr(-</span><span class="s5">9</span><span class="s1">) === </span><span class="s2">&quot;minus.png&quot;</span><span class="s1">) {</span>
+        <span class="s1">el.src = </span><span class="s2">`</span><span class="s1">${el.src.substr(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">el.src.length - </span><span class="s5">9</span><span class="s1">)}</span><span class="s2">plus.png`</span><span class="s3">;</span>
+        <span class="s1">toggledRows.forEach((el) =&gt; (el.style.display = </span><span class="s2">&quot;none&quot;</span><span class="s1">))</span><span class="s3">;</span>
+      <span class="s1">} </span><span class="s3">else </span><span class="s1">{</span>
+        <span class="s1">el.src = </span><span class="s2">`</span><span class="s1">${el.src.substr(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">el.src.length - </span><span class="s5">8</span><span class="s1">)}</span><span class="s2">minus.png`</span><span class="s3">;</span>
+        <span class="s1">toggledRows.forEach((el) =&gt; (el.style.display = </span><span class="s2">&quot;&quot;</span><span class="s1">))</span><span class="s3">;</span>
+      <span class="s1">}</span>
+    <span class="s1">}</span><span class="s3">;</span>
+
+    <span class="s3">const </span><span class="s1">togglerElements = document.querySelectorAll(</span><span class="s2">&quot;img.toggler&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">togglerElements.forEach((el) =&gt;</span>
+      <span class="s1">el.addEventListener(</span><span class="s2">&quot;click&quot;</span><span class="s3">, </span><span class="s1">(event) =&gt; toggler(event.currentTarget))</span>
+    <span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">togglerElements.forEach((el) =&gt; (el.style.display = </span><span class="s2">&quot;&quot;</span><span class="s1">))</span><span class="s3">;</span>
+    <span class="s3">if </span><span class="s1">(DOCUMENTATION_OPTIONS.COLLAPSE_INDEX) togglerElements.forEach(toggler)</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s1">initOnKeyListeners: () =&gt; {</span>
+    <span class="s0">// only install a listener if it is really needed</span>
+    <span class="s3">if </span><span class="s1">(</span>
+      <span class="s1">!DOCUMENTATION_OPTIONS.NAVIGATION_WITH_KEYS &amp;&amp;</span>
+      <span class="s1">!DOCUMENTATION_OPTIONS.ENABLE_SEARCH_SHORTCUTS</span>
+    <span class="s1">)</span>
+      <span class="s3">return;</span>
+
+    <span class="s1">document.addEventListener(</span><span class="s2">&quot;keydown&quot;</span><span class="s3">, </span><span class="s1">(event) =&gt; {</span>
+      <span class="s0">// bail for input elements</span>
+      <span class="s3">if </span><span class="s1">(BLACKLISTED_KEY_CONTROL_ELEMENTS.has(document.activeElement.tagName)) </span><span class="s3">return;</span>
+      <span class="s0">// bail with special keys</span>
+      <span class="s3">if </span><span class="s1">(event.altKey || event.ctrlKey || event.metaKey) </span><span class="s3">return;</span>
+
+      <span class="s3">if </span><span class="s1">(!event.shiftKey) {</span>
+        <span class="s3">switch </span><span class="s1">(event.key) {</span>
+          <span class="s3">case </span><span class="s2">&quot;ArrowLeft&quot;</span><span class="s1">:</span>
+            <span class="s3">if </span><span class="s1">(!DOCUMENTATION_OPTIONS.NAVIGATION_WITH_KEYS) </span><span class="s3">break;</span>
+
+            <span class="s3">const </span><span class="s1">prevLink = document.querySelector(</span><span class="s2">'link[rel=&quot;prev&quot;]'</span><span class="s1">)</span><span class="s3">;</span>
+            <span class="s3">if </span><span class="s1">(prevLink &amp;&amp; prevLink.href) {</span>
+              <span class="s1">window.location.href = prevLink.href</span><span class="s3">;</span>
+              <span class="s1">event.preventDefault()</span><span class="s3">;</span>
+            <span class="s1">}</span>
+            <span class="s3">break;</span>
+          <span class="s3">case </span><span class="s2">&quot;ArrowRight&quot;</span><span class="s1">:</span>
+            <span class="s3">if </span><span class="s1">(!DOCUMENTATION_OPTIONS.NAVIGATION_WITH_KEYS) </span><span class="s3">break;</span>
+
+            <span class="s3">const </span><span class="s1">nextLink = document.querySelector(</span><span class="s2">'link[rel=&quot;next&quot;]'</span><span class="s1">)</span><span class="s3">;</span>
+            <span class="s3">if </span><span class="s1">(nextLink &amp;&amp; nextLink.href) {</span>
+              <span class="s1">window.location.href = nextLink.href</span><span class="s3">;</span>
+              <span class="s1">event.preventDefault()</span><span class="s3">;</span>
+            <span class="s1">}</span>
+            <span class="s3">break;</span>
+        <span class="s1">}</span>
+      <span class="s1">}</span>
+
+      <span class="s0">// some keyboard layouts may need Shift to get /</span>
+      <span class="s3">switch </span><span class="s1">(event.key) {</span>
+        <span class="s3">case </span><span class="s2">&quot;/&quot;</span><span class="s1">:</span>
+          <span class="s3">if </span><span class="s1">(!DOCUMENTATION_OPTIONS.ENABLE_SEARCH_SHORTCUTS) </span><span class="s3">break;</span>
+          <span class="s1">Documentation.focusSearchBar()</span><span class="s3">;</span>
+          <span class="s1">event.preventDefault()</span><span class="s3">;</span>
+      <span class="s1">}</span>
+    <span class="s1">})</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+<span class="s1">}</span><span class="s3">;</span>
+
+<span class="s0">// quick alias for translations</span>
+<span class="s3">const </span><span class="s1">_ = Documentation.gettext</span><span class="s3">;</span>
+
+<span class="s1">_ready(Documentation.init)</span><span class="s3">;</span>
+</pre>
+</body>
+</html>

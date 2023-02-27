@@ -1,0 +1,539 @@
+<html>
+<head>
+<title>sysfont.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6a8759;}
+.s5 { color: #6897bb;}
+.s6 { color: #a5c261;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+sysfont.py</font>
+</center></td></tr></table>
+<pre><span class="s0"># pygame - Python Game Library</span>
+<span class="s0"># Copyright (C) 2000-2003  Pete Shinners</span>
+<span class="s0">#</span>
+<span class="s0"># This library is free software; you can redistribute it and/or</span>
+<span class="s0"># modify it under the terms of the GNU Library General Public</span>
+<span class="s0"># License as published by the Free Software Foundation; either</span>
+<span class="s0"># version 2 of the License, or (at your option) any later version.</span>
+<span class="s0">#</span>
+<span class="s0"># This library is distributed in the hope that it will be useful,</span>
+<span class="s0"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="s0"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+<span class="s0"># Library General Public License for more details.</span>
+<span class="s0">#</span>
+<span class="s0"># You should have received a copy of the GNU Library General Public</span>
+<span class="s0"># License along with this library; if not, write to the Free</span>
+<span class="s0"># Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</span>
+<span class="s0">#</span>
+<span class="s0"># Pete Shinners</span>
+<span class="s0"># pete@shinners.org</span>
+<span class="s2">&quot;&quot;&quot;sysfont, used in the font module to find system fonts&quot;&quot;&quot;</span>
+
+<span class="s3">import </span><span class="s1">os</span>
+<span class="s3">import </span><span class="s1">sys</span>
+<span class="s3">import </span><span class="s1">warnings</span>
+<span class="s3">from </span><span class="s1">os.path </span><span class="s3">import </span><span class="s1">basename</span><span class="s3">, </span><span class="s1">dirname</span><span class="s3">, </span><span class="s1">exists</span><span class="s3">, </span><span class="s1">join</span><span class="s3">, </span><span class="s1">splitext</span>
+
+<span class="s3">from </span><span class="s1">pygame.font </span><span class="s3">import </span><span class="s1">Font</span>
+
+<span class="s3">if </span><span class="s1">sys.platform != </span><span class="s4">&quot;emscripten&quot;</span><span class="s1">:</span>
+    <span class="s3">if </span><span class="s1">os.name == </span><span class="s4">&quot;nt&quot;</span><span class="s1">:</span>
+        <span class="s3">import </span><span class="s1">winreg </span><span class="s3">as </span><span class="s1">_winreg</span>
+    <span class="s3">import </span><span class="s1">subprocess</span>
+
+
+<span class="s1">OpenType_extensions = frozenset((</span><span class="s4">&quot;.ttf&quot;</span><span class="s3">, </span><span class="s4">&quot;.ttc&quot;</span><span class="s3">, </span><span class="s4">&quot;.otf&quot;</span><span class="s1">))</span>
+<span class="s1">Sysfonts = {}</span>
+<span class="s1">Sysalias = {}</span>
+
+<span class="s1">is_init = </span><span class="s3">False</span>
+
+
+<span class="s3">def </span><span class="s1">_simplename(name):</span>
+    <span class="s2">&quot;&quot;&quot;create simple version of the font name&quot;&quot;&quot;</span>
+    <span class="s0"># return alphanumeric characters of a string (converted to lowercase)</span>
+    <span class="s3">return </span><span class="s4">&quot;&quot;</span><span class="s1">.join(c.lower() </span><span class="s3">for </span><span class="s1">c </span><span class="s3">in </span><span class="s1">name </span><span class="s3">if </span><span class="s1">c.isalnum())</span>
+
+
+<span class="s3">def </span><span class="s1">_addfont(name</span><span class="s3">, </span><span class="s1">bold</span><span class="s3">, </span><span class="s1">italic</span><span class="s3">, </span><span class="s1">font</span><span class="s3">, </span><span class="s1">fontdict):</span>
+    <span class="s2">&quot;&quot;&quot;insert a font and style into the font dictionary&quot;&quot;&quot;</span>
+    <span class="s3">if </span><span class="s1">name </span><span class="s3">not in </span><span class="s1">fontdict:</span>
+        <span class="s1">fontdict[name] = {}</span>
+    <span class="s1">fontdict[name][bold</span><span class="s3">, </span><span class="s1">italic] = font</span>
+
+
+<span class="s3">def </span><span class="s1">initsysfonts_win32():</span>
+    <span class="s2">&quot;&quot;&quot;initialize fonts dictionary on Windows&quot;&quot;&quot;</span>
+
+    <span class="s1">fontdir = join(os.environ.get(</span><span class="s4">&quot;WINDIR&quot;</span><span class="s3">, </span><span class="s4">&quot;C:</span><span class="s3">\\</span><span class="s4">Windows&quot;</span><span class="s1">)</span><span class="s3">, </span><span class="s4">&quot;Fonts&quot;</span><span class="s1">)</span>
+    <span class="s1">fonts = {}</span>
+
+    <span class="s0"># add fonts entered in the registry</span>
+    <span class="s1">microsoft_font_dirs = [</span>
+        <span class="s4">&quot;SOFTWARE</span><span class="s3">\\</span><span class="s4">Microsoft</span><span class="s3">\\</span><span class="s4">Windows NT</span><span class="s3">\\</span><span class="s4">CurrentVersion</span><span class="s3">\\</span><span class="s4">Fonts&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;SOFTWARE</span><span class="s3">\\</span><span class="s4">Microsoft</span><span class="s3">\\</span><span class="s4">Windows</span><span class="s3">\\</span><span class="s4">CurrentVersion</span><span class="s3">\\</span><span class="s4">Fonts&quot;</span><span class="s3">,</span>
+    <span class="s1">]</span>
+
+    <span class="s3">for </span><span class="s1">domain </span><span class="s3">in </span><span class="s1">[_winreg.HKEY_LOCAL_MACHINE</span><span class="s3">, </span><span class="s1">_winreg.HKEY_CURRENT_USER]:</span>
+        <span class="s3">for </span><span class="s1">font_dir </span><span class="s3">in </span><span class="s1">microsoft_font_dirs:</span>
+            <span class="s3">try</span><span class="s1">:</span>
+                <span class="s1">key = _winreg.OpenKey(domain</span><span class="s3">, </span><span class="s1">font_dir)</span>
+            <span class="s3">except </span><span class="s1">FileNotFoundError:</span>
+                <span class="s3">continue</span>
+
+            <span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(_winreg.QueryInfoKey(key)[</span><span class="s5">1</span><span class="s1">]):</span>
+                <span class="s3">try</span><span class="s1">:</span>
+                    <span class="s0"># name is the font's name e.g. Times New Roman (TrueType)</span>
+                    <span class="s0"># font is the font's filename e.g. times.ttf</span>
+                    <span class="s1">name</span><span class="s3">, </span><span class="s1">font</span><span class="s3">, </span><span class="s1">_ = _winreg.EnumValue(key</span><span class="s3">, </span><span class="s1">i)</span>
+                <span class="s3">except </span><span class="s1">OSError:</span>
+                    <span class="s3">break</span>
+
+                <span class="s3">if </span><span class="s1">splitext(font)[</span><span class="s5">1</span><span class="s1">].lower() </span><span class="s3">not in </span><span class="s1">OpenType_extensions:</span>
+                    <span class="s3">continue</span>
+                <span class="s3">if not </span><span class="s1">dirname(font):</span>
+                    <span class="s1">font = join(fontdir</span><span class="s3">, </span><span class="s1">font)</span>
+
+                <span class="s0"># Some are named A &amp; B, both names should be processed separately</span>
+                <span class="s0"># Ex: the main Cambria file is marked as &quot;Cambria &amp; Cambria Math&quot;</span>
+                <span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">name.split(</span><span class="s4">&quot;&amp;&quot;</span><span class="s1">):</span>
+                    <span class="s1">_parse_font_entry_win(name</span><span class="s3">, </span><span class="s1">font</span><span class="s3">, </span><span class="s1">fonts)</span>
+
+    <span class="s3">return </span><span class="s1">fonts</span>
+
+
+<span class="s3">def </span><span class="s1">_parse_font_entry_win(name</span><span class="s3">, </span><span class="s1">font</span><span class="s3">, </span><span class="s1">fonts):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Parse out a simpler name and the font style from the initial file name. 
+ 
+    :param name: The font name 
+    :param font: The font file path 
+    :param fonts: The pygame font dictionary 
+ 
+    :return: Tuple of (bold, italic, name) 
+    &quot;&quot;&quot;</span>
+    <span class="s1">true_type_suffix = </span><span class="s4">&quot;(TrueType)&quot;</span>
+    <span class="s1">mods = (</span><span class="s4">&quot;demibold&quot;</span><span class="s3">, </span><span class="s4">&quot;narrow&quot;</span><span class="s3">, </span><span class="s4">&quot;light&quot;</span><span class="s3">, </span><span class="s4">&quot;unicode&quot;</span><span class="s3">, </span><span class="s4">&quot;bt&quot;</span><span class="s3">, </span><span class="s4">&quot;mt&quot;</span><span class="s1">)</span>
+    <span class="s3">if </span><span class="s1">name.endswith(true_type_suffix):</span>
+        <span class="s1">name = name.rstrip(true_type_suffix).rstrip()</span>
+    <span class="s1">name = name.lower().split()</span>
+    <span class="s1">bold = italic = </span><span class="s3">False</span>
+    <span class="s3">for </span><span class="s1">mod </span><span class="s3">in </span><span class="s1">mods:</span>
+        <span class="s3">if </span><span class="s1">mod </span><span class="s3">in </span><span class="s1">name:</span>
+            <span class="s1">name.remove(mod)</span>
+    <span class="s3">if </span><span class="s4">&quot;bold&quot; </span><span class="s3">in </span><span class="s1">name:</span>
+        <span class="s1">name.remove(</span><span class="s4">&quot;bold&quot;</span><span class="s1">)</span>
+        <span class="s1">bold = </span><span class="s3">True</span>
+    <span class="s3">if </span><span class="s4">&quot;italic&quot; </span><span class="s3">in </span><span class="s1">name:</span>
+        <span class="s1">name.remove(</span><span class="s4">&quot;italic&quot;</span><span class="s1">)</span>
+        <span class="s1">italic = </span><span class="s3">True</span>
+    <span class="s1">name = </span><span class="s4">&quot;&quot;</span><span class="s1">.join(name)</span>
+    <span class="s1">name = _simplename(name)</span>
+
+    <span class="s1">_addfont(name</span><span class="s3">, </span><span class="s1">bold</span><span class="s3">, </span><span class="s1">italic</span><span class="s3">, </span><span class="s1">font</span><span class="s3">, </span><span class="s1">fonts)</span>
+
+
+<span class="s3">def </span><span class="s1">_parse_font_entry_darwin(name</span><span class="s3">, </span><span class="s1">filepath</span><span class="s3">, </span><span class="s1">fonts):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Parses a font entry for macOS 
+ 
+    :param name: The filepath without extensions or directories 
+    :param filepath: The full path to the font 
+    :param fonts: The pygame font dictionary to add the parsed font data to. 
+    &quot;&quot;&quot;</span>
+
+    <span class="s1">name = _simplename(name)</span>
+
+    <span class="s1">mods = (</span><span class="s4">&quot;regular&quot;</span><span class="s3">,</span><span class="s1">)</span>
+
+    <span class="s3">for </span><span class="s1">mod </span><span class="s3">in </span><span class="s1">mods:</span>
+        <span class="s3">if </span><span class="s1">mod </span><span class="s3">in </span><span class="s1">name:</span>
+            <span class="s1">name = name.replace(mod</span><span class="s3">, </span><span class="s4">&quot;&quot;</span><span class="s1">)</span>
+
+    <span class="s1">bold = italic = </span><span class="s3">False</span>
+    <span class="s3">if </span><span class="s4">&quot;bold&quot; </span><span class="s3">in </span><span class="s1">name:</span>
+        <span class="s1">name = name.replace(</span><span class="s4">&quot;bold&quot;</span><span class="s3">, </span><span class="s4">&quot;&quot;</span><span class="s1">)</span>
+        <span class="s1">bold = </span><span class="s3">True</span>
+    <span class="s3">if </span><span class="s4">&quot;italic&quot; </span><span class="s3">in </span><span class="s1">name:</span>
+        <span class="s1">name = name.replace(</span><span class="s4">&quot;italic&quot;</span><span class="s3">, </span><span class="s4">&quot;&quot;</span><span class="s1">)</span>
+        <span class="s1">italic = </span><span class="s3">True</span>
+
+    <span class="s1">_addfont(name</span><span class="s3">, </span><span class="s1">bold</span><span class="s3">, </span><span class="s1">italic</span><span class="s3">, </span><span class="s1">filepath</span><span class="s3">, </span><span class="s1">fonts)</span>
+
+
+<span class="s3">def </span><span class="s1">_font_finder_darwin():</span>
+    <span class="s1">locations = [</span>
+        <span class="s4">&quot;/Library/Fonts&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;/Network/Library/Fonts&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;/System/Library/Fonts&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;/System/Library/Fonts/Supplemental&quot;</span><span class="s3">,</span>
+    <span class="s1">]</span>
+
+    <span class="s1">username = os.getenv(</span><span class="s4">&quot;USER&quot;</span><span class="s1">)</span>
+    <span class="s3">if </span><span class="s1">username:</span>
+        <span class="s1">locations.append(</span><span class="s4">f&quot;/Users/</span><span class="s3">{</span><span class="s1">username</span><span class="s3">}</span><span class="s4">/Library/Fonts&quot;</span><span class="s1">)</span>
+
+    <span class="s1">strange_root = </span><span class="s4">&quot;/System/Library/Assets/com_apple_MobileAsset_Font3&quot;</span>
+    <span class="s3">if </span><span class="s1">exists(strange_root):</span>
+        <span class="s1">strange_locations = os.listdir(strange_root)</span>
+        <span class="s3">for </span><span class="s1">loc </span><span class="s3">in </span><span class="s1">strange_locations:</span>
+            <span class="s1">locations.append(</span><span class="s4">f&quot;</span><span class="s3">{</span><span class="s1">strange_root</span><span class="s3">}</span><span class="s4">/</span><span class="s3">{</span><span class="s1">loc</span><span class="s3">}</span><span class="s4">/AssetData&quot;</span><span class="s1">)</span>
+
+    <span class="s1">fonts = {}</span>
+
+    <span class="s3">for </span><span class="s1">location </span><span class="s3">in </span><span class="s1">locations:</span>
+        <span class="s3">if not </span><span class="s1">exists(location):</span>
+            <span class="s3">continue</span>
+
+        <span class="s1">files = os.listdir(location)</span>
+        <span class="s3">for </span><span class="s1">file </span><span class="s3">in </span><span class="s1">files:</span>
+            <span class="s1">name</span><span class="s3">, </span><span class="s1">extension = splitext(file)</span>
+            <span class="s3">if </span><span class="s1">extension </span><span class="s3">in </span><span class="s1">OpenType_extensions:</span>
+                <span class="s1">_parse_font_entry_darwin(name</span><span class="s3">, </span><span class="s1">join(location</span><span class="s3">, </span><span class="s1">file)</span><span class="s3">, </span><span class="s1">fonts)</span>
+
+    <span class="s3">return </span><span class="s1">fonts</span>
+
+
+<span class="s3">def </span><span class="s1">initsysfonts_darwin():</span>
+    <span class="s2">&quot;&quot;&quot;Read the fonts on MacOS, and OS X.&quot;&quot;&quot;</span>
+    <span class="s0"># if the X11 binary exists... try and use that.</span>
+    <span class="s0">#  Not likely to be there on pre 10.4.x ... or MacOS 10.10+</span>
+    <span class="s3">if </span><span class="s1">exists(</span><span class="s4">&quot;/usr/X11/bin/fc-list&quot;</span><span class="s1">):</span>
+        <span class="s1">fonts = initsysfonts_unix(</span><span class="s4">&quot;/usr/X11/bin/fc-list&quot;</span><span class="s1">)</span>
+    <span class="s0"># This fc-list path will work with the X11 from the OS X 10.3 installation</span>
+    <span class="s0"># disc</span>
+    <span class="s3">elif </span><span class="s1">exists(</span><span class="s4">&quot;/usr/X11R6/bin/fc-list&quot;</span><span class="s1">):</span>
+        <span class="s1">fonts = initsysfonts_unix(</span><span class="s4">&quot;/usr/X11R6/bin/fc-list&quot;</span><span class="s1">)</span>
+    <span class="s3">else</span><span class="s1">:</span>
+        <span class="s0"># eventually this should probably be the preferred solution</span>
+        <span class="s1">fonts = _font_finder_darwin()</span>
+
+    <span class="s3">return </span><span class="s1">fonts</span>
+
+
+<span class="s0"># read the fonts on unix</span>
+<span class="s3">def </span><span class="s1">initsysfonts_unix(path=</span><span class="s4">&quot;fc-list&quot;</span><span class="s1">):</span>
+    <span class="s2">&quot;&quot;&quot;use the fc-list from fontconfig to get a list of fonts&quot;&quot;&quot;</span>
+    <span class="s1">fonts = {}</span>
+
+    <span class="s3">if </span><span class="s1">sys.platform == </span><span class="s4">&quot;emscripten&quot;</span><span class="s1">:</span>
+        <span class="s3">return </span><span class="s1">fonts</span>
+
+    <span class="s3">try</span><span class="s1">:</span>
+        <span class="s1">proc = subprocess.run(</span>
+            <span class="s1">[path</span><span class="s3">, </span><span class="s4">&quot;:&quot;</span><span class="s3">, </span><span class="s4">&quot;file&quot;</span><span class="s3">, </span><span class="s4">&quot;family&quot;</span><span class="s3">, </span><span class="s4">&quot;style&quot;</span><span class="s1">]</span><span class="s3">,</span>
+            <span class="s1">stdout=subprocess.PIPE</span><span class="s3">,  </span><span class="s0"># capture stdout</span>
+            <span class="s1">stderr=subprocess.PIPE</span><span class="s3">,  </span><span class="s0"># capture stderr</span>
+            <span class="s1">check=</span><span class="s3">True,  </span><span class="s0"># so that errors raise python exception which is handled below</span>
+            <span class="s1">timeout=</span><span class="s5">1</span><span class="s3">,  </span><span class="s0"># so that we don't hang the program waiting</span>
+        <span class="s1">)</span>
+
+    <span class="s3">except </span><span class="s1">FileNotFoundError:</span>
+        <span class="s1">warnings.warn(</span>
+            <span class="s4">f&quot;'</span><span class="s3">{</span><span class="s1">path</span><span class="s3">}</span><span class="s4">' is missing, system fonts cannot be loaded on your platform&quot;</span>
+        <span class="s1">)</span>
+
+    <span class="s3">except </span><span class="s1">subprocess.TimeoutExpired:</span>
+        <span class="s1">warnings.warn(</span>
+            <span class="s4">f&quot;Process running '</span><span class="s3">{</span><span class="s1">path</span><span class="s3">}</span><span class="s4">' timed-out! System fonts cannot be loaded on &quot;</span>
+            <span class="s4">&quot;your platform&quot;</span>
+        <span class="s1">)</span>
+
+    <span class="s3">except </span><span class="s1">subprocess.CalledProcessError </span><span class="s3">as </span><span class="s1">e:</span>
+        <span class="s1">warnings.warn(</span>
+            <span class="s4">f&quot;'</span><span class="s3">{</span><span class="s1">path</span><span class="s3">}</span><span class="s4">' failed with error code </span><span class="s3">{</span><span class="s1">e.returncode</span><span class="s3">}</span><span class="s4">! System fonts cannot be &quot;</span>
+            <span class="s4">f&quot;loaded on your platform. Error log is:</span><span class="s3">\n{</span><span class="s1">e.stderr</span><span class="s3">}</span><span class="s4">&quot;</span>
+        <span class="s1">)</span>
+
+    <span class="s3">else</span><span class="s1">:</span>
+        <span class="s3">for </span><span class="s1">entry </span><span class="s3">in </span><span class="s1">proc.stdout.decode(</span><span class="s4">&quot;ascii&quot;</span><span class="s3">, </span><span class="s4">&quot;ignore&quot;</span><span class="s1">).splitlines():</span>
+            <span class="s3">try</span><span class="s1">:</span>
+                <span class="s1">_parse_font_entry_unix(entry</span><span class="s3">, </span><span class="s1">fonts)</span>
+            <span class="s3">except </span><span class="s1">ValueError:</span>
+                <span class="s0"># try the next one.</span>
+                <span class="s3">pass</span>
+
+    <span class="s3">return </span><span class="s1">fonts</span>
+
+
+<span class="s3">def </span><span class="s1">_parse_font_entry_unix(entry</span><span class="s3">, </span><span class="s1">fonts):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Parses an entry in the unix font data to add to the pygame font 
+    dictionary. 
+ 
+    :param entry: A entry from the unix font list. 
+    :param fonts: The pygame font dictionary to add the parsed font data to. 
+ 
+    &quot;&quot;&quot;</span>
+    <span class="s1">filename</span><span class="s3">, </span><span class="s1">family</span><span class="s3">, </span><span class="s1">style = entry.split(</span><span class="s4">&quot;:&quot;</span><span class="s3">, </span><span class="s5">2</span><span class="s1">)</span>
+    <span class="s3">if </span><span class="s1">splitext(filename)[</span><span class="s5">1</span><span class="s1">].lower() </span><span class="s3">in </span><span class="s1">OpenType_extensions:</span>
+        <span class="s1">bold = </span><span class="s4">&quot;Bold&quot; </span><span class="s3">in </span><span class="s1">style</span>
+        <span class="s1">italic = </span><span class="s4">&quot;Italic&quot; </span><span class="s3">in </span><span class="s1">style</span>
+        <span class="s1">oblique = </span><span class="s4">&quot;Oblique&quot; </span><span class="s3">in </span><span class="s1">style</span>
+        <span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">family.strip().split(</span><span class="s4">&quot;,&quot;</span><span class="s1">):</span>
+            <span class="s3">if </span><span class="s1">name:</span>
+                <span class="s3">break</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">name = splitext(basename(filename))[</span><span class="s5">0</span><span class="s1">]</span>
+
+        <span class="s1">_addfont(_simplename(name)</span><span class="s3">, </span><span class="s1">bold</span><span class="s3">, </span><span class="s1">italic </span><span class="s3">or </span><span class="s1">oblique</span><span class="s3">, </span><span class="s1">filename</span><span class="s3">, </span><span class="s1">fonts)</span>
+
+
+<span class="s3">def </span><span class="s1">create_aliases():</span>
+    <span class="s2">&quot;&quot;&quot;Map common fonts that are absent from the system to similar fonts 
+    that are installed in the system 
+    &quot;&quot;&quot;</span>
+    <span class="s1">alias_groups = (</span>
+        <span class="s1">(</span>
+            <span class="s4">&quot;monospace&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;misc-fixed&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;courier&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;couriernew&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;console&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;fixed&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;mono&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;freemono&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;bitstreamverasansmono&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;verasansmono&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;monotype&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;lucidaconsole&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;consolas&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;dejavusansmono&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;liberationmono&quot;</span><span class="s3">,</span>
+        <span class="s1">)</span><span class="s3">,</span>
+        <span class="s1">(</span>
+            <span class="s4">&quot;sans&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;arial&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;helvetica&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;swiss&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;freesans&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;bitstreamverasans&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;verasans&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;verdana&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;tahoma&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;calibri&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;gillsans&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;segoeui&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;trebuchetms&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;ubuntu&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;dejavusans&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;liberationsans&quot;</span><span class="s3">,</span>
+        <span class="s1">)</span><span class="s3">,</span>
+        <span class="s1">(</span>
+            <span class="s4">&quot;serif&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;times&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;freeserif&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;bitstreamveraserif&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;roman&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;timesroman&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;timesnewroman&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;dutch&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;veraserif&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;georgia&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;cambria&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;constantia&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;dejavuserif&quot;</span><span class="s3">,</span>
+            <span class="s4">&quot;liberationserif&quot;</span><span class="s3">,</span>
+        <span class="s1">)</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s4">&quot;wingdings&quot;</span><span class="s3">, </span><span class="s4">&quot;wingbats&quot;</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s4">&quot;comicsansms&quot;</span><span class="s3">, </span><span class="s4">&quot;comicsans&quot;</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">)</span>
+    <span class="s3">for </span><span class="s1">alias_set </span><span class="s3">in </span><span class="s1">alias_groups:</span>
+        <span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">alias_set:</span>
+            <span class="s3">if </span><span class="s1">name </span><span class="s3">in </span><span class="s1">Sysfonts:</span>
+                <span class="s1">found = Sysfonts[name]</span>
+                <span class="s3">break</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s3">continue</span>
+        <span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">alias_set:</span>
+            <span class="s3">if </span><span class="s1">name </span><span class="s3">not in </span><span class="s1">Sysfonts:</span>
+                <span class="s1">Sysalias[name] = found</span>
+
+
+<span class="s3">def </span><span class="s1">initsysfonts():</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Initialise the sysfont module, called once. Locates the installed fonts 
+    and creates some aliases for common font categories. 
+ 
+    Has different initialisation functions for different platforms. 
+    &quot;&quot;&quot;</span>
+    <span class="s3">global </span><span class="s1">is_init</span>
+    <span class="s3">if </span><span class="s1">is_init:</span>
+        <span class="s0"># no need to re-init</span>
+        <span class="s3">return</span>
+
+    <span class="s3">if </span><span class="s1">sys.platform == </span><span class="s4">&quot;win32&quot;</span><span class="s1">:</span>
+        <span class="s1">fonts = initsysfonts_win32()</span>
+    <span class="s3">elif </span><span class="s1">sys.platform == </span><span class="s4">&quot;darwin&quot;</span><span class="s1">:</span>
+        <span class="s1">fonts = initsysfonts_darwin()</span>
+    <span class="s3">else</span><span class="s1">:</span>
+        <span class="s1">fonts = initsysfonts_unix()</span>
+
+    <span class="s1">Sysfonts.update(fonts)</span>
+    <span class="s1">create_aliases()</span>
+    <span class="s1">is_init = </span><span class="s3">True</span>
+
+
+<span class="s3">def </span><span class="s1">font_constructor(fontpath</span><span class="s3">, </span><span class="s1">size</span><span class="s3">, </span><span class="s1">bold</span><span class="s3">, </span><span class="s1">italic):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    pygame.font specific declarations 
+ 
+    :param fontpath: path to a font. 
+    :param size: size of a font. 
+    :param bold: bold style, True or False. 
+    :param italic: italic style, True or False. 
+ 
+    :return: A font.Font object. 
+    &quot;&quot;&quot;</span>
+
+    <span class="s1">font = Font(fontpath</span><span class="s3">, </span><span class="s1">size)</span>
+    <span class="s3">if </span><span class="s1">bold:</span>
+        <span class="s1">font.set_bold(</span><span class="s3">True</span><span class="s1">)</span>
+    <span class="s3">if </span><span class="s1">italic:</span>
+        <span class="s1">font.set_italic(</span><span class="s3">True</span><span class="s1">)</span>
+
+    <span class="s3">return </span><span class="s1">font</span>
+
+
+<span class="s0"># the exported functions</span>
+
+
+<span class="s3">def </span><span class="s1">SysFont(name</span><span class="s3">, </span><span class="s1">size</span><span class="s3">, </span><span class="s1">bold=</span><span class="s3">False, </span><span class="s1">italic=</span><span class="s3">False, </span><span class="s1">constructor=</span><span class="s3">None</span><span class="s1">):</span>
+    <span class="s2">&quot;&quot;&quot;pygame.font.SysFont(name, size, bold=False, italic=False, constructor=None) -&gt; Font 
+    Create a pygame Font from system font resources. 
+ 
+    This will search the system fonts for the given font 
+    name. You can also enable bold or italic styles, and 
+    the appropriate system font will be selected if available. 
+ 
+    This will always return a valid Font object, and will 
+    fallback on the builtin pygame font if the given font 
+    is not found. 
+ 
+    Name can also be an iterable of font names, a string of 
+    comma-separated font names, or a bytes of comma-separated 
+    font names, in which case the set of names will be searched 
+    in order. Pygame uses a small set of common font aliases. If the 
+    specific font you ask for is not available, a reasonable 
+    alternative may be used. 
+ 
+    If optional constructor is provided, it must be a function with 
+    signature constructor(fontpath, size, bold, italic) which returns 
+    a Font instance. If None, a pygame.font.Font object is created. 
+    &quot;&quot;&quot;</span>
+    <span class="s3">if </span><span class="s1">constructor </span><span class="s3">is None</span><span class="s1">:</span>
+        <span class="s1">constructor = font_constructor</span>
+
+    <span class="s1">initsysfonts()</span>
+
+    <span class="s1">gotbold = gotitalic = </span><span class="s3">False</span>
+    <span class="s1">fontname = </span><span class="s3">None</span>
+    <span class="s3">if </span><span class="s1">name:</span>
+        <span class="s3">if </span><span class="s1">isinstance(name</span><span class="s3">, </span><span class="s1">(str</span><span class="s3">, </span><span class="s1">bytes)):</span>
+            <span class="s1">name = name.split(</span><span class="s6">b&quot;,&quot; </span><span class="s3">if </span><span class="s1">isinstance(name</span><span class="s3">, </span><span class="s1">bytes) </span><span class="s3">else </span><span class="s4">&quot;,&quot;</span><span class="s1">)</span>
+        <span class="s3">for </span><span class="s1">single_name </span><span class="s3">in </span><span class="s1">name:</span>
+            <span class="s3">if </span><span class="s1">isinstance(single_name</span><span class="s3">, </span><span class="s1">bytes):</span>
+                <span class="s1">single_name = single_name.decode()</span>
+
+            <span class="s1">single_name = _simplename(single_name)</span>
+            <span class="s1">styles = Sysfonts.get(single_name)</span>
+            <span class="s3">if not </span><span class="s1">styles:</span>
+                <span class="s1">styles = Sysalias.get(single_name)</span>
+            <span class="s3">if </span><span class="s1">styles:</span>
+                <span class="s1">plainname = styles.get((</span><span class="s3">False, False</span><span class="s1">))</span>
+                <span class="s1">fontname = styles.get((bold</span><span class="s3">, </span><span class="s1">italic))</span>
+                <span class="s3">if not </span><span class="s1">(fontname </span><span class="s3">or </span><span class="s1">plainname):</span>
+                    <span class="s0"># Neither requested style, nor plain font exists, so</span>
+                    <span class="s0"># return a font with the name requested, but an</span>
+                    <span class="s0"># arbitrary style.</span>
+                    <span class="s1">(style</span><span class="s3">, </span><span class="s1">fontname) = list(styles.items())[</span><span class="s5">0</span><span class="s1">]</span>
+                    <span class="s0"># Attempt to style it as requested. This can't</span>
+                    <span class="s0"># unbold or unitalicize anything, but it can</span>
+                    <span class="s0"># fake bold and/or fake italicize.</span>
+                    <span class="s3">if </span><span class="s1">bold </span><span class="s3">and </span><span class="s1">style[</span><span class="s5">0</span><span class="s1">]:</span>
+                        <span class="s1">gotbold = </span><span class="s3">True</span>
+                    <span class="s3">if </span><span class="s1">italic </span><span class="s3">and </span><span class="s1">style[</span><span class="s5">1</span><span class="s1">]:</span>
+                        <span class="s1">gotitalic = </span><span class="s3">True</span>
+                <span class="s3">elif not </span><span class="s1">fontname:</span>
+                    <span class="s1">fontname = plainname</span>
+                <span class="s3">elif </span><span class="s1">plainname != fontname:</span>
+                    <span class="s1">gotbold = bold</span>
+                    <span class="s1">gotitalic = italic</span>
+            <span class="s3">if </span><span class="s1">fontname:</span>
+                <span class="s3">break</span>
+
+    <span class="s1">set_bold = set_italic = </span><span class="s3">False</span>
+    <span class="s3">if </span><span class="s1">bold </span><span class="s3">and not </span><span class="s1">gotbold:</span>
+        <span class="s1">set_bold = </span><span class="s3">True</span>
+    <span class="s3">if </span><span class="s1">italic </span><span class="s3">and not </span><span class="s1">gotitalic:</span>
+        <span class="s1">set_italic = </span><span class="s3">True</span>
+
+    <span class="s3">return </span><span class="s1">constructor(fontname</span><span class="s3">, </span><span class="s1">size</span><span class="s3">, </span><span class="s1">set_bold</span><span class="s3">, </span><span class="s1">set_italic)</span>
+
+
+<span class="s3">def </span><span class="s1">get_fonts():</span>
+    <span class="s2">&quot;&quot;&quot;pygame.font.get_fonts() -&gt; list 
+    get a list of system font names 
+ 
+    Returns the list of all found system fonts. Note that 
+    the names of the fonts will be all lowercase with spaces 
+    removed. This is how pygame internally stores the font 
+    names for matching. 
+    &quot;&quot;&quot;</span>
+    <span class="s1">initsysfonts()</span>
+    <span class="s3">return </span><span class="s1">list(Sysfonts)</span>
+
+
+<span class="s3">def </span><span class="s1">match_font(name</span><span class="s3">, </span><span class="s1">bold=</span><span class="s5">0</span><span class="s3">, </span><span class="s1">italic=</span><span class="s5">0</span><span class="s1">):</span>
+    <span class="s2">&quot;&quot;&quot;pygame.font.match_font(name, bold=0, italic=0) -&gt; name 
+    find the filename for the named system font 
+ 
+    This performs the same font search as the SysFont() 
+    function, only it returns the path to the TTF file 
+    that would be loaded. The font name can also be an 
+    iterable of font names or a string/bytes of comma-separated 
+    font names to try. 
+ 
+    If no match is found, None is returned. 
+    &quot;&quot;&quot;</span>
+    <span class="s1">initsysfonts()</span>
+
+    <span class="s1">fontname = </span><span class="s3">None</span>
+    <span class="s3">if </span><span class="s1">isinstance(name</span><span class="s3">, </span><span class="s1">(str</span><span class="s3">, </span><span class="s1">bytes)):</span>
+        <span class="s1">name = name.split(</span><span class="s6">b&quot;,&quot; </span><span class="s3">if </span><span class="s1">isinstance(name</span><span class="s3">, </span><span class="s1">bytes) </span><span class="s3">else </span><span class="s4">&quot;,&quot;</span><span class="s1">)</span>
+
+    <span class="s3">for </span><span class="s1">single_name </span><span class="s3">in </span><span class="s1">name:</span>
+        <span class="s3">if </span><span class="s1">isinstance(single_name</span><span class="s3">, </span><span class="s1">bytes):</span>
+            <span class="s1">single_name = single_name.decode()</span>
+
+        <span class="s1">single_name = _simplename(single_name)</span>
+        <span class="s1">styles = Sysfonts.get(single_name)</span>
+        <span class="s3">if not </span><span class="s1">styles:</span>
+            <span class="s1">styles = Sysalias.get(single_name)</span>
+        <span class="s3">if </span><span class="s1">styles:</span>
+            <span class="s3">while not </span><span class="s1">fontname:</span>
+                <span class="s1">fontname = styles.get((bold</span><span class="s3">, </span><span class="s1">italic))</span>
+                <span class="s3">if </span><span class="s1">italic:</span>
+                    <span class="s1">italic = </span><span class="s5">0</span>
+                <span class="s3">elif </span><span class="s1">bold:</span>
+                    <span class="s1">bold = </span><span class="s5">0</span>
+                <span class="s3">elif not </span><span class="s1">fontname:</span>
+                    <span class="s1">fontname = list(styles.values())[</span><span class="s5">0</span><span class="s1">]</span>
+
+        <span class="s3">if </span><span class="s1">fontname:</span>
+            <span class="s3">break</span>
+
+    <span class="s3">return </span><span class="s1">fontname</span>
+</pre>
+</body>
+</html>

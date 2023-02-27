@@ -1,0 +1,929 @@
+<html>
+<head>
+<title>basic.css</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #e8bf6a;}
+.s3 { color: #bababa;}
+.s4 { color: #a9b7c6;}
+.s5 { color: #a5c261;}
+.s6 { color: #cc7832;}
+.s7 { color: #6a8759;}
+.s8 { color: #6897bb;}
+.s9 { color: #287bde;}
+.s10 { color: #cc7832; font-weight: bold;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+basic.css</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+ * basic.css 
+ * ~~~~~~~~~ 
+ * 
+ * Sphinx stylesheet -- basic theme. 
+ * 
+ * :copyright: Copyright 2007-2023 by the Sphinx team, see AUTHORS. 
+ * :license: BSD, see LICENSE for details. 
+ * 
+ */</span>
+
+<span class="s0">/* -- main layout ----------------------------------------------------------- */</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">clearer </span><span class="s1">{</span>
+    <span class="s3">clear</span><span class="s4">: </span><span class="s5">both</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">section</span><span class="s4">::</span><span class="s2">after </span><span class="s1">{</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">block</span><span class="s6">;</span>
+    <span class="s3">content</span><span class="s4">: </span><span class="s7">''</span><span class="s6">;</span>
+    <span class="s3">clear</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- relbar ---------------------------------------------------------------- */</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">related </span><span class="s1">{</span>
+    <span class="s3">width</span><span class="s4">: </span><span class="s8">100</span><span class="s1">%</span><span class="s6">;</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s8">90</span><span class="s1">%</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">related h3 </span><span class="s1">{</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">related ul </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0 0 0 10</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">list-style</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">related li </span><span class="s1">{</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">inline</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">related li</span><span class="s1">.</span><span class="s2">right </span><span class="s1">{</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">right</span><span class="s6">;</span>
+    <span class="s3">margin-right</span><span class="s4">: </span><span class="s8">5</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- sidebar --------------------------------------------------------------- */</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebarwrapper </span><span class="s1">{</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px </span><span class="s8">5</span><span class="s5">px </span><span class="s8">0 10</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar </span><span class="s1">{</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+    <span class="s3">width</span><span class="s4">: </span><span class="s8">230</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">margin-left</span><span class="s4">: </span><span class="s1">-</span><span class="s8">100</span><span class="s1">%</span><span class="s6">;</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s8">90</span><span class="s1">%</span><span class="s6">;</span>
+    <span class="s3">word-wrap</span><span class="s4">: </span><span class="s5">break-word</span><span class="s6">;</span>
+    <span class="s3">overflow-wrap </span><span class="s4">: </span><span class="s5">break-word</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar ul </span><span class="s1">{</span>
+    <span class="s3">list-style</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar ul ul</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar ul</span><span class="s1">.</span><span class="s2">want-points </span><span class="s1">{</span>
+    <span class="s3">margin-left</span><span class="s4">: </span><span class="s8">20</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">list-style</span><span class="s4">: </span><span class="s5">square</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar ul ul </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar form </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar input </span><span class="s1">{</span>
+    <span class="s3">border</span><span class="s4">: </span><span class="s8">1</span><span class="s5">px solid </span><span class="s8">#98dbcc</span><span class="s6">;</span>
+    <span class="s3">font-family</span><span class="s4">: </span><span class="s5">sans-serif</span><span class="s6">;</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar #searchbox form</span><span class="s1">.</span><span class="s2">search </span><span class="s1">{</span>
+    <span class="s3">overflow</span><span class="s4">: </span><span class="s5">hidden</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar #searchbox input</span><span class="s1">[</span><span class="s2">type</span><span class="s1">=</span><span class="s7">&quot;text&quot;</span><span class="s1">] {</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+    <span class="s3">width</span><span class="s4">: </span><span class="s8">80</span><span class="s1">%</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0.25</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">box-sizing</span><span class="s4">: </span><span class="s5">border-box</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar #searchbox input</span><span class="s1">[</span><span class="s2">type</span><span class="s1">=</span><span class="s7">&quot;submit&quot;</span><span class="s1">] {</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+    <span class="s3">width</span><span class="s4">: </span><span class="s8">20</span><span class="s1">%</span><span class="s6">;</span>
+    <span class="s3">border-left</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0.25</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">box-sizing</span><span class="s4">: </span><span class="s5">border-box</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+
+<span class="s2">img </span><span class="s1">{</span>
+    <span class="s3">border</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">max-width</span><span class="s4">: </span><span class="s8">100</span><span class="s1">%</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- search page ----------------------------------------------------------- */</span>
+
+<span class="s2">ul</span><span class="s1">.</span><span class="s2">search </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px </span><span class="s8">0 0 20</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ul</span><span class="s1">.</span><span class="s2">search li </span><span class="s1">{</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">5</span><span class="s5">px </span><span class="s8">0 5</span><span class="s5">px </span><span class="s8">20</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">background-image</span><span class="s4">: </span><span class="s2">url</span><span class="s1">(</span><span class="s9">file.png</span><span class="s1">)</span><span class="s6">;</span>
+    <span class="s3">background-repeat</span><span class="s4">: </span><span class="s5">no-repeat</span><span class="s6">;</span>
+    <span class="s3">background-position</span><span class="s4">: </span><span class="s8">0 7</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ul</span><span class="s1">.</span><span class="s2">search li a </span><span class="s1">{</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ul</span><span class="s1">.</span><span class="s2">search li p</span><span class="s1">.</span><span class="s2">context </span><span class="s1">{</span>
+    <span class="s3">color</span><span class="s4">: </span><span class="s8">#888</span><span class="s6">;</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">2</span><span class="s5">px </span><span class="s8">0 0 30</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ul</span><span class="s1">.</span><span class="s2">keywordmatches li</span><span class="s1">.</span><span class="s2">goodmatch a </span><span class="s1">{</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- index page ------------------------------------------------------------ */</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">contentstable </span><span class="s1">{</span>
+    <span class="s3">width</span><span class="s4">: </span><span class="s8">90</span><span class="s1">%</span><span class="s6">;</span>
+    <span class="s3">margin-left</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+    <span class="s3">margin-right</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">contentstable p</span><span class="s1">.</span><span class="s2">biglink </span><span class="s1">{</span>
+    <span class="s3">line-height</span><span class="s4">: </span><span class="s8">150</span><span class="s1">%</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">a</span><span class="s1">.</span><span class="s2">biglink </span><span class="s1">{</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s8">1.3</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">span</span><span class="s1">.</span><span class="s2">linkdescr </span><span class="s1">{</span>
+    <span class="s3">font-style</span><span class="s4">: </span><span class="s5">italic</span><span class="s6">;</span>
+    <span class="s3">padding-top</span><span class="s4">: </span><span class="s8">5</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s8">90</span><span class="s1">%</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- general index --------------------------------------------------------- */</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">indextable </span><span class="s1">{</span>
+    <span class="s3">width</span><span class="s4">: </span><span class="s8">100</span><span class="s1">%</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">indextable td </span><span class="s1">{</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+    <span class="s3">vertical-align</span><span class="s4">: </span><span class="s5">top</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">indextable ul </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">list-style-type</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">indextable </span><span class="s1">&gt; </span><span class="s2">tbody </span><span class="s1">&gt; </span><span class="s2">tr </span><span class="s1">&gt; </span><span class="s2">td </span><span class="s1">&gt; </span><span class="s2">ul </span><span class="s1">{</span>
+    <span class="s3">padding-left</span><span class="s4">: </span><span class="s8">0</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">indextable tr</span><span class="s1">.</span><span class="s2">pcap </span><span class="s1">{</span>
+    <span class="s3">height</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">indextable tr</span><span class="s1">.</span><span class="s2">cap </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s8">#f2f2f2</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">img</span><span class="s1">.</span><span class="s2">toggler </span><span class="s1">{</span>
+    <span class="s3">margin-right</span><span class="s4">: </span><span class="s8">3</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">3</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">cursor</span><span class="s4">: </span><span class="s5">pointer</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">modindex-jumpbox </span><span class="s1">{</span>
+    <span class="s3">border-top</span><span class="s4">: </span><span class="s8">1</span><span class="s5">px solid </span><span class="s8">#ddd</span><span class="s6">;</span>
+    <span class="s3">border-bottom</span><span class="s4">: </span><span class="s8">1</span><span class="s5">px solid </span><span class="s8">#ddd</span><span class="s6">;</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em </span><span class="s8">0 1</span><span class="s5">em </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0.4</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">genindex-jumpbox </span><span class="s1">{</span>
+    <span class="s3">border-top</span><span class="s4">: </span><span class="s8">1</span><span class="s5">px solid </span><span class="s8">#ddd</span><span class="s6">;</span>
+    <span class="s3">border-bottom</span><span class="s4">: </span><span class="s8">1</span><span class="s5">px solid </span><span class="s8">#ddd</span><span class="s6">;</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em </span><span class="s8">0 1</span><span class="s5">em </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0.4</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- domain module index --------------------------------------------------- */</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">modindextable td </span><span class="s1">{</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">2</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">border-collapse</span><span class="s4">: </span><span class="s5">collapse</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- general body styles --------------------------------------------------- */</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">body </span><span class="s1">{</span>
+    <span class="s3">min-width</span><span class="s4">: </span><span class="s8">360</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">max-width</span><span class="s4">: </span><span class="s8">800</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">body p</span><span class="s6">, </span><span class="s2">div</span><span class="s1">.</span><span class="s2">body dd</span><span class="s6">, </span><span class="s2">div</span><span class="s1">.</span><span class="s2">body li</span><span class="s6">, </span><span class="s2">div</span><span class="s1">.</span><span class="s2">body blockquote </span><span class="s1">{</span>
+    <span class="s3">-moz-hyphens</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+    <span class="s3">-ms-hyphens</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+    <span class="s3">-webkit-hyphens</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+    <span class="s3">hyphens</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink </span><span class="s1">{</span>
+    <span class="s3">visibility</span><span class="s4">: </span><span class="s5">hidden</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">h1</span><span class="s4">:</span><span class="s2">hover </span><span class="s1">&gt; </span><span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink</span><span class="s6">,</span>
+<span class="s2">h2</span><span class="s4">:</span><span class="s2">hover </span><span class="s1">&gt; </span><span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink</span><span class="s6">,</span>
+<span class="s2">h3</span><span class="s4">:</span><span class="s2">hover </span><span class="s1">&gt; </span><span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink</span><span class="s6">,</span>
+<span class="s2">h4</span><span class="s4">:</span><span class="s2">hover </span><span class="s1">&gt; </span><span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink</span><span class="s6">,</span>
+<span class="s2">h5</span><span class="s4">:</span><span class="s2">hover </span><span class="s1">&gt; </span><span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink</span><span class="s6">,</span>
+<span class="s2">h6</span><span class="s4">:</span><span class="s2">hover </span><span class="s1">&gt; </span><span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink</span><span class="s6">,</span>
+<span class="s2">dt</span><span class="s4">:</span><span class="s2">hover </span><span class="s1">&gt; </span><span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink</span><span class="s6">,</span>
+<span class="s2">caption</span><span class="s4">:</span><span class="s2">hover </span><span class="s1">&gt; </span><span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink</span><span class="s6">,</span>
+<span class="s2">p</span><span class="s1">.</span><span class="s2">caption</span><span class="s4">:</span><span class="s2">hover </span><span class="s1">&gt; </span><span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">code-block-caption</span><span class="s4">:</span><span class="s2">hover </span><span class="s1">&gt; </span><span class="s2">a</span><span class="s1">.</span><span class="s2">headerlink </span><span class="s1">{</span>
+    <span class="s3">visibility</span><span class="s4">: </span><span class="s5">visible</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">body p</span><span class="s1">.</span><span class="s2">caption </span><span class="s1">{</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">inherit</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">body td </span><span class="s1">{</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">first </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0 </span><span class="s10">!important</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">p</span><span class="s1">.</span><span class="s2">rubric </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">30</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">img</span><span class="s1">.</span><span class="s2">align-left</span><span class="s6">, </span><span class="s2">figure</span><span class="s1">.</span><span class="s2">align-left</span><span class="s6">, </span><span class="s1">.</span><span class="s2">figure</span><span class="s1">.</span><span class="s2">align-left</span><span class="s6">, </span><span class="s2">object</span><span class="s1">.</span><span class="s2">align-left </span><span class="s1">{</span>
+    <span class="s3">clear</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+    <span class="s3">margin-right</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">img</span><span class="s1">.</span><span class="s2">align-right</span><span class="s6">, </span><span class="s2">figure</span><span class="s1">.</span><span class="s2">align-right</span><span class="s6">, </span><span class="s1">.</span><span class="s2">figure</span><span class="s1">.</span><span class="s2">align-right</span><span class="s6">, </span><span class="s2">object</span><span class="s1">.</span><span class="s2">align-right </span><span class="s1">{</span>
+    <span class="s3">clear</span><span class="s4">: </span><span class="s5">right</span><span class="s6">;</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">right</span><span class="s6">;</span>
+    <span class="s3">margin-left</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">img</span><span class="s1">.</span><span class="s2">align-center</span><span class="s6">, </span><span class="s2">figure</span><span class="s1">.</span><span class="s2">align-center</span><span class="s6">, </span><span class="s1">.</span><span class="s2">figure</span><span class="s1">.</span><span class="s2">align-center</span><span class="s6">, </span><span class="s2">object</span><span class="s1">.</span><span class="s2">align-center </span><span class="s1">{</span>
+  <span class="s3">display</span><span class="s4">: </span><span class="s5">block</span><span class="s6">;</span>
+  <span class="s3">margin-left</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+  <span class="s3">margin-right</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">img</span><span class="s1">.</span><span class="s2">align-default</span><span class="s6">, </span><span class="s2">figure</span><span class="s1">.</span><span class="s2">align-default</span><span class="s6">, </span><span class="s1">.</span><span class="s2">figure</span><span class="s1">.</span><span class="s2">align-default </span><span class="s1">{</span>
+  <span class="s3">display</span><span class="s4">: </span><span class="s5">block</span><span class="s6">;</span>
+  <span class="s3">margin-left</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+  <span class="s3">margin-right</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">align-left </span><span class="s1">{</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">align-center </span><span class="s1">{</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">center</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">align-default </span><span class="s1">{</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">center</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">align-right </span><span class="s1">{</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">right</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- sidebars -------------------------------------------------------------- */</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sidebar</span><span class="s6">,</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">sidebar </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">0 0 0.5</span><span class="s5">em </span><span class="s8">1</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">border</span><span class="s4">: </span><span class="s8">1</span><span class="s5">px solid </span><span class="s8">#ddb</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">7</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s8">#ffe</span><span class="s6">;</span>
+    <span class="s3">width</span><span class="s4">: </span><span class="s8">40</span><span class="s1">%</span><span class="s6">;</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">right</span><span class="s6">;</span>
+    <span class="s3">clear</span><span class="s4">: </span><span class="s5">right</span><span class="s6">;</span>
+    <span class="s3">overflow-x</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">p</span><span class="s1">.</span><span class="s2">sidebar-title </span><span class="s1">{</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">nav</span><span class="s1">.</span><span class="s2">contents</span><span class="s6">,</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">topic</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">admonition</span><span class="s6">, </span><span class="s2">div</span><span class="s1">.</span><span class="s2">topic</span><span class="s6">, </span><span class="s2">blockquote </span><span class="s1">{</span>
+    <span class="s3">clear</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- topics ---------------------------------------------------------------- */</span>
+
+<span class="s2">nav</span><span class="s1">.</span><span class="s2">contents</span><span class="s6">,</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">topic</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">topic </span><span class="s1">{</span>
+    <span class="s3">border</span><span class="s4">: </span><span class="s8">1</span><span class="s5">px solid </span><span class="s8">#ccc</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">7</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px </span><span class="s8">0 10</span><span class="s5">px </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">p</span><span class="s1">.</span><span class="s2">topic-title </span><span class="s1">{</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s8">1.1</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- admonitions ----------------------------------------------------------- */</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">admonition </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">7</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">admonition dt </span><span class="s1">{</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">p</span><span class="s1">.</span><span class="s2">admonition-title </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">0</span><span class="s5">px </span><span class="s8">10</span><span class="s5">px </span><span class="s8">5</span><span class="s5">px </span><span class="s8">0</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">body p</span><span class="s1">.</span><span class="s2">centered </span><span class="s1">{</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">center</span><span class="s6">;</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">25</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- content of sidebars/topics/admonitions -------------------------------- */</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sidebar </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child</span><span class="s6">,</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">sidebar </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child</span><span class="s6">,</span>
+<span class="s2">nav</span><span class="s1">.</span><span class="s2">contents </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child</span><span class="s6">,</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">topic </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">topic </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">admonition </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child </span><span class="s1">{</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">sidebar</span><span class="s4">::</span><span class="s2">after</span><span class="s6">,</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">sidebar</span><span class="s4">::</span><span class="s2">after</span><span class="s6">,</span>
+<span class="s2">nav</span><span class="s1">.</span><span class="s2">contents</span><span class="s4">::</span><span class="s2">after</span><span class="s6">,</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">topic</span><span class="s4">::</span><span class="s2">after</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">topic</span><span class="s4">::</span><span class="s2">after</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">admonition</span><span class="s4">::</span><span class="s2">after</span><span class="s6">,</span>
+<span class="s2">blockquote</span><span class="s4">::</span><span class="s2">after </span><span class="s1">{</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">block</span><span class="s6">;</span>
+    <span class="s3">content</span><span class="s4">: </span><span class="s7">''</span><span class="s6">;</span>
+    <span class="s3">clear</span><span class="s4">: </span><span class="s5">both</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- tables ---------------------------------------------------------------- */</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">docutils </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">border</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">border-collapse</span><span class="s4">: </span><span class="s5">collapse</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">align-center </span><span class="s1">{</span>
+    <span class="s3">margin-left</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+    <span class="s3">margin-right</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">align-default </span><span class="s1">{</span>
+    <span class="s3">margin-left</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+    <span class="s3">margin-right</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table caption span</span><span class="s1">.</span><span class="s2">caption-number </span><span class="s1">{</span>
+    <span class="s3">font-style</span><span class="s4">: </span><span class="s5">italic</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table caption span</span><span class="s1">.</span><span class="s2">caption-text </span><span class="s1">{</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">docutils td</span><span class="s6">, </span><span class="s2">table</span><span class="s1">.</span><span class="s2">docutils th </span><span class="s1">{</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">1</span><span class="s5">px </span><span class="s8">8</span><span class="s5">px </span><span class="s8">1</span><span class="s5">px </span><span class="s8">5</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">border-top</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">border-left</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">border-right</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">border-bottom</span><span class="s4">: </span><span class="s8">1</span><span class="s5">px solid </span><span class="s8">#aaa</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">th </span><span class="s1">{</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+    <span class="s3">padding-right</span><span class="s4">: </span><span class="s8">5</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">citation </span><span class="s1">{</span>
+    <span class="s3">border-left</span><span class="s4">: </span><span class="s5">solid </span><span class="s8">1</span><span class="s5">px gray</span><span class="s6">;</span>
+    <span class="s3">margin-left</span><span class="s4">: </span><span class="s8">1</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">citation td </span><span class="s1">{</span>
+    <span class="s3">border-bottom</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">th </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">first-child</span><span class="s6">,</span>
+<span class="s2">td </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">first-child </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">th </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child</span><span class="s6">,</span>
+<span class="s2">td </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child </span><span class="s1">{</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">0</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- figures --------------------------------------------------------------- */</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">figure</span><span class="s6">, </span><span class="s2">figure </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">0.5</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0.5</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">figure p</span><span class="s1">.</span><span class="s2">caption</span><span class="s6">, </span><span class="s2">figcaption </span><span class="s1">{</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0.3</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">figure p</span><span class="s1">.</span><span class="s2">caption span</span><span class="s1">.</span><span class="s2">caption-number</span><span class="s6">,</span>
+<span class="s2">figcaption span</span><span class="s1">.</span><span class="s2">caption-number </span><span class="s1">{</span>
+    <span class="s3">font-style</span><span class="s4">: </span><span class="s5">italic</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">figure p</span><span class="s1">.</span><span class="s2">caption span</span><span class="s1">.</span><span class="s2">caption-text</span><span class="s6">,</span>
+<span class="s2">figcaption span</span><span class="s1">.</span><span class="s2">caption-text </span><span class="s1">{</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- field list styles ----------------------------------------------------- */</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">field-list td</span><span class="s6">, </span><span class="s2">table</span><span class="s1">.</span><span class="s2">field-list th </span><span class="s1">{</span>
+    <span class="s3">border</span><span class="s4">: </span><span class="s8">0 </span><span class="s10">!important</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">field-list ul </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">padding-left</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">field-list p </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">field-name </span><span class="s1">{</span>
+    <span class="s3">-moz-hyphens</span><span class="s4">: </span><span class="s5">manual</span><span class="s6">;</span>
+    <span class="s3">-ms-hyphens</span><span class="s4">: </span><span class="s5">manual</span><span class="s6">;</span>
+    <span class="s3">-webkit-hyphens</span><span class="s4">: </span><span class="s5">manual</span><span class="s6">;</span>
+    <span class="s3">hyphens</span><span class="s4">: </span><span class="s5">manual</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- hlist styles ---------------------------------------------------------- */</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">hlist </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">hlist td </span><span class="s1">{</span>
+    <span class="s3">vertical-align</span><span class="s4">: </span><span class="s5">top</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- object description styles --------------------------------------------- */</span>
+
+<span class="s1">.</span><span class="s2">sig </span><span class="s1">{</span>
+	<span class="s3">font-family</span><span class="s4">: </span><span class="s7">'Consolas'</span><span class="s6">, </span><span class="s7">'Menlo'</span><span class="s6">, </span><span class="s7">'DejaVu Sans Mono'</span><span class="s6">, </span><span class="s7">'Bitstream Vera Sans Mono'</span><span class="s6">, </span><span class="s5">monospace</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">sig-name</span><span class="s6">, </span><span class="s2">code</span><span class="s1">.</span><span class="s2">descname </span><span class="s1">{</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s5">transparent</span><span class="s6">;</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">sig-name </span><span class="s1">{</span>
+	<span class="s3">font-size</span><span class="s4">: </span><span class="s8">1.1</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">code</span><span class="s1">.</span><span class="s2">descname </span><span class="s1">{</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s8">1.2</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">sig-prename</span><span class="s6">, </span><span class="s2">code</span><span class="s1">.</span><span class="s2">descclassname </span><span class="s1">{</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s5">transparent</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">optional </span><span class="s1">{</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s8">1.3</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">sig-paren </span><span class="s1">{</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s5">larger</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">sig-param</span><span class="s1">.</span><span class="s2">n </span><span class="s1">{</span>
+	<span class="s3">font-style</span><span class="s4">: </span><span class="s5">italic</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* C++ specific styling */</span>
+
+<span class="s1">.</span><span class="s2">sig-inline</span><span class="s1">.</span><span class="s2">c-texpr</span><span class="s6">,</span>
+<span class="s1">.</span><span class="s2">sig-inline</span><span class="s1">.</span><span class="s2">cpp-texpr </span><span class="s1">{</span>
+	<span class="s3">font-family</span><span class="s4">: </span><span class="s5">unset</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">sig</span><span class="s1">.</span><span class="s2">c   </span><span class="s1">.</span><span class="s2">k</span><span class="s6">, </span><span class="s1">.</span><span class="s2">sig</span><span class="s1">.</span><span class="s2">c   </span><span class="s1">.</span><span class="s2">kt</span><span class="s6">,</span>
+<span class="s1">.</span><span class="s2">sig</span><span class="s1">.</span><span class="s2">cpp </span><span class="s1">.</span><span class="s2">k</span><span class="s6">, </span><span class="s1">.</span><span class="s2">sig</span><span class="s1">.</span><span class="s2">cpp </span><span class="s1">.</span><span class="s2">kt </span><span class="s1">{</span>
+	<span class="s3">color</span><span class="s4">: </span><span class="s8">#0033B3</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">sig</span><span class="s1">.</span><span class="s2">c   </span><span class="s1">.</span><span class="s2">m</span><span class="s6">,</span>
+<span class="s1">.</span><span class="s2">sig</span><span class="s1">.</span><span class="s2">cpp </span><span class="s1">.</span><span class="s2">m </span><span class="s1">{</span>
+	<span class="s3">color</span><span class="s4">: </span><span class="s8">#1750EB</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">sig</span><span class="s1">.</span><span class="s2">c   </span><span class="s1">.</span><span class="s2">s</span><span class="s6">, </span><span class="s1">.</span><span class="s2">sig</span><span class="s1">.</span><span class="s2">c   </span><span class="s1">.</span><span class="s2">sc</span><span class="s6">,</span>
+<span class="s1">.</span><span class="s2">sig</span><span class="s1">.</span><span class="s2">cpp </span><span class="s1">.</span><span class="s2">s</span><span class="s6">, </span><span class="s1">.</span><span class="s2">sig</span><span class="s1">.</span><span class="s2">cpp </span><span class="s1">.</span><span class="s2">sc </span><span class="s1">{</span>
+	<span class="s3">color</span><span class="s4">: </span><span class="s8">#067D17</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+
+<span class="s0">/* -- other body styles ----------------------------------------------------- */</span>
+
+<span class="s2">ol</span><span class="s1">.</span><span class="s2">arabic </span><span class="s1">{</span>
+    <span class="s3">list-style</span><span class="s4">: </span><span class="s5">decimal</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ol</span><span class="s1">.</span><span class="s2">loweralpha </span><span class="s1">{</span>
+    <span class="s3">list-style</span><span class="s4">: </span><span class="s5">lower-alpha</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ol</span><span class="s1">.</span><span class="s2">upperalpha </span><span class="s1">{</span>
+    <span class="s3">list-style</span><span class="s4">: </span><span class="s5">upper-alpha</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ol</span><span class="s1">.</span><span class="s2">lowerroman </span><span class="s1">{</span>
+    <span class="s3">list-style</span><span class="s4">: </span><span class="s5">lower-roman</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ol</span><span class="s1">.</span><span class="s2">upperroman </span><span class="s1">{</span>
+    <span class="s3">list-style</span><span class="s4">: </span><span class="s5">upper-roman</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s4">:</span><span class="s2">not</span><span class="s1">(</span><span class="s2">li</span><span class="s1">) &gt; </span><span class="s2">ol </span><span class="s1">&gt; </span><span class="s2">li</span><span class="s4">:</span><span class="s2">first-child </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">first-child</span><span class="s6">,</span>
+<span class="s4">:</span><span class="s2">not</span><span class="s1">(</span><span class="s2">li</span><span class="s1">) &gt; </span><span class="s2">ul </span><span class="s1">&gt; </span><span class="s2">li</span><span class="s4">:</span><span class="s2">first-child </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">first-child </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s4">:</span><span class="s2">not</span><span class="s1">(</span><span class="s2">li</span><span class="s1">) &gt; </span><span class="s2">ol </span><span class="s1">&gt; </span><span class="s2">li</span><span class="s4">:</span><span class="s2">last-child </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child</span><span class="s6">,</span>
+<span class="s4">:</span><span class="s2">not</span><span class="s1">(</span><span class="s2">li</span><span class="s1">) &gt; </span><span class="s2">ul </span><span class="s1">&gt; </span><span class="s2">li</span><span class="s4">:</span><span class="s2">last-child </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child </span><span class="s1">{</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">0</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ol</span><span class="s1">.</span><span class="s2">simple ol p</span><span class="s6">,</span>
+<span class="s2">ol</span><span class="s1">.</span><span class="s2">simple ul p</span><span class="s6">,</span>
+<span class="s2">ul</span><span class="s1">.</span><span class="s2">simple ol p</span><span class="s6">,</span>
+<span class="s2">ul</span><span class="s1">.</span><span class="s2">simple ul p </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ol</span><span class="s1">.</span><span class="s2">simple </span><span class="s1">&gt; </span><span class="s2">li</span><span class="s4">:</span><span class="s2">not</span><span class="s1">(</span><span class="s4">:</span><span class="s2">first-child</span><span class="s1">) &gt; </span><span class="s2">p</span><span class="s6">,</span>
+<span class="s2">ul</span><span class="s1">.</span><span class="s2">simple </span><span class="s1">&gt; </span><span class="s2">li</span><span class="s4">:</span><span class="s2">not</span><span class="s1">(</span><span class="s4">:</span><span class="s2">first-child</span><span class="s1">) &gt; </span><span class="s2">p </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">ol</span><span class="s1">.</span><span class="s2">simple p</span><span class="s6">,</span>
+<span class="s2">ul</span><span class="s1">.</span><span class="s2">simple p </span><span class="s1">{</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">footnote </span><span class="s1">&gt; </span><span class="s2">span</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">citation </span><span class="s1">&gt; </span><span class="s2">span </span><span class="s1">{</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">left</span><span class="s6">;</span>
+<span class="s1">}</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">footnote </span><span class="s1">&gt; </span><span class="s2">span</span><span class="s4">:</span><span class="s2">last-of-type</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">citation </span><span class="s1">&gt; </span><span class="s2">span</span><span class="s4">:</span><span class="s2">last-of-type </span><span class="s1">{</span>
+  <span class="s3">padding-right</span><span class="s4">: </span><span class="s8">0.5</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">footnote </span><span class="s1">&gt; </span><span class="s2">p </span><span class="s1">{</span>
+  <span class="s3">margin-left</span><span class="s4">: </span><span class="s8">2</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">citation </span><span class="s1">&gt; </span><span class="s2">p </span><span class="s1">{</span>
+  <span class="s3">margin-left</span><span class="s4">: </span><span class="s8">4</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">footnote </span><span class="s1">&gt; </span><span class="s2">p</span><span class="s4">:</span><span class="s2">last-of-type</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">citation </span><span class="s1">&gt; </span><span class="s2">p</span><span class="s4">:</span><span class="s2">last-of-type </span><span class="s1">{</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">0</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+<span class="s2">aside</span><span class="s1">.</span><span class="s2">footnote </span><span class="s1">&gt; </span><span class="s2">p</span><span class="s4">:</span><span class="s2">last-of-type</span><span class="s4">:</span><span class="s2">after</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">citation </span><span class="s1">&gt; </span><span class="s2">p</span><span class="s4">:</span><span class="s2">last-of-type</span><span class="s4">:</span><span class="s2">after </span><span class="s1">{</span>
+    <span class="s3">content</span><span class="s4">: </span><span class="s7">&quot;&quot;</span><span class="s6">;</span>
+    <span class="s3">clear</span><span class="s4">: </span><span class="s5">both</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">dl</span><span class="s1">.</span><span class="s2">field-list </span><span class="s1">{</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">grid</span><span class="s6">;</span>
+    <span class="s3">grid-template-columns</span><span class="s4">: </span><span class="s2">fit-content</span><span class="s1">(</span><span class="s8">30</span><span class="s1">%) </span><span class="s5">auto</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">dl</span><span class="s1">.</span><span class="s2">field-list </span><span class="s1">&gt; </span><span class="s2">dt </span><span class="s1">{</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+    <span class="s3">word-break</span><span class="s4">: </span><span class="s5">break-word</span><span class="s6">;</span>
+    <span class="s3">padding-left</span><span class="s4">: </span><span class="s8">0.5</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">padding-right</span><span class="s4">: </span><span class="s8">5</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">dl</span><span class="s1">.</span><span class="s2">field-list </span><span class="s1">&gt; </span><span class="s2">dd </span><span class="s1">{</span>
+    <span class="s3">padding-left</span><span class="s4">: </span><span class="s8">0.5</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">margin-left</span><span class="s4">: </span><span class="s8">0</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">0</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">dl </span><span class="s1">{</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">15</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">dd </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">first-child </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">dd ul</span><span class="s6">, </span><span class="s2">dd table </span><span class="s1">{</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">dd </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">3</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">margin-left</span><span class="s4">: </span><span class="s8">30</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">dl </span><span class="s1">&gt; </span><span class="s2">dd</span><span class="s4">:</span><span class="s2">last-child</span><span class="s6">,</span>
+<span class="s2">dl </span><span class="s1">&gt; </span><span class="s2">dd</span><span class="s4">:</span><span class="s2">last-child </span><span class="s1">&gt; </span><span class="s4">:</span><span class="s2">last-child </span><span class="s1">{</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">dt</span><span class="s4">:</span><span class="s2">target</span><span class="s6">, </span><span class="s2">span</span><span class="s1">.</span><span class="s2">highlighted </span><span class="s1">{</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s8">#fbe54e</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">rect</span><span class="s1">.</span><span class="s2">highlighted </span><span class="s1">{</span>
+    <span class="s3">fill</span><span class="s4">: </span><span class="s8">#fbe54e</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">dl</span><span class="s1">.</span><span class="s2">glossary dt </span><span class="s1">{</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s8">1.1</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">versionmodified </span><span class="s1">{</span>
+    <span class="s3">font-style</span><span class="s4">: </span><span class="s5">italic</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">system-message </span><span class="s1">{</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s8">#fda</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">5</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">border</span><span class="s4">: </span><span class="s8">3</span><span class="s5">px solid red</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">footnote</span><span class="s4">:</span><span class="s2">target  </span><span class="s1">{</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s8">#ffa</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">line-block </span><span class="s1">{</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">block</span><span class="s6">;</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">line-block </span><span class="s1">.</span><span class="s2">line-block </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">margin-bottom</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">margin-left</span><span class="s4">: </span><span class="s8">1.5</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">guilabel</span><span class="s6">, </span><span class="s1">.</span><span class="s2">menuselection </span><span class="s1">{</span>
+    <span class="s3">font-family</span><span class="s4">: </span><span class="s5">sans-serif</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">accelerator </span><span class="s1">{</span>
+    <span class="s3">text-decoration</span><span class="s4">: </span><span class="s5">underline</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">classifier </span><span class="s1">{</span>
+    <span class="s3">font-style</span><span class="s4">: </span><span class="s5">oblique</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">classifier</span><span class="s4">:</span><span class="s2">before </span><span class="s1">{</span>
+    <span class="s3">font-style</span><span class="s4">: </span><span class="s5">normal</span><span class="s6">;</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">0 0.5</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">content</span><span class="s4">: </span><span class="s7">&quot;:&quot;</span><span class="s6">;</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">inline-block</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">abbr</span><span class="s6">, </span><span class="s2">acronym </span><span class="s1">{</span>
+    <span class="s3">border-bottom</span><span class="s4">: </span><span class="s5">dotted </span><span class="s8">1</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">cursor</span><span class="s4">: </span><span class="s5">help</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- code displays --------------------------------------------------------- */</span>
+
+<span class="s2">pre </span><span class="s1">{</span>
+    <span class="s3">overflow</span><span class="s4">: </span><span class="s5">auto</span><span class="s6">;</span>
+    <span class="s3">overflow-y</span><span class="s4">: </span><span class="s5">hidden</span><span class="s6">;  </span><span class="s0">/* fixes display issues on Chrome browsers */</span>
+<span class="s1">}</span>
+
+<span class="s2">pre</span><span class="s6">, </span><span class="s2">div</span><span class="s1">[</span><span class="s2">class</span><span class="s1">*=</span><span class="s7">&quot;highlight-&quot;</span><span class="s1">] {</span>
+    <span class="s3">clear</span><span class="s4">: </span><span class="s5">both</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">span</span><span class="s1">.</span><span class="s2">pre </span><span class="s1">{</span>
+    <span class="s3">-moz-hyphens</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+    <span class="s3">-ms-hyphens</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+    <span class="s3">-webkit-hyphens</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+    <span class="s3">hyphens</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+    <span class="s3">white-space</span><span class="s4">: </span><span class="s5">nowrap</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">[</span><span class="s2">class</span><span class="s1">*=</span><span class="s7">&quot;highlight-&quot;</span><span class="s1">] {</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">td</span><span class="s1">.</span><span class="s2">linenos pre </span><span class="s1">{</span>
+    <span class="s3">border</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s5">transparent</span><span class="s6">;</span>
+    <span class="s3">color</span><span class="s4">: </span><span class="s8">#aaa</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">highlighttable </span><span class="s1">{</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">block</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">highlighttable tbody </span><span class="s1">{</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">block</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">highlighttable tr </span><span class="s1">{</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">flex</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">highlighttable td </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">highlighttable td</span><span class="s1">.</span><span class="s2">linenos </span><span class="s1">{</span>
+    <span class="s3">padding-right</span><span class="s4">: </span><span class="s8">0.5</span><span class="s5">em</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">highlighttable td</span><span class="s1">.</span><span class="s2">code </span><span class="s1">{</span>
+    <span class="s3">flex</span><span class="s4">: </span><span class="s8">1</span><span class="s6">;</span>
+    <span class="s3">overflow</span><span class="s4">: </span><span class="s5">hidden</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">highlight </span><span class="s1">.</span><span class="s2">hll </span><span class="s1">{</span>
+    <span class="s3">display</span><span class="s4">: </span><span class="s5">block</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">highlight pre</span><span class="s6">,</span>
+<span class="s2">table</span><span class="s1">.</span><span class="s2">highlighttable pre </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">code-block-caption </span><span class="s1">+ </span><span class="s2">div </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">code-block-caption </span><span class="s1">{</span>
+    <span class="s3">margin-top</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">2</span><span class="s5">px </span><span class="s8">5</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">font-size</span><span class="s4">: </span><span class="s5">small</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">code-block-caption code </span><span class="s1">{</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s5">transparent</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">table</span><span class="s1">.</span><span class="s2">highlighttable td</span><span class="s1">.</span><span class="s2">linenos</span><span class="s6">,</span>
+<span class="s2">span</span><span class="s1">.</span><span class="s2">linenos</span><span class="s6">,</span>
+<span class="s2">div</span><span class="s1">.</span><span class="s2">highlight span</span><span class="s1">.</span><span class="s2">gp </span><span class="s1">{  </span><span class="s0">/* gp: Generic.Prompt */</span>
+  <span class="s3">user-select</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+  <span class="s3">-webkit-user-select</span><span class="s4">: </span><span class="s5">text</span><span class="s6">; </span><span class="s0">/* Safari fallback only */</span>
+  <span class="s3">-webkit-user-select</span><span class="s4">: </span><span class="s5">none</span><span class="s6">; </span><span class="s0">/* Chrome/Safari */</span>
+  <span class="s3">-moz-user-select</span><span class="s4">: </span><span class="s5">none</span><span class="s6">; </span><span class="s0">/* Firefox */</span>
+  <span class="s3">-ms-user-select</span><span class="s4">: </span><span class="s5">none</span><span class="s6">; </span><span class="s0">/* IE10+ */</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">code-block-caption span</span><span class="s1">.</span><span class="s2">caption-number </span><span class="s1">{</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0.1</span><span class="s5">em </span><span class="s8">0.3</span><span class="s5">em</span><span class="s6">;</span>
+    <span class="s3">font-style</span><span class="s4">: </span><span class="s5">italic</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">code-block-caption span</span><span class="s1">.</span><span class="s2">caption-text </span><span class="s1">{</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">literal-block-wrapper </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s8">1</span><span class="s5">em </span><span class="s8">0</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">code</span><span class="s1">.</span><span class="s2">xref</span><span class="s6">, </span><span class="s2">a code </span><span class="s1">{</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s5">transparent</span><span class="s6">;</span>
+    <span class="s3">font-weight</span><span class="s4">: </span><span class="s5">bold</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">h1 code</span><span class="s6">, </span><span class="s2">h2 code</span><span class="s6">, </span><span class="s2">h3 code</span><span class="s6">, </span><span class="s2">h4 code</span><span class="s6">, </span><span class="s2">h5 code</span><span class="s6">, </span><span class="s2">h6 code </span><span class="s1">{</span>
+    <span class="s3">background-color</span><span class="s4">: </span><span class="s5">transparent</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">viewcode-link </span><span class="s1">{</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">right</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s2">viewcode-back </span><span class="s1">{</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">right</span><span class="s6">;</span>
+    <span class="s3">font-family</span><span class="s4">: </span><span class="s5">sans-serif</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">viewcode-block</span><span class="s4">:</span><span class="s2">target </span><span class="s1">{</span>
+    <span class="s3">margin</span><span class="s4">: </span><span class="s1">-</span><span class="s8">1</span><span class="s5">px </span><span class="s1">-</span><span class="s8">10</span><span class="s5">px</span><span class="s6">;</span>
+    <span class="s3">padding</span><span class="s4">: </span><span class="s8">0 10</span><span class="s5">px</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- math display ---------------------------------------------------------- */</span>
+
+<span class="s2">img</span><span class="s1">.</span><span class="s2">math </span><span class="s1">{</span>
+    <span class="s3">vertical-align</span><span class="s4">: </span><span class="s5">middle</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">body div</span><span class="s1">.</span><span class="s2">math p </span><span class="s1">{</span>
+    <span class="s3">text-align</span><span class="s4">: </span><span class="s5">center</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">span</span><span class="s1">.</span><span class="s2">eqno </span><span class="s1">{</span>
+    <span class="s3">float</span><span class="s4">: </span><span class="s5">right</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">span</span><span class="s1">.</span><span class="s2">eqno a</span><span class="s1">.</span><span class="s2">headerlink </span><span class="s1">{</span>
+    <span class="s3">position</span><span class="s4">: </span><span class="s5">absolute</span><span class="s6">;</span>
+    <span class="s3">z-index</span><span class="s4">: </span><span class="s8">1</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s2">div</span><span class="s1">.</span><span class="s2">math</span><span class="s4">:</span><span class="s2">hover a</span><span class="s1">.</span><span class="s2">headerlink </span><span class="s1">{</span>
+    <span class="s3">visibility</span><span class="s4">: </span><span class="s5">visible</span><span class="s6">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- printout stylesheet --------------------------------------------------- */</span>
+
+<span class="s6">@media </span><span class="s2">print </span><span class="s1">{</span>
+    <span class="s2">div</span><span class="s1">.</span><span class="s2">document</span><span class="s6">,</span>
+    <span class="s2">div</span><span class="s1">.</span><span class="s2">documentwrapper</span><span class="s6">,</span>
+    <span class="s2">div</span><span class="s1">.</span><span class="s2">bodywrapper </span><span class="s1">{</span>
+        <span class="s3">margin</span><span class="s4">: </span><span class="s8">0 </span><span class="s10">!important</span><span class="s6">;</span>
+        <span class="s3">width</span><span class="s4">: </span><span class="s8">100</span><span class="s1">%</span><span class="s6">;</span>
+    <span class="s1">}</span>
+
+    <span class="s2">div</span><span class="s1">.</span><span class="s2">sphinxsidebar</span><span class="s6">,</span>
+    <span class="s2">div</span><span class="s1">.</span><span class="s2">related</span><span class="s6">,</span>
+    <span class="s2">div</span><span class="s1">.</span><span class="s2">footer</span><span class="s6">,</span>
+    <span class="s2">#top-link </span><span class="s1">{</span>
+        <span class="s3">display</span><span class="s4">: </span><span class="s5">none</span><span class="s6">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

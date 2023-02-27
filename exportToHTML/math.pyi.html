@@ -1,0 +1,350 @@
+<html>
+<head>
+<title>math.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #6a8759;}
+.s4 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+math.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">sys</span>
+<span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">(</span>
+    <span class="s1">Any</span><span class="s0">,</span>
+    <span class="s1">Generic</span><span class="s0">,</span>
+    <span class="s1">Iterator</span><span class="s0">,</span>
+    <span class="s1">List</span><span class="s0">,</span>
+    <span class="s1">Literal</span><span class="s0">,</span>
+    <span class="s1">Sequence</span><span class="s0">,</span>
+    <span class="s1">Tuple</span><span class="s0">,</span>
+    <span class="s1">Type</span><span class="s0">,</span>
+    <span class="s1">TypeVar</span><span class="s0">,</span>
+    <span class="s1">Union</span><span class="s0">,</span>
+    <span class="s1">final</span><span class="s0">,</span>
+    <span class="s1">overload</span><span class="s0">,</span>
+<span class="s1">)</span>
+
+<span class="s0">if </span><span class="s1">sys.version_info &gt;= (</span><span class="s2">3</span><span class="s0">, </span><span class="s2">9</span><span class="s1">):</span>
+    <span class="s0">from </span><span class="s1">collections.abc </span><span class="s0">import </span><span class="s1">Collection</span>
+<span class="s0">else</span><span class="s1">:</span>
+    <span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Collection</span>
+
+<span class="s0">def </span><span class="s1">clamp(value: float</span><span class="s0">, </span><span class="s1">min: float</span><span class="s0">, </span><span class="s1">max: float</span><span class="s0">, </span><span class="s1">/) -&gt; float: ...</span>
+
+<span class="s1">_TVec = TypeVar(</span><span class="s3">&quot;_TVec&quot;</span><span class="s0">, </span><span class="s1">bound=_GenericVector)</span>
+
+<span class="s4"># not implemented in code, only implemented here for ease of implementing</span>
+<span class="s4"># typestubs. Contains attributes/methods common to Vector2 and Vector3</span>
+<span class="s4"># Also used with _TVec generics</span>
+<span class="s0">class </span><span class="s1">_GenericVector(Collection[float]):</span>
+    <span class="s1">epsilon: float</span>
+    <span class="s1">__hash__: </span><span class="s0">None  </span><span class="s4"># type: ignore</span>
+    <span class="s0">def </span><span class="s1">__len__(self) -&gt; int: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__setitem__(self</span><span class="s0">, </span><span class="s1">key: int</span><span class="s0">, </span><span class="s1">value: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__setitem__(self</span><span class="s0">, </span><span class="s1">key: slice</span><span class="s0">, </span><span class="s1">value: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__getitem__(self</span><span class="s0">, </span><span class="s1">i: int) -&gt; float: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__getitem__(self</span><span class="s0">, </span><span class="s1">s: slice) -&gt; List[float]: ...</span>
+    <span class="s0">def </span><span class="s1">__iter__(self) -&gt; VectorIterator: ...</span>
+    <span class="s0">def </span><span class="s1">__add__(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__radd__(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__sub__(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__rsub__(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; _TVec: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__mul__(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; float: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__mul__(self: _TVec</span><span class="s0">, </span><span class="s1">other: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__rmul__(self: _TVec</span><span class="s0">, </span><span class="s1">other: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__truediv__(self: _TVec</span><span class="s0">, </span><span class="s1">other: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__rtruediv__(self: _TVec</span><span class="s0">, </span><span class="s1">other: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__floordiv__(self: _TVec</span><span class="s0">, </span><span class="s1">other: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__neg__(self: _TVec) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__pos__(self: _TVec) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__bool__(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">__iadd__(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__isub__(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; _TVec: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__imul__(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; float: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__imul__(self: _TVec</span><span class="s0">, </span><span class="s1">other: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__copy__(self: _TVec) -&gt; _TVec: ...</span>
+    <span class="s1">copy = __copy__</span>
+    <span class="s0">def </span><span class="s1">__safe_for_unpickling__(self) -&gt; Literal[</span><span class="s0">True</span><span class="s1">]: ...</span>
+    <span class="s0">def </span><span class="s1">__contains__(self</span><span class="s0">, </span><span class="s1">other: float) -&gt; bool: ...  </span><span class="s4"># type: ignore[override]</span>
+    <span class="s0">def </span><span class="s1">dot(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">magnitude(self) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">magnitude_squared(self) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">length(self) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">length_squared(self) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">normalize(self: _TVec) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">normalize_ip(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">is_normalized(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">scale_to_length(self</span><span class="s0">, </span><span class="s1">value: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">reflect(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">reflect_ip(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">distance_to(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">distance_squared_to(</span>
+        <span class="s1">self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]</span>
+    <span class="s1">) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">lerp(</span>
+        <span class="s1">self: _TVec</span><span class="s0">,</span>
+        <span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]</span><span class="s0">,</span>
+        <span class="s1">value: float</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">slerp(</span>
+        <span class="s1">self: _TVec</span><span class="s0">,</span>
+        <span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]</span><span class="s0">,</span>
+        <span class="s1">value: float</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">elementwise(self: _TVec) -&gt; VectorElementwiseProxy[_TVec]: ...</span>
+    <span class="s0">def </span><span class="s1">angle_to(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">move_towards(</span>
+        <span class="s1">self: _TVec</span><span class="s0">,</span>
+        <span class="s1">target: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]</span><span class="s0">,</span>
+        <span class="s1">max_distance: float</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">move_towards_ip(</span>
+        <span class="s1">self: _TVec</span><span class="s0">,</span>
+        <span class="s1">target: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]</span><span class="s0">,</span>
+        <span class="s1">max_distance: float</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clamp_magnitude(self: _TVec</span><span class="s0">, </span><span class="s1">max_length: float</span><span class="s0">, </span><span class="s1">/) -&gt; _TVec: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clamp_magnitude(</span>
+        <span class="s1">self: _TVec</span><span class="s0">, </span><span class="s1">min_length: float</span><span class="s0">, </span><span class="s1">max_length: float</span><span class="s0">, </span><span class="s1">/</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clamp_magnitude_ip(self</span><span class="s0">, </span><span class="s1">max_length: float</span><span class="s0">, </span><span class="s1">/) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clamp_magnitude_ip(self</span><span class="s0">, </span><span class="s1">min_length: float</span><span class="s0">, </span><span class="s1">max_length: float</span><span class="s0">, </span><span class="s1">/) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">project(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; _TVec: ...</span>
+
+<span class="s4"># VectorElementwiseProxy is a generic, it can be an elementwiseproxy object for</span>
+<span class="s4"># Vector2, Vector3 and vector subclass objects</span>
+<span class="s1">@final</span>
+<span class="s0">class </span><span class="s1">VectorElementwiseProxy(Generic[_TVec]):</span>
+    <span class="s0">def </span><span class="s1">__add__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__radd__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__sub__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__rsub__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__mul__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__rmul__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__truediv__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__rtruediv__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__floordiv__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__rfloordiv__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__mod__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__rmod__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__pow__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">power: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+        <span class="s1">mod: </span><span class="s0">None </span><span class="s1">= </span><span class="s0">None,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__rpow__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">power: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+        <span class="s1">mod: </span><span class="s0">None </span><span class="s1">= </span><span class="s0">None,</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__eq__(self</span><span class="s0">, </span><span class="s1">other: Any) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">__ne__(self</span><span class="s0">, </span><span class="s1">other: Any) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">__gt__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">__lt__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">__ge__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">__le__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Union[float</span><span class="s0">, </span><span class="s1">_TVec</span><span class="s0">, </span><span class="s1">VectorElementwiseProxy[_TVec]]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">__abs__(self) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__neg__(self) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__pos__(self) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">__bool__(self) -&gt; bool: ...</span>
+
+<span class="s1">@final</span>
+<span class="s0">class </span><span class="s1">VectorIterator:</span>
+    <span class="s0">def </span><span class="s1">__length_hint__(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">__iter__(self) -&gt; Iterator[float]: ...</span>
+    <span class="s0">def </span><span class="s1">__next__(self) -&gt; float: ...</span>
+
+<span class="s0">class </span><span class="s1">Vector2(_GenericVector):</span>
+    <span class="s1">x: float</span>
+    <span class="s1">y: float</span>
+    <span class="s1">xx: Vector2</span>
+    <span class="s1">xy: Vector2</span>
+    <span class="s1">yx: Vector2</span>
+    <span class="s1">yy: Vector2</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self: _TVec</span><span class="s0">,</span>
+        <span class="s1">x: Union[str</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec] = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">x: float</span><span class="s0">, </span><span class="s1">y: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__reduce__(self: _TVec) -&gt; Tuple[Type[_TVec]</span><span class="s0">, </span><span class="s1">Tuple[float</span><span class="s0">, </span><span class="s1">float]]: ...</span>
+    <span class="s0">def </span><span class="s1">rotate(self: _TVec</span><span class="s0">, </span><span class="s1">angle: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_rad(self: _TVec</span><span class="s0">, </span><span class="s1">angle: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_ip(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_rad_ip(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_ip_rad(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">cross(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">as_polar(self) -&gt; Tuple[float</span><span class="s0">, </span><span class="s1">float]: ...</span>
+    <span class="s0">def </span><span class="s1">from_polar(self</span><span class="s0">, </span><span class="s1">polar_value: Sequence[float]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">update(</span>
+        <span class="s1">self: _TVec</span><span class="s0">,</span>
+        <span class="s1">x: Union[str</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec] = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">x: float = </span><span class="s2">0</span><span class="s0">, </span><span class="s1">y: float = </span><span class="s2">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s0">class </span><span class="s1">Vector3(_GenericVector):</span>
+    <span class="s1">x: float</span>
+    <span class="s1">y: float</span>
+    <span class="s1">z: float</span>
+    <span class="s1">xx: Vector2</span>
+    <span class="s1">xy: Vector2</span>
+    <span class="s1">xz: Vector2</span>
+    <span class="s1">yx: Vector2</span>
+    <span class="s1">yy: Vector2</span>
+    <span class="s1">yz: Vector2</span>
+    <span class="s1">zx: Vector2</span>
+    <span class="s1">zy: Vector2</span>
+    <span class="s1">zz: Vector2</span>
+    <span class="s1">xxx: Vector3</span>
+    <span class="s1">xxy: Vector3</span>
+    <span class="s1">xxz: Vector3</span>
+    <span class="s1">xyx: Vector3</span>
+    <span class="s1">xyy: Vector3</span>
+    <span class="s1">xyz: Vector3</span>
+    <span class="s1">xzx: Vector3</span>
+    <span class="s1">xzy: Vector3</span>
+    <span class="s1">xzz: Vector3</span>
+    <span class="s1">yxx: Vector3</span>
+    <span class="s1">yxy: Vector3</span>
+    <span class="s1">yxz: Vector3</span>
+    <span class="s1">yyx: Vector3</span>
+    <span class="s1">yyy: Vector3</span>
+    <span class="s1">yyz: Vector3</span>
+    <span class="s1">yzx: Vector3</span>
+    <span class="s1">yzy: Vector3</span>
+    <span class="s1">yzz: Vector3</span>
+    <span class="s1">zxx: Vector3</span>
+    <span class="s1">zxy: Vector3</span>
+    <span class="s1">zxz: Vector3</span>
+    <span class="s1">zyx: Vector3</span>
+    <span class="s1">zyy: Vector3</span>
+    <span class="s1">zyz: Vector3</span>
+    <span class="s1">zzx: Vector3</span>
+    <span class="s1">zzy: Vector3</span>
+    <span class="s1">zzz: Vector3</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self: _TVec</span><span class="s0">,</span>
+        <span class="s1">x: Union[str</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec] = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">x: float</span><span class="s0">, </span><span class="s1">y: float</span><span class="s0">, </span><span class="s1">z: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__reduce__(self: _TVec) -&gt; Tuple[Type[_TVec]</span><span class="s0">, </span><span class="s1">Tuple[float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float]]: ...</span>
+    <span class="s0">def </span><span class="s1">cross(self: _TVec</span><span class="s0">, </span><span class="s1">other: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate(</span>
+        <span class="s1">self: _TVec</span><span class="s0">, </span><span class="s1">angle: float</span><span class="s0">, </span><span class="s1">axis: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_rad(</span>
+        <span class="s1">self: _TVec</span><span class="s0">, </span><span class="s1">angle: float</span><span class="s0">, </span><span class="s1">axis: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]</span>
+    <span class="s1">) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_ip(</span>
+        <span class="s1">self: _TVec</span><span class="s0">, </span><span class="s1">angle: float</span><span class="s0">, </span><span class="s1">axis: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_rad_ip(</span>
+        <span class="s1">self: _TVec</span><span class="s0">, </span><span class="s1">angle: float</span><span class="s0">, </span><span class="s1">axis: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_ip_rad(</span>
+        <span class="s1">self: _TVec</span><span class="s0">, </span><span class="s1">angle: float</span><span class="s0">, </span><span class="s1">axis: Union[Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec]</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_x(self: _TVec</span><span class="s0">, </span><span class="s1">angle: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_x_rad(self: _TVec</span><span class="s0">, </span><span class="s1">angle: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_x_ip(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_x_rad_ip(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_x_ip_rad(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_y(self: _TVec</span><span class="s0">, </span><span class="s1">angle: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_y_rad(self: _TVec</span><span class="s0">, </span><span class="s1">angle: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_y_ip(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_y_rad_ip(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_y_ip_rad(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_z(self: _TVec</span><span class="s0">, </span><span class="s1">angle: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_z_rad(self: _TVec</span><span class="s0">, </span><span class="s1">angle: float) -&gt; _TVec: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_z_ip(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_z_rad_ip(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">rotate_z_ip_rad(self</span><span class="s0">, </span><span class="s1">angle: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">as_spherical(self) -&gt; Tuple[float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float]: ...</span>
+    <span class="s0">def </span><span class="s1">from_spherical(self</span><span class="s0">, </span><span class="s1">spherical: Tuple[float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">update(</span>
+        <span class="s1">self: _TVec</span><span class="s0">,</span>
+        <span class="s1">x: Union[str</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">Sequence[float]</span><span class="s0">, </span><span class="s1">_TVec] = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">x: int</span><span class="s0">, </span><span class="s1">y: int</span><span class="s0">, </span><span class="s1">z: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s4"># typehints for deprecated functions, to be removed in a future version</span>
+<span class="s0">def </span><span class="s1">enable_swizzling() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">disable_swizzling() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+</pre>
+</body>
+</html>

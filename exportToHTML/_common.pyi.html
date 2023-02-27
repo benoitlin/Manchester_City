@@ -1,0 +1,56 @@
+<html>
+<head>
+<title>_common.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+_common.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">os </span><span class="s0">import </span><span class="s1">PathLike</span>
+<span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">IO</span><span class="s0">, </span><span class="s1">Callable</span><span class="s0">, </span><span class="s1">Sequence</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">Union</span>
+
+<span class="s0">from </span><span class="s1">typing_extensions </span><span class="s0">import </span><span class="s1">Literal </span><span class="s0">as </span><span class="s1">Literal</span>
+<span class="s0">from </span><span class="s1">typing_extensions </span><span class="s0">import </span><span class="s1">Protocol</span>
+
+<span class="s0">from </span><span class="s1">pygame.color </span><span class="s0">import </span><span class="s1">Color</span>
+<span class="s0">from </span><span class="s1">pygame.math </span><span class="s0">import </span><span class="s1">Vector2</span>
+<span class="s0">from </span><span class="s1">pygame.rect </span><span class="s0">import </span><span class="s1">Rect</span>
+
+<span class="s2"># For functions that take a file name</span>
+<span class="s1">AnyPath = Union[str</span><span class="s0">, </span><span class="s1">bytes</span><span class="s0">, </span><span class="s1">PathLike[str]</span><span class="s0">, </span><span class="s1">PathLike[bytes]]</span>
+
+<span class="s2"># Most pygame functions that take a file argument should be able to handle</span>
+<span class="s2"># a FileArg type</span>
+<span class="s1">FileArg = Union[AnyPath</span><span class="s0">, </span><span class="s1">IO[bytes]</span><span class="s0">, </span><span class="s1">IO[str]]</span>
+
+<span class="s1">Coordinate = Union[Tuple[float</span><span class="s0">, </span><span class="s1">float]</span><span class="s0">, </span><span class="s1">Sequence[float]</span><span class="s0">, </span><span class="s1">Vector2]</span>
+
+<span class="s2"># This typehint is used when a function would return an RGBA tuble</span>
+<span class="s1">RGBAOutput = Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]</span>
+<span class="s1">ColorValue = Union[Color</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">RGBAOutput</span><span class="s0">, </span><span class="s1">Sequence[int]]</span>
+
+<span class="s1">_CanBeRect = Union[</span>
+    <span class="s1">Rect</span><span class="s0">,</span>
+    <span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">,</span>
+    <span class="s1">Tuple[Coordinate</span><span class="s0">, </span><span class="s1">Coordinate]</span><span class="s0">,</span>
+    <span class="s1">Sequence[int]</span><span class="s0">,</span>
+    <span class="s1">Sequence[Coordinate]</span><span class="s0">,</span>
+<span class="s1">]</span>
+
+<span class="s0">class </span><span class="s1">_HasRectAttribute(Protocol):</span>
+    <span class="s2"># An object that has a rect attribute that is either a rect, or a function</span>
+    <span class="s2"># that returns a rect confirms to the rect protocol</span>
+    <span class="s1">rect: Union[RectValue</span><span class="s0">, </span><span class="s1">Callable[[]</span><span class="s0">, </span><span class="s1">RectValue]]</span>
+
+<span class="s1">RectValue = Union[_CanBeRect</span><span class="s0">, </span><span class="s1">_HasRectAttribute]</span>
+</pre>
+</body>
+</html>

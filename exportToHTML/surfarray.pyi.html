@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>surfarray.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+surfarray.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Tuple</span>
+
+<span class="s0">import </span><span class="s1">numpy</span>
+
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+
+<span class="s2"># importing this way exports the functions in the typestubs</span>
+<span class="s0">from </span><span class="s1">pygame.pixelcopy </span><span class="s0">import </span><span class="s1">(</span>
+    <span class="s1">array_to_surface </span><span class="s0">as </span><span class="s1">array_to_surface</span><span class="s0">,</span>
+    <span class="s1">surface_to_array </span><span class="s0">as </span><span class="s1">surface_to_array</span><span class="s0">,</span>
+<span class="s1">)</span>
+
+<span class="s0">def </span><span class="s1">array2d(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">pixels2d(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">array3d(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">pixels3d(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">array_alpha(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">pixels_alpha(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">array_red(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">pixels_red(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">array_green(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">pixels_green(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">array_blue(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">pixels_blue(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">array_colorkey(surface: Surface) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">make_surface(array: numpy.ndarray) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">blit_array(surface: Surface</span><span class="s0">, </span><span class="s1">array: numpy.ndarray) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">map_array(surface: Surface</span><span class="s0">, </span><span class="s1">array: numpy.ndarray) -&gt; numpy.ndarray: ...</span>
+<span class="s0">def </span><span class="s1">use_arraytype(arraytype: str) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_arraytype() -&gt; str: ...</span>
+<span class="s0">def </span><span class="s1">get_arraytypes() -&gt; Tuple[str]: ...</span>
+</pre>
+</body>
+</html>

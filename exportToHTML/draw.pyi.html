@@ -1,0 +1,93 @@
+<html>
+<head>
+<title>draw.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+draw.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Optional</span><span class="s0">, </span><span class="s1">Sequence</span>
+
+<span class="s0">from </span><span class="s1">pygame.rect </span><span class="s0">import </span><span class="s1">Rect</span>
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">ColorValue</span><span class="s0">, </span><span class="s1">Coordinate</span><span class="s0">, </span><span class="s1">RectValue</span>
+
+<span class="s0">def </span><span class="s1">rect(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+    <span class="s1">rect: RectValue</span><span class="s0">,</span>
+    <span class="s1">width: int = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">border_radius: int = -</span><span class="s2">1</span><span class="s0">,</span>
+    <span class="s1">border_top_left_radius: int = -</span><span class="s2">1</span><span class="s0">,</span>
+    <span class="s1">border_top_right_radius: int = -</span><span class="s2">1</span><span class="s0">,</span>
+    <span class="s1">border_bottom_left_radius: int = -</span><span class="s2">1</span><span class="s0">,</span>
+    <span class="s1">border_bottom_right_radius: int = -</span><span class="s2">1</span><span class="s0">,</span>
+<span class="s1">) -&gt; Rect: ...</span>
+<span class="s0">def </span><span class="s1">polygon(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+    <span class="s1">points: Sequence[Coordinate]</span><span class="s0">,</span>
+    <span class="s1">width: int = </span><span class="s2">0</span><span class="s0">,</span>
+<span class="s1">) -&gt; Rect: ...</span>
+<span class="s0">def </span><span class="s1">circle(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+    <span class="s1">center: Coordinate</span><span class="s0">,</span>
+    <span class="s1">radius: float</span><span class="s0">,</span>
+    <span class="s1">width: int = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">draw_top_right: bool = </span><span class="s0">False,</span>
+    <span class="s1">draw_top_left: bool = </span><span class="s0">False,</span>
+    <span class="s1">draw_bottom_left: bool = </span><span class="s0">False,</span>
+    <span class="s1">draw_bottom_right: bool = </span><span class="s0">False,</span>
+<span class="s1">) -&gt; Rect: ...</span>
+<span class="s0">def </span><span class="s1">ellipse(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">color: ColorValue</span><span class="s0">, </span><span class="s1">rect: RectValue</span><span class="s0">, </span><span class="s1">width: int = </span><span class="s2">0</span>
+<span class="s1">) -&gt; Rect: ...</span>
+<span class="s0">def </span><span class="s1">arc(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+    <span class="s1">rect: RectValue</span><span class="s0">,</span>
+    <span class="s1">start_angle: float</span><span class="s0">,</span>
+    <span class="s1">stop_angle: float</span><span class="s0">,</span>
+    <span class="s1">width: int = </span><span class="s2">1</span><span class="s0">,</span>
+<span class="s1">) -&gt; Rect: ...</span>
+<span class="s0">def </span><span class="s1">line(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+    <span class="s1">start_pos: Coordinate</span><span class="s0">,</span>
+    <span class="s1">end_pos: Coordinate</span><span class="s0">,</span>
+    <span class="s1">width: int = </span><span class="s2">1</span><span class="s0">,</span>
+<span class="s1">) -&gt; Rect: ...</span>
+<span class="s0">def </span><span class="s1">lines(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+    <span class="s1">closed: bool</span><span class="s0">,</span>
+    <span class="s1">points: Sequence[Coordinate]</span><span class="s0">,</span>
+    <span class="s1">width: int = </span><span class="s2">1</span><span class="s0">,</span>
+<span class="s1">) -&gt; Rect: ...</span>
+<span class="s0">def </span><span class="s1">aaline(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+    <span class="s1">start_pos: Coordinate</span><span class="s0">,</span>
+    <span class="s1">end_pos: Coordinate</span><span class="s0">,</span>
+    <span class="s1">blend: int = </span><span class="s2">1</span><span class="s0">,</span>
+<span class="s1">) -&gt; Rect: ...</span>
+<span class="s0">def </span><span class="s1">aalines(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+    <span class="s1">closed: bool</span><span class="s0">,</span>
+    <span class="s1">points: Sequence[Coordinate]</span><span class="s0">,</span>
+    <span class="s1">blend: int = </span><span class="s2">1</span><span class="s0">,</span>
+<span class="s1">) -&gt; Rect: ...</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<html>
+<head>
+<title>sdl2_controller.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+sdl2_controller.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame._sdl2.controller`</span>
+<span class="s0">==============================</span>
+
+<span class="s0">.. module:: pygame._sdl2.controller</span>
+   <span class="s0">:synopsis: pygame module to work with controllers</span>
+
+<span class="s0">| :sl:`Pygame module to work with controllers.`</span>
+
+<span class="s0">This module offers control over common controller types like the dualshock 4 or</span>
+<span class="s0">the xbox 360 controllers: They have two analog sticks, two triggers, two shoulder buttons,</span>
+<span class="s0">a dpad, 4 buttons on the side, 2 (or 3) buttons in the middle.</span>
+
+<span class="s0">Pygame uses xbox controllers naming conventions (like a, b, x, y for buttons) but</span>
+<span class="s0">they always refer to the same buttons. For example ``CONTROLLER_BUTTON_X`` is</span>
+<span class="s0">always the leftmost button of the 4 buttons on the right.</span>
+
+<span class="s0">Controllers can generate the following events::</span>
+
+   <span class="s0">CONTROLLERAXISMOTION, CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP,</span>
+   <span class="s0">CONTROLLERDEVICEREMAPPED, CONTROLLERDEVICEADDED, CONTROLLERDEVICEREMOVED</span>
+
+<span class="s0">Additionally if pygame is built with SDL 2.0.14 or higher the following events can also be generated</span>
+<span class="s0">(to get the version of sdl pygame is built with use :meth:`pygame.version.SDL`)::</span>
+
+   <span class="s0">CONTROLLERTOUCHPADDOWN, CONTROLLERTOUCHPADMOTION, CONTROLLERTOUCHPADUP</span>
+
+<span class="s0">These events can be enabled/disabled by :meth:`pygame._sdl2.controller.set_eventstate`</span>
+<span class="s0">Note that controllers can generate joystick events as well. This function only toggles</span>
+<span class="s0">events related to controllers.</span>
+
+<span class="s0">.. note::</span>
+   <span class="s0">See the :mod:`pygame.joystick` for a more versatile but more advanced api.</span>
+
+<span class="s0">.. versionadded:: 2 This module requires SDL2.</span>
+
+<span class="s0">.. function:: init</span>
+
+   <span class="s0">| :sl:`initialize the controller module`</span>
+   <span class="s0">| :sg:`init() -&gt; None`</span>
+
+   <span class="s0">Initialize the controller module.</span>
+
+   <span class="s0">.. ## pygame._sdl2.controller.init ##</span>
+
+<span class="s0">.. function:: quit</span>
+
+   <span class="s0">| :sl:`Uninitialize the controller module.`</span>
+   <span class="s0">| :sg:`quit() -&gt; None`</span>
+
+   <span class="s0">Uninitialize the controller module.</span>
+
+   <span class="s0">.. ## pygame._sdl2.controller.quit ##</span>
+
+<span class="s0">.. function:: get_init</span>
+
+   <span class="s0">| :sl:`Returns True if the controller module is initialized.`</span>
+   <span class="s0">| :sg:`get_init() -&gt; bool`</span>
+
+   <span class="s0">Test if ``pygame._sdl2.controller.init()`` was called.</span>
+
+    <span class="s0">.. ## pygame._sdl2.controller.get_init ##</span>
+
+<span class="s0">.. function:: set_eventstate</span>
+
+    <span class="s0">| :sl:`Sets the current state of events related to controllers`</span>
+    <span class="s0">| :sg:`set_eventstate(state) -&gt; None`</span>
+
+    <span class="s0">Enable or disable events connected to controllers.</span>
+
+    <span class="s0">.. note::</span>
+        <span class="s0">Controllers can still generate joystick events, which will not be toggled by this function.</span>
+
+    <span class="s0">.. versionchanged:: 2.0.2: Changed return type from int to None</span>
+
+    <span class="s0">.. ## pygame._sdl2.controller.set_eventstate ##</span>
+
+<span class="s0">.. function:: get_eventstate</span>
+
+    <span class="s0">| :sl:`Gets the current state of events related to controllers`</span>
+    <span class="s0">| :sg:`get_eventstate() -&gt; bool`</span>
+
+    <span class="s0">Returns the current state of events related to controllers, True meaning</span>
+    <span class="s0">events will be posted.</span>
+
+    <span class="s0">.. versionadded:: 2.0.2</span>
+
+    <span class="s0">.. ## pygame._sdl2.controller.get_eventstate ##</span>
+
+<span class="s0">.. function:: get_count</span>
+
+    <span class="s0">| :sl:`Get the number of joysticks connected`</span>
+    <span class="s0">| :sg:`get_count() -&gt; int`</span>
+
+    <span class="s0">Get the number of joysticks connected.</span>
+
+    <span class="s0">.. ## pygame._sdl2.controller.get_count ##</span>
+
+<span class="s0">.. function:: is_controller</span>
+
+    <span class="s0">| :sl:`Check if the given joystick is supported by the game controller interface`</span>
+    <span class="s0">| :sg:`is_controller(index) -&gt; bool`</span>
+
+    <span class="s0">Returns True if the index given can be used to create a controller object.</span>
+
+    <span class="s0">.. ## pygame._sdl2.controller.is_controller ##</span>
+
+<span class="s0">.. function:: name_forindex</span>
+
+    <span class="s0">| :sl:`Get the name of the controller`</span>
+    <span class="s0">| :sg:`name_forindex(index) -&gt; name or None`</span>
+
+    <span class="s0">Returns the name of controller, or None if there's no name or the</span>
+    <span class="s0">index is invalid.</span>
+
+    <span class="s0">.. ## pygame._sdl2.controller.name_forindex ##</span>
+
+<span class="s0">.. class:: Controller</span>
+
+    <span class="s0">| :sl:`Create a new Controller object.`</span>
+    <span class="s0">| :sg:`Controller(index) -&gt; Controller`</span>
+
+    <span class="s0">Create a new Controller object. Index should be integer between</span>
+    <span class="s0">0 and ``pygame._sdl2.controller.get_count()``. Controllers also</span>
+    <span class="s0">can be created from a ``pygame.joystick.Joystick`` using</span>
+    <span class="s0">``pygame._sdl2.controller.from_joystick``. Controllers are</span>
+    <span class="s0">initialized on creation.</span>
+
+   <span class="s0">.. method:: quit</span>
+
+      <span class="s0">| :sl:`uninitialize the Controller`</span>
+      <span class="s0">| :sg:`quit() -&gt; None`</span>
+
+      <span class="s0">Close a Controller object. After this the pygame event queue will no longer</span>
+      <span class="s0">receive events from the device.</span>
+
+      <span class="s0">It is safe to call this more than once.</span>
+
+      <span class="s0">.. ## Controller.quit ##</span>
+
+   <span class="s0">.. method:: get_init</span>
+
+      <span class="s0">| :sl:`check if the Controller is initialized`</span>
+      <span class="s0">| :sg:`get_init() -&gt; bool`</span>
+
+      <span class="s0">Returns True if the Controller object is currently initialised.</span>
+
+      <span class="s0">.. ## Controller.get_init ##</span>
+
+   <span class="s0">.. staticmethod:: from_joystick</span>
+
+       <span class="s0">| :sl:`Create a Controller from a pygame.joystick.Joystick object`</span>
+       <span class="s0">| :sg:`from_joystick(joystick) -&gt; Controller`</span>
+
+       <span class="s0">Create a Controller object from a ``pygame.joystick.Joystick`` object</span>
+
+       <span class="s0">.. ## Controller.from_joystick ##</span>
+
+   <span class="s0">.. method:: attached</span>
+
+      <span class="s0">| :sl:`Check if the Controller has been opened and is currently connected.`</span>
+      <span class="s0">| :sg:`attached() -&gt; bool`</span>
+
+      <span class="s0">Returns True if the Controller object is opened and connected.</span>
+
+      <span class="s0">.. ## Controller.attached ##</span>
+
+   <span class="s0">.. method:: as_joystick</span>
+
+      <span class="s0">| :sl:`Returns a pygame.joystick.Joystick() object`</span>
+      <span class="s0">| :sg:`as_joystick() -&gt; Joystick object`</span>
+
+      <span class="s0">Returns a pygame.joystick.Joystick() object created from this controller's index</span>
+
+      <span class="s0">.. ## Controller.as_joystick ##</span>
+
+   <span class="s0">.. method:: get_axis</span>
+
+      <span class="s0">| :sl:`Get the current state of a joystick axis`</span>
+      <span class="s0">| :sg:`get_axis(axis) -&gt; int`</span>
+
+      <span class="s0">Get the current state of a trigger or joystick axis.</span>
+      <span class="s0">The axis argument must be one of the following constants::</span>
+
+         <span class="s0">CONTROLLER_AXIS_LEFTX, CONTROLLER_AXIS_LEFTY,</span>
+         <span class="s0">CONTROLLER_AXIS_RIGHTX, CONTROLLER_AXIS_RIGHTY,</span>
+         <span class="s0">CONTROLLER_AXIS_TRIGGERLEFT, CONTROLLER_AXIS_TRIGGERRIGHT</span>
+
+      <span class="s0">Joysticks can return a value between -32768 and 32767. Triggers however</span>
+      <span class="s0">can only return a value between 0 and 32768.</span>
+
+      <span class="s0">.. ## Controller.get_axis ##</span>
+
+   <span class="s0">.. method:: get_button</span>
+
+      <span class="s0">| :sl:`Get the current state of a button`</span>
+      <span class="s0">| :sg:`get_button(button) -&gt; bool`</span>
+
+      <span class="s0">Get the current state of a button, True meaning it is pressed down.</span>
+      <span class="s0">The button argument must be one of the following constants::</span>
+
+         <span class="s0">CONTROLLER_BUTTON_A, CONTROLLER_BUTTON_B,</span>
+         <span class="s0">CONTROLLER_BUTTON_X, CONTROLLER_BUTTON_Y</span>
+         <span class="s0">CONTROLLER_BUTTON_DPAD_UP, CONTROLLER_BUTTON_DPAD_DOWN,</span>
+         <span class="s0">CONTROLLER_BUTTON_DPAD_LEFT, CONTROLLER_BUTTON_DPAD_RIGHT,</span>
+         <span class="s0">CONTROLLER_BUTTON_LEFTSHOULDER, CONTROLLER_BUTTON_RIGHTSHOULDER,</span>
+         <span class="s0">CONTROLLER_BUTTON_LEFTSTICK, CONTROLLER_BUTTON_RIGHTSTICK,</span>
+         <span class="s0">CONTROLLER_BUTTON_BACK, CONTROLLER_BUTTON_GUIDE,</span>
+         <span class="s0">CONTROLLER_BUTTON_START</span>
+
+
+      <span class="s0">.. ## Controller.get_button ##</span>
+
+   <span class="s0">.. method:: get_mapping</span>
+
+      <span class="s0">| :sl:`Get the mapping assigned to the controller`</span>
+      <span class="s0">| :sg:`get_mapping() -&gt; mapping`</span>
+
+      <span class="s0">Returns a dict containing the mapping of the Controller. For more</span>
+      <span class="s0">information see :meth:`Controller.set_mapping()`</span>
+
+      <span class="s0">.. versionchanged:: 2.0.2: Return type changed from ``str`` to ``dict``</span>
+
+      <span class="s0">.. ## Contorller.get_mapping ##</span>
+
+   <span class="s0">.. method:: set_mapping</span>
+
+      <span class="s0">| :sl:`Assign a mapping to the controller`</span>
+      <span class="s0">| :sg:`set_mapping(mapping) -&gt; int`</span>
+
+      <span class="s0">Rebind buttons, axes, triggers and dpads. The mapping should be a </span>
+      <span class="s0">dict containing all buttons, hats and axes. The easiest way to get this</span>
+      <span class="s0">is to use the dict returned by :meth:`Controller.get_mapping`. To edit</span>
+      <span class="s0">this mapping assign a value to the original button. The value of the</span>
+      <span class="s0">dictionary must be a button, hat or axis represented in the following way:</span>
+
+      <span class="s0">* For a button use: bX where X is the index of the button.</span>
+      <span class="s0">* For a hat use: hX.Y where X is the index and the Y is the direction (up: 1, right: 2, down: 3, left: 4).</span>
+      <span class="s0">* For an axis use: aX where x is the index of the axis.</span>
+
+      <span class="s0">An example of mapping::</span>
+
+         <span class="s0">mapping = controller.get_mapping() # Get current mapping</span>
+         <span class="s0">mapping[&quot;a&quot;] = &quot;b3&quot; # Remap button a to y</span>
+         <span class="s0">mapping[&quot;y&quot;] = &quot;b0&quot; # Remap button y to a</span>
+         <span class="s0">controller.set_mapping(mapping) # Set the mapping</span>
+
+
+      <span class="s0">The function will return 1 if a new mapping is added or 0 if an existing one is updated.</span>
+
+      <span class="s0">.. versionchanged:: 2.0.2: Renamed from ``add_mapping`` to ``set_mapping``</span>
+      <span class="s0">.. versionchanged:: 2.0.2: Argument type changed from ``str`` to ``dict``</span>
+
+      <span class="s0">.. ## Contorller.set_mapping ##</span>
+
+   <span class="s0">.. method:: rumble</span>
+
+      <span class="s0">| :sl:`Start a rumbling effect`</span>
+      <span class="s0">| :sg:`rumble(low_frequency, high_frequency, duration) -&gt; bool`</span>
+
+      <span class="s0">Start a rumble effect on the controller, with the specified strength ranging</span>
+      <span class="s0">from 0 to 1. Duration is length of the effect, in ms. Setting the duration</span>
+      <span class="s0">to 0 will play the effect until another one overwrites it or</span>
+      <span class="s0">:meth:`Controller.stop_rumble` is called. If an effect is already</span>
+      <span class="s0">playing, then it will be overwritten.</span>
+
+      <span class="s0">Returns True if the rumble was played successfully or False if the</span>
+      <span class="s0">controller does not support it or :meth:`pygame.version.SDL` is below 2.0.9.</span>
+
+      <span class="s0">.. versionadded:: 2.0.2</span>
+
+      <span class="s0">.. ## Contorller.rumble ##</span>
+
+   <span class="s0">.. method:: stop_rumble</span>
+
+      <span class="s0">| :sl:`Stop any rumble effect playing`</span>
+      <span class="s0">| :sg:`stop_rumble() -&gt; None`</span>
+
+      <span class="s0">Stops any rumble effect playing on the controller. See</span>
+      <span class="s0">:meth:`Controller.rumble` for more information.</span>
+
+      <span class="s0">.. versionadded:: 2.0.2</span>
+
+      <span class="s0">.. ## Contorller.stop_rumble ##</span>
+
+<span class="s0">.. ## pygame._sdl2.controller ##</span>
+</pre>
+</body>
+</html>

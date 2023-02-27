@@ -1,0 +1,254 @@
+<html>
+<head>
+<title>textinput.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6a8759;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+textinput.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pg.examples.textinput 
+ 
+A little &quot;console&quot; where you can write in text. 
+ 
+Shows how to use the TEXTEDITING and TEXTINPUT events. 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">sys</span>
+<span class="s3">import </span><span class="s1">os</span>
+
+<span class="s3">import </span><span class="s1">pygame</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+<span class="s3">import </span><span class="s1">pygame.freetype </span><span class="s3">as </span><span class="s1">freetype</span>
+
+<span class="s0"># This environment variable is important</span>
+<span class="s0"># If not added the candidate list will not show</span>
+<span class="s1">os.environ[</span><span class="s4">&quot;SDL_IME_SHOW_UI&quot;</span><span class="s1">] = </span><span class="s4">&quot;1&quot;</span>
+
+
+<span class="s3">class </span><span class="s1">TextInput:</span>
+    <span class="s2">&quot;&quot;&quot; 
+    A simple TextInput class that allows you to receive inputs in pygame. 
+    &quot;&quot;&quot;</span>
+
+    <span class="s0"># Add font name for each language,</span>
+    <span class="s0"># otherwise some text can't be correctly displayed.</span>
+    <span class="s1">FONT_NAMES = [</span>
+        <span class="s4">&quot;notosanscjktcregular&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;notosansmonocjktcregular&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;notosansregular,&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;microsoftjhengheimicrosoftjhengheiuilight&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;microsoftyaheimicrosoftyaheiuilight&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;msgothicmsuigothicmspgothic&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;msmincho&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;Arial&quot;</span><span class="s3">,</span>
+    <span class="s1">]</span>
+
+    <span class="s3">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s3">, </span><span class="s1">prompt: str</span><span class="s3">, </span><span class="s1">pos</span><span class="s3">, </span><span class="s1">screen_dimensions</span><span class="s3">, </span><span class="s1">print_event: bool</span><span class="s3">, </span><span class="s1">text_color=</span><span class="s4">&quot;white&quot;</span>
+    <span class="s1">) -&gt; </span><span class="s3">None</span><span class="s1">:</span>
+        <span class="s1">self.prompt = prompt</span>
+        <span class="s1">self.print_event = print_event</span>
+        <span class="s0"># position of chatlist and chatbox</span>
+        <span class="s1">self.CHAT_LIST_POS = pg.Rect((pos[</span><span class="s5">0</span><span class="s1">]</span><span class="s3">, </span><span class="s1">pos[</span><span class="s5">1</span><span class="s1">] + </span><span class="s5">50</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(screen_dimensions[</span><span class="s5">0</span><span class="s1">]</span><span class="s3">, </span><span class="s5">400</span><span class="s1">))</span>
+        <span class="s1">self.CHAT_BOX_POS = pg.Rect(pos</span><span class="s3">, </span><span class="s1">(screen_dimensions[</span><span class="s5">1</span><span class="s1">]</span><span class="s3">, </span><span class="s5">40</span><span class="s1">))</span>
+        <span class="s1">self.CHAT_LIST_MAXSIZE = </span><span class="s5">20</span>
+
+        <span class="s1">self._ime_editing = </span><span class="s3">False</span>
+        <span class="s1">self._ime_text = </span><span class="s4">&quot;&quot;</span>
+        <span class="s1">self._ime_text_pos = </span><span class="s5">0</span>
+        <span class="s1">self._ime_editing_text = </span><span class="s4">&quot;&quot;</span>
+        <span class="s1">self._ime_editing_pos = </span><span class="s5">0</span>
+        <span class="s1">self.chat_list = []</span>
+
+        <span class="s0"># Freetype</span>
+        <span class="s0"># The font name can be a comma separated list</span>
+        <span class="s0"># of font names to search for.</span>
+        <span class="s1">self.FONT_NAMES = </span><span class="s4">&quot;,&quot;</span><span class="s1">.join(str(x) </span><span class="s3">for </span><span class="s1">x </span><span class="s3">in </span><span class="s1">self.FONT_NAMES)</span>
+        <span class="s1">self.font = freetype.SysFont(self.FONT_NAMES</span><span class="s3">, </span><span class="s5">24</span><span class="s1">)</span>
+        <span class="s1">self.font_small = freetype.SysFont(self.FONT_NAMES</span><span class="s3">, </span><span class="s5">16</span><span class="s1">)</span>
+        <span class="s1">self.text_color = text_color</span>
+
+        <span class="s1">print(</span><span class="s4">&quot;Using font: &quot; </span><span class="s1">+ self.font.name)</span>
+
+    <span class="s3">def </span><span class="s1">update(self</span><span class="s3">, </span><span class="s1">events) -&gt; </span><span class="s3">None</span><span class="s1">:</span>
+        <span class="s2">&quot;&quot;&quot; 
+        Updates the text input widget 
+        &quot;&quot;&quot;</span>
+        <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">events:</span>
+            <span class="s3">if </span><span class="s1">event.type == pg.KEYDOWN:</span>
+                <span class="s3">if </span><span class="s1">self.print_event:</span>
+                    <span class="s1">print(event)</span>
+
+                <span class="s3">if </span><span class="s1">self._ime_editing:</span>
+                    <span class="s3">if </span><span class="s1">len(self._ime_editing_text) == </span><span class="s5">0</span><span class="s1">:</span>
+                        <span class="s1">self._ime_editing = </span><span class="s3">False</span>
+                    <span class="s3">continue</span>
+
+                <span class="s3">if </span><span class="s1">event.key == pg.K_BACKSPACE:</span>
+                    <span class="s3">if </span><span class="s1">len(self._ime_text) &gt; </span><span class="s5">0 </span><span class="s3">and </span><span class="s1">self._ime_text_pos &gt; </span><span class="s5">0</span><span class="s1">:</span>
+                        <span class="s1">self._ime_text = (</span>
+                            <span class="s1">self._ime_text[</span><span class="s5">0 </span><span class="s1">: self._ime_text_pos - </span><span class="s5">1</span><span class="s1">]</span>
+                            <span class="s1">+ self._ime_text[self._ime_text_pos :]</span>
+                        <span class="s1">)</span>
+                        <span class="s1">self._ime_text_pos = max(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">self._ime_text_pos - </span><span class="s5">1</span><span class="s1">)</span>
+
+                <span class="s3">elif </span><span class="s1">event.key == pg.K_DELETE:</span>
+                    <span class="s1">self._ime_text = (</span>
+                        <span class="s1">self._ime_text[</span><span class="s5">0 </span><span class="s1">: self._ime_text_pos]</span>
+                        <span class="s1">+ self._ime_text[self._ime_text_pos + </span><span class="s5">1 </span><span class="s1">:]</span>
+                    <span class="s1">)</span>
+                <span class="s3">elif </span><span class="s1">event.key == pg.K_LEFT:</span>
+                    <span class="s1">self._ime_text_pos = max(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">self._ime_text_pos - </span><span class="s5">1</span><span class="s1">)</span>
+                <span class="s3">elif </span><span class="s1">event.key == pg.K_RIGHT:</span>
+                    <span class="s1">self._ime_text_pos = min(</span>
+                        <span class="s1">len(self._ime_text)</span><span class="s3">, </span><span class="s1">self._ime_text_pos + </span><span class="s5">1</span>
+                    <span class="s1">)</span>
+                <span class="s0"># Handle ENTER key</span>
+                <span class="s3">elif </span><span class="s1">event.key </span><span class="s3">in </span><span class="s1">[pg.K_RETURN</span><span class="s3">, </span><span class="s1">pg.K_KP_ENTER]:</span>
+                    <span class="s0"># Block if we have no text to append</span>
+                    <span class="s3">if </span><span class="s1">len(self._ime_text) == </span><span class="s5">0</span><span class="s1">:</span>
+                        <span class="s3">continue</span>
+
+                    <span class="s0"># Append chat list</span>
+                    <span class="s1">self.chat_list.append(self._ime_text)</span>
+                    <span class="s3">if </span><span class="s1">len(self.chat_list) &gt; self.CHAT_LIST_MAXSIZE:</span>
+                        <span class="s1">self.chat_list.pop(</span><span class="s5">0</span><span class="s1">)</span>
+                    <span class="s1">self._ime_text = </span><span class="s4">&quot;&quot;</span>
+                    <span class="s1">self._ime_text_pos = </span><span class="s5">0</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.TEXTEDITING:</span>
+                <span class="s3">if </span><span class="s1">self.print_event:</span>
+                    <span class="s1">print(event)</span>
+                <span class="s1">self._ime_editing = </span><span class="s3">True</span>
+                <span class="s1">self._ime_editing_text = event.text</span>
+                <span class="s1">self._ime_editing_pos = event.start</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.TEXTINPUT:</span>
+                <span class="s3">if </span><span class="s1">self.print_event:</span>
+                    <span class="s1">print(event)</span>
+                <span class="s1">self._ime_editing = </span><span class="s3">False</span>
+                <span class="s1">self._ime_editing_text = </span><span class="s4">&quot;&quot;</span>
+                <span class="s1">self._ime_text = (</span>
+                    <span class="s1">self._ime_text[</span><span class="s5">0 </span><span class="s1">: self._ime_text_pos]</span>
+                    <span class="s1">+ event.text</span>
+                    <span class="s1">+ self._ime_text[self._ime_text_pos :]</span>
+                <span class="s1">)</span>
+                <span class="s1">self._ime_text_pos += len(event.text)</span>
+
+    <span class="s3">def </span><span class="s1">draw(self</span><span class="s3">, </span><span class="s1">screen: pygame.Surface) -&gt; </span><span class="s3">None</span><span class="s1">:</span>
+        <span class="s2">&quot;&quot;&quot; 
+        Draws the text input widget onto the provided surface 
+        &quot;&quot;&quot;</span>
+
+        <span class="s0"># Chat List updates</span>
+        <span class="s1">chat_height = self.CHAT_LIST_POS.height / self.CHAT_LIST_MAXSIZE</span>
+        <span class="s3">for </span><span class="s1">i</span><span class="s3">, </span><span class="s1">chat </span><span class="s3">in </span><span class="s1">enumerate(self.chat_list):</span>
+            <span class="s1">self.font_small.render_to(</span>
+                <span class="s1">screen</span><span class="s3">,</span>
+                <span class="s1">(self.CHAT_LIST_POS.x</span><span class="s3">, </span><span class="s1">self.CHAT_LIST_POS.y + i * chat_height)</span><span class="s3">,</span>
+                <span class="s1">chat</span><span class="s3">,</span>
+                <span class="s1">self.text_color</span><span class="s3">,</span>
+            <span class="s1">)</span>
+
+        <span class="s0"># Chat box updates</span>
+        <span class="s1">start_pos = self.CHAT_BOX_POS.copy()</span>
+        <span class="s1">ime_text_l = self.prompt + self._ime_text[</span><span class="s5">0 </span><span class="s1">: self._ime_text_pos]</span>
+        <span class="s1">ime_text_m = (</span>
+            <span class="s1">self._ime_editing_text[</span><span class="s5">0 </span><span class="s1">: self._ime_editing_pos]</span>
+            <span class="s1">+ </span><span class="s4">&quot;|&quot;</span>
+            <span class="s1">+ self._ime_editing_text[self._ime_editing_pos :]</span>
+        <span class="s1">)</span>
+        <span class="s1">ime_text_r = self._ime_text[self._ime_text_pos :]</span>
+
+        <span class="s1">rect_text_l = self.font.render_to(</span>
+            <span class="s1">screen</span><span class="s3">, </span><span class="s1">start_pos</span><span class="s3">, </span><span class="s1">ime_text_l</span><span class="s3">, </span><span class="s1">self.text_color</span>
+        <span class="s1">)</span>
+        <span class="s1">start_pos.x += rect_text_l.width</span>
+
+        <span class="s0"># Editing texts should be underlined</span>
+        <span class="s1">rect_text_m = self.font.render_to(</span>
+            <span class="s1">screen</span><span class="s3">,</span>
+            <span class="s1">start_pos</span><span class="s3">,</span>
+            <span class="s1">ime_text_m</span><span class="s3">,</span>
+            <span class="s1">self.text_color</span><span class="s3">,</span>
+            <span class="s3">None,</span>
+            <span class="s1">freetype.STYLE_UNDERLINE</span><span class="s3">,</span>
+        <span class="s1">)</span>
+        <span class="s1">start_pos.x += rect_text_m.width</span>
+        <span class="s1">self.font.render_to(screen</span><span class="s3">, </span><span class="s1">start_pos</span><span class="s3">, </span><span class="s1">ime_text_r</span><span class="s3">, </span><span class="s1">self.text_color)</span>
+
+
+<span class="s3">class </span><span class="s1">Game:</span>
+    <span class="s2">&quot;&quot;&quot; 
+    A class that handles the game's events, mainloop etc. 
+    &quot;&quot;&quot;</span>
+
+    <span class="s0"># CONSTANTS</span>
+    <span class="s0"># Frames per second, the general speed of the program</span>
+    <span class="s1">FPS = </span><span class="s5">50</span>
+    <span class="s0"># Size of window</span>
+    <span class="s1">SCREEN_WIDTH</span><span class="s3">, </span><span class="s1">SCREEN_HEIGHT = </span><span class="s5">640</span><span class="s3">, </span><span class="s5">480</span>
+    <span class="s1">BG_COLOR = </span><span class="s4">&quot;black&quot;</span>
+
+    <span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">caption: str) -&gt; </span><span class="s3">None</span><span class="s1">:</span>
+        <span class="s0"># Initialize</span>
+        <span class="s1">pg.init()</span>
+        <span class="s1">self.screen = pg.display.set_mode((self.SCREEN_WIDTH</span><span class="s3">, </span><span class="s1">self.SCREEN_HEIGHT))</span>
+        <span class="s1">pg.display.set_caption(caption)</span>
+        <span class="s1">self.clock = pg.time.Clock()</span>
+
+        <span class="s0"># Text input</span>
+        <span class="s0"># Set to true or add 'showevent' in argv to see IME and KEYDOWN events</span>
+        <span class="s1">self.print_event = </span><span class="s4">&quot;showevent&quot; </span><span class="s3">in </span><span class="s1">sys.argv</span>
+        <span class="s1">self.text_input = TextInput(</span>
+            <span class="s1">prompt=</span><span class="s4">&quot;&gt; &quot;</span><span class="s3">,</span>
+            <span class="s1">pos=(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">20</span><span class="s1">)</span><span class="s3">,</span>
+            <span class="s1">screen_dimensions=(self.SCREEN_WIDTH</span><span class="s3">, </span><span class="s1">self.SCREEN_HEIGHT)</span><span class="s3">,</span>
+            <span class="s1">print_event=self.print_event</span><span class="s3">,</span>
+            <span class="s1">text_color=</span><span class="s4">&quot;green&quot;</span><span class="s3">,</span>
+        <span class="s1">)</span>
+
+    <span class="s3">def </span><span class="s1">main_loop(self) -&gt; </span><span class="s3">None</span><span class="s1">:</span>
+        <span class="s1">pg.key.start_text_input()</span>
+        <span class="s1">input_rect = pg.Rect(</span><span class="s5">80</span><span class="s3">, </span><span class="s5">80</span><span class="s3">, </span><span class="s5">320</span><span class="s3">, </span><span class="s5">40</span><span class="s1">)</span>
+        <span class="s1">pg.key.set_text_input_rect(input_rect)</span>
+
+        <span class="s3">while True</span><span class="s1">:</span>
+            <span class="s1">events = pg.event.get()</span>
+            <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">events:</span>
+                <span class="s3">if </span><span class="s1">event.type == pg.QUIT:</span>
+                    <span class="s1">pg.quit()</span>
+                    <span class="s3">return</span>
+
+            <span class="s1">self.text_input.update(events)</span>
+
+            <span class="s0"># Screen updates</span>
+            <span class="s1">self.screen.fill(self.BG_COLOR)</span>
+            <span class="s1">self.text_input.draw(self.screen)</span>
+
+            <span class="s1">pg.display.update()</span>
+            <span class="s1">self.clock.tick(self.FPS)</span>
+
+
+<span class="s0"># Main loop process</span>
+<span class="s3">def </span><span class="s1">main():</span>
+    <span class="s1">game = Game(</span><span class="s4">&quot;Text Input Example&quot;</span><span class="s1">)</span>
+    <span class="s1">game.main_loop()</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s4">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">main()</span>
+</pre>
+</body>
+</html>

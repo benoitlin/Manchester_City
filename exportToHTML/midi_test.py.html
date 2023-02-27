@@ -1,0 +1,494 @@
+<html>
+<head>
+<title>midi_test.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+.s4 { color: #808080;}
+.s5 { color: #629755; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+midi_test.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">unittest</span>
+
+
+<span class="s0">import </span><span class="s1">pygame</span>
+
+
+<span class="s0">class </span><span class="s1">MidiInputTest(unittest.TestCase):</span>
+    <span class="s1">__tags__ = [</span><span class="s2">&quot;interactive&quot;</span><span class="s1">]</span>
+
+    <span class="s0">def </span><span class="s1">setUp(self):</span>
+        <span class="s0">import </span><span class="s1">pygame.midi</span>
+
+        <span class="s1">pygame.midi.init()</span>
+        <span class="s1">in_id = pygame.midi.get_default_input_id()</span>
+        <span class="s0">if </span><span class="s1">in_id != -</span><span class="s3">1</span><span class="s1">:</span>
+            <span class="s1">self.midi_input = pygame.midi.Input(in_id)</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s1">self.midi_input = </span><span class="s0">None</span>
+
+    <span class="s0">def </span><span class="s1">tearDown(self):</span>
+        <span class="s0">if </span><span class="s1">self.midi_input:</span>
+            <span class="s1">self.midi_input.close()</span>
+        <span class="s1">pygame.midi.quit()</span>
+
+    <span class="s0">def </span><span class="s1">test_Input(self):</span>
+        <span class="s1">i = pygame.midi.get_default_input_id()</span>
+        <span class="s0">if </span><span class="s1">self.midi_input:</span>
+            <span class="s1">self.assertEqual(self.midi_input.device_id</span><span class="s0">, </span><span class="s1">i)</span>
+
+        <span class="s4"># try feeding it an input id.</span>
+        <span class="s1">i = pygame.midi.get_default_output_id()</span>
+
+        <span class="s4"># can handle some invalid input too.</span>
+        <span class="s1">self.assertRaises(pygame.midi.MidiException</span><span class="s0">, </span><span class="s1">pygame.midi.Input</span><span class="s0">, </span><span class="s1">i)</span>
+        <span class="s1">self.assertRaises(pygame.midi.MidiException</span><span class="s0">, </span><span class="s1">pygame.midi.Input</span><span class="s0">, </span><span class="s3">9009</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(pygame.midi.MidiException</span><span class="s0">, </span><span class="s1">pygame.midi.Input</span><span class="s0">, </span><span class="s1">-</span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">pygame.midi.Input</span><span class="s0">, </span><span class="s2">&quot;1234&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(OverflowError</span><span class="s0">, </span><span class="s1">pygame.midi.Input</span><span class="s0">, </span><span class="s1">pow(</span><span class="s3">2</span><span class="s0">, </span><span class="s3">99</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_poll(self):</span>
+
+        <span class="s0">if not </span><span class="s1">self.midi_input:</span>
+            <span class="s1">self.skipTest(</span><span class="s2">&quot;No midi Input device&quot;</span><span class="s1">)</span>
+
+        <span class="s1">self.assertFalse(self.midi_input.poll())</span>
+        <span class="s4"># TODO fake some incoming data</span>
+
+        <span class="s1">pygame.midi.quit()</span>
+        <span class="s1">self.assertRaises(RuntimeError</span><span class="s0">, </span><span class="s1">self.midi_input.poll)</span>
+        <span class="s4"># set midi_input to None to avoid error in tearDown</span>
+        <span class="s1">self.midi_input = </span><span class="s0">None</span>
+
+    <span class="s0">def </span><span class="s1">test_read(self):</span>
+
+        <span class="s0">if not </span><span class="s1">self.midi_input:</span>
+            <span class="s1">self.skipTest(</span><span class="s2">&quot;No midi Input device&quot;</span><span class="s1">)</span>
+
+        <span class="s1">read = self.midi_input.read(</span><span class="s3">5</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(read</span><span class="s0">, </span><span class="s1">[])</span>
+        <span class="s4"># TODO fake some  incoming data</span>
+
+        <span class="s1">pygame.midi.quit()</span>
+        <span class="s1">self.assertRaises(RuntimeError</span><span class="s0">, </span><span class="s1">self.midi_input.read</span><span class="s0">, </span><span class="s3">52</span><span class="s1">)</span>
+        <span class="s4"># set midi_input to None to avoid error in tearDown</span>
+        <span class="s1">self.midi_input = </span><span class="s0">None</span>
+
+    <span class="s0">def </span><span class="s1">test_close(self):</span>
+        <span class="s0">if not </span><span class="s1">self.midi_input:</span>
+            <span class="s1">self.skipTest(</span><span class="s2">&quot;No midi Input device&quot;</span><span class="s1">)</span>
+
+        <span class="s1">self.assertIsNotNone(self.midi_input._input)</span>
+        <span class="s1">self.midi_input.close()</span>
+        <span class="s1">self.assertIsNone(self.midi_input._input)</span>
+
+
+<span class="s0">class </span><span class="s1">MidiOutputTest(unittest.TestCase):</span>
+    <span class="s1">__tags__ = [</span><span class="s2">&quot;interactive&quot;</span><span class="s1">]</span>
+
+    <span class="s0">def </span><span class="s1">setUp(self):</span>
+        <span class="s0">import </span><span class="s1">pygame.midi</span>
+
+        <span class="s1">pygame.midi.init()</span>
+        <span class="s1">m_out_id = pygame.midi.get_default_output_id()</span>
+        <span class="s0">if </span><span class="s1">m_out_id != -</span><span class="s3">1</span><span class="s1">:</span>
+            <span class="s1">self.midi_output = pygame.midi.Output(m_out_id)</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s1">self.midi_output = </span><span class="s0">None</span>
+
+    <span class="s0">def </span><span class="s1">tearDown(self):</span>
+        <span class="s0">if </span><span class="s1">self.midi_output:</span>
+            <span class="s1">self.midi_output.close()</span>
+        <span class="s1">pygame.midi.quit()</span>
+
+    <span class="s0">def </span><span class="s1">test_Output(self):</span>
+        <span class="s1">i = pygame.midi.get_default_output_id()</span>
+        <span class="s0">if </span><span class="s1">self.midi_output:</span>
+            <span class="s1">self.assertEqual(self.midi_output.device_id</span><span class="s0">, </span><span class="s1">i)</span>
+
+        <span class="s4"># try feeding it an input id.</span>
+        <span class="s1">i = pygame.midi.get_default_input_id()</span>
+
+        <span class="s4"># can handle some invalid input too.</span>
+        <span class="s1">self.assertRaises(pygame.midi.MidiException</span><span class="s0">, </span><span class="s1">pygame.midi.Output</span><span class="s0">, </span><span class="s1">i)</span>
+        <span class="s1">self.assertRaises(pygame.midi.MidiException</span><span class="s0">, </span><span class="s1">pygame.midi.Output</span><span class="s0">, </span><span class="s3">9009</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(pygame.midi.MidiException</span><span class="s0">, </span><span class="s1">pygame.midi.Output</span><span class="s0">, </span><span class="s1">-</span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">pygame.midi.Output</span><span class="s0">, </span><span class="s2">&quot;1234&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(OverflowError</span><span class="s0">, </span><span class="s1">pygame.midi.Output</span><span class="s0">, </span><span class="s1">pow(</span><span class="s3">2</span><span class="s0">, </span><span class="s3">99</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_note_off(self):</span>
+        <span class="s0">if </span><span class="s1">self.midi_output:</span>
+            <span class="s1">out = self.midi_output</span>
+            <span class="s1">out.note_on(</span><span class="s3">5</span><span class="s0">, </span><span class="s3">30</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+            <span class="s1">out.note_off(</span><span class="s3">5</span><span class="s0">, </span><span class="s3">30</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+            <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+                <span class="s1">out.note_off(</span><span class="s3">5</span><span class="s0">, </span><span class="s3">30</span><span class="s0">, </span><span class="s3">25</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s2">&quot;Channel not between 0 and 15.&quot;</span><span class="s1">)</span>
+            <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+                <span class="s1">out.note_off(</span><span class="s3">5</span><span class="s0">, </span><span class="s3">30</span><span class="s0">, </span><span class="s1">-</span><span class="s3">1</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s2">&quot;Channel not between 0 and 15.&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_note_on(self):</span>
+        <span class="s0">if </span><span class="s1">self.midi_output:</span>
+            <span class="s1">out = self.midi_output</span>
+            <span class="s1">out.note_on(</span><span class="s3">5</span><span class="s0">, </span><span class="s3">30</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+            <span class="s1">out.note_on(</span><span class="s3">5</span><span class="s0">, </span><span class="s3">42</span><span class="s0">, </span><span class="s3">10</span><span class="s1">)</span>
+            <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+                <span class="s1">out.note_on(</span><span class="s3">5</span><span class="s0">, </span><span class="s3">30</span><span class="s0">, </span><span class="s3">25</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s2">&quot;Channel not between 0 and 15.&quot;</span><span class="s1">)</span>
+            <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+                <span class="s1">out.note_on(</span><span class="s3">5</span><span class="s0">, </span><span class="s3">30</span><span class="s0">, </span><span class="s1">-</span><span class="s3">1</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s2">&quot;Channel not between 0 and 15.&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_set_instrument(self):</span>
+
+        <span class="s0">if not </span><span class="s1">self.midi_output:</span>
+            <span class="s1">self.skipTest(</span><span class="s2">&quot;No midi device&quot;</span><span class="s1">)</span>
+        <span class="s1">out = self.midi_output</span>
+        <span class="s1">out.set_instrument(</span><span class="s3">5</span><span class="s1">)</span>
+        <span class="s1">out.set_instrument(</span><span class="s3">42</span><span class="s0">, </span><span class="s1">channel=</span><span class="s3">2</span><span class="s1">)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">out.set_instrument(-</span><span class="s3">6</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s2">&quot;Undefined instrument id: -6&quot;</span><span class="s1">)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">out.set_instrument(</span><span class="s3">156</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s2">&quot;Undefined instrument id: 156&quot;</span><span class="s1">)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">out.set_instrument(</span><span class="s3">5</span><span class="s0">, </span><span class="s1">-</span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s2">&quot;Channel not between 0 and 15.&quot;</span><span class="s1">)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">out.set_instrument(</span><span class="s3">5</span><span class="s0">, </span><span class="s3">16</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s2">&quot;Channel not between 0 and 15.&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_write(self):</span>
+        <span class="s0">if not </span><span class="s1">self.midi_output:</span>
+            <span class="s1">self.skipTest(</span><span class="s2">&quot;No midi device&quot;</span><span class="s1">)</span>
+
+        <span class="s1">out = self.midi_output</span>
+        <span class="s1">out.write([[[</span><span class="s3">0xC0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s1">]</span><span class="s0">, </span><span class="s3">20000</span><span class="s1">]])</span>
+        <span class="s4"># is equivalent to</span>
+        <span class="s1">out.write([[[</span><span class="s3">0xC0</span><span class="s1">]</span><span class="s0">, </span><span class="s3">20000</span><span class="s1">]])</span>
+        <span class="s4"># example from the docstring :</span>
+        <span class="s4"># 1. choose program change 1 at time 20000 and</span>
+        <span class="s4"># 2. send note 65 with velocity 100 500 ms later</span>
+        <span class="s1">out.write([[[</span><span class="s3">0xC0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s1">]</span><span class="s0">, </span><span class="s3">20000</span><span class="s1">]</span><span class="s0">, </span><span class="s1">[[</span><span class="s3">0x90</span><span class="s0">, </span><span class="s3">60</span><span class="s0">, </span><span class="s3">100</span><span class="s1">]</span><span class="s0">, </span><span class="s3">20500</span><span class="s1">]])</span>
+
+        <span class="s1">out.write([])</span>
+        <span class="s1">verrry_long = [[[</span><span class="s3">0x90</span><span class="s0">, </span><span class="s3">60</span><span class="s0">, </span><span class="s1">i % </span><span class="s3">100</span><span class="s1">]</span><span class="s0">, </span><span class="s3">20000 </span><span class="s1">+ </span><span class="s3">100 </span><span class="s1">* i] </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">1024</span><span class="s1">)]</span>
+        <span class="s1">out.write(verrry_long)</span>
+
+        <span class="s1">too_long = [[[</span><span class="s3">0x90</span><span class="s0">, </span><span class="s3">60</span><span class="s0">, </span><span class="s1">i % </span><span class="s3">100</span><span class="s1">]</span><span class="s0">, </span><span class="s3">20000 </span><span class="s1">+ </span><span class="s3">100 </span><span class="s1">* i] </span><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">1025</span><span class="s1">)]</span>
+        <span class="s1">self.assertRaises(IndexError</span><span class="s0">, </span><span class="s1">out.write</span><span class="s0">, </span><span class="s1">too_long)</span>
+        <span class="s4"># test wrong data</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(TypeError) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">out.write(</span><span class="s2">&quot;Non sens ?&quot;</span><span class="s1">)</span>
+        <span class="s1">error_msg = </span><span class="s2">&quot;unsupported operand type(s) for &amp;: 'str' and 'int'&quot;</span>
+        <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s1">error_msg)</span>
+
+        <span class="s0">with </span><span class="s1">self.assertRaises(TypeError) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">out.write([</span><span class="s2">&quot;Hey what's that?&quot;</span><span class="s1">])</span>
+        <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s1">error_msg)</span>
+
+    <span class="s0">def </span><span class="s1">test_write_short(self):</span>
+        <span class="s0">if not </span><span class="s1">self.midi_output:</span>
+            <span class="s1">self.skipTest(</span><span class="s2">&quot;No midi device&quot;</span><span class="s1">)</span>
+
+        <span class="s1">out = self.midi_output</span>
+        <span class="s4"># program change</span>
+        <span class="s1">out.write_short(</span><span class="s3">0xC0</span><span class="s1">)</span>
+        <span class="s4"># put a note on, then off.</span>
+        <span class="s1">out.write_short(</span><span class="s3">0x90</span><span class="s0">, </span><span class="s3">65</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span>
+        <span class="s1">out.write_short(</span><span class="s3">0x80</span><span class="s0">, </span><span class="s3">65</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span>
+        <span class="s1">out.write_short(</span><span class="s3">0x90</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_write_sys_ex(self):</span>
+        <span class="s0">if not </span><span class="s1">self.midi_output:</span>
+            <span class="s1">self.skipTest(</span><span class="s2">&quot;No midi device&quot;</span><span class="s1">)</span>
+
+        <span class="s1">out = self.midi_output</span>
+        <span class="s1">out.write_sys_ex(pygame.midi.time()</span><span class="s0">, </span><span class="s1">[</span><span class="s3">0xF0</span><span class="s0">, </span><span class="s3">0x7D</span><span class="s0">, </span><span class="s3">0x10</span><span class="s0">, </span><span class="s3">0x11</span><span class="s0">, </span><span class="s3">0x12</span><span class="s0">, </span><span class="s3">0x13</span><span class="s0">, </span><span class="s3">0xF7</span><span class="s1">])</span>
+
+    <span class="s0">def </span><span class="s1">test_pitch_bend(self):</span>
+        <span class="s4"># FIXME : pitch_bend in the code, but not in documentation</span>
+        <span class="s0">if not </span><span class="s1">self.midi_output:</span>
+            <span class="s1">self.skipTest(</span><span class="s2">&quot;No midi device&quot;</span><span class="s1">)</span>
+
+        <span class="s1">out = self.midi_output</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">out.pitch_bend(</span><span class="s3">5</span><span class="s0">, </span><span class="s1">channel=-</span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(str(cm.exception)</span><span class="s0">, </span><span class="s2">&quot;Channel not between 0 and 15.&quot;</span><span class="s1">)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">out.pitch_bend(</span><span class="s3">5</span><span class="s0">, </span><span class="s1">channel=</span><span class="s3">16</span><span class="s1">)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">out.pitch_bend(-</span><span class="s3">10001</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(</span>
+            <span class="s1">str(cm.exception)</span><span class="s0">,</span>
+            <span class="s2">&quot;Pitch bend value must be between &quot; &quot;-8192 and +8191, not -10001.&quot;</span><span class="s0">,</span>
+        <span class="s1">)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">out.pitch_bend(</span><span class="s3">10665</span><span class="s0">, </span><span class="s3">2</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_close(self):</span>
+        <span class="s0">if not </span><span class="s1">self.midi_output:</span>
+            <span class="s1">self.skipTest(</span><span class="s2">&quot;No midi device&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertIsNotNone(self.midi_output._output)</span>
+        <span class="s1">self.midi_output.close()</span>
+        <span class="s1">self.assertIsNone(self.midi_output._output)</span>
+
+    <span class="s0">def </span><span class="s1">test_abort(self):</span>
+        <span class="s0">if not </span><span class="s1">self.midi_output:</span>
+            <span class="s1">self.skipTest(</span><span class="s2">&quot;No midi device&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(self.midi_output._aborted</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+        <span class="s1">self.midi_output.abort()</span>
+        <span class="s1">self.assertEqual(self.midi_output._aborted</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span>
+
+
+<span class="s0">class </span><span class="s1">MidiModuleTest(unittest.TestCase):</span>
+    <span class="s5">&quot;&quot;&quot;Midi module tests that require midi hardware or midi.init(). 
+ 
+    See MidiModuleNonInteractiveTest for non-interactive module tests. 
+    &quot;&quot;&quot;</span>
+
+    <span class="s1">__tags__ = [</span><span class="s2">&quot;interactive&quot;</span><span class="s1">]</span>
+
+    <span class="s0">def </span><span class="s1">setUp(self):</span>
+        <span class="s0">import </span><span class="s1">pygame.midi</span>
+
+        <span class="s1">pygame.midi.init()</span>
+
+    <span class="s0">def </span><span class="s1">tearDown(self):</span>
+        <span class="s1">pygame.midi.quit()</span>
+
+    <span class="s0">def </span><span class="s1">test_get_count(self):</span>
+        <span class="s1">c = pygame.midi.get_count()</span>
+        <span class="s1">self.assertIsInstance(c</span><span class="s0">, </span><span class="s1">int)</span>
+        <span class="s1">self.assertTrue(c &gt;= </span><span class="s3">0</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_default_input_id(self):</span>
+
+        <span class="s1">midin_id = pygame.midi.get_default_input_id()</span>
+        <span class="s4"># if there is a not None return make sure it is an int.</span>
+        <span class="s1">self.assertIsInstance(midin_id</span><span class="s0">, </span><span class="s1">int)</span>
+        <span class="s1">self.assertTrue(midin_id &gt;= -</span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">pygame.midi.quit()</span>
+        <span class="s1">self.assertRaises(RuntimeError</span><span class="s0">, </span><span class="s1">pygame.midi.get_default_output_id)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_default_output_id(self):</span>
+
+        <span class="s1">c = pygame.midi.get_default_output_id()</span>
+        <span class="s1">self.assertIsInstance(c</span><span class="s0">, </span><span class="s1">int)</span>
+        <span class="s1">self.assertTrue(c &gt;= -</span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">pygame.midi.quit()</span>
+        <span class="s1">self.assertRaises(RuntimeError</span><span class="s0">, </span><span class="s1">pygame.midi.get_default_output_id)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_device_info(self):</span>
+
+        <span class="s1">an_id = pygame.midi.get_default_output_id()</span>
+        <span class="s0">if </span><span class="s1">an_id != -</span><span class="s3">1</span><span class="s1">:</span>
+            <span class="s1">interf</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">input</span><span class="s0">, </span><span class="s1">output</span><span class="s0">, </span><span class="s1">opened = pygame.midi.get_device_info(an_id)</span>
+            <span class="s1">self.assertEqual(output</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(input</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(opened</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+
+        <span class="s1">an_in_id = pygame.midi.get_default_input_id()</span>
+        <span class="s0">if </span><span class="s1">an_in_id != -</span><span class="s3">1</span><span class="s1">:</span>
+            <span class="s1">r = pygame.midi.get_device_info(an_in_id)</span>
+            <span class="s4"># if r is None, it means that the id is out of range.</span>
+            <span class="s1">interf</span><span class="s0">, </span><span class="s1">name</span><span class="s0">, </span><span class="s1">input</span><span class="s0">, </span><span class="s1">output</span><span class="s0">, </span><span class="s1">opened = r</span>
+
+            <span class="s1">self.assertEqual(output</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(input</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(opened</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+        <span class="s1">out_of_range = pygame.midi.get_count()</span>
+        <span class="s0">for </span><span class="s1">num </span><span class="s0">in </span><span class="s1">range(out_of_range):</span>
+            <span class="s1">self.assertIsNotNone(pygame.midi.get_device_info(num))</span>
+        <span class="s1">info = pygame.midi.get_device_info(out_of_range)</span>
+        <span class="s1">self.assertIsNone(info)</span>
+
+    <span class="s0">def </span><span class="s1">test_init(self):</span>
+
+        <span class="s1">pygame.midi.quit()</span>
+        <span class="s1">self.assertRaises(RuntimeError</span><span class="s0">, </span><span class="s1">pygame.midi.get_count)</span>
+        <span class="s4"># initialising many times should be fine.</span>
+        <span class="s1">pygame.midi.init()</span>
+        <span class="s1">pygame.midi.init()</span>
+        <span class="s1">pygame.midi.init()</span>
+        <span class="s1">pygame.midi.init()</span>
+
+        <span class="s1">self.assertTrue(pygame.midi.get_init())</span>
+
+    <span class="s0">def </span><span class="s1">test_quit(self):</span>
+
+        <span class="s4"># It is safe to call this more than once.</span>
+        <span class="s1">pygame.midi.quit()</span>
+        <span class="s1">pygame.midi.init()</span>
+        <span class="s1">pygame.midi.quit()</span>
+        <span class="s1">pygame.midi.quit()</span>
+        <span class="s1">pygame.midi.init()</span>
+        <span class="s1">pygame.midi.init()</span>
+        <span class="s1">pygame.midi.quit()</span>
+
+        <span class="s1">self.assertFalse(pygame.midi.get_init())</span>
+
+    <span class="s0">def </span><span class="s1">test_get_init(self):</span>
+        <span class="s4"># Already initialized as pygame.midi.init() was called in setUp().</span>
+        <span class="s1">self.assertTrue(pygame.midi.get_init())</span>
+
+    <span class="s0">def </span><span class="s1">test_time(self):</span>
+
+        <span class="s1">mtime = pygame.midi.time()</span>
+        <span class="s1">self.assertIsInstance(mtime</span><span class="s0">, </span><span class="s1">int)</span>
+        <span class="s4"># should be close to 2-3... since the timer is just init'd.</span>
+        <span class="s1">self.assertTrue(</span><span class="s3">0 </span><span class="s1">&lt;= mtime &lt; </span><span class="s3">100</span><span class="s1">)</span>
+
+
+<span class="s0">class </span><span class="s1">MidiModuleNonInteractiveTest(unittest.TestCase):</span>
+    <span class="s5">&quot;&quot;&quot;Midi module tests that do not require midi hardware or midi.init(). 
+ 
+    See MidiModuleTest for interactive module tests. 
+    &quot;&quot;&quot;</span>
+
+    <span class="s0">def </span><span class="s1">setUp(self):</span>
+        <span class="s0">import </span><span class="s1">pygame.midi</span>
+
+    <span class="s0">def </span><span class="s1">test_midiin(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures the MIDIIN event id exists in the midi module. 
+ 
+        The MIDIIN event id can be accessed via the midi module for backward 
+        compatibility. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">self.assertEqual(pygame.midi.MIDIIN</span><span class="s0">, </span><span class="s1">pygame.MIDIIN)</span>
+        <span class="s1">self.assertEqual(pygame.midi.MIDIIN</span><span class="s0">, </span><span class="s1">pygame.locals.MIDIIN)</span>
+
+        <span class="s1">self.assertNotEqual(pygame.midi.MIDIIN</span><span class="s0">, </span><span class="s1">pygame.MIDIOUT)</span>
+        <span class="s1">self.assertNotEqual(pygame.midi.MIDIIN</span><span class="s0">, </span><span class="s1">pygame.locals.MIDIOUT)</span>
+
+    <span class="s0">def </span><span class="s1">test_midiout(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures the MIDIOUT event id exists in the midi module. 
+ 
+        The MIDIOUT event id can be accessed via the midi module for backward 
+        compatibility. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">self.assertEqual(pygame.midi.MIDIOUT</span><span class="s0">, </span><span class="s1">pygame.MIDIOUT)</span>
+        <span class="s1">self.assertEqual(pygame.midi.MIDIOUT</span><span class="s0">, </span><span class="s1">pygame.locals.MIDIOUT)</span>
+
+        <span class="s1">self.assertNotEqual(pygame.midi.MIDIOUT</span><span class="s0">, </span><span class="s1">pygame.MIDIIN)</span>
+        <span class="s1">self.assertNotEqual(pygame.midi.MIDIOUT</span><span class="s0">, </span><span class="s1">pygame.locals.MIDIIN)</span>
+
+    <span class="s0">def </span><span class="s1">test_MidiException(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures the MidiException is raised as expected.&quot;&quot;&quot;</span>
+
+        <span class="s0">def </span><span class="s1">raiseit():</span>
+            <span class="s0">raise </span><span class="s1">pygame.midi.MidiException(</span><span class="s2">&quot;Hello Midi param&quot;</span><span class="s1">)</span>
+
+        <span class="s0">with </span><span class="s1">self.assertRaises(pygame.midi.MidiException) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">raiseit()</span>
+
+        <span class="s1">self.assertEqual(cm.exception.parameter</span><span class="s0">, </span><span class="s2">&quot;Hello Midi param&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_midis2events(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures midi events are properly converted to pygame events.&quot;&quot;&quot;</span>
+        <span class="s4"># List/tuple indexes.</span>
+        <span class="s1">MIDI_DATA = </span><span class="s3">0</span>
+        <span class="s1">MD_STATUS = </span><span class="s3">0</span>
+        <span class="s1">MD_DATA1 = </span><span class="s3">1</span>
+        <span class="s1">MD_DATA2 = </span><span class="s3">2</span>
+        <span class="s1">MD_DATA3 = </span><span class="s3">3</span>
+
+        <span class="s1">TIMESTAMP = </span><span class="s3">1</span>
+
+        <span class="s4"># Midi events take the form of:</span>
+        <span class="s4"># ((status, data1, data2, data3), timestamp)</span>
+        <span class="s1">midi_events = (</span>
+            <span class="s1">((</span><span class="s3">0xC0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s1">)</span><span class="s0">, </span><span class="s3">20000</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">((</span><span class="s3">0x90</span><span class="s0">, </span><span class="s3">60</span><span class="s0">, </span><span class="s3">1000</span><span class="s0">, </span><span class="s2">&quot;string_data&quot;</span><span class="s1">)</span><span class="s0">, </span><span class="s3">20001</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">((</span><span class="s2">&quot;0&quot;</span><span class="s0">, </span><span class="s2">&quot;1&quot;</span><span class="s0">, </span><span class="s2">&quot;2&quot;</span><span class="s0">, </span><span class="s2">&quot;3&quot;</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;4&quot;</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s1">)</span>
+        <span class="s1">expected_num_events = len(midi_events)</span>
+
+        <span class="s4"># Test different device ids.</span>
+        <span class="s0">for </span><span class="s1">device_id </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">3</span><span class="s1">):</span>
+            <span class="s1">pg_events = pygame.midi.midis2events(midi_events</span><span class="s0">, </span><span class="s1">device_id)</span>
+
+            <span class="s1">self.assertEqual(len(pg_events)</span><span class="s0">, </span><span class="s1">expected_num_events)</span>
+
+            <span class="s0">for </span><span class="s1">i</span><span class="s0">, </span><span class="s1">pg_event </span><span class="s0">in </span><span class="s1">enumerate(pg_events):</span>
+                <span class="s4"># Get the original midi data for comparison.</span>
+                <span class="s1">midi_event = midi_events[i]</span>
+                <span class="s1">midi_event_data = midi_event[MIDI_DATA]</span>
+
+                <span class="s4"># Can't directly check event instance as pygame.event.Event is</span>
+                <span class="s4"># a function.</span>
+                <span class="s4"># self.assertIsInstance(pg_event, pygame.event.Event)</span>
+                <span class="s1">self.assertEqual(pg_event.__class__.__name__</span><span class="s0">, </span><span class="s2">&quot;Event&quot;</span><span class="s1">)</span>
+                <span class="s1">self.assertEqual(pg_event.type</span><span class="s0">, </span><span class="s1">pygame.MIDIIN)</span>
+                <span class="s1">self.assertEqual(pg_event.status</span><span class="s0">, </span><span class="s1">midi_event_data[MD_STATUS])</span>
+                <span class="s1">self.assertEqual(pg_event.data1</span><span class="s0">, </span><span class="s1">midi_event_data[MD_DATA1])</span>
+                <span class="s1">self.assertEqual(pg_event.data2</span><span class="s0">, </span><span class="s1">midi_event_data[MD_DATA2])</span>
+                <span class="s1">self.assertEqual(pg_event.data3</span><span class="s0">, </span><span class="s1">midi_event_data[MD_DATA3])</span>
+                <span class="s1">self.assertEqual(pg_event.timestamp</span><span class="s0">, </span><span class="s1">midi_event[TIMESTAMP])</span>
+                <span class="s1">self.assertEqual(pg_event.vice_id</span><span class="s0">, </span><span class="s1">device_id)</span>
+
+    <span class="s0">def </span><span class="s1">test_midis2events__missing_event_data(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures midi events with missing values are handled properly.&quot;&quot;&quot;</span>
+        <span class="s1">midi_event_missing_data = ((</span><span class="s3">0xC0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span><span class="s0">, </span><span class="s3">20000</span><span class="s1">)</span>
+        <span class="s1">midi_event_missing_timestamp = ((</span><span class="s3">0xC0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s1">)</span><span class="s0">,</span><span class="s1">)</span>
+
+        <span class="s0">for </span><span class="s1">midi_event </span><span class="s0">in </span><span class="s1">(midi_event_missing_data</span><span class="s0">, </span><span class="s1">midi_event_missing_timestamp):</span>
+            <span class="s0">with </span><span class="s1">self.assertRaises(ValueError):</span>
+                <span class="s1">events = pygame.midi.midis2events([midi_event]</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_midis2events__extra_event_data(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures midi events with extra values are handled properly.&quot;&quot;&quot;</span>
+        <span class="s1">midi_event_extra_data = ((</span><span class="s3">0xC0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s0">, </span><span class="s2">&quot;extra&quot;</span><span class="s1">)</span><span class="s0">, </span><span class="s3">20000</span><span class="s1">)</span>
+        <span class="s1">midi_event_extra_timestamp = ((</span><span class="s3">0xC0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s1">)</span><span class="s0">, </span><span class="s3">20000</span><span class="s0">, </span><span class="s2">&quot;extra&quot;</span><span class="s1">)</span>
+
+        <span class="s0">for </span><span class="s1">midi_event </span><span class="s0">in </span><span class="s1">(midi_event_extra_data</span><span class="s0">, </span><span class="s1">midi_event_extra_timestamp):</span>
+            <span class="s0">with </span><span class="s1">self.assertRaises(ValueError):</span>
+                <span class="s1">events = pygame.midi.midis2events([midi_event]</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_midis2events__extra_event_data_missing_timestamp(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures midi events with extra data and no timestamps are handled 
+        properly. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">midi_event_extra_data_no_timestamp = ((</span><span class="s3">0xC0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s0">, </span><span class="s2">&quot;extra&quot;</span><span class="s1">)</span><span class="s0">,</span><span class="s1">)</span>
+
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError):</span>
+            <span class="s1">events = pygame.midi.midis2events([midi_event_extra_data_no_timestamp]</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_conversions(self):</span>
+        <span class="s5">&quot;&quot;&quot;of frequencies to midi note numbers and ansi note names.&quot;&quot;&quot;</span>
+        <span class="s0">from </span><span class="s1">pygame.midi </span><span class="s0">import </span><span class="s1">frequency_to_midi</span><span class="s0">, </span><span class="s1">midi_to_frequency</span><span class="s0">, </span><span class="s1">midi_to_ansi_note</span>
+
+        <span class="s1">self.assertEqual(frequency_to_midi(</span><span class="s3">27.5</span><span class="s1">)</span><span class="s0">, </span><span class="s3">21</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(frequency_to_midi(</span><span class="s3">36.7</span><span class="s1">)</span><span class="s0">, </span><span class="s3">26</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(frequency_to_midi(</span><span class="s3">4186.0</span><span class="s1">)</span><span class="s0">, </span><span class="s3">108</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_frequency(</span><span class="s3">21</span><span class="s1">)</span><span class="s0">, </span><span class="s3">27.5</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_frequency(</span><span class="s3">26</span><span class="s1">)</span><span class="s0">, </span><span class="s3">36.7</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_frequency(</span><span class="s3">108</span><span class="s1">)</span><span class="s0">, </span><span class="s3">4186.0</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_ansi_note(</span><span class="s3">21</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;A0&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_ansi_note(</span><span class="s3">71</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;B4&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_ansi_note(</span><span class="s3">82</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;A#5&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_ansi_note(</span><span class="s3">83</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;B5&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_ansi_note(</span><span class="s3">93</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;A6&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_ansi_note(</span><span class="s3">94</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;A#6&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_ansi_note(</span><span class="s3">95</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;B6&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_ansi_note(</span><span class="s3">96</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;C7&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_ansi_note(</span><span class="s3">102</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;F#7&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(midi_to_ansi_note(</span><span class="s3">108</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;C8&quot;</span><span class="s1">)</span>
+
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s2">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">unittest.main()</span>
+</pre>
+</body>
+</html>

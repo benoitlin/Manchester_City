@@ -1,0 +1,423 @@
+<html>
+<head>
+<title>aliens.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6a8759;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+aliens.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.aliens 
+ 
+Shows a mini game where you have to defend against aliens. 
+ 
+What does it show you about pygame? 
+ 
+* pg.sprite, the difference between Sprite and Group. 
+* dirty rectangle optimization for processing for speed. 
+* music with pg.mixer.music, including fadeout 
+* sound effects with pg.Sound 
+* event processing, keyboard handling, QUIT handling. 
+* a main loop frame limited with a game clock from pg.time.Clock 
+* fullscreen switching. 
+ 
+ 
+Controls 
+-------- 
+ 
+* Left and right arrows to move. 
+* Space bar to shoot 
+* f key to toggle between fullscreen. 
+ 
+&quot;&quot;&quot;</span>
+
+<span class="s3">import </span><span class="s1">random</span>
+<span class="s3">import </span><span class="s1">os</span>
+
+<span class="s0"># import basic pygame modules</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+
+<span class="s0"># see if we can load more than standard BMP</span>
+<span class="s3">if not </span><span class="s1">pg.image.get_extended():</span>
+    <span class="s3">raise </span><span class="s1">SystemExit(</span><span class="s4">&quot;Sorry, extended image module required&quot;</span><span class="s1">)</span>
+
+
+<span class="s0"># game constants</span>
+<span class="s1">MAX_SHOTS = </span><span class="s5">2  </span><span class="s0"># most player bullets onscreen</span>
+<span class="s1">ALIEN_ODDS = </span><span class="s5">22  </span><span class="s0"># chances a new alien appears</span>
+<span class="s1">BOMB_ODDS = </span><span class="s5">60  </span><span class="s0"># chances a new bomb will drop</span>
+<span class="s1">ALIEN_RELOAD = </span><span class="s5">12  </span><span class="s0"># frames between new aliens</span>
+<span class="s1">SCREENRECT = pg.Rect(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">640</span><span class="s3">, </span><span class="s5">480</span><span class="s1">)</span>
+<span class="s1">SCORE = </span><span class="s5">0</span>
+
+<span class="s1">main_dir = os.path.split(os.path.abspath(__file__))[</span><span class="s5">0</span><span class="s1">]</span>
+
+
+<span class="s3">def </span><span class="s1">load_image(file):</span>
+    <span class="s2">&quot;&quot;&quot;loads an image, prepares it for play&quot;&quot;&quot;</span>
+    <span class="s1">file = os.path.join(main_dir</span><span class="s3">, </span><span class="s4">&quot;data&quot;</span><span class="s3">, </span><span class="s1">file)</span>
+    <span class="s3">try</span><span class="s1">:</span>
+        <span class="s1">surface = pg.image.load(file)</span>
+    <span class="s3">except </span><span class="s1">pg.error:</span>
+        <span class="s3">raise </span><span class="s1">SystemExit(</span><span class="s4">f'Could not load image &quot;</span><span class="s3">{</span><span class="s1">file</span><span class="s3">}</span><span class="s4">&quot; </span><span class="s3">{</span><span class="s1">pg.get_error()</span><span class="s3">}</span><span class="s4">'</span><span class="s1">)</span>
+    <span class="s3">return </span><span class="s1">surface.convert()</span>
+
+
+<span class="s3">def </span><span class="s1">load_sound(file):</span>
+    <span class="s2">&quot;&quot;&quot;because pygame can be be compiled without mixer.&quot;&quot;&quot;</span>
+    <span class="s3">if not </span><span class="s1">pg.mixer:</span>
+        <span class="s3">return None</span>
+    <span class="s1">file = os.path.join(main_dir</span><span class="s3">, </span><span class="s4">&quot;data&quot;</span><span class="s3">, </span><span class="s1">file)</span>
+    <span class="s3">try</span><span class="s1">:</span>
+        <span class="s1">sound = pg.mixer.Sound(file)</span>
+        <span class="s3">return </span><span class="s1">sound</span>
+    <span class="s3">except </span><span class="s1">pg.error:</span>
+        <span class="s1">print(</span><span class="s4">f&quot;Warning, unable to load, </span><span class="s3">{</span><span class="s1">file</span><span class="s3">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+    <span class="s3">return None</span>
+
+
+<span class="s0"># Each type of game object gets an init and an update function.</span>
+<span class="s0"># The update function is called once per frame, and it is when each object should</span>
+<span class="s0"># change its current position and state.</span>
+<span class="s0">#</span>
+<span class="s0"># The Player object actually gets a &quot;move&quot; function instead of update,</span>
+<span class="s0"># since it is passed extra information about the keyboard.</span>
+
+
+<span class="s3">class </span><span class="s1">Player(pg.sprite.Sprite):</span>
+    <span class="s2">&quot;&quot;&quot;Representing the player as a moon buggy type car.&quot;&quot;&quot;</span>
+
+    <span class="s1">speed = </span><span class="s5">10</span>
+    <span class="s1">bounce = </span><span class="s5">24</span>
+    <span class="s1">gun_offset = -</span><span class="s5">11</span>
+    <span class="s1">images = []</span>
+
+    <span class="s3">def </span><span class="s1">__init__(self):</span>
+        <span class="s1">pg.sprite.Sprite.__init__(self</span><span class="s3">, </span><span class="s1">self.containers)</span>
+        <span class="s1">self.image = self.images[</span><span class="s5">0</span><span class="s1">]</span>
+        <span class="s1">self.rect = self.image.get_rect(midbottom=SCREENRECT.midbottom)</span>
+        <span class="s1">self.reloading = </span><span class="s5">0</span>
+        <span class="s1">self.origtop = self.rect.top</span>
+        <span class="s1">self.facing = -</span><span class="s5">1</span>
+
+    <span class="s3">def </span><span class="s1">move(self</span><span class="s3">, </span><span class="s1">direction):</span>
+        <span class="s3">if </span><span class="s1">direction:</span>
+            <span class="s1">self.facing = direction</span>
+        <span class="s1">self.rect.move_ip(direction * self.speed</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span>
+        <span class="s1">self.rect = self.rect.clamp(SCREENRECT)</span>
+        <span class="s3">if </span><span class="s1">direction &lt; </span><span class="s5">0</span><span class="s1">:</span>
+            <span class="s1">self.image = self.images[</span><span class="s5">0</span><span class="s1">]</span>
+        <span class="s3">elif </span><span class="s1">direction &gt; </span><span class="s5">0</span><span class="s1">:</span>
+            <span class="s1">self.image = self.images[</span><span class="s5">1</span><span class="s1">]</span>
+        <span class="s1">self.rect.top = self.origtop - (self.rect.left // self.bounce % </span><span class="s5">2</span><span class="s1">)</span>
+
+    <span class="s3">def </span><span class="s1">gunpos(self):</span>
+        <span class="s1">pos = self.facing * self.gun_offset + self.rect.centerx</span>
+        <span class="s3">return </span><span class="s1">pos</span><span class="s3">, </span><span class="s1">self.rect.top</span>
+
+
+<span class="s3">class </span><span class="s1">Alien(pg.sprite.Sprite):</span>
+    <span class="s2">&quot;&quot;&quot;An alien space ship. That slowly moves down the screen.&quot;&quot;&quot;</span>
+
+    <span class="s1">speed = </span><span class="s5">13</span>
+    <span class="s1">animcycle = </span><span class="s5">12</span>
+    <span class="s1">images = []</span>
+
+    <span class="s3">def </span><span class="s1">__init__(self):</span>
+        <span class="s1">pg.sprite.Sprite.__init__(self</span><span class="s3">, </span><span class="s1">self.containers)</span>
+        <span class="s1">self.image = self.images[</span><span class="s5">0</span><span class="s1">]</span>
+        <span class="s1">self.rect = self.image.get_rect()</span>
+        <span class="s1">self.facing = random.choice((-</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)) * Alien.speed</span>
+        <span class="s1">self.frame = </span><span class="s5">0</span>
+        <span class="s3">if </span><span class="s1">self.facing &lt; </span><span class="s5">0</span><span class="s1">:</span>
+            <span class="s1">self.rect.right = SCREENRECT.right</span>
+
+    <span class="s3">def </span><span class="s1">update(self):</span>
+        <span class="s1">self.rect.move_ip(self.facing</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span>
+        <span class="s3">if not </span><span class="s1">SCREENRECT.contains(self.rect):</span>
+            <span class="s1">self.facing = -self.facing</span>
+            <span class="s1">self.rect.top = self.rect.bottom + </span><span class="s5">1</span>
+            <span class="s1">self.rect = self.rect.clamp(SCREENRECT)</span>
+        <span class="s1">self.frame = self.frame + </span><span class="s5">1</span>
+        <span class="s1">self.image = self.images[self.frame // self.animcycle % </span><span class="s5">3</span><span class="s1">]</span>
+
+
+<span class="s3">class </span><span class="s1">Explosion(pg.sprite.Sprite):</span>
+    <span class="s2">&quot;&quot;&quot;An explosion. Hopefully the Alien and not the player!&quot;&quot;&quot;</span>
+
+    <span class="s1">defaultlife = </span><span class="s5">12</span>
+    <span class="s1">animcycle = </span><span class="s5">3</span>
+    <span class="s1">images = []</span>
+
+    <span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">actor):</span>
+        <span class="s1">pg.sprite.Sprite.__init__(self</span><span class="s3">, </span><span class="s1">self.containers)</span>
+        <span class="s1">self.image = self.images[</span><span class="s5">0</span><span class="s1">]</span>
+        <span class="s1">self.rect = self.image.get_rect(center=actor.rect.center)</span>
+        <span class="s1">self.life = self.defaultlife</span>
+
+    <span class="s3">def </span><span class="s1">update(self):</span>
+        <span class="s2">&quot;&quot;&quot;called every time around the game loop. 
+ 
+        Show the explosion surface for 'defaultlife'. 
+        Every game tick(update), we decrease the 'life'. 
+ 
+        Also we animate the explosion. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">self.life = self.life - </span><span class="s5">1</span>
+        <span class="s1">self.image = self.images[self.life // self.animcycle % </span><span class="s5">2</span><span class="s1">]</span>
+        <span class="s3">if </span><span class="s1">self.life &lt;= </span><span class="s5">0</span><span class="s1">:</span>
+            <span class="s1">self.kill()</span>
+
+
+<span class="s3">class </span><span class="s1">Shot(pg.sprite.Sprite):</span>
+    <span class="s2">&quot;&quot;&quot;a bullet the Player sprite fires.&quot;&quot;&quot;</span>
+
+    <span class="s1">speed = -</span><span class="s5">11</span>
+    <span class="s1">images = []</span>
+
+    <span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">pos):</span>
+        <span class="s1">pg.sprite.Sprite.__init__(self</span><span class="s3">, </span><span class="s1">self.containers)</span>
+        <span class="s1">self.image = self.images[</span><span class="s5">0</span><span class="s1">]</span>
+        <span class="s1">self.rect = self.image.get_rect(midbottom=pos)</span>
+
+    <span class="s3">def </span><span class="s1">update(self):</span>
+        <span class="s2">&quot;&quot;&quot;called every time around the game loop. 
+ 
+        Every tick we move the shot upwards. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">self.rect.move_ip(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">self.speed)</span>
+        <span class="s3">if </span><span class="s1">self.rect.top &lt;= </span><span class="s5">0</span><span class="s1">:</span>
+            <span class="s1">self.kill()</span>
+
+
+<span class="s3">class </span><span class="s1">Bomb(pg.sprite.Sprite):</span>
+    <span class="s2">&quot;&quot;&quot;A bomb the aliens drop.&quot;&quot;&quot;</span>
+
+    <span class="s1">speed = </span><span class="s5">9</span>
+    <span class="s1">images = []</span>
+
+    <span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">alien):</span>
+        <span class="s1">pg.sprite.Sprite.__init__(self</span><span class="s3">, </span><span class="s1">self.containers)</span>
+        <span class="s1">self.image = self.images[</span><span class="s5">0</span><span class="s1">]</span>
+        <span class="s1">self.rect = self.image.get_rect(midbottom=alien.rect.move(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">5</span><span class="s1">).midbottom)</span>
+
+    <span class="s3">def </span><span class="s1">update(self):</span>
+        <span class="s2">&quot;&quot;&quot;called every time around the game loop. 
+ 
+        Every frame we move the sprite 'rect' down. 
+        When it reaches the bottom we: 
+ 
+        - make an explosion. 
+        - remove the Bomb. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">self.rect.move_ip(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">self.speed)</span>
+        <span class="s3">if </span><span class="s1">self.rect.bottom &gt;= </span><span class="s5">470</span><span class="s1">:</span>
+            <span class="s1">Explosion(self)</span>
+            <span class="s1">self.kill()</span>
+
+
+<span class="s3">class </span><span class="s1">Score(pg.sprite.Sprite):</span>
+    <span class="s2">&quot;&quot;&quot;to keep track of the score.&quot;&quot;&quot;</span>
+
+    <span class="s3">def </span><span class="s1">__init__(self):</span>
+        <span class="s1">pg.sprite.Sprite.__init__(self)</span>
+        <span class="s1">self.font = pg.font.Font(</span><span class="s3">None, </span><span class="s5">20</span><span class="s1">)</span>
+        <span class="s1">self.font.set_italic(</span><span class="s5">1</span><span class="s1">)</span>
+        <span class="s1">self.color = </span><span class="s4">&quot;white&quot;</span>
+        <span class="s1">self.lastscore = -</span><span class="s5">1</span>
+        <span class="s1">self.update()</span>
+        <span class="s1">self.rect = self.image.get_rect().move(</span><span class="s5">10</span><span class="s3">, </span><span class="s5">450</span><span class="s1">)</span>
+
+    <span class="s3">def </span><span class="s1">update(self):</span>
+        <span class="s2">&quot;&quot;&quot;We only update the score in update() when it has changed.&quot;&quot;&quot;</span>
+        <span class="s3">if </span><span class="s1">SCORE != self.lastscore:</span>
+            <span class="s1">self.lastscore = SCORE</span>
+            <span class="s1">msg = </span><span class="s4">&quot;Score: %d&quot; </span><span class="s1">% SCORE</span>
+            <span class="s1">self.image = self.font.render(msg</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s1">self.color)</span>
+
+
+<span class="s3">def </span><span class="s1">main(winstyle=</span><span class="s5">0</span><span class="s1">):</span>
+    <span class="s0"># Initialize pygame</span>
+    <span class="s3">if </span><span class="s1">pg.get_sdl_version()[</span><span class="s5">0</span><span class="s1">] == </span><span class="s5">2</span><span class="s1">:</span>
+        <span class="s1">pg.mixer.pre_init(</span><span class="s5">44100</span><span class="s3">, </span><span class="s5">32</span><span class="s3">, </span><span class="s5">2</span><span class="s3">, </span><span class="s5">1024</span><span class="s1">)</span>
+    <span class="s1">pg.init()</span>
+    <span class="s3">if </span><span class="s1">pg.mixer </span><span class="s3">and not </span><span class="s1">pg.mixer.get_init():</span>
+        <span class="s1">print(</span><span class="s4">&quot;Warning, no sound&quot;</span><span class="s1">)</span>
+        <span class="s1">pg.mixer = </span><span class="s3">None</span>
+
+    <span class="s1">fullscreen = </span><span class="s3">False</span>
+    <span class="s0"># Set the display mode</span>
+    <span class="s1">winstyle = </span><span class="s5">0  </span><span class="s0"># |FULLSCREEN</span>
+    <span class="s1">bestdepth = pg.display.mode_ok(SCREENRECT.size</span><span class="s3">, </span><span class="s1">winstyle</span><span class="s3">, </span><span class="s5">32</span><span class="s1">)</span>
+    <span class="s1">screen = pg.display.set_mode(SCREENRECT.size</span><span class="s3">, </span><span class="s1">winstyle</span><span class="s3">, </span><span class="s1">bestdepth)</span>
+
+    <span class="s0"># Load images, assign to sprite classes</span>
+    <span class="s0"># (do this before the classes are used, after screen setup)</span>
+    <span class="s1">img = load_image(</span><span class="s4">&quot;player1.gif&quot;</span><span class="s1">)</span>
+    <span class="s1">Player.images = [img</span><span class="s3">, </span><span class="s1">pg.transform.flip(img</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)]</span>
+    <span class="s1">img = load_image(</span><span class="s4">&quot;explosion1.gif&quot;</span><span class="s1">)</span>
+    <span class="s1">Explosion.images = [img</span><span class="s3">, </span><span class="s1">pg.transform.flip(img</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)]</span>
+    <span class="s1">Alien.images = [load_image(im) </span><span class="s3">for </span><span class="s1">im </span><span class="s3">in </span><span class="s1">(</span><span class="s4">&quot;alien1.gif&quot;</span><span class="s3">, </span><span class="s4">&quot;alien2.gif&quot;</span><span class="s3">, </span><span class="s4">&quot;alien3.gif&quot;</span><span class="s1">)]</span>
+    <span class="s1">Bomb.images = [load_image(</span><span class="s4">&quot;bomb.gif&quot;</span><span class="s1">)]</span>
+    <span class="s1">Shot.images = [load_image(</span><span class="s4">&quot;shot.gif&quot;</span><span class="s1">)]</span>
+
+    <span class="s0"># decorate the game window</span>
+    <span class="s1">icon = pg.transform.scale(Alien.images[</span><span class="s5">0</span><span class="s1">]</span><span class="s3">, </span><span class="s1">(</span><span class="s5">32</span><span class="s3">, </span><span class="s5">32</span><span class="s1">))</span>
+    <span class="s1">pg.display.set_icon(icon)</span>
+    <span class="s1">pg.display.set_caption(</span><span class="s4">&quot;Pygame Aliens&quot;</span><span class="s1">)</span>
+    <span class="s1">pg.mouse.set_visible(</span><span class="s5">0</span><span class="s1">)</span>
+
+    <span class="s0"># create the background, tile the bgd image</span>
+    <span class="s1">bgdtile = load_image(</span><span class="s4">&quot;background.gif&quot;</span><span class="s1">)</span>
+    <span class="s1">background = pg.Surface(SCREENRECT.size)</span>
+    <span class="s3">for </span><span class="s1">x </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">SCREENRECT.width</span><span class="s3">, </span><span class="s1">bgdtile.get_width()):</span>
+        <span class="s1">background.blit(bgdtile</span><span class="s3">, </span><span class="s1">(x</span><span class="s3">, </span><span class="s5">0</span><span class="s1">))</span>
+    <span class="s1">screen.blit(background</span><span class="s3">, </span><span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">))</span>
+    <span class="s1">pg.display.flip()</span>
+
+    <span class="s0"># load the sound effects</span>
+    <span class="s1">boom_sound = load_sound(</span><span class="s4">&quot;boom.wav&quot;</span><span class="s1">)</span>
+    <span class="s1">shoot_sound = load_sound(</span><span class="s4">&quot;car_door.wav&quot;</span><span class="s1">)</span>
+    <span class="s3">if </span><span class="s1">pg.mixer:</span>
+        <span class="s1">music = os.path.join(main_dir</span><span class="s3">, </span><span class="s4">&quot;data&quot;</span><span class="s3">, </span><span class="s4">&quot;house_lo.wav&quot;</span><span class="s1">)</span>
+        <span class="s1">pg.mixer.music.load(music)</span>
+        <span class="s1">pg.mixer.music.play(-</span><span class="s5">1</span><span class="s1">)</span>
+
+    <span class="s0"># Initialize Game Groups</span>
+    <span class="s1">aliens = pg.sprite.Group()</span>
+    <span class="s1">shots = pg.sprite.Group()</span>
+    <span class="s1">bombs = pg.sprite.Group()</span>
+    <span class="s1">all = pg.sprite.RenderUpdates()</span>
+    <span class="s1">lastalien = pg.sprite.GroupSingle()</span>
+
+    <span class="s0"># assign default groups to each sprite class</span>
+    <span class="s1">Player.containers = all</span>
+    <span class="s1">Alien.containers = aliens</span><span class="s3">, </span><span class="s1">all</span><span class="s3">, </span><span class="s1">lastalien</span>
+    <span class="s1">Shot.containers = shots</span><span class="s3">, </span><span class="s1">all</span>
+    <span class="s1">Bomb.containers = bombs</span><span class="s3">, </span><span class="s1">all</span>
+    <span class="s1">Explosion.containers = all</span>
+    <span class="s1">Score.containers = all</span>
+
+    <span class="s0"># Create Some Starting Values</span>
+    <span class="s3">global </span><span class="s1">score</span>
+    <span class="s1">alienreload = ALIEN_RELOAD</span>
+    <span class="s1">clock = pg.time.Clock()</span>
+
+    <span class="s0"># initialize our starting sprites</span>
+    <span class="s3">global </span><span class="s1">SCORE</span>
+    <span class="s1">player = Player()</span>
+    <span class="s1">Alien()  </span><span class="s0"># note, this 'lives' because it goes into a sprite group</span>
+    <span class="s3">if </span><span class="s1">pg.font:</span>
+        <span class="s1">all.add(Score())</span>
+
+    <span class="s0"># Run our main loop whilst the player is alive.</span>
+    <span class="s3">while </span><span class="s1">player.alive():</span>
+
+        <span class="s0"># get input</span>
+        <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">pg.event.get():</span>
+            <span class="s3">if </span><span class="s1">event.type == pg.QUIT:</span>
+                <span class="s3">return</span>
+            <span class="s3">if </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key == pg.K_ESCAPE:</span>
+                <span class="s3">return</span>
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN:</span>
+                <span class="s3">if </span><span class="s1">event.key == pg.K_f:</span>
+                    <span class="s3">if not </span><span class="s1">fullscreen:</span>
+                        <span class="s1">print(</span><span class="s4">&quot;Changing to FULLSCREEN&quot;</span><span class="s1">)</span>
+                        <span class="s1">screen_backup = screen.copy()</span>
+                        <span class="s1">screen = pg.display.set_mode(</span>
+                            <span class="s1">SCREENRECT.size</span><span class="s3">, </span><span class="s1">winstyle | pg.FULLSCREEN</span><span class="s3">, </span><span class="s1">bestdepth</span>
+                        <span class="s1">)</span>
+                        <span class="s1">screen.blit(screen_backup</span><span class="s3">, </span><span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">))</span>
+                    <span class="s3">else</span><span class="s1">:</span>
+                        <span class="s1">print(</span><span class="s4">&quot;Changing to windowed mode&quot;</span><span class="s1">)</span>
+                        <span class="s1">screen_backup = screen.copy()</span>
+                        <span class="s1">screen = pg.display.set_mode(</span>
+                            <span class="s1">SCREENRECT.size</span><span class="s3">, </span><span class="s1">winstyle</span><span class="s3">, </span><span class="s1">bestdepth</span>
+                        <span class="s1">)</span>
+                        <span class="s1">screen.blit(screen_backup</span><span class="s3">, </span><span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">))</span>
+                    <span class="s1">pg.display.flip()</span>
+                    <span class="s1">fullscreen = </span><span class="s3">not </span><span class="s1">fullscreen</span>
+
+        <span class="s1">keystate = pg.key.get_pressed()</span>
+
+        <span class="s0"># clear/erase the last drawn sprites</span>
+        <span class="s1">all.clear(screen</span><span class="s3">, </span><span class="s1">background)</span>
+
+        <span class="s0"># update all the sprites</span>
+        <span class="s1">all.update()</span>
+
+        <span class="s0"># handle player input</span>
+        <span class="s1">direction = keystate[pg.K_RIGHT] - keystate[pg.K_LEFT]</span>
+        <span class="s1">player.move(direction)</span>
+        <span class="s1">firing = keystate[pg.K_SPACE]</span>
+        <span class="s3">if not </span><span class="s1">player.reloading </span><span class="s3">and </span><span class="s1">firing </span><span class="s3">and </span><span class="s1">len(shots) &lt; MAX_SHOTS:</span>
+            <span class="s1">Shot(player.gunpos())</span>
+            <span class="s3">if </span><span class="s1">pg.mixer:</span>
+                <span class="s1">shoot_sound.play()</span>
+        <span class="s1">player.reloading = firing</span>
+
+        <span class="s0"># Create new alien</span>
+        <span class="s3">if </span><span class="s1">alienreload:</span>
+            <span class="s1">alienreload = alienreload - </span><span class="s5">1</span>
+        <span class="s3">elif not </span><span class="s1">int(random.random() * ALIEN_ODDS):</span>
+            <span class="s1">Alien()</span>
+            <span class="s1">alienreload = ALIEN_RELOAD</span>
+
+        <span class="s0"># Drop bombs</span>
+        <span class="s3">if </span><span class="s1">lastalien </span><span class="s3">and not </span><span class="s1">int(random.random() * BOMB_ODDS):</span>
+            <span class="s1">Bomb(lastalien.sprite)</span>
+
+        <span class="s0"># Detect collisions between aliens and players.</span>
+        <span class="s3">for </span><span class="s1">alien </span><span class="s3">in </span><span class="s1">pg.sprite.spritecollide(player</span><span class="s3">, </span><span class="s1">aliens</span><span class="s3">, </span><span class="s5">1</span><span class="s1">):</span>
+            <span class="s3">if </span><span class="s1">pg.mixer:</span>
+                <span class="s1">boom_sound.play()</span>
+            <span class="s1">Explosion(alien)</span>
+            <span class="s1">Explosion(player)</span>
+            <span class="s1">SCORE = SCORE + </span><span class="s5">1</span>
+            <span class="s1">player.kill()</span>
+
+        <span class="s0"># See if shots hit the aliens.</span>
+        <span class="s3">for </span><span class="s1">alien </span><span class="s3">in </span><span class="s1">pg.sprite.groupcollide(aliens</span><span class="s3">, </span><span class="s1">shots</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">).keys():</span>
+            <span class="s3">if </span><span class="s1">pg.mixer:</span>
+                <span class="s1">boom_sound.play()</span>
+            <span class="s1">Explosion(alien)</span>
+            <span class="s1">SCORE = SCORE + </span><span class="s5">1</span>
+
+        <span class="s0"># See if alien bombs hit the player.</span>
+        <span class="s3">for </span><span class="s1">bomb </span><span class="s3">in </span><span class="s1">pg.sprite.spritecollide(player</span><span class="s3">, </span><span class="s1">bombs</span><span class="s3">, </span><span class="s5">1</span><span class="s1">):</span>
+            <span class="s3">if </span><span class="s1">pg.mixer:</span>
+                <span class="s1">boom_sound.play()</span>
+            <span class="s1">Explosion(player)</span>
+            <span class="s1">Explosion(bomb)</span>
+            <span class="s1">player.kill()</span>
+
+        <span class="s0"># draw the scene</span>
+        <span class="s1">dirty = all.draw(screen)</span>
+        <span class="s1">pg.display.update(dirty)</span>
+
+        <span class="s0"># cap the framerate at 40fps. Also called 40HZ or 40 times per second.</span>
+        <span class="s1">clock.tick(</span><span class="s5">40</span><span class="s1">)</span>
+
+    <span class="s3">if </span><span class="s1">pg.mixer:</span>
+        <span class="s1">pg.mixer.music.fadeout(</span><span class="s5">1000</span><span class="s1">)</span>
+    <span class="s1">pg.time.wait(</span><span class="s5">1000</span><span class="s1">)</span>
+
+
+<span class="s0"># call the &quot;main&quot; function if running this script</span>
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s4">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">main()</span>
+    <span class="s1">pg.quit()</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>go_over_there.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #629755; font-style: italic;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #6897bb;}
+.s4 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+go_over_there.py</font>
+</center></td></tr></table>
+<pre><span class="s0">&quot;&quot;&quot; pg.examples.go_over_there 
+This simple tech demo is showcasing the use of Vector2.move_towards() 
+using multiple circles to represent Vectors. Each circle will have a 
+random position and speed once the demo starts. 
+ 
+Mouse Controls: 
+* Use the mouse to click on a new target position 
+ 
+Keyboard Controls: 
+* Press R to restart the demo 
+&quot;&quot;&quot;</span>
+<span class="s2">import </span><span class="s1">pygame </span><span class="s2">as </span><span class="s1">pg</span>
+<span class="s2">import </span><span class="s1">random</span>
+
+<span class="s1">MIN_SPEED = </span><span class="s3">0.25</span>
+<span class="s1">MAX_SPEED = </span><span class="s3">5</span>
+<span class="s1">MAX_BALLS = </span><span class="s3">1600</span>
+<span class="s1">SCREEN_SIZE = pg.Vector2(</span><span class="s3">1000</span><span class="s2">, </span><span class="s3">600</span><span class="s1">)</span>
+<span class="s1">CIRCLE_RADIUS = </span><span class="s3">5</span>
+
+<span class="s1">pg.init()</span>
+<span class="s1">screen = pg.display.set_mode(SCREEN_SIZE)</span>
+<span class="s1">clock = pg.time.Clock()</span>
+
+<span class="s1">target_position = </span><span class="s2">None</span>
+<span class="s1">balls = []</span>
+
+
+<span class="s2">class </span><span class="s1">Ball:</span>
+    <span class="s2">def </span><span class="s1">__init__(self</span><span class="s2">, </span><span class="s1">position</span><span class="s2">, </span><span class="s1">speed):</span>
+        <span class="s1">self.position = position</span>
+        <span class="s1">self.speed = speed</span>
+
+
+<span class="s2">def </span><span class="s1">reset():</span>
+    <span class="s2">global </span><span class="s1">balls</span>
+    <span class="s2">global </span><span class="s1">target_position</span>
+
+    <span class="s1">target_position = </span><span class="s2">None</span>
+    <span class="s1">balls = []</span>
+    <span class="s2">for </span><span class="s1">x </span><span class="s2">in </span><span class="s1">range(MAX_BALLS):</span>
+        <span class="s1">pos = pg.Vector2(</span>
+            <span class="s1">random.randint(</span><span class="s3">0</span><span class="s2">, </span><span class="s1">SCREEN_SIZE.x)</span><span class="s2">, </span><span class="s1">random.randint(</span><span class="s3">0</span><span class="s2">, </span><span class="s1">SCREEN_SIZE.y)</span>
+        <span class="s1">)</span>
+        <span class="s1">speed = random.uniform(MIN_SPEED</span><span class="s2">, </span><span class="s1">MAX_SPEED)</span>
+
+        <span class="s1">b = Ball(pos</span><span class="s2">, </span><span class="s1">speed)</span>
+        <span class="s1">balls.append(b)</span>
+
+
+<span class="s1">reset()</span>
+<span class="s1">delta_time = </span><span class="s3">0</span>
+<span class="s1">running = </span><span class="s2">True</span>
+<span class="s2">while </span><span class="s1">running:</span>
+    <span class="s2">for </span><span class="s1">event </span><span class="s2">in </span><span class="s1">pg.event.get():</span>
+        <span class="s2">if </span><span class="s1">event.type == pg.QUIT:</span>
+            <span class="s1">running = </span><span class="s2">False</span>
+
+        <span class="s2">if </span><span class="s1">event.type == pg.MOUSEBUTTONUP:</span>
+            <span class="s1">target_position = pg.mouse.get_pos()</span>
+
+        <span class="s2">if </span><span class="s1">event.type == pg.KEYUP:</span>
+            <span class="s2">if </span><span class="s1">event.key == pg.K_ESCAPE:</span>
+                <span class="s1">running = </span><span class="s2">False</span>
+
+            <span class="s2">if </span><span class="s1">event.key == pg.K_r:</span>
+                <span class="s1">reset()</span>
+
+    <span class="s1">screen.fill((</span><span class="s3">31</span><span class="s2">, </span><span class="s3">143</span><span class="s2">, </span><span class="s3">65</span><span class="s1">))</span>
+
+    <span class="s2">for </span><span class="s1">o </span><span class="s2">in </span><span class="s1">balls:</span>
+        <span class="s2">if </span><span class="s1">target_position </span><span class="s2">is not None</span><span class="s1">:</span>
+            <span class="s1">o.position.move_towards_ip(target_position</span><span class="s2">, </span><span class="s1">o.speed * delta_time)</span>
+        <span class="s1">pg.draw.circle(screen</span><span class="s2">, </span><span class="s1">(</span><span class="s3">118</span><span class="s2">, </span><span class="s3">207</span><span class="s2">, </span><span class="s3">145</span><span class="s1">)</span><span class="s2">, </span><span class="s1">o.position</span><span class="s2">, </span><span class="s1">CIRCLE_RADIUS)</span>
+
+    <span class="s1">pg.display.flip()</span>
+    <span class="s1">delta_time = clock.tick(</span><span class="s3">60</span><span class="s1">)</span>
+    <span class="s1">pg.display.set_caption(</span>
+        <span class="s4">f&quot;fps: </span><span class="s2">{</span><span class="s1">round(clock.get_fps()</span><span class="s2">, </span><span class="s3">2</span><span class="s1">)</span><span class="s2">}</span><span class="s4">, ball count: </span><span class="s2">{</span><span class="s1">len(balls)</span><span class="s2">}</span><span class="s4">&quot;</span>
+    <span class="s1">)</span>
+
+<span class="s1">pg.quit()</span>
+</pre>
+</body>
+</html>

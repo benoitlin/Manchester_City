@@ -1,0 +1,125 @@
+<html>
+<head>
+<title>fastevent.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+fastevent.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.fastevent`</span>
+<span class="s0">=======================</span>
+
+<span class="s0">.. module:: pygame.fastevent</span>
+   <span class="s0">:synopsis: pygame module for interacting with events and queues from multiple</span>
+              <span class="s0">threads.</span>
+
+<span class="s0">| :sl:`pygame module for interacting with events and queues`</span>
+
+<span class="s0">IMPORTANT NOTE: THIS MODULE IS DEPRECATED IN PYGAME 2.2</span>
+
+<span class="s0">In older pygame versions before pygame 2, :mod:`pygame.event` was not well</span>
+<span class="s0">suited for posting events from different threads. This module served as a</span>
+<span class="s0">replacement (with less features) for multithreaded use. Now, the usage of this</span>
+<span class="s0">module is highly discouraged in favour of use of the main :mod:`pygame.event`</span>
+<span class="s0">module. This module will be removed in a future pygame version.</span>
+
+<span class="s0">Below, the legacy docs of the module is provided</span>
+
+<span class="s0">.. function:: init</span>
+
+   <span class="s0">| :sl:`initialize pygame.fastevent`</span>
+   <span class="s0">| :sg:`init() -&gt; None`</span>
+
+   <span class="s0">Initialize the pygame.fastevent module.</span>
+
+   <span class="s0">.. ## pygame.fastevent.init ##</span>
+
+<span class="s0">.. function:: get_init</span>
+
+   <span class="s0">| :sl:`returns True if the fastevent module is currently initialized`</span>
+   <span class="s0">| :sg:`get_init() -&gt; bool`</span>
+
+   <span class="s0">Returns True if the pygame.fastevent module is currently initialized.</span>
+
+   <span class="s0">.. ## pygame.fastevent.get_init ##</span>
+
+<span class="s0">.. function:: pump</span>
+
+   <span class="s0">| :sl:`internally process pygame event handlers`</span>
+   <span class="s0">| :sg:`pump() -&gt; None`</span>
+
+   <span class="s0">For each frame of your game, you will need to make some sort of call to the</span>
+   <span class="s0">event queue. This ensures your program can internally interact with the rest</span>
+   <span class="s0">of the operating system.</span>
+
+   <span class="s0">This function is not necessary if your program is consistently processing</span>
+   <span class="s0">events on the queue through the other :mod:`pygame.fastevent` functions.</span>
+
+   <span class="s0">There are important things that must be dealt with internally in the event</span>
+   <span class="s0">queue. The main window may need to be repainted or respond to the system. If</span>
+   <span class="s0">you fail to make a call to the event queue for too long, the system may</span>
+   <span class="s0">decide your program has locked up.</span>
+
+   <span class="s0">.. ## pygame.fastevent.pump ##</span>
+
+<span class="s0">.. function:: wait</span>
+
+   <span class="s0">| :sl:`wait for an event`</span>
+   <span class="s0">| :sg:`wait() -&gt; Event`</span>
+
+   <span class="s0">Returns the current event on the queue. If there are no messages</span>
+   <span class="s0">waiting on the queue, this will not return until one is available.</span>
+   <span class="s0">Sometimes it is important to use this wait to get events from the queue,</span>
+   <span class="s0">it will allow your application to idle when the user isn't doing anything</span>
+   <span class="s0">with it.</span>
+
+   <span class="s0">.. ## pygame.fastevent.wait ##</span>
+
+<span class="s0">.. function:: poll</span>
+
+   <span class="s0">| :sl:`get an available event`</span>
+   <span class="s0">| :sg:`poll() -&gt; Event`</span>
+
+   <span class="s0">Returns next event on queue. If there is no event waiting on the queue,</span>
+   <span class="s0">this will return an event with type NOEVENT.</span>
+
+   <span class="s0">.. ## pygame.fastevent.poll ##</span>
+
+<span class="s0">.. function:: get</span>
+
+   <span class="s0">| :sl:`get all events from the queue`</span>
+   <span class="s0">| :sg:`get() -&gt; list of Events`</span>
+
+   <span class="s0">This will get all the messages and remove them from the queue.</span>
+
+   <span class="s0">.. ## pygame.fastevent.get ##</span>
+
+<span class="s0">.. function:: post</span>
+
+   <span class="s0">| :sl:`place an event on the queue`</span>
+   <span class="s0">| :sg:`post(Event) -&gt; None`</span>
+
+   <span class="s0">This will post your own event objects onto the event queue. You can post</span>
+   <span class="s0">any event type you want, but some care must be taken. For example, if you</span>
+   <span class="s0">post a MOUSEBUTTONDOWN event to the queue, it is likely any code receiving</span>
+   <span class="s0">the event will expect the standard MOUSEBUTTONDOWN attributes to be</span>
+   <span class="s0">available, like 'pos' and 'button'.</span>
+
+   <span class="s0">Because pygame.fastevent.post() may have to wait for the queue to empty,</span>
+   <span class="s0">you can get into a dead lock if you try to append an event on to a full</span>
+   <span class="s0">queue from the thread that processes events. For that reason I do not</span>
+   <span class="s0">recommend using this function in the main thread of an SDL program.</span>
+
+   <span class="s0">.. ## pygame.fastevent.post ##</span>
+
+<span class="s0">.. ## pygame.fastevent ##</span></pre>
+</body>
+</html>

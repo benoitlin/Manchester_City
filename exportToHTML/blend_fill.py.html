@@ -1,0 +1,136 @@
+<html>
+<head>
+<title>blend_fill.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6a8759;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+blend_fill.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.blend_fill 
+ 
+BLEND_ing colors in different ways with Surface.fill(). 
+ 
+Keyboard Controls: 
+ 
+* Press R, G, B to increase the color channel values, 
+* 1-9 to set the step range for the increment, 
+* A - ADD, S- SUB, M- MULT, - MIN, + MAX to change the blend modes 
+ 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">os</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+<span class="s3">from </span><span class="s1">pygame </span><span class="s3">import </span><span class="s1">K_1</span><span class="s3">, </span><span class="s1">K_2</span><span class="s3">, </span><span class="s1">K_3</span><span class="s3">, </span><span class="s1">K_4</span><span class="s3">, </span><span class="s1">K_5</span><span class="s3">, </span><span class="s1">K_6</span><span class="s3">, </span><span class="s1">K_7</span><span class="s3">, </span><span class="s1">K_8</span><span class="s3">, </span><span class="s1">K_9</span>
+
+
+<span class="s3">def </span><span class="s1">usage():</span>
+    <span class="s1">print(</span><span class="s4">&quot;Press R, G, B to increase the color channel values,&quot;</span><span class="s1">)</span>
+    <span class="s1">print(</span><span class="s4">&quot;1-9 to set the step range for the increment,&quot;</span><span class="s1">)</span>
+    <span class="s1">print(</span><span class="s4">&quot;A - ADD, S- SUB, M- MULT, - MIN, + MAX&quot;</span><span class="s1">)</span>
+    <span class="s1">print(</span><span class="s4">&quot;  to change the blend modes&quot;</span><span class="s1">)</span>
+
+
+<span class="s1">main_dir = os.path.split(os.path.abspath(__file__))[</span><span class="s5">0</span><span class="s1">]</span>
+<span class="s1">data_dir = os.path.join(main_dir</span><span class="s3">, </span><span class="s4">&quot;data&quot;</span><span class="s1">)</span>
+
+
+<span class="s3">def </span><span class="s1">main():</span>
+    <span class="s1">color = [</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">]</span>
+    <span class="s1">changed = </span><span class="s3">False</span>
+    <span class="s1">blendtype = </span><span class="s5">0</span>
+    <span class="s1">step = </span><span class="s5">5</span>
+
+    <span class="s1">pg.init()</span>
+    <span class="s1">screen = pg.display.set_mode((</span><span class="s5">640</span><span class="s3">, </span><span class="s5">480</span><span class="s1">)</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">32</span><span class="s1">)</span>
+    <span class="s1">screen.fill((</span><span class="s5">100</span><span class="s3">, </span><span class="s5">100</span><span class="s3">, </span><span class="s5">100</span><span class="s1">))</span>
+
+    <span class="s1">image = pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s4">&quot;liquid.bmp&quot;</span><span class="s1">)).convert()</span>
+    <span class="s1">blendimage = pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s4">&quot;liquid.bmp&quot;</span><span class="s1">)).convert()</span>
+    <span class="s1">screen.blit(image</span><span class="s3">, </span><span class="s1">(</span><span class="s5">10</span><span class="s3">, </span><span class="s5">10</span><span class="s1">))</span>
+    <span class="s1">screen.blit(blendimage</span><span class="s3">, </span><span class="s1">(</span><span class="s5">200</span><span class="s3">, </span><span class="s5">10</span><span class="s1">))</span>
+
+    <span class="s1">pg.display.flip()</span>
+    <span class="s1">pg.key.set_repeat(</span><span class="s5">500</span><span class="s3">, </span><span class="s5">30</span><span class="s1">)</span>
+    <span class="s1">usage()</span>
+
+    <span class="s1">going = </span><span class="s3">True</span>
+    <span class="s3">while </span><span class="s1">going:</span>
+        <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">pg.event.get():</span>
+            <span class="s3">if </span><span class="s1">event.type == pg.QUIT:</span>
+                <span class="s1">going = </span><span class="s3">False</span>
+
+            <span class="s3">if </span><span class="s1">event.type == pg.KEYDOWN:</span>
+                <span class="s1">usage()</span>
+
+                <span class="s3">if </span><span class="s1">event.key == pg.K_ESCAPE:</span>
+                    <span class="s1">going = </span><span class="s3">False</span>
+
+                <span class="s3">if </span><span class="s1">event.key == pg.K_r:</span>
+                    <span class="s1">color[</span><span class="s5">0</span><span class="s1">] += step</span>
+                    <span class="s3">if </span><span class="s1">color[</span><span class="s5">0</span><span class="s1">] &gt; </span><span class="s5">255</span><span class="s1">:</span>
+                        <span class="s1">color[</span><span class="s5">0</span><span class="s1">] = </span><span class="s5">0</span>
+                    <span class="s1">changed = </span><span class="s3">True</span>
+
+                <span class="s3">elif </span><span class="s1">event.key == pg.K_g:</span>
+                    <span class="s1">color[</span><span class="s5">1</span><span class="s1">] += step</span>
+                    <span class="s3">if </span><span class="s1">color[</span><span class="s5">1</span><span class="s1">] &gt; </span><span class="s5">255</span><span class="s1">:</span>
+                        <span class="s1">color[</span><span class="s5">1</span><span class="s1">] = </span><span class="s5">0</span>
+                    <span class="s1">changed = </span><span class="s3">True</span>
+
+                <span class="s3">elif </span><span class="s1">event.key == pg.K_b:</span>
+                    <span class="s1">color[</span><span class="s5">2</span><span class="s1">] += step</span>
+                    <span class="s3">if </span><span class="s1">color[</span><span class="s5">2</span><span class="s1">] &gt; </span><span class="s5">255</span><span class="s1">:</span>
+                        <span class="s1">color[</span><span class="s5">2</span><span class="s1">] = </span><span class="s5">0</span>
+                    <span class="s1">changed = </span><span class="s3">True</span>
+
+                <span class="s3">elif </span><span class="s1">event.key == pg.K_a:</span>
+                    <span class="s1">blendtype = pg.BLEND_ADD</span>
+                    <span class="s1">changed = </span><span class="s3">True</span>
+                <span class="s3">elif </span><span class="s1">event.key == pg.K_s:</span>
+                    <span class="s1">blendtype = pg.BLEND_SUB</span>
+                    <span class="s1">changed = </span><span class="s3">True</span>
+                <span class="s3">elif </span><span class="s1">event.key == pg.K_m:</span>
+                    <span class="s1">blendtype = pg.BLEND_MULT</span>
+                    <span class="s1">changed = </span><span class="s3">True</span>
+                <span class="s3">elif </span><span class="s1">event.key == pg.K_PLUS:</span>
+                    <span class="s1">blendtype = pg.BLEND_MAX</span>
+                    <span class="s1">changed = </span><span class="s3">True</span>
+                <span class="s3">elif </span><span class="s1">event.key == pg.K_MINUS:</span>
+                    <span class="s1">blendtype = pg.BLEND_MIN</span>
+                    <span class="s1">changed = </span><span class="s3">True</span>
+
+                <span class="s3">elif </span><span class="s1">event.key </span><span class="s3">in </span><span class="s1">(K_1</span><span class="s3">, </span><span class="s1">K_2</span><span class="s3">, </span><span class="s1">K_3</span><span class="s3">, </span><span class="s1">K_4</span><span class="s3">, </span><span class="s1">K_5</span><span class="s3">, </span><span class="s1">K_6</span><span class="s3">, </span><span class="s1">K_7</span><span class="s3">, </span><span class="s1">K_8</span><span class="s3">, </span><span class="s1">K_9):</span>
+                    <span class="s1">step = int(event.unicode)</span>
+
+            <span class="s3">if </span><span class="s1">changed:</span>
+                <span class="s1">screen.fill((</span><span class="s5">100</span><span class="s3">, </span><span class="s5">100</span><span class="s3">, </span><span class="s5">100</span><span class="s1">))</span>
+                <span class="s1">screen.blit(image</span><span class="s3">, </span><span class="s1">(</span><span class="s5">10</span><span class="s3">, </span><span class="s5">10</span><span class="s1">))</span>
+                <span class="s1">blendimage.blit(image</span><span class="s3">, </span><span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">))</span>
+                <span class="s0"># blendimage.fill (color, (0, 0, 20, 20), blendtype)</span>
+                <span class="s1">blendimage.fill(color</span><span class="s3">, None, </span><span class="s1">blendtype)</span>
+                <span class="s1">screen.blit(blendimage</span><span class="s3">, </span><span class="s1">(</span><span class="s5">200</span><span class="s3">, </span><span class="s5">10</span><span class="s1">))</span>
+                <span class="s1">print(</span>
+                    <span class="s4">f&quot;Color: </span><span class="s3">{</span><span class="s1">tuple(color)</span><span class="s3">}</span><span class="s4">, Pixel (0,0): </span><span class="s3">{</span><span class="s1">[blendimage.get_at((</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">))]</span><span class="s3">}</span><span class="s4">&quot;</span>
+                <span class="s1">)</span>
+                <span class="s1">changed = </span><span class="s3">False</span>
+                <span class="s1">pg.display.flip()</span>
+
+    <span class="s1">pg.quit()</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s4">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">main()</span>
+</pre>
+</body>
+</html>

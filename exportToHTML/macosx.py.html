@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>macosx.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #629755; font-style: italic;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+macosx.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">platform</span>
+<span class="s0">import </span><span class="s1">os</span>
+<span class="s0">import </span><span class="s1">sys</span>
+
+<span class="s1">__all__ = [</span><span class="s2">&quot;Video_AutoInit&quot;</span><span class="s1">]</span>
+
+
+<span class="s0">def </span><span class="s1">Video_AutoInit():</span>
+    <span class="s3">&quot;&quot;&quot;Called from the base.c just before display module is initialized.&quot;&quot;&quot;</span>
+    <span class="s0">if </span><span class="s2">&quot;Darwin&quot; </span><span class="s0">in </span><span class="s1">platform.platform():</span>
+        <span class="s0">if </span><span class="s1">(os.getcwd() == </span><span class="s2">&quot;/&quot;</span><span class="s1">) </span><span class="s0">and </span><span class="s1">len(sys.argv) &gt; </span><span class="s4">1</span><span class="s1">:</span>
+            <span class="s1">os.chdir(os.path.dirname(sys.argv[</span><span class="s4">0</span><span class="s1">]))</span>
+    <span class="s0">return True</span>
+</pre>
+</body>
+</html>

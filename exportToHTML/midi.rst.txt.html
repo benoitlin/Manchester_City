@@ -1,0 +1,501 @@
+<html>
+<head>
+<title>midi.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+midi.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.midi`</span>
+<span class="s0">==================</span>
+
+<span class="s0">.. module:: pygame.midi</span>
+   <span class="s0">:synopsis: pygame module for interacting with midi input and output.</span>
+
+<span class="s0">| :sl:`pygame module for interacting with midi input and output.`</span>
+
+<span class="s0">.. versionadded:: 1.9.0</span>
+
+<span class="s0">The midi module can send output to midi devices and get input from midi</span>
+<span class="s0">devices. It can also list midi devices on the system.</span>
+
+<span class="s0">The midi module supports real and virtual midi devices.</span>
+
+<span class="s0">It uses the portmidi library. Is portable to which ever platforms portmidi</span>
+<span class="s0">supports (currently Windows, Mac OS X, and Linux).</span>
+
+<span class="s0">This uses pyportmidi for now, but may use its own bindings at some point in the</span>
+<span class="s0">future. The pyportmidi bindings are included with pygame.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">.. versionadded:: 2.0.0</span>
+
+<span class="s0">These are pygame events (:mod:`pygame.event`) reserved for midi use. The</span>
+<span class="s0">``MIDIIN`` event is used by :func:`pygame.midi.midis2events` when converting</span>
+<span class="s0">midi events to pygame events.</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">MIDIIN</span>
+   <span class="s0">MIDIOUT</span>
+
+<span class="s0">|</span>
+
+<span class="s0">.. function:: init</span>
+
+   <span class="s0">| :sl:`initialize the midi module`</span>
+   <span class="s0">| :sg:`init() -&gt; None`</span>
+
+   <span class="s0">Initializes the :mod:`pygame.midi` module. Must be called before using the</span>
+   <span class="s0">:mod:`pygame.midi` module.</span>
+
+   <span class="s0">It is safe to call this more than once.</span>
+
+   <span class="s0">.. ## pygame.midi.init ##</span>
+
+<span class="s0">.. function:: quit</span>
+
+   <span class="s0">| :sl:`uninitialize the midi module`</span>
+   <span class="s0">| :sg:`quit() -&gt; None`</span>
+
+   <span class="s0">Uninitializes the :mod:`pygame.midi` module. If :func:`pygame.midi.init` was</span>
+   <span class="s0">called to initialize the :mod:`pygame.midi` module, then this function will</span>
+   <span class="s0">be called automatically when your program exits.</span>
+
+   <span class="s0">It is safe to call this function more than once.</span>
+
+   <span class="s0">.. ## pygame.midi.quit ##</span>
+
+<span class="s0">.. function:: get_init</span>
+
+   <span class="s0">| :sl:`returns True if the midi module is currently initialized`</span>
+   <span class="s0">| :sg:`get_init() -&gt; bool`</span>
+
+   <span class="s0">Gets the initialization state of the :mod:`pygame.midi` module.</span>
+
+   <span class="s0">:returns: ``True`` if the :mod:`pygame.midi` module is currently initialized.</span>
+   <span class="s0">:rtype: bool</span>
+
+   <span class="s0">.. versionadded:: 1.9.5</span>
+
+   <span class="s0">.. ## pygame.midi.get_init ##</span>
+
+<span class="s0">.. class:: Input</span>
+
+   <span class="s0">| :sl:`Input is used to get midi input from midi devices.`</span>
+   <span class="s0">| :sg:`Input(device_id) -&gt; None`</span>
+   <span class="s0">| :sg:`Input(device_id, buffer_size) -&gt; None`</span>
+
+   <span class="s0">:param int device_id: midi device id</span>
+   <span class="s0">:param int buffer_size: (optional) the number of input events to be buffered</span>
+
+   <span class="s0">.. method:: close</span>
+
+      <span class="s0">| :sl:`closes a midi stream, flushing any pending buffers.`</span>
+      <span class="s0">| :sg:`close() -&gt; None`</span>
+
+      <span class="s0">PortMidi attempts to close open streams when the application exits.</span>
+
+      <span class="s0">.. note:: This is particularly difficult under Windows.</span>
+
+      <span class="s0">.. ## Input.close ##</span>
+
+   <span class="s0">.. method:: poll</span>
+
+      <span class="s0">| :sl:`returns True if there's data, or False if not.`</span>
+      <span class="s0">| :sg:`poll() -&gt; bool`</span>
+
+      <span class="s0">Used to indicate if any data exists.</span>
+
+      <span class="s0">:returns: ``True`` if there is data, ``False`` otherwise</span>
+      <span class="s0">:rtype: bool</span>
+
+      <span class="s0">:raises MidiException: on error</span>
+
+      <span class="s0">.. ## Input.poll ##</span>
+
+   <span class="s0">.. method:: read</span>
+
+      <span class="s0">| :sl:`reads num_events midi events from the buffer.`</span>
+      <span class="s0">| :sg:`read(num_events) -&gt; midi_event_list`</span>
+
+      <span class="s0">Reads from the input buffer and gives back midi events.</span>
+
+      <span class="s0">:param int num_events: number of input events to read</span>
+
+      <span class="s0">:returns: the format for midi_event_list is</span>
+         <span class="s0">``[[[status, data1, data2, data3], timestamp], ...]``</span>
+      <span class="s0">:rtype: list</span>
+
+      <span class="s0">.. ## Input.read ##</span>
+
+   <span class="s0">.. ## pygame.midi.Input ##</span>
+
+<span class="s0">.. class:: Output</span>
+
+   <span class="s0">| :sl:`Output is used to send midi to an output device`</span>
+   <span class="s0">| :sg:`Output(device_id) -&gt; None`</span>
+   <span class="s0">| :sg:`Output(device_id, latency=0) -&gt; None`</span>
+   <span class="s0">| :sg:`Output(device_id, buffer_size=256) -&gt; None`</span>
+   <span class="s0">| :sg:`Output(device_id, latency, buffer_size) -&gt; None`</span>
+
+   <span class="s0">The ``buffer_size`` specifies the number of output events to be buffered</span>
+   <span class="s0">waiting for output. In some cases (see below) PortMidi does not buffer</span>
+   <span class="s0">output at all and merely passes data to a lower-level API, in which case</span>
+   <span class="s0">buffersize is ignored.</span>
+
+   <span class="s0">``latency`` is the delay in milliseconds applied to timestamps to determine</span>
+   <span class="s0">when the output should actually occur. If ``latency`` is &lt;&lt;0, 0 is assumed.</span>
+
+   <span class="s0">If ``latency`` is zero, timestamps are ignored and all output is delivered</span>
+   <span class="s0">immediately. If ``latency`` is greater than zero, output is delayed until the</span>
+   <span class="s0">message timestamp plus the ``latency``. In some cases, PortMidi can obtain</span>
+   <span class="s0">better timing than your application by passing timestamps along to the</span>
+   <span class="s0">device driver or hardware. Latency may also help you to synchronize midi</span>
+   <span class="s0">data to audio data by matching midi latency to the audio buffer latency.</span>
+
+   <span class="s0">.. note::</span>
+      <span class="s0">Time is measured relative to the time source indicated by time_proc.</span>
+      <span class="s0">Timestamps are absolute, not relative delays or offsets.</span>
+
+   <span class="s0">.. method:: abort</span>
+
+      <span class="s0">| :sl:`terminates outgoing messages immediately`</span>
+      <span class="s0">| :sg:`abort() -&gt; None`</span>
+
+      <span class="s0">The caller should immediately close the output port; this call may result</span>
+      <span class="s0">in transmission of a partial midi message. There is no abort for Midi</span>
+      <span class="s0">input because the user can simply ignore messages in the buffer and close</span>
+      <span class="s0">an input device at any time.</span>
+
+      <span class="s0">.. ## Output.abort ##</span>
+
+   <span class="s0">.. method:: close</span>
+
+      <span class="s0">| :sl:`closes a midi stream, flushing any pending buffers.`</span>
+      <span class="s0">| :sg:`close() -&gt; None`</span>
+
+      <span class="s0">PortMidi attempts to close open streams when the application exits.</span>
+
+      <span class="s0">.. note:: This is particularly difficult under Windows.</span>
+
+      <span class="s0">.. ## Output.close ##</span>
+
+   <span class="s0">.. method:: note_off</span>
+
+      <span class="s0">| :sl:`turns a midi note off (note must be on)`</span>
+      <span class="s0">| :sg:`note_off(note, velocity=None, channel=0) -&gt; None`</span>
+
+      <span class="s0">Turn a note off in the output stream. The note must already be on for</span>
+      <span class="s0">this to work correctly.</span>
+
+      <span class="s0">.. ## Output.note_off ##</span>
+
+   <span class="s0">.. method:: note_on</span>
+
+      <span class="s0">| :sl:`turns a midi note on (note must be off)`</span>
+      <span class="s0">| :sg:`note_on(note, velocity=None, channel=0) -&gt; None`</span>
+
+      <span class="s0">Turn a note on in the output stream. The note must already be off for</span>
+      <span class="s0">this to work correctly.</span>
+
+      <span class="s0">.. ## Output.note_on ##</span>
+
+   <span class="s0">.. method:: set_instrument</span>
+
+      <span class="s0">| :sl:`select an instrument, with a value between 0 and 127`</span>
+      <span class="s0">| :sg:`set_instrument(instrument_id, channel=0) -&gt; None`</span>
+
+      <span class="s0">Select an instrument.</span>
+
+      <span class="s0">.. ## Output.set_instrument ##</span>
+
+   <span class="s0">.. method:: pitch_bend</span>
+
+      <span class="s0">| :sl:`modify the pitch of a channel.`</span>
+      <span class="s0">| :sg:`set_instrument(value=0, channel=0) -&gt; None`</span>
+
+      <span class="s0">Adjust the pitch of a channel. The value is a signed integer</span>
+      <span class="s0">from -8192 to +8191. For example, 0 means &quot;no change&quot;, +4096 is</span>
+      <span class="s0">typically a semitone higher, and -8192 is 1 whole tone lower (though</span>
+      <span class="s0">the musical range corresponding to the pitch bend range can also be</span>
+      <span class="s0">changed in some synthesizers).</span>
+
+      <span class="s0">If no value is given, the pitch bend is returned to &quot;no change&quot;.</span>
+
+      <span class="s0">.. versionadded:: 1.9.4</span>
+
+   <span class="s0">.. method:: write</span>
+
+      <span class="s0">| :sl:`writes a list of midi data to the Output`</span>
+      <span class="s0">| :sg:`write(data) -&gt; None`</span>
+
+      <span class="s0">Writes series of MIDI information in the form of a list.</span>
+
+      <span class="s0">:param list data: data to write, the expected format is</span>
+         <span class="s0">``[[[status, data1=0, data2=0, ...], timestamp], ...]``</span>
+         <span class="s0">with the ``data#`` fields being optional</span>
+
+      <span class="s0">:raises IndexError: if more than 1024 elements in the data list</span>
+
+      <span class="s0">Example:</span>
+      <span class="s0">::</span>
+
+         <span class="s0"># Program change at time 20000 and 500ms later send note 65 with</span>
+         <span class="s0"># velocity 100.</span>
+         <span class="s0">write([[[0xc0, 0, 0], 20000], [[0x90, 60, 100], 20500]])</span>
+
+      <span class="s0">.. note::</span>
+         <span class="s0">- Timestamps will be ignored if latency = 0</span>
+         <span class="s0">- To get a note to play immediately, send MIDI info with timestamp</span>
+           <span class="s0">read from function Time</span>
+         <span class="s0">- Optional data fields: ``write([[[0xc0, 0, 0], 20000]])`` is</span>
+           <span class="s0">equivalent to ``write([[[0xc0], 20000]])``</span>
+
+      <span class="s0">.. ## Output.write ##</span>
+
+   <span class="s0">.. method:: write_short</span>
+
+      <span class="s0">| :sl:`writes up to 3 bytes of midi data to the Output`</span>
+      <span class="s0">| :sg:`write_short(status) -&gt; None`</span>
+      <span class="s0">| :sg:`write_short(status, data1=0, data2=0) -&gt; None`</span>
+
+      <span class="s0">Output MIDI information of 3 bytes or less. The ``data`` fields are</span>
+      <span class="s0">optional and assumed to be 0 if omitted.</span>
+
+      <span class="s0">Examples of status byte values:</span>
+      <span class="s0">::</span>
+
+         <span class="s0">0xc0  # program change</span>
+         <span class="s0">0x90  # note on</span>
+         <span class="s0"># etc.</span>
+
+      <span class="s0">Example:</span>
+      <span class="s0">::</span>
+
+         <span class="s0"># note 65 on with velocity 100</span>
+         <span class="s0">write_short(0x90, 65, 100)</span>
+
+      <span class="s0">.. ## Output.write_short ##</span>
+
+   <span class="s0">.. method:: write_sys_ex</span>
+
+      <span class="s0">| :sl:`writes a timestamped system-exclusive midi message.`</span>
+      <span class="s0">| :sg:`write_sys_ex(when, msg) -&gt; None`</span>
+
+      <span class="s0">Writes a timestamped system-exclusive midi message.</span>
+
+      <span class="s0">:param msg: midi message</span>
+      <span class="s0">:type msg: list[int] or str</span>
+      <span class="s0">:param when: timestamp in milliseconds</span>
+
+      <span class="s0">Example:</span>
+      <span class="s0">::</span>
+
+         <span class="s0">midi_output.write_sys_ex(0, '\xF0\x7D\x10\x11\x12\x13\xF7')</span>
+
+         <span class="s0"># is equivalent to</span>
+
+         <span class="s0">midi_output.write_sys_ex(pygame.midi.time(),</span>
+                                  <span class="s0">[0xF0, 0x7D, 0x10, 0x11, 0x12, 0x13, 0xF7])</span>
+
+      <span class="s0">.. ## Output.write_sys_ex ##</span>
+
+   <span class="s0">.. ## pygame.midi.Output ##</span>
+
+<span class="s0">.. function:: get_count</span>
+
+   <span class="s0">| :sl:`gets the number of devices.`</span>
+   <span class="s0">| :sg:`get_count() -&gt; num_devices`</span>
+
+   <span class="s0">Device ids range from 0 to ``get_count() - 1``</span>
+
+   <span class="s0">.. ## pygame.midi.get_count ##</span>
+
+<span class="s0">.. function:: get_default_input_id</span>
+
+   <span class="s0">| :sl:`gets default input device number`</span>
+   <span class="s0">| :sg:`get_default_input_id() -&gt; default_id`</span>
+
+   <span class="s0">The following describes the usage details for this function and the</span>
+   <span class="s0">:func:`get_default_output_id` function.</span>
+
+   <span class="s0">Return the default device ID or ``-1`` if there are no devices. The result</span>
+   <span class="s0">can be passed to the :class:`Input`/:class:`Output` class.</span>
+
+   <span class="s0">On a PC the user can specify a default device by setting an environment</span>
+   <span class="s0">variable. To use device #1, for example:</span>
+   <span class="s0">::</span>
+
+      <span class="s0">set PM_RECOMMENDED_INPUT_DEVICE=1</span>
+      <span class="s0">or</span>
+      <span class="s0">set PM_RECOMMENDED_OUTPUT_DEVICE=1</span>
+
+   <span class="s0">The user should first determine the available device ID by using the</span>
+   <span class="s0">supplied application &quot;testin&quot; or &quot;testout&quot;.</span>
+
+   <span class="s0">In general, the registry is a better place for this kind of info. With</span>
+   <span class="s0">USB devices that can come and go, using integers is not very reliable</span>
+   <span class="s0">for device identification. Under Windows, if ``PM_RECOMMENDED_INPUT_DEVICE``</span>
+   <span class="s0">(or ``PM_RECOMMENDED_OUTPUT_DEVICE``) is NOT found in the environment,</span>
+   <span class="s0">then the default device is obtained by looking for a string in the registry</span>
+   <span class="s0">under:</span>
+   <span class="s0">::</span>
+
+      <span class="s0">HKEY_LOCAL_MACHINE/SOFTWARE/PortMidi/Recommended_Input_Device</span>
+      <span class="s0">or</span>
+      <span class="s0">HKEY_LOCAL_MACHINE/SOFTWARE/PortMidi/Recommended_Output_Device</span>
+
+
+   <span class="s0">The number of the first device with a substring that matches the</span>
+   <span class="s0">string exactly is returned. For example, if the string in the registry is</span>
+   <span class="s0">&quot;USB&quot; and device 1 is named &quot;In USB MidiSport 1x1&quot;, then that will be</span>
+   <span class="s0">the default input because it contains the string &quot;USB&quot;.</span>
+
+   <span class="s0">In addition to the name, :func:`get_device_info()` returns &quot;interf&quot;, which is</span>
+   <span class="s0">the interface name. The &quot;interface&quot; is the underlying software system or</span>
+   <span class="s0">API used by PortMidi to access devices. Supported interfaces:</span>
+   <span class="s0">::</span>
+
+      <span class="s0">MMSystem   # the only Win32 interface currently supported</span>
+      <span class="s0">ALSA       # the only Linux interface currently supported</span>
+      <span class="s0">CoreMIDI   # the only Mac OS X interface currently supported</span>
+      <span class="s0"># DirectX - not implemented</span>
+      <span class="s0"># OSS     - not implemented</span>
+
+   <span class="s0">To specify both the interface and the device name in the registry, separate</span>
+   <span class="s0">the two with a comma and a space. The string before the comma must be a</span>
+   <span class="s0">substring of the &quot;interf&quot; string and the string after the space must be a</span>
+   <span class="s0">substring of the &quot;name&quot; name string in order to match the device. e.g.:</span>
+   <span class="s0">::</span>
+
+      <span class="s0">MMSystem, In USB MidiSport 1x1</span>
+
+   <span class="s0">.. note::</span>
+      <span class="s0">In the current release, the default is simply the first device (the</span>
+      <span class="s0">input or output device with the lowest PmDeviceID).</span>
+
+   <span class="s0">.. ## pygame.midi.get_default_input_id ##</span>
+
+<span class="s0">.. function:: get_default_output_id</span>
+
+   <span class="s0">| :sl:`gets default output device number`</span>
+   <span class="s0">| :sg:`get_default_output_id() -&gt; default_id`</span>
+
+   <span class="s0">See :func:`get_default_input_id` for usage details.</span>
+
+   <span class="s0">.. ## pygame.midi.get_default_output_id ##</span>
+
+<span class="s0">.. function:: get_device_info</span>
+
+   <span class="s0">| :sl:`returns information about a midi device`</span>
+   <span class="s0">| :sg:`get_device_info(an_id) -&gt; (interf, name, input, output, opened)`</span>
+   <span class="s0">| :sg:`get_device_info(an_id) -&gt; None`</span>
+
+   <span class="s0">Gets the device info for a given id.</span>
+
+   <span class="s0">:param int an_id: id of the midi device being queried</span>
+
+   <span class="s0">:returns: if the id is out of range ``None`` is returned, otherwise</span>
+      <span class="s0">a tuple of (interf, name, input, output, opened) is returned.</span>
+
+         <span class="s0">- interf: string describing the device interface (e.g. 'ALSA')</span>
+         <span class="s0">- name: string name of the device (e.g. 'Midi Through Port-0')</span>
+         <span class="s0">- input: 1 if the device is an input device, otherwise 0</span>
+         <span class="s0">- output: 1 if the device is an output device, otherwise 0</span>
+         <span class="s0">- opened: 1 if the device is opened, otherwise 0</span>
+   <span class="s0">:rtype: tuple or None</span>
+
+   <span class="s0">.. ## pygame.midi.get_device_info ##</span>
+
+<span class="s0">.. function:: midis2events</span>
+
+   <span class="s0">| :sl:`converts midi events to pygame events`</span>
+   <span class="s0">| :sg:`midis2events(midi_events, device_id) -&gt; [Event, ...]`</span>
+
+   <span class="s0">Takes a sequence of midi events and returns list of pygame events.</span>
+
+   <span class="s0">The ``midi_events`` data is expected to be a sequence of</span>
+   <span class="s0">``((status, data1, data2, data3), timestamp)`` midi events (all values</span>
+   <span class="s0">required).</span>
+
+   <span class="s0">:returns: a list of pygame events of event type ``MIDIIN``</span>
+   <span class="s0">:rtype: list</span>
+
+   <span class="s0">.. ## pygame.midi.midis2events ##</span>
+
+<span class="s0">.. function:: time</span>
+
+   <span class="s0">| :sl:`returns the current time in ms of the PortMidi timer`</span>
+   <span class="s0">| :sg:`time() -&gt; time`</span>
+
+   <span class="s0">The time is reset to 0 when the :mod:`pygame.midi` module is initialized.</span>
+
+   <span class="s0">.. ## pygame.midi.time ##</span>
+
+
+<span class="s0">.. function:: frequency_to_midi</span>
+
+   <span class="s0">| :sl:`Converts a frequency into a MIDI note. Rounds to the closest midi note.`</span>
+   <span class="s0">| :sg:`frequency_to_midi(midi_note) -&gt; midi_note`</span>
+
+   <span class="s0">example:</span>
+   <span class="s0">::</span>
+
+       <span class="s0">frequency_to_midi(27.5) == 21</span>
+
+   <span class="s0">.. versionadded:: 1.9.5</span>
+
+   <span class="s0">.. ## pygame.midi.frequency_to_midi ##</span>
+
+
+<span class="s0">.. function:: midi_to_frequency</span>
+
+   <span class="s0">| :sl:`Converts a midi note to a frequency.`</span>
+   <span class="s0">| :sg:`midi_to_frequency(midi_note) -&gt; frequency`</span>
+
+   <span class="s0">example:</span>
+   <span class="s0">::</span>
+
+       <span class="s0">midi_to_frequency(21) == 27.5</span>
+
+   <span class="s0">.. versionadded:: 1.9.5</span>
+
+   <span class="s0">.. ## pygame.midi.midi_to_frequency ##</span>
+
+
+<span class="s0">.. function:: midi_to_ansi_note</span>
+
+   <span class="s0">| :sl:`Returns the Ansi Note name for a midi number.`</span>
+   <span class="s0">| :sg:`midi_to_ansi_note(midi_note) -&gt; ansi_note`</span>
+
+   <span class="s0">example:</span>
+   <span class="s0">::</span>
+
+       <span class="s0">midi_to_ansi_note(21) == 'A0'</span>
+
+   <span class="s0">.. versionadded:: 1.9.5</span>
+
+   <span class="s0">.. ## pygame.midi.midi_to_ansi_note ##</span>
+
+<span class="s0">.. exception:: MidiException</span>
+
+   <span class="s0">| :sl:`exception that pygame.midi functions and classes can raise`</span>
+   <span class="s0">| :sg:`MidiException(errno) -&gt; None`</span>
+
+   <span class="s0">.. ## pygame.midi.MidiException ##</span>
+
+
+<span class="s0">.. ## pygame.midi ##</span>
+</pre>
+</body>
+</html>

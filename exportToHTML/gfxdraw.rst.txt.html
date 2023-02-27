@@ -1,0 +1,645 @@
+<html>
+<head>
+<title>gfxdraw.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+gfxdraw.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.gfxdraw`</span>
+<span class="s0">=====================</span>
+
+<span class="s0">.. module:: pygame.gfxdraw</span>
+   <span class="s0">:synopsis: pygame module for drawing shapes</span>
+
+<span class="s0">| :sl:`pygame module for drawing shapes`</span>
+
+<span class="s0">**EXPERIMENTAL!**: This API may change or disappear in later pygame releases. If</span>
+<span class="s0">you use this, your code may break with the next pygame release.</span>
+
+<span class="s0">The pygame package does not import gfxdraw automatically when loaded, so it</span>
+<span class="s0">must imported explicitly to be used.</span>
+
+<span class="s0">::</span>
+
+    <span class="s0">import pygame</span>
+    <span class="s0">import pygame.gfxdraw</span>
+
+<span class="s0">For all functions the arguments are strictly positional and integers are</span>
+<span class="s0">accepted for coordinates and radii. The ``color`` argument can be one of the</span>
+<span class="s0">following formats:</span>
+
+   <span class="s0">- a :mod:`pygame.Color` object</span>
+   <span class="s0">- an ``(RGB)`` triplet (tuple/list)</span>
+   <span class="s0">- an ``(RGBA)`` quadruplet (tuple/list)</span>
+
+<span class="s0">The functions :meth:`rectangle` and :meth:`box` will accept any ``(x, y, w, h)``</span>
+<span class="s0">sequence for their ``rect`` argument, though :mod:`pygame.Rect` instances are</span>
+<span class="s0">preferred.</span>
+
+<span class="s0">To draw a filled antialiased shape, first use the antialiased (aa*) version</span>
+<span class="s0">of the function, and then use the filled (filled_*) version.</span>
+<span class="s0">For example:</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">col = (255, 0, 0)</span>
+   <span class="s0">surf.fill((255, 255, 255))</span>
+   <span class="s0">pygame.gfxdraw.aacircle(surf, x, y, 30, col)</span>
+   <span class="s0">pygame.gfxdraw.filled_circle(surf, x, y, 30, col)</span>
+
+
+<span class="s0">.. note::</span>
+   <span class="s0">For threading, each of the functions releases the GIL during the C part of</span>
+   <span class="s0">the call.</span>
+
+<span class="s0">.. note::</span>
+   <span class="s0">See the :mod:`pygame.draw` module for alternative draw methods.</span>
+   <span class="s0">The ``pygame.gfxdraw`` module differs from the :mod:`pygame.draw` module in</span>
+   <span class="s0">the API it uses and the different draw functions available.</span>
+   <span class="s0">``pygame.gfxdraw`` wraps the primitives from the library called SDL_gfx,</span>
+   <span class="s0">rather than using modified versions.</span>
+
+<span class="s0">.. versionadded:: 1.9.0</span>
+
+
+<span class="s0">.. function:: pixel</span>
+
+   <span class="s0">| :sl:`draw a pixel`</span>
+   <span class="s0">| :sg:`pixel(surface, x, y, color) -&gt; None`</span>
+
+   <span class="s0">Draws a single pixel, at position (x ,y), on the given surface.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x: x coordinate of the pixel</span>
+   <span class="s0">:param int y: y coordinate of the pixel</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.pixel ##</span>
+
+<span class="s0">.. function:: hline</span>
+
+   <span class="s0">| :sl:`draw a horizontal line`</span>
+   <span class="s0">| :sg:`hline(surface, x1, x2, y, color) -&gt; None`</span>
+
+   <span class="s0">Draws a straight horizontal line (``(x1, y)`` to ``(x2, y)``) on the given</span>
+   <span class="s0">surface. There are no endcaps.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x1: x coordinate of one end of the line</span>
+   <span class="s0">:param int x2: x coordinate of the other end of the line</span>
+   <span class="s0">:param int y: y coordinate of the line</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.hline ##</span>
+
+<span class="s0">.. function:: vline</span>
+
+   <span class="s0">| :sl:`draw a vertical line`</span>
+   <span class="s0">| :sg:`vline(surface, x, y1, y2, color) -&gt; None`</span>
+
+   <span class="s0">Draws a straight vertical line (``(x, y1)`` to ``(x, y2)``) on the given</span>
+   <span class="s0">surface. There are no endcaps.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x: x coordinate of the line</span>
+   <span class="s0">:param int y1: y coordinate of one end of the line</span>
+   <span class="s0">:param int y2: y coordinate of the other end of the line</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.vline ##</span>
+
+<span class="s0">.. function:: line</span>
+
+   <span class="s0">| :sl:`draw a line`</span>
+   <span class="s0">| :sg:`line(surface, x1, y1, x2, y2, color) -&gt; None`</span>
+
+   <span class="s0">Draws a straight line (``(x1, y1)`` to ``(x2, y2)``) on the given surface.</span>
+   <span class="s0">There are no endcaps.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x1: x coordinate of one end of the line</span>
+   <span class="s0">:param int y1: y coordinate of one end of the line</span>
+   <span class="s0">:param int x2: x coordinate of the other end of the line</span>
+   <span class="s0">:param int y2: y coordinate of the other end of the line</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.line ##</span>
+
+<span class="s0">.. function:: rectangle</span>
+
+   <span class="s0">| :sl:`draw a rectangle`</span>
+   <span class="s0">| :sg:`rectangle(surface, rect, color) -&gt; None`</span>
+
+   <span class="s0">Draws an unfilled rectangle on the given surface. For a filled rectangle use</span>
+   <span class="s0">:meth:`box`.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param Rect rect: rectangle to draw, position and dimensions</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. note::</span>
+      <span class="s0">The ``rect.bottom`` and ``rect.right`` attributes of a :mod:`pygame.Rect`</span>
+      <span class="s0">always lie one pixel outside of its actual border. Therefore, these</span>
+      <span class="s0">values will not be included as part of the drawing.</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.rectangle ##</span>
+
+<span class="s0">.. function:: box</span>
+
+   <span class="s0">| :sl:`draw a filled rectangle`</span>
+   <span class="s0">| :sg:`box(surface, rect, color) -&gt; None`</span>
+
+   <span class="s0">Draws a filled rectangle on the given surface. For an unfilled rectangle use</span>
+   <span class="s0">:meth:`rectangle`.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param Rect rect: rectangle to draw, position and dimensions</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. note::</span>
+      <span class="s0">The ``rect.bottom`` and ``rect.right`` attributes of a :mod:`pygame.Rect`</span>
+      <span class="s0">always lie one pixel outside of its actual border. Therefore, these</span>
+      <span class="s0">values will not be included as part of the drawing.</span>
+
+   <span class="s0">.. note::</span>
+      <span class="s0">The :func:`pygame.Surface.fill` method works just as well for drawing</span>
+      <span class="s0">filled rectangles. In fact :func:`pygame.Surface.fill` can be hardware</span>
+      <span class="s0">accelerated on some platforms with both software and hardware display</span>
+      <span class="s0">modes.</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.box ##</span>
+
+<span class="s0">.. function:: circle</span>
+
+   <span class="s0">| :sl:`draw a circle`</span>
+   <span class="s0">| :sg:`circle(surface, x, y, r, color) -&gt; None`</span>
+
+   <span class="s0">Draws an unfilled circle on the given surface. For a filled circle use</span>
+   <span class="s0">:meth:`filled_circle`.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x: x coordinate of the center of the circle</span>
+   <span class="s0">:param int y: y coordinate of the center of the circle</span>
+   <span class="s0">:param int r: radius of the circle</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.circle ##</span>
+
+<span class="s0">.. function:: aacircle</span>
+
+   <span class="s0">| :sl:`draw an antialiased circle`</span>
+   <span class="s0">| :sg:`aacircle(surface, x, y, r, color) -&gt; None`</span>
+
+   <span class="s0">Draws an unfilled antialiased circle on the given surface.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x: x coordinate of the center of the circle</span>
+   <span class="s0">:param int y: y coordinate of the center of the circle</span>
+   <span class="s0">:param int r: radius of the circle</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.aacircle ##</span>
+
+<span class="s0">.. function:: filled_circle</span>
+
+   <span class="s0">| :sl:`draw a filled circle`</span>
+   <span class="s0">| :sg:`filled_circle(surface, x, y, r, color) -&gt; None`</span>
+
+   <span class="s0">Draws a filled circle on the given surface. For an unfilled circle use</span>
+   <span class="s0">:meth:`circle`.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x: x coordinate of the center of the circle</span>
+   <span class="s0">:param int y: y coordinate of the center of the circle</span>
+   <span class="s0">:param int r: radius of the circle</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.filled_circle ##</span>
+
+<span class="s0">.. function:: ellipse</span>
+
+   <span class="s0">| :sl:`draw an ellipse`</span>
+   <span class="s0">| :sg:`ellipse(surface, x, y, rx, ry, color) -&gt; None`</span>
+
+   <span class="s0">Draws an unfilled ellipse on the given surface. For a filled ellipse use</span>
+   <span class="s0">:meth:`filled_ellipse`.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x: x coordinate of the center of the ellipse</span>
+   <span class="s0">:param int y: y coordinate of the center of the ellipse</span>
+   <span class="s0">:param int rx: horizontal radius of the ellipse</span>
+   <span class="s0">:param int ry: vertical radius of the ellipse</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.ellipse ##</span>
+
+<span class="s0">.. function:: aaellipse</span>
+
+   <span class="s0">| :sl:`draw an antialiased ellipse`</span>
+   <span class="s0">| :sg:`aaellipse(surface, x, y, rx, ry, color) -&gt; None`</span>
+
+   <span class="s0">Draws an unfilled antialiased ellipse on the given surface.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x: x coordinate of the center of the ellipse</span>
+   <span class="s0">:param int y: y coordinate of the center of the ellipse</span>
+   <span class="s0">:param int rx: horizontal radius of the ellipse</span>
+   <span class="s0">:param int ry: vertical radius of the ellipse</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.aaellipse ##</span>
+
+<span class="s0">.. function:: filled_ellipse</span>
+
+   <span class="s0">| :sl:`draw a filled ellipse`</span>
+   <span class="s0">| :sg:`filled_ellipse(surface, x, y, rx, ry, color) -&gt; None`</span>
+
+   <span class="s0">Draws a filled ellipse on the given surface. For an unfilled ellipse use</span>
+   <span class="s0">:meth:`ellipse`.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x: x coordinate of the center of the ellipse</span>
+   <span class="s0">:param int y: y coordinate of the center of the ellipse</span>
+   <span class="s0">:param int rx: horizontal radius of the ellipse</span>
+   <span class="s0">:param int ry: vertical radius of the ellipse</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.filled_ellipse ##</span>
+
+<span class="s0">.. function:: arc</span>
+
+   <span class="s0">| :sl:`draw an arc`</span>
+   <span class="s0">| :sg:`arc(surface, x, y, r, start_angle, stop_angle, color) -&gt; None`</span>
+
+   <span class="s0">Draws an arc on the given surface. For an arc with its endpoints connected</span>
+   <span class="s0">to its center use :meth:`pie`.</span>
+
+   <span class="s0">The two angle arguments are given in degrees and indicate the start and stop</span>
+   <span class="s0">positions of the arc. The arc is drawn in a clockwise direction from the</span>
+   <span class="s0">``start_angle`` to the ``stop_angle``. If ``start_angle == stop_angle``,</span>
+   <span class="s0">nothing will be drawn</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x: x coordinate of the center of the arc</span>
+   <span class="s0">:param int y: y coordinate of the center of the arc</span>
+   <span class="s0">:param int r: radius of the arc</span>
+   <span class="s0">:param int start_angle: start angle in degrees</span>
+   <span class="s0">:param int stop_angle: stop angle in degrees</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. note::</span>
+      <span class="s0">This function uses *degrees* while the :func:`pygame.draw.arc` function</span>
+      <span class="s0">uses *radians*.</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.arc ##</span>
+
+<span class="s0">.. function:: pie</span>
+
+   <span class="s0">| :sl:`draw a pie`</span>
+   <span class="s0">| :sg:`pie(surface, x, y, r, start_angle, stop_angle, color) -&gt; None`</span>
+
+   <span class="s0">Draws an unfilled pie on the given surface. A pie is an :meth:`arc` with its</span>
+   <span class="s0">endpoints connected to its center.</span>
+
+   <span class="s0">The two angle arguments are given in degrees and indicate the start and stop</span>
+   <span class="s0">positions of the pie. The pie is drawn in a clockwise direction from the</span>
+   <span class="s0">``start_angle`` to the ``stop_angle``. If ``start_angle == stop_angle``,</span>
+   <span class="s0">a straight line will be drawn from the center position at the given angle,</span>
+   <span class="s0">to a length of the radius.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x: x coordinate of the center of the pie</span>
+   <span class="s0">:param int y: y coordinate of the center of the pie</span>
+   <span class="s0">:param int r: radius of the pie</span>
+   <span class="s0">:param int start_angle: start angle in degrees</span>
+   <span class="s0">:param int stop_angle: stop angle in degrees</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.pie ##</span>
+
+<span class="s0">.. function:: trigon</span>
+
+   <span class="s0">| :sl:`draw a trigon/triangle`</span>
+   <span class="s0">| :sg:`trigon(surface, x1, y1, x2, y2, x3, y3, color) -&gt; None`</span>
+
+   <span class="s0">Draws an unfilled trigon (triangle) on the given surface. For a filled</span>
+   <span class="s0">trigon use :meth:`filled_trigon`.</span>
+
+   <span class="s0">A trigon can also be drawn using :meth:`polygon` e.g.</span>
+   <span class="s0">``polygon(surface, ((x1, y1), (x2, y2), (x3, y3)), color)``</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x1: x coordinate of the first corner of the trigon</span>
+   <span class="s0">:param int y1: y coordinate of the first corner of the trigon</span>
+   <span class="s0">:param int x2: x coordinate of the second corner of the trigon</span>
+   <span class="s0">:param int y2: y coordinate of the second corner of the trigon</span>
+   <span class="s0">:param int x3: x coordinate of the third corner of the trigon</span>
+   <span class="s0">:param int y3: y coordinate of the third corner of the trigon</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.trigon ##</span>
+
+<span class="s0">.. function:: aatrigon</span>
+
+   <span class="s0">| :sl:`draw an antialiased trigon/triangle`</span>
+   <span class="s0">| :sg:`aatrigon(surface, x1, y1, x2, y2, x3, y3, color) -&gt; None`</span>
+
+   <span class="s0">Draws an unfilled antialiased trigon (triangle) on the given surface.</span>
+
+   <span class="s0">An aatrigon can also be drawn using :meth:`aapolygon` e.g.</span>
+   <span class="s0">``aapolygon(surface, ((x1, y1), (x2, y2), (x3, y3)), color)``</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x1: x coordinate of the first corner of the trigon</span>
+   <span class="s0">:param int y1: y coordinate of the first corner of the trigon</span>
+   <span class="s0">:param int x2: x coordinate of the second corner of the trigon</span>
+   <span class="s0">:param int y2: y coordinate of the second corner of the trigon</span>
+   <span class="s0">:param int x3: x coordinate of the third corner of the trigon</span>
+   <span class="s0">:param int y3: y coordinate of the third corner of the trigon</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.aatrigon ##</span>
+
+<span class="s0">.. function:: filled_trigon</span>
+
+   <span class="s0">| :sl:`draw a filled trigon/triangle`</span>
+   <span class="s0">| :sg:`filled_trigon(surface, x1, y1, x2, y2, x3, y3, color) -&gt; None`</span>
+
+   <span class="s0">Draws a filled trigon (triangle) on the given surface. For an unfilled</span>
+   <span class="s0">trigon use :meth:`trigon`.</span>
+
+   <span class="s0">A filled_trigon can also be drawn using :meth:`filled_polygon` e.g.</span>
+   <span class="s0">``filled_polygon(surface, ((x1, y1), (x2, y2), (x3, y3)), color)``</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param int x1: x coordinate of the first corner of the trigon</span>
+   <span class="s0">:param int y1: y coordinate of the first corner of the trigon</span>
+   <span class="s0">:param int x2: x coordinate of the second corner of the trigon</span>
+   <span class="s0">:param int y2: y coordinate of the second corner of the trigon</span>
+   <span class="s0">:param int x3: x coordinate of the third corner of the trigon</span>
+   <span class="s0">:param int y3: y coordinate of the third corner of the trigon</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.filled_trigon ##</span>
+
+<span class="s0">.. function:: polygon</span>
+
+   <span class="s0">| :sl:`draw a polygon`</span>
+   <span class="s0">| :sg:`polygon(surface, points, color) -&gt; None`</span>
+
+   <span class="s0">Draws an unfilled polygon on the given surface. For a filled polygon use</span>
+   <span class="s0">:meth:`filled_polygon`.</span>
+
+   <span class="s0">The adjacent coordinates in the ``points`` argument, as well as the first</span>
+   <span class="s0">and last points, will be connected by line segments.</span>
+   <span class="s0">e.g. For the points ``[(x1, y1), (x2, y2), (x3, y3)]`` a line segment will</span>
+   <span class="s0">be drawn from ``(x1, y1)`` to ``(x2, y2)``, from ``(x2, y2)`` to</span>
+   <span class="s0">``(x3, y3)``, and from ``(x3, y3)`` to ``(x1, y1)``.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param points: a sequence of 3 or more (x, y) coordinates, where each</span>
+      <span class="s0">*coordinate* in the sequence must be a</span>
+      <span class="s0">tuple/list/:class:`pygame.math.Vector2` of 2 ints/floats (float values</span>
+      <span class="s0">will be truncated)</span>
+   <span class="s0">:type points: tuple(coordinate) or list(coordinate)</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">:raises ValueError: if ``len(points) &lt; 3`` (must have at least 3 points)</span>
+   <span class="s0">:raises IndexError: if ``len(coordinate) &lt; 2`` (each coordinate must have</span>
+      <span class="s0">at least 2 items)</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.polygon ##</span>
+
+<span class="s0">.. function:: aapolygon</span>
+
+   <span class="s0">| :sl:`draw an antialiased polygon`</span>
+   <span class="s0">| :sg:`aapolygon(surface, points, color) -&gt; None`</span>
+
+   <span class="s0">Draws an unfilled antialiased polygon on the given surface.</span>
+
+   <span class="s0">The adjacent coordinates in the ``points`` argument, as well as the first</span>
+   <span class="s0">and last points, will be connected by line segments.</span>
+   <span class="s0">e.g. For the points ``[(x1, y1), (x2, y2), (x3, y3)]`` a line segment will</span>
+   <span class="s0">be drawn from ``(x1, y1)`` to ``(x2, y2)``, from ``(x2, y2)`` to</span>
+   <span class="s0">``(x3, y3)``, and from ``(x3, y3)`` to ``(x1, y1)``.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param points: a sequence of 3 or more (x, y) coordinates, where each</span>
+      <span class="s0">*coordinate* in the sequence must be a</span>
+      <span class="s0">tuple/list/:class:`pygame.math.Vector2` of 2 ints/floats (float values</span>
+      <span class="s0">will be truncated)</span>
+   <span class="s0">:type points: tuple(coordinate) or list(coordinate)</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">:raises ValueError: if ``len(points) &lt; 3`` (must have at least 3 points)</span>
+   <span class="s0">:raises IndexError: if ``len(coordinate) &lt; 2`` (each coordinate must have</span>
+      <span class="s0">at least 2 items)</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.aapolygon ##</span>
+
+<span class="s0">.. function:: filled_polygon</span>
+
+   <span class="s0">| :sl:`draw a filled polygon`</span>
+   <span class="s0">| :sg:`filled_polygon(surface, points, color) -&gt; None`</span>
+
+   <span class="s0">Draws a filled polygon on the given surface. For an unfilled polygon use</span>
+   <span class="s0">:meth:`polygon`.</span>
+
+   <span class="s0">The adjacent coordinates in the ``points`` argument, as well as the first</span>
+   <span class="s0">and last points, will be connected by line segments.</span>
+   <span class="s0">e.g. For the points ``[(x1, y1), (x2, y2), (x3, y3)]`` a line segment will</span>
+   <span class="s0">be drawn from ``(x1, y1)`` to ``(x2, y2)``, from ``(x2, y2)`` to</span>
+   <span class="s0">``(x3, y3)``, and from ``(x3, y3)`` to ``(x1, y1)``.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param points: a sequence of 3 or more (x, y) coordinates, where each</span>
+      <span class="s0">*coordinate* in the sequence must be a</span>
+      <span class="s0">tuple/list/:class:`pygame.math.Vector2` of 2 ints/floats (float values</span>
+      <span class="s0">will be truncated)`</span>
+   <span class="s0">:type points: tuple(coordinate) or list(coordinate)</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">:raises ValueError: if ``len(points) &lt; 3`` (must have at least 3 points)</span>
+   <span class="s0">:raises IndexError: if ``len(coordinate) &lt; 2`` (each coordinate must have</span>
+      <span class="s0">at least 2 items)</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.filled_polygon ##</span>
+
+<span class="s0">.. function:: textured_polygon</span>
+
+   <span class="s0">| :sl:`draw a textured polygon`</span>
+   <span class="s0">| :sg:`textured_polygon(surface, points, texture, tx, ty) -&gt; None`</span>
+
+   <span class="s0">Draws a textured polygon on the given surface. For better performance, the</span>
+   <span class="s0">surface and the texture should have the same format.</span>
+
+   <span class="s0">A per-pixel alpha texture blit to a per-pixel alpha surface will differ from</span>
+   <span class="s0">a :func:`pygame.Surface.blit` blit. Also, a per-pixel alpha texture cannot be</span>
+   <span class="s0">used with an 8-bit per pixel destination.</span>
+
+   <span class="s0">The adjacent coordinates in the ``points`` argument, as well as the first</span>
+   <span class="s0">and last points, will be connected by line segments.</span>
+   <span class="s0">e.g. For the points ``[(x1, y1), (x2, y2), (x3, y3)]`` a line segment will</span>
+   <span class="s0">be drawn from ``(x1, y1)`` to ``(x2, y2)``, from ``(x2, y2)`` to</span>
+   <span class="s0">``(x3, y3)``, and from ``(x3, y3)`` to ``(x1, y1)``.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param points: a sequence of 3 or more (x, y) coordinates, where each</span>
+      <span class="s0">*coordinate* in the sequence must be a</span>
+      <span class="s0">tuple/list/:class:`pygame.math.Vector2` of 2 ints/floats (float values</span>
+      <span class="s0">will be truncated)</span>
+   <span class="s0">:type points: tuple(coordinate) or list(coordinate)</span>
+   <span class="s0">:param Surface texture: texture to draw on the polygon</span>
+   <span class="s0">:param int tx: x offset of the texture</span>
+   <span class="s0">:param int ty: y offset of the texture</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">:raises ValueError: if ``len(points) &lt; 3`` (must have at least 3 points)</span>
+   <span class="s0">:raises IndexError: if ``len(coordinate) &lt; 2`` (each coordinate must have</span>
+      <span class="s0">at least 2 items)</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.textured_polygon ##</span>
+
+<span class="s0">.. function:: bezier</span>
+
+   <span class="s0">| :sl:`draw a Bezier curve`</span>
+   <span class="s0">| :sg:`bezier(surface, points, steps, color) -&gt; None`</span>
+
+   <span class="s0">Draws a Bézier curve on the given surface.</span>
+
+   <span class="s0">:param Surface surface: surface to draw on</span>
+   <span class="s0">:param points: a sequence of 3 or more (x, y) coordinates used to form a</span>
+      <span class="s0">curve, where each *coordinate* in the sequence must be a</span>
+      <span class="s0">tuple/list/:class:`pygame.math.Vector2` of 2 ints/floats (float values</span>
+      <span class="s0">will be truncated)</span>
+   <span class="s0">:type points: tuple(coordinate) or list(coordinate)</span>
+   <span class="s0">:param int steps: number of steps for the interpolation, the minimum is 2</span>
+   <span class="s0">:param color: color to draw with, the alpha value is optional if using a</span>
+      <span class="s0">tuple ``(RGB[A])``</span>
+   <span class="s0">:type color: Color or tuple(int, int, int, [int])</span>
+
+   <span class="s0">:returns: ``None``</span>
+   <span class="s0">:rtype: NoneType</span>
+
+   <span class="s0">:raises ValueError: if ``steps &lt; 2``</span>
+   <span class="s0">:raises ValueError: if ``len(points) &lt; 3`` (must have at least 3 points)</span>
+   <span class="s0">:raises IndexError: if ``len(coordinate) &lt; 2`` (each coordinate must have</span>
+      <span class="s0">at least 2 items)</span>
+
+   <span class="s0">.. ## pygame.gfxdraw.bezier ##</span>
+
+<span class="s0">.. ## pygame.gfxdraw ##</span>
+</pre>
+</body>
+</html>

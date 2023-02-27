@@ -1,0 +1,290 @@
+<html>
+<head>
+<title>sprite.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+sprite.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">(</span>
+    <span class="s1">Any</span><span class="s0">,</span>
+    <span class="s1">Callable</span><span class="s0">,</span>
+    <span class="s1">Dict</span><span class="s0">,</span>
+    <span class="s1">Generic</span><span class="s0">,</span>
+    <span class="s1">Iterable</span><span class="s0">,</span>
+    <span class="s1">Iterator</span><span class="s0">,</span>
+    <span class="s1">List</span><span class="s0">,</span>
+    <span class="s1">Optional</span><span class="s0">,</span>
+    <span class="s1">SupportsFloat</span><span class="s0">,</span>
+    <span class="s1">Tuple</span><span class="s0">,</span>
+    <span class="s1">TypeVar</span><span class="s0">,</span>
+    <span class="s1">Union</span><span class="s0">,</span>
+<span class="s1">)</span>
+
+<span class="s2"># Protocol added in python 3.8</span>
+<span class="s0">from </span><span class="s1">typing_extensions </span><span class="s0">import </span><span class="s1">Protocol</span>
+
+<span class="s0">from </span><span class="s1">pygame.rect </span><span class="s0">import </span><span class="s1">Rect</span>
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+<span class="s0">from </span><span class="s1">pygame.mask </span><span class="s0">import </span><span class="s1">Mask</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">RectValue</span><span class="s0">, </span><span class="s1">Coordinate</span>
+
+<span class="s2"># non-generic Group, used in Sprite</span>
+<span class="s1">_Group = AbstractGroup[_SpriteSupportsGroup]</span>
+
+<span class="s2"># protocol helps with structural subtyping for typevars in sprite group generics</span>
+<span class="s0">class </span><span class="s1">_SupportsSprite(Protocol):</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">layer(self) -&gt; int: ...</span>
+    <span class="s1">@layer.setter</span>
+    <span class="s0">def </span><span class="s1">layer(self</span><span class="s0">, </span><span class="s1">value: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">*groups: _Group) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">add_internal(self</span><span class="s0">, </span><span class="s1">group: _Group) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">remove_internal(self</span><span class="s0">, </span><span class="s1">group: _Group) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">*args: Any</span><span class="s0">, </span><span class="s1">**kwargs: Any) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">add(self</span><span class="s0">, </span><span class="s1">*groups: _Group) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">remove(self</span><span class="s0">, </span><span class="s1">*groups: _Group) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">kill(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">alive(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">groups(self) -&gt; List[_Group]: ...</span>
+
+<span class="s2"># also a protocol</span>
+<span class="s0">class </span><span class="s1">_SupportsDirtySprite(_SupportsSprite</span><span class="s0">, </span><span class="s1">Protocol):</span>
+    <span class="s1">dirty: int</span>
+    <span class="s1">blendmode: int</span>
+    <span class="s1">source_rect: Rect</span>
+    <span class="s1">visible: int</span>
+    <span class="s1">_layer: int</span>
+    <span class="s0">def </span><span class="s1">_set_visible(self</span><span class="s0">, </span><span class="s1">val: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">_get_visible(self) -&gt; int: ...</span>
+
+<span class="s2"># concrete sprite implementation class</span>
+<span class="s0">class </span><span class="s1">Sprite(_SupportsSprite):</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">layer(self) -&gt; int: ...</span>
+    <span class="s1">@layer.setter</span>
+    <span class="s0">def </span><span class="s1">layer(self</span><span class="s0">, </span><span class="s1">value: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">*groups: _Group) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">add_internal(self</span><span class="s0">, </span><span class="s1">group: _Group) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">remove_internal(self</span><span class="s0">, </span><span class="s1">group: _Group) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">*args: Any</span><span class="s0">, </span><span class="s1">**kwargs: Any) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">add(self</span><span class="s0">, </span><span class="s1">*groups: _Group) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">remove(self</span><span class="s0">, </span><span class="s1">*groups: _Group) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">kill(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">alive(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">groups(self) -&gt; List[_Group]: ...</span>
+
+<span class="s2"># concrete dirty sprite implementation class</span>
+<span class="s0">class </span><span class="s1">DirtySprite(_SupportsDirtySprite):</span>
+    <span class="s1">dirty: int</span>
+    <span class="s1">blendmode: int</span>
+    <span class="s1">source_rect: Rect</span>
+    <span class="s1">visible: int</span>
+    <span class="s1">_layer: int</span>
+    <span class="s0">def </span><span class="s1">_set_visible(self</span><span class="s0">, </span><span class="s1">val: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">_get_visible(self) -&gt; int: ...</span>
+
+<span class="s2"># used as a workaround for typing.Self because it is added in python 3.11</span>
+<span class="s1">_TGroup = TypeVar(</span><span class="s3">&quot;_TGroup&quot;</span><span class="s0">, </span><span class="s1">bound=AbstractGroup)</span>
+
+<span class="s2"># define some useful protocols first, which sprite functions accept</span>
+<span class="s2"># sprite functions don't need all sprite attributes to be present in the</span>
+<span class="s2"># arguments passed, they only use a few which are marked in the below protocols</span>
+<span class="s0">class </span><span class="s1">_HasRect(Protocol):</span>
+    <span class="s1">rect: Rect</span>
+
+<span class="s2"># image in addition to rect</span>
+<span class="s0">class </span><span class="s1">_HasImageAndRect(_HasRect</span><span class="s0">, </span><span class="s1">Protocol):</span>
+    <span class="s1">image: Surface</span>
+
+<span class="s2"># mask in addition to rect</span>
+<span class="s0">class </span><span class="s1">_HasMaskAndRect(_HasRect</span><span class="s0">, </span><span class="s1">Protocol):</span>
+    <span class="s1">mask: Mask</span>
+
+<span class="s2"># radius in addition to rect</span>
+<span class="s0">class </span><span class="s1">_HasRadiusAndRect(_HasRect</span><span class="s0">, </span><span class="s1">Protocol):</span>
+    <span class="s1">radius: float</span>
+
+<span class="s0">class </span><span class="s1">_SpriteSupportsGroup(_SupportsSprite</span><span class="s0">, </span><span class="s1">_HasImageAndRect</span><span class="s0">, </span><span class="s1">Protocol): ...</span>
+<span class="s0">class </span><span class="s1">_DirtySpriteSupportsGroup(_SupportsDirtySprite</span><span class="s0">, </span><span class="s1">_HasImageAndRect</span><span class="s0">, </span><span class="s1">Protocol): ...</span>
+
+<span class="s2"># typevar bound to Sprite, _SpriteSupportsGroup Protocol ensures sprite</span>
+<span class="s2"># subclass passed to group has image and rect attributes</span>
+<span class="s1">_TSprite = TypeVar(</span><span class="s3">&quot;_TSprite&quot;</span><span class="s0">, </span><span class="s1">bound=_SpriteSupportsGroup)</span>
+<span class="s1">_TSprite2 = TypeVar(</span><span class="s3">&quot;_TSprite2&quot;</span><span class="s0">, </span><span class="s1">bound=_SpriteSupportsGroup)</span>
+
+<span class="s2"># almost the same as _TSprite but bound to DirtySprite</span>
+<span class="s1">_TDirtySprite = TypeVar(</span><span class="s3">&quot;_TDirtySprite&quot;</span><span class="s0">, </span><span class="s1">bound=_DirtySpriteSupportsGroup)</span>
+
+<span class="s2"># Below code demonstrates the advantages of the _SpriteSupportsGroup protocol</span>
+
+<span class="s2"># typechecker should error, regular Sprite does not support Group.draw due to</span>
+<span class="s2"># missing image and rect attributes</span>
+<span class="s2"># a = Group(Sprite())</span>
+
+<span class="s2"># typechecker should error, other Sprite attibutes are also needed for Group</span>
+<span class="s2"># class MySprite:</span>
+<span class="s2">#     image: Surface</span>
+<span class="s2">#     rect: Rect</span>
+<span class="s2">#</span>
+<span class="s2"># b = Group(MySprite())</span>
+
+<span class="s2"># typechecker should pass</span>
+<span class="s2"># class MySprite(Sprite):</span>
+<span class="s2">#     image: Surface</span>
+<span class="s2">#     rect: Rect</span>
+<span class="s2">#</span>
+<span class="s2"># b = Group(MySprite())</span>
+
+<span class="s0">class </span><span class="s1">AbstractGroup(Generic[_TSprite]):</span>
+    <span class="s1">spritedict: Dict[_TSprite</span><span class="s0">, </span><span class="s1">Optional[Rect]]</span>
+    <span class="s1">lostsprites: List[Rect]</span>
+    <span class="s0">def </span><span class="s1">__init__(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__len__(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">__iter__(self) -&gt; Iterator[_TSprite]: ...</span>
+    <span class="s0">def </span><span class="s1">__bool__(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">__contains__(self</span><span class="s0">, </span><span class="s1">item: Any) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">add_internal(self</span><span class="s0">, </span><span class="s1">sprite: _TSprite</span><span class="s0">, </span><span class="s1">layer: </span><span class="s0">None </span><span class="s1">= </span><span class="s0">None</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">remove_internal(self</span><span class="s0">, </span><span class="s1">sprite: _TSprite) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">has_internal(self</span><span class="s0">, </span><span class="s1">sprite: _TSprite) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">copy(self: _TGroup) -&gt; _TGroup: ...  </span><span class="s2"># typing.Self is py3.11+</span>
+    <span class="s0">def </span><span class="s1">sprites(self) -&gt; List[_TSprite]: ...</span>
+    <span class="s0">def </span><span class="s1">add(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">*sprites: Union[_TSprite</span><span class="s0">, </span><span class="s1">AbstractGroup[_TSprite]</span><span class="s0">, </span><span class="s1">Iterable[_TSprite]]</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">remove(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">*sprites: Union[_TSprite</span><span class="s0">, </span><span class="s1">AbstractGroup[_TSprite]</span><span class="s0">, </span><span class="s1">Iterable[_TSprite]]</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">has(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">*sprites: Union[_TSprite</span><span class="s0">, </span><span class="s1">AbstractGroup[_TSprite]</span><span class="s0">, </span><span class="s1">Iterable[_TSprite]]</span>
+    <span class="s1">) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">*args: Any</span><span class="s0">, </span><span class="s1">**kwargs: Any) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">draw(self</span><span class="s0">, </span><span class="s1">surface: Surface) -&gt; List[Rect]: ...</span>
+    <span class="s0">def </span><span class="s1">clear(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">bgd: Union[Surface</span><span class="s0">, </span><span class="s1">Callable[[Surface</span><span class="s0">, </span><span class="s1">Rect]</span><span class="s0">, </span><span class="s1">Any]]</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">empty(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s0">class </span><span class="s1">Group(AbstractGroup[_TSprite]):</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">*sprites: Union[_TSprite</span><span class="s0">, </span><span class="s1">AbstractGroup[_TSprite]</span><span class="s0">, </span><span class="s1">Iterable[_TSprite]]</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s2"># these are aliased in the code too</span>
+<span class="s1">RenderPlain = Group</span>
+<span class="s1">RenderClear = Group</span>
+
+<span class="s0">class </span><span class="s1">RenderUpdates(Group[_TSprite]): ...</span>
+<span class="s0">class </span><span class="s1">OrderedUpdates(RenderUpdates[_TSprite]): ...</span>
+
+<span class="s0">class </span><span class="s1">LayeredUpdates(AbstractGroup[_TSprite]):</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">*sprites: Union[</span>
+            <span class="s1">_TSprite</span><span class="s0">,</span>
+            <span class="s1">AbstractGroup[_TSprite]</span><span class="s0">,</span>
+            <span class="s1">Iterable[Union[_TSprite</span><span class="s0">, </span><span class="s1">AbstractGroup[_TSprite]]]</span><span class="s0">,</span>
+        <span class="s1">]</span><span class="s0">,</span>
+        <span class="s1">**kwargs: Any</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">add(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">*sprites: Union[</span>
+            <span class="s1">_TSprite</span><span class="s0">,</span>
+            <span class="s1">AbstractGroup[_TSprite]</span><span class="s0">,</span>
+            <span class="s1">Iterable[Union[_TSprite</span><span class="s0">, </span><span class="s1">AbstractGroup[_TSprite]]]</span><span class="s0">,</span>
+        <span class="s1">]</span><span class="s0">,</span>
+        <span class="s1">**kwargs: Any</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_sprites_at(self</span><span class="s0">, </span><span class="s1">pos: Coordinate) -&gt; List[_TSprite]: ...</span>
+    <span class="s0">def </span><span class="s1">get_sprite(self</span><span class="s0">, </span><span class="s1">idx: int) -&gt; _TSprite: ...</span>
+    <span class="s0">def </span><span class="s1">remove_sprites_of_layer(self</span><span class="s0">, </span><span class="s1">layer_nr: int) -&gt; List[_TSprite]: ...</span>
+    <span class="s0">def </span><span class="s1">layers(self) -&gt; List[int]: ...</span>
+    <span class="s0">def </span><span class="s1">change_layer(self</span><span class="s0">, </span><span class="s1">sprite: _TSprite</span><span class="s0">, </span><span class="s1">new_layer: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_layer_of_sprite(self</span><span class="s0">, </span><span class="s1">sprite: _TSprite) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_top_layer(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_bottom_layer(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">move_to_front(self</span><span class="s0">, </span><span class="s1">sprite: _TSprite) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">move_to_back(self</span><span class="s0">, </span><span class="s1">sprite: _TSprite) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_top_sprite(self) -&gt; _TSprite: ...</span>
+    <span class="s0">def </span><span class="s1">get_sprites_from_layer(self</span><span class="s0">, </span><span class="s1">layer: int) -&gt; List[_TSprite]: ...</span>
+    <span class="s0">def </span><span class="s1">switch_layer(self</span><span class="s0">, </span><span class="s1">layer1_nr: int</span><span class="s0">, </span><span class="s1">layer2_nr: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s0">class </span><span class="s1">LayeredDirty(LayeredUpdates[_TDirtySprite]):</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">*sprites: _TDirtySprite</span><span class="s0">, </span><span class="s1">**kwargs: Any) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">draw(self</span><span class="s0">, </span><span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">bgd: Optional[Surface] = </span><span class="s0">None</span><span class="s1">) -&gt; List[Rect]: ...</span>
+    <span class="s2"># clear breaks Liskov substitution principle in code</span>
+    <span class="s0">def </span><span class="s1">clear(self</span><span class="s0">, </span><span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">bgd: Surface) -&gt; </span><span class="s0">None</span><span class="s1">: ...  </span><span class="s2"># type: ignore[override]</span>
+    <span class="s0">def </span><span class="s1">repaint_rect(self</span><span class="s0">, </span><span class="s1">screen_rect: RectValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">set_clip(self</span><span class="s0">, </span><span class="s1">screen_rect: Optional[RectValue] = </span><span class="s0">None</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_clip(self) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">set_timing_threshold(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">time_ms: SupportsFloat</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...  </span><span class="s2"># This actually accept any value</span>
+    <span class="s2"># deprecated alias</span>
+    <span class="s1">set_timing_treshold = set_timing_threshold</span>
+
+<span class="s0">class </span><span class="s1">GroupSingle(AbstractGroup[_TSprite]):</span>
+    <span class="s1">sprite: _TSprite</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">sprite: Optional[_TSprite] = </span><span class="s0">None</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s2"># argument to collide_rect must have rect attribute</span>
+<span class="s0">def </span><span class="s1">collide_rect(left: _HasRect</span><span class="s0">, </span><span class="s1">right: _HasRect) -&gt; bool: ...</span>
+
+<span class="s0">class </span><span class="s1">collide_rect_ratio:</span>
+    <span class="s1">ratio: float</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">ratio: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__call__(self</span><span class="s0">, </span><span class="s1">left: _HasRect</span><span class="s0">, </span><span class="s1">right: _HasRect) -&gt; bool: ...</span>
+
+<span class="s2"># must have rect attribute, may optionally have radius attribute</span>
+<span class="s1">_SupportsCollideCircle = Union[_HasRect</span><span class="s0">, </span><span class="s1">_HasRadiusAndRect]</span>
+
+<span class="s0">def </span><span class="s1">collide_circle(</span>
+    <span class="s1">left: _SupportsCollideCircle</span><span class="s0">, </span><span class="s1">right: _SupportsCollideCircle</span>
+<span class="s1">) -&gt; bool: ...</span>
+
+<span class="s0">class </span><span class="s1">collide_circle_ratio:</span>
+    <span class="s1">ratio: float</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">ratio: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__call__(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">left: _SupportsCollideCircle</span><span class="s0">, </span><span class="s1">right: _SupportsCollideCircle</span>
+    <span class="s1">) -&gt; bool: ...</span>
+
+<span class="s2"># argument to collide_mask must either have mask or have image attribute, in</span>
+<span class="s2"># addtion to mandatorily having a rect attribute</span>
+<span class="s1">_SupportsCollideMask = Union[_HasImageAndRect</span><span class="s0">, </span><span class="s1">_HasMaskAndRect]</span>
+
+<span class="s0">def </span><span class="s1">collide_mask(</span>
+    <span class="s1">left: _SupportsCollideMask</span><span class="s0">, </span><span class="s1">right: _SupportsCollideMask</span>
+<span class="s1">) -&gt; Optional[Tuple[int</span><span class="s0">, </span><span class="s1">int]]: ...</span>
+<span class="s0">def </span><span class="s1">spritecollide(</span>
+    <span class="s1">sprite: _HasRect</span><span class="s0">,</span>
+    <span class="s1">group: AbstractGroup[_TSprite]</span><span class="s0">,</span>
+    <span class="s1">dokill: bool</span><span class="s0">,</span>
+    <span class="s1">collided: Optional[Callable[[_HasRect</span><span class="s0">, </span><span class="s1">_TSprite]</span><span class="s0">, </span><span class="s1">bool]] = </span><span class="s0">None,</span>
+<span class="s1">) -&gt; List[_TSprite]: ...</span>
+<span class="s0">def </span><span class="s1">groupcollide(</span>
+    <span class="s1">groupa: AbstractGroup[_TSprite]</span><span class="s0">,</span>
+    <span class="s1">groupb: AbstractGroup[_TSprite2]</span><span class="s0">,</span>
+    <span class="s1">dokilla: bool</span><span class="s0">,</span>
+    <span class="s1">dokillb: bool</span><span class="s0">,</span>
+    <span class="s1">collided: Optional[Callable[[_TSprite</span><span class="s0">, </span><span class="s1">_TSprite2]</span><span class="s0">, </span><span class="s1">bool]] = </span><span class="s0">None,</span>
+<span class="s1">) -&gt; Dict[_TSprite</span><span class="s0">, </span><span class="s1">List[_TSprite2]]: ...</span>
+<span class="s0">def </span><span class="s1">spritecollideany(</span>
+    <span class="s1">sprite: _HasRect</span><span class="s0">,</span>
+    <span class="s1">group: AbstractGroup[_TSprite]</span><span class="s0">,</span>
+    <span class="s1">collided: Optional[Callable[[_HasRect</span><span class="s0">, </span><span class="s1">_TSprite]</span><span class="s0">, </span><span class="s1">bool]] = </span><span class="s0">None,</span>
+<span class="s1">) -&gt; Optional[_TSprite]: ...</span>
+</pre>
+</body>
+</html>

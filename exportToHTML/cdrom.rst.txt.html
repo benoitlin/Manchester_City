@@ -1,0 +1,327 @@
+<html>
+<head>
+<title>cdrom.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+cdrom.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.cdrom`</span>
+<span class="s0">===================</span>
+
+<span class="s0">.. module:: pygame.cdrom</span>
+   <span class="s0">:synopsis: pygame module for audio cdrom control</span>
+
+<span class="s0">| :sl:`pygame module for audio cdrom control`</span>
+
+<span class="s0">.. warning::</span>
+	<span class="s0">This module is non functional in pygame 2.0 and above, unless you have manually compiled pygame with SDL1.</span>
+	<span class="s0">This module will not be supported in the future.</span>
+	<span class="s0">One alternative for python cdrom functionality is `pycdio &lt;https://pypi.org/project/pycdio/&gt;`_.</span>
+	
+<span class="s0">The cdrom module manages the ``CD`` and ``DVD`` drives on a computer. It can</span>
+<span class="s0">also control the playback of audio CDs. This module needs to be initialized</span>
+<span class="s0">before it can do anything. Each ``CD`` object you create represents a cdrom</span>
+<span class="s0">drive and must also be initialized individually before it can do most things.</span>
+
+<span class="s0">.. function:: init</span>
+
+   <span class="s0">| :sl:`initialize the cdrom module`</span>
+   <span class="s0">| :sg:`init() -&gt; None`</span>
+
+   <span class="s0">Initialize the cdrom module. This will scan the system for all ``CD``</span>
+   <span class="s0">devices. The module must be initialized before any other functions will</span>
+   <span class="s0">work. This automatically happens when you call ``pygame.init()``.</span>
+
+   <span class="s0">It is safe to call this function more than once.</span>
+
+   <span class="s0">.. ## pygame.cdrom.init ##</span>
+
+<span class="s0">.. function:: quit</span>
+
+   <span class="s0">| :sl:`uninitialize the cdrom module`</span>
+   <span class="s0">| :sg:`quit() -&gt; None`</span>
+
+   <span class="s0">Uninitialize the cdrom module. After you call this any existing ``CD``</span>
+   <span class="s0">objects will no longer work.</span>
+
+   <span class="s0">It is safe to call this function more than once.</span>
+
+   <span class="s0">.. ## pygame.cdrom.quit ##</span>
+
+<span class="s0">.. function:: get_init</span>
+
+   <span class="s0">| :sl:`true if the cdrom module is initialized`</span>
+   <span class="s0">| :sg:`get_init() -&gt; bool`</span>
+
+   <span class="s0">Test if the cdrom module is initialized or not. This is different than the</span>
+   <span class="s0">``CD.init()`` since each drive must also be initialized individually.</span>
+
+   <span class="s0">.. ## pygame.cdrom.get_init ##</span>
+
+<span class="s0">.. function:: get_count</span>
+
+   <span class="s0">| :sl:`number of cd drives on the system`</span>
+   <span class="s0">| :sg:`get_count() -&gt; count`</span>
+
+   <span class="s0">Return the number of cd drives on the system. When you create ``CD`` objects</span>
+   <span class="s0">you need to pass an integer id that must be lower than this count. The count</span>
+   <span class="s0">will be 0 if there are no drives on the system.</span>
+
+   <span class="s0">.. ## pygame.cdrom.get_count ##</span>
+
+<span class="s0">.. class:: CD</span>
+
+   <span class="s0">| :sl:`class to manage a cdrom drive`</span>
+   <span class="s0">| :sg:`CD(id) -&gt; CD`</span>
+
+   <span class="s0">You can create a ``CD`` object for each cdrom on the system. Use</span>
+   <span class="s0">``pygame.cdrom.get_count()`` to determine how many drives actually exist.</span>
+   <span class="s0">The id argument is an integer of the drive, starting at zero.</span>
+
+   <span class="s0">The ``CD`` object is not initialized, you can only call ``CD.get_id()`` and</span>
+   <span class="s0">``CD.get_name()`` on an uninitialized drive.</span>
+
+   <span class="s0">It is safe to create multiple ``CD`` objects for the same drive, they will</span>
+   <span class="s0">all cooperate normally.</span>
+
+   <span class="s0">.. method:: init</span>
+
+      <span class="s0">| :sl:`initialize a cdrom drive for use`</span>
+      <span class="s0">| :sg:`init() -&gt; None`</span>
+
+      <span class="s0">Initialize the cdrom drive for use. The drive must be initialized for</span>
+      <span class="s0">most ``CD`` methods to work. Even if the rest of pygame has been</span>
+      <span class="s0">initialized.</span>
+
+      <span class="s0">There may be a brief pause while the drive is initialized. Avoid</span>
+      <span class="s0">``CD.init()`` if the program should not stop for a second or two.</span>
+
+      <span class="s0">.. ## CD.init ##</span>
+
+   <span class="s0">.. method:: quit</span>
+
+      <span class="s0">| :sl:`uninitialize a cdrom drive for use`</span>
+      <span class="s0">| :sg:`quit() -&gt; None`</span>
+
+      <span class="s0">Uninitialize a drive for use. Call this when your program will not be</span>
+      <span class="s0">accessing the drive for awhile.</span>
+
+      <span class="s0">.. ## CD.quit ##</span>
+
+   <span class="s0">.. method:: get_init</span>
+
+      <span class="s0">| :sl:`true if this cd device initialized`</span>
+      <span class="s0">| :sg:`get_init() -&gt; bool`</span>
+
+      <span class="s0">Test if this ``CDROM`` device is initialized. This is different than the</span>
+      <span class="s0">``pygame.cdrom.init()`` since each drive must also be initialized</span>
+      <span class="s0">individually.</span>
+
+      <span class="s0">.. ## CD.get_init ##</span>
+
+   <span class="s0">.. method:: play</span>
+
+      <span class="s0">| :sl:`start playing audio`</span>
+      <span class="s0">| :sg:`play(track, start=None, end=None) -&gt; None`</span>
+
+      <span class="s0">Playback audio from an audio cdrom in the drive. Besides the track number</span>
+      <span class="s0">argument, you can also pass a starting and ending time for playback. The</span>
+      <span class="s0">start and end time are in seconds, and can limit the section of an audio</span>
+      <span class="s0">track played.</span>
+
+      <span class="s0">If you pass a start time but no end, the audio will play to the end of</span>
+      <span class="s0">the track. If you pass a start time and 'None' for the end time, the</span>
+      <span class="s0">audio will play to the end of the entire disc.</span>
+
+      <span class="s0">See the ``CD.get_numtracks()`` and ``CD.get_track_audio()`` to find</span>
+      <span class="s0">tracks to playback.</span>
+
+      <span class="s0">Note, track 0 is the first track on the ``CD``. Track numbers start at</span>
+      <span class="s0">zero.</span>
+
+      <span class="s0">.. ## CD.play ##</span>
+
+   <span class="s0">.. method:: stop</span>
+
+      <span class="s0">| :sl:`stop audio playback`</span>
+      <span class="s0">| :sg:`stop() -&gt; None`</span>
+
+      <span class="s0">Stops playback of audio from the cdrom. This will also lose the current</span>
+      <span class="s0">playback position. This method does nothing if the drive isn't already</span>
+      <span class="s0">playing audio.</span>
+
+      <span class="s0">.. ## CD.stop ##</span>
+
+   <span class="s0">.. method:: pause</span>
+
+      <span class="s0">| :sl:`temporarily stop audio playback`</span>
+      <span class="s0">| :sg:`pause() -&gt; None`</span>
+
+      <span class="s0">Temporarily stop audio playback on the ``CD``. The playback can be</span>
+      <span class="s0">resumed at the same point with the ``CD.resume()`` method. If the ``CD``</span>
+      <span class="s0">is not playing this method does nothing.</span>
+
+      <span class="s0">Note, track 0 is the first track on the ``CD``. Track numbers start at</span>
+      <span class="s0">zero.</span>
+
+      <span class="s0">.. ## CD.pause ##</span>
+
+   <span class="s0">.. method:: resume</span>
+
+      <span class="s0">| :sl:`unpause audio playback`</span>
+      <span class="s0">| :sg:`resume() -&gt; None`</span>
+
+      <span class="s0">Unpause a paused ``CD``. If the ``CD`` is not paused or already playing,</span>
+      <span class="s0">this method does nothing.</span>
+
+      <span class="s0">.. ## CD.resume ##</span>
+
+   <span class="s0">.. method:: eject</span>
+
+      <span class="s0">| :sl:`eject or open the cdrom drive`</span>
+      <span class="s0">| :sg:`eject() -&gt; None`</span>
+
+      <span class="s0">This will open the cdrom drive and eject the cdrom. If the drive is</span>
+      <span class="s0">playing or paused it will be stopped.</span>
+
+      <span class="s0">.. ## CD.eject ##</span>
+
+   <span class="s0">.. method:: get_id</span>
+
+      <span class="s0">| :sl:`the index of the cdrom drive`</span>
+      <span class="s0">| :sg:`get_id() -&gt; id`</span>
+
+      <span class="s0">Returns the integer id that was used to create the ``CD`` instance. This</span>
+      <span class="s0">method can work on an uninitialized ``CD``.</span>
+
+      <span class="s0">.. ## CD.get_id ##</span>
+
+   <span class="s0">.. method:: get_name</span>
+
+      <span class="s0">| :sl:`the system name of the cdrom drive`</span>
+      <span class="s0">| :sg:`get_name() -&gt; name`</span>
+
+      <span class="s0">Return the string name of the drive. This is the system name used to</span>
+      <span class="s0">represent the drive. It is often the drive letter or device name. This</span>
+      <span class="s0">method can work on an uninitialized ``CD``.</span>
+
+      <span class="s0">.. ## CD.get_name ##</span>
+
+   <span class="s0">.. method:: get_busy</span>
+
+      <span class="s0">| :sl:`true if the drive is playing audio`</span>
+      <span class="s0">| :sg:`get_busy() -&gt; bool`</span>
+
+      <span class="s0">Returns True if the drive busy playing back audio.</span>
+
+      <span class="s0">.. ## CD.get_busy ##</span>
+
+   <span class="s0">.. method:: get_paused</span>
+
+      <span class="s0">| :sl:`true if the drive is paused`</span>
+      <span class="s0">| :sg:`get_paused() -&gt; bool`</span>
+
+      <span class="s0">Returns True if the drive is currently paused.</span>
+
+      <span class="s0">.. ## CD.get_paused ##</span>
+
+   <span class="s0">.. method:: get_current</span>
+
+      <span class="s0">| :sl:`the current audio playback position`</span>
+      <span class="s0">| :sg:`get_current() -&gt; track, seconds`</span>
+
+      <span class="s0">Returns both the current track and time of that track. This method works</span>
+      <span class="s0">when the drive is either playing or paused.</span>
+
+      <span class="s0">Note, track 0 is the first track on the ``CD``. Track numbers start at</span>
+      <span class="s0">zero.</span>
+
+      <span class="s0">.. ## CD.get_current ##</span>
+
+   <span class="s0">.. method:: get_empty</span>
+
+      <span class="s0">| :sl:`False if a cdrom is in the drive`</span>
+      <span class="s0">| :sg:`get_empty() -&gt; bool`</span>
+
+      <span class="s0">Return False if there is a cdrom currently in the drive. If the drive is</span>
+      <span class="s0">empty this will return True.</span>
+
+      <span class="s0">.. ## CD.get_empty ##</span>
+
+   <span class="s0">.. method:: get_numtracks</span>
+
+      <span class="s0">| :sl:`the number of tracks on the cdrom`</span>
+      <span class="s0">| :sg:`get_numtracks() -&gt; count`</span>
+
+      <span class="s0">Return the number of tracks on the cdrom in the drive. This will return</span>
+      <span class="s0">zero of the drive is empty or has no tracks.</span>
+
+      <span class="s0">.. ## CD.get_numtracks ##</span>
+
+   <span class="s0">.. method:: get_track_audio</span>
+
+      <span class="s0">| :sl:`true if the cdrom track has audio data`</span>
+      <span class="s0">| :sg:`get_track_audio(track) -&gt; bool`</span>
+
+      <span class="s0">Determine if a track on a cdrom contains audio data. You can also call</span>
+      <span class="s0">``CD.num_tracks()`` and ``CD.get_all()`` to determine more information</span>
+      <span class="s0">about the cdrom.</span>
+
+      <span class="s0">Note, track 0 is the first track on the ``CD``. Track numbers start at</span>
+      <span class="s0">zero.</span>
+
+      <span class="s0">.. ## CD.get_track_audio ##</span>
+
+   <span class="s0">.. method:: get_all</span>
+
+      <span class="s0">| :sl:`get all track information`</span>
+      <span class="s0">| :sg:`get_all() -&gt; [(audio, start, end, length), ...]`</span>
+
+      <span class="s0">Return a list with information for every track on the cdrom. The</span>
+      <span class="s0">information consists of a tuple with four values. The audio value is True</span>
+      <span class="s0">if the track contains audio data. The start, end, and length values are</span>
+      <span class="s0">floating point numbers in seconds. Start and end represent absolute times</span>
+      <span class="s0">on the entire disc.</span>
+
+      <span class="s0">.. ## CD.get_all ##</span>
+
+   <span class="s0">.. method:: get_track_start</span>
+
+      <span class="s0">| :sl:`start time of a cdrom track`</span>
+      <span class="s0">| :sg:`get_track_start(track) -&gt; seconds`</span>
+
+      <span class="s0">Return the absolute time in seconds where at start of the cdrom track.</span>
+
+      <span class="s0">Note, track 0 is the first track on the ``CD``. Track numbers start at</span>
+      <span class="s0">zero.</span>
+
+      <span class="s0">.. ## CD.get_track_start ##</span>
+
+   <span class="s0">.. method:: get_track_length</span>
+
+      <span class="s0">| :sl:`length of a cdrom track`</span>
+      <span class="s0">| :sg:`get_track_length(track) -&gt; seconds`</span>
+
+      <span class="s0">Return a floating point value in seconds of the length of the cdrom</span>
+      <span class="s0">track.</span>
+
+      <span class="s0">Note, track 0 is the first track on the ``CD``. Track numbers start at</span>
+      <span class="s0">zero.</span>
+
+      <span class="s0">.. ## CD.get_track_length ##</span>
+
+   <span class="s0">.. ## pygame.cdrom.CD ##</span>
+
+<span class="s0">.. ## pygame.cdrom ##</span>
+</pre>
+</body>
+</html>

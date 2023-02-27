@@ -1,0 +1,182 @@
+<html>
+<head>
+<title>time.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+time.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.time`</span>
+<span class="s0">==================</span>
+
+<span class="s0">.. module:: pygame.time</span>
+   <span class="s0">:synopsis: pygame module for monitoring time</span>
+
+<span class="s0">| :sl:`pygame module for monitoring time`</span>
+
+<span class="s0">Times in pygame are represented in milliseconds (1/1000 seconds). Most</span>
+<span class="s0">platforms have a limited time resolution of around 10 milliseconds. This</span>
+<span class="s0">resolution, in milliseconds, is given in the ``TIMER_RESOLUTION`` constant.</span>
+
+<span class="s0">.. function:: get_ticks</span>
+
+   <span class="s0">| :sl:`get the time in milliseconds`</span>
+   <span class="s0">| :sg:`get_ticks() -&gt; milliseconds`</span>
+
+   <span class="s0">Return the number of milliseconds since ``pygame.init()`` was called. Before</span>
+   <span class="s0">pygame is initialized this will always be 0.</span>
+
+   <span class="s0">.. ## pygame.time.get_ticks ##</span>
+
+<span class="s0">.. function:: wait</span>
+
+   <span class="s0">| :sl:`pause the program for an amount of time`</span>
+   <span class="s0">| :sg:`wait(milliseconds) -&gt; time`</span>
+
+   <span class="s0">Will pause for a given number of milliseconds. This function sleeps the</span>
+   <span class="s0">process to share the processor with other programs. A program that waits for</span>
+   <span class="s0">even a few milliseconds will consume very little processor time. It is</span>
+   <span class="s0">slightly less accurate than the ``pygame.time.delay()`` function.</span>
+
+   <span class="s0">This returns the actual number of milliseconds used.</span>
+
+   <span class="s0">.. ## pygame.time.wait ##</span>
+
+<span class="s0">.. function:: delay</span>
+
+   <span class="s0">| :sl:`pause the program for an amount of time`</span>
+   <span class="s0">| :sg:`delay(milliseconds) -&gt; time`</span>
+
+   <span class="s0">Will pause for a given number of milliseconds. This function will use the</span>
+   <span class="s0">processor (rather than sleeping) in order to make the delay more accurate</span>
+   <span class="s0">than ``pygame.time.wait()``.</span>
+
+   <span class="s0">This returns the actual number of milliseconds used.</span>
+
+   <span class="s0">.. ## pygame.time.delay ##</span>
+
+<span class="s0">.. function:: set_timer</span>
+
+   <span class="s0">| :sl:`repeatedly create an event on the event queue`</span>
+   <span class="s0">| :sg:`set_timer(event, millis) -&gt; None`</span>
+   <span class="s0">| :sg:`set_timer(event, millis, loops=0) -&gt; None`</span>
+
+   <span class="s0">Set an event to appear on the event queue every given number of milliseconds.</span>
+   <span class="s0">The first event will not appear until the amount of time has passed.</span>
+
+   <span class="s0">The ``event`` attribute can be a ``pygame.event.Event`` object or an integer</span>
+   <span class="s0">type that denotes an event.</span>
+
+   <span class="s0">``loops`` is an integer that denotes the number of events posted. If 0 (default)</span>
+   <span class="s0">then the events will keep getting posted, unless explicitly stopped.</span>
+
+   <span class="s0">To disable the timer for such an event, call the function again with the same</span>
+   <span class="s0">event argument with ``millis`` argument set to 0.</span>
+
+   <span class="s0">It is also worth mentioning that a particular event type can only be put on a</span>
+   <span class="s0">timer once. In other words, there cannot be two timers for the same event type.</span>
+   <span class="s0">Setting an event timer for a particular event discards the old one for that</span>
+   <span class="s0">event type.</span>
+
+   <span class="s0">``loops`` replaces the ``once`` argument, and this does not break backward</span>
+   <span class="s0">compatibility</span>
+
+   <span class="s0">.. versionadded:: 2.0.0.dev3 once argument added.</span>
+   <span class="s0">.. versionchanged:: 2.0.1 event argument supports ``pygame.event.Event`` object</span>
+   <span class="s0">.. versionadded:: 2.0.1 added loops argument to replace once argument</span>
+
+   <span class="s0">.. ## pygame.time.set_timer ##</span>
+
+<span class="s0">.. class:: Clock</span>
+
+   <span class="s0">| :sl:`create an object to help track time`</span>
+   <span class="s0">| :sg:`Clock() -&gt; Clock`</span>
+
+   <span class="s0">Creates a new Clock object that can be used to track an amount of time. The</span>
+   <span class="s0">clock also provides several functions to help control a game's framerate.</span>
+
+   <span class="s0">.. method:: tick</span>
+
+      <span class="s0">| :sl:`update the clock`</span>
+      <span class="s0">| :sg:`tick(framerate=0) -&gt; milliseconds`</span>
+
+      <span class="s0">This method should be called once per frame. It will compute how many</span>
+      <span class="s0">milliseconds have passed since the previous call.</span>
+
+      <span class="s0">If you pass the optional framerate argument the function will delay to</span>
+      <span class="s0">keep the game running slower than the given ticks per second. This can be</span>
+      <span class="s0">used to help limit the runtime speed of a game. By calling</span>
+      <span class="s0">``Clock.tick(40)`` once per frame, the program will never run at more</span>
+      <span class="s0">than 40 frames per second.</span>
+
+      <span class="s0">Note that this function uses SDL_Delay function which is not accurate on</span>
+      <span class="s0">every platform, but does not use much CPU. Use tick_busy_loop if you want</span>
+      <span class="s0">an accurate timer, and don't mind chewing CPU.</span>
+
+      <span class="s0">.. ## Clock.tick ##</span>
+
+   <span class="s0">.. method:: tick_busy_loop</span>
+
+      <span class="s0">| :sl:`update the clock`</span>
+      <span class="s0">| :sg:`tick_busy_loop(framerate=0) -&gt; milliseconds`</span>
+
+      <span class="s0">This method should be called once per frame. It will compute how many</span>
+      <span class="s0">milliseconds have passed since the previous call.</span>
+
+      <span class="s0">If you pass the optional framerate argument the function will delay to</span>
+      <span class="s0">keep the game running slower than the given ticks per second. This can be</span>
+      <span class="s0">used to help limit the runtime speed of a game. By calling</span>
+      <span class="s0">``Clock.tick_busy_loop(40)`` once per frame, the program will never run at</span>
+      <span class="s0">more than 40 frames per second.</span>
+
+      <span class="s0">Note that this function uses :func:`pygame.time.delay`, which uses lots</span>
+      <span class="s0">of CPU in a busy loop to make sure that timing is more accurate.</span>
+
+      <span class="s0">.. versionadded:: 1.8</span>
+
+      <span class="s0">.. ## Clock.tick_busy_loop ##</span>
+
+   <span class="s0">.. method:: get_time</span>
+
+      <span class="s0">| :sl:`time used in the previous tick`</span>
+      <span class="s0">| :sg:`get_time() -&gt; milliseconds`</span>
+
+      <span class="s0">The number of milliseconds that passed between the previous two calls to</span>
+      <span class="s0">``Clock.tick()``.</span>
+
+      <span class="s0">.. ## Clock.get_time ##</span>
+
+   <span class="s0">.. method:: get_rawtime</span>
+
+      <span class="s0">| :sl:`actual time used in the previous tick`</span>
+      <span class="s0">| :sg:`get_rawtime() -&gt; milliseconds`</span>
+
+      <span class="s0">Similar to ``Clock.get_time()``, but does not include any time used</span>
+      <span class="s0">while ``Clock.tick()`` was delaying to limit the framerate.</span>
+
+      <span class="s0">.. ## Clock.get_rawtime ##</span>
+
+   <span class="s0">.. method:: get_fps</span>
+
+      <span class="s0">| :sl:`compute the clock framerate`</span>
+      <span class="s0">| :sg:`get_fps() -&gt; float`</span>
+
+      <span class="s0">Compute your game's framerate (in frames per second). It is computed by</span>
+      <span class="s0">averaging the last ten calls to ``Clock.tick()``.</span>
+
+      <span class="s0">.. ## Clock.get_fps ##</span>
+
+   <span class="s0">.. ## pygame.time.Clock ##</span>
+
+<span class="s0">.. ## pygame.time ##</span>
+</pre>
+</body>
+</html>

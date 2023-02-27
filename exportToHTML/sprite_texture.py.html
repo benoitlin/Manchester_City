@@ -1,0 +1,126 @@
+<html>
+<head>
+<title>sprite_texture.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+sprite_texture.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.sprite_texture 
+ 
+Experimental! Uses APIs which may disappear in the next release (_sdl2 is private). 
+ 
+ 
+Hardware accelerated Image objects with pygame.sprite. 
+ 
+_sdl2.video.Image is a backwards compatible way with to use Texture with 
+pygame.sprite groups. 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">os</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+
+<span class="s3">if </span><span class="s1">pg.get_sdl_version()[</span><span class="s4">0</span><span class="s1">] &lt; </span><span class="s4">2</span><span class="s1">:</span>
+    <span class="s3">raise </span><span class="s1">SystemExit(</span><span class="s5">&quot;This example requires pygame 2 and SDL2.&quot;</span><span class="s1">)</span>
+<span class="s3">from </span><span class="s1">pygame._sdl2 </span><span class="s3">import </span><span class="s1">Window</span><span class="s3">, </span><span class="s1">Texture</span><span class="s3">, </span><span class="s1">Image</span><span class="s3">, </span><span class="s1">Renderer</span>
+
+
+<span class="s1">data_dir = os.path.join(os.path.split(os.path.abspath(__file__))[</span><span class="s4">0</span><span class="s1">]</span><span class="s3">, </span><span class="s5">&quot;data&quot;</span><span class="s1">)</span>
+
+
+<span class="s3">def </span><span class="s1">load_img(file):</span>
+    <span class="s3">return </span><span class="s1">pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s1">file))</span>
+
+
+<span class="s1">pg.display.init()</span>
+<span class="s1">pg.key.set_repeat(</span><span class="s4">10</span><span class="s3">, </span><span class="s4">10</span><span class="s1">)</span>
+
+<span class="s1">win = Window(</span><span class="s5">&quot;asdf&quot;</span><span class="s3">, </span><span class="s1">resizable=</span><span class="s3">True</span><span class="s1">)</span>
+<span class="s1">renderer = Renderer(win)</span>
+<span class="s1">tex = Texture.from_surface(renderer</span><span class="s3">, </span><span class="s1">load_img(</span><span class="s5">&quot;alien1.gif&quot;</span><span class="s1">))</span>
+
+
+<span class="s3">class </span><span class="s1">Something(pg.sprite.Sprite):</span>
+    <span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">img):</span>
+        <span class="s1">pg.sprite.Sprite.__init__(self)</span>
+
+        <span class="s1">self.rect = img.get_rect()</span>
+        <span class="s1">self.image = img</span>
+
+        <span class="s1">self.rect.w *= </span><span class="s4">5</span>
+        <span class="s1">self.rect.h *= </span><span class="s4">5</span>
+
+        <span class="s1">img.origin = self.rect.w / </span><span class="s4">2</span><span class="s3">, </span><span class="s1">self.rect.h / </span><span class="s4">2</span>
+
+
+<span class="s1">sprite = Something(Image(tex</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s1">tex.width / </span><span class="s4">2</span><span class="s3">, </span><span class="s1">tex.height / </span><span class="s4">2</span><span class="s1">)))</span>
+<span class="s1">sprite.rect.x = </span><span class="s4">250</span>
+<span class="s1">sprite.rect.y = </span><span class="s4">50</span>
+
+<span class="s0"># sprite2 = Something(Image(sprite.image))</span>
+<span class="s1">sprite2 = Something(Image(tex))</span>
+<span class="s1">sprite2.rect.x = </span><span class="s4">250</span>
+<span class="s1">sprite2.rect.y = </span><span class="s4">250</span>
+<span class="s1">sprite2.rect.w /= </span><span class="s4">2</span>
+<span class="s1">sprite2.rect.h /= </span><span class="s4">2</span>
+
+<span class="s1">group = pg.sprite.Group()</span>
+<span class="s1">group.add(sprite2)</span>
+<span class="s1">group.add(sprite)</span>
+
+<span class="s3">import </span><span class="s1">math</span>
+
+<span class="s1">t = </span><span class="s4">0</span>
+<span class="s1">running = </span><span class="s3">True</span>
+<span class="s1">clock = pg.time.Clock()</span>
+<span class="s1">renderer.draw_color = (</span><span class="s4">255</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span>
+
+<span class="s3">while </span><span class="s1">running:</span>
+    <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">pg.event.get():</span>
+        <span class="s3">if </span><span class="s1">event.type == pg.QUIT:</span>
+            <span class="s1">running = </span><span class="s3">False</span>
+        <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN:</span>
+            <span class="s3">if </span><span class="s1">event.key == pg.K_ESCAPE:</span>
+                <span class="s1">running = </span><span class="s3">False</span>
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_LEFT:</span>
+                <span class="s1">sprite.rect.x -= </span><span class="s4">5</span>
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_RIGHT:</span>
+                <span class="s1">sprite.rect.x += </span><span class="s4">5</span>
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_DOWN:</span>
+                <span class="s1">sprite.rect.y += </span><span class="s4">5</span>
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_UP:</span>
+                <span class="s1">sprite.rect.y -= </span><span class="s4">5</span>
+
+    <span class="s1">renderer.clear()</span>
+    <span class="s1">t += </span><span class="s4">1</span>
+
+    <span class="s1">img = sprite.image</span>
+    <span class="s1">img.angle += </span><span class="s4">1</span>
+    <span class="s1">img.flip_x = t % </span><span class="s4">50 </span><span class="s1">&lt; </span><span class="s4">25</span>
+    <span class="s1">img.flip_y = t % </span><span class="s4">100 </span><span class="s1">&lt; </span><span class="s4">50</span>
+    <span class="s1">img.color[</span><span class="s4">0</span><span class="s1">] = int(</span><span class="s4">255.0 </span><span class="s1">* (</span><span class="s4">0.5 </span><span class="s1">+ math.sin(</span><span class="s4">0.5 </span><span class="s1">* t + </span><span class="s4">10.0</span><span class="s1">) / </span><span class="s4">2.0</span><span class="s1">))</span>
+    <span class="s1">img.alpha = int(</span><span class="s4">255.0 </span><span class="s1">* (</span><span class="s4">0.5 </span><span class="s1">+ math.sin(</span><span class="s4">0.1 </span><span class="s1">* t) / </span><span class="s4">2.0</span><span class="s1">))</span>
+    <span class="s0"># img.draw(dstrect=(x, y, 5 * img.srcrect['w'], 5 * img.srcrect['h']))</span>
+
+    <span class="s1">group.draw(renderer)</span>
+
+    <span class="s1">renderer.present()</span>
+
+    <span class="s1">clock.tick(</span><span class="s4">60</span><span class="s1">)</span>
+    <span class="s1">win.title = str(</span><span class="s5">f&quot;FPS: </span><span class="s3">{</span><span class="s1">clock.get_fps()</span><span class="s3">}</span><span class="s5">&quot;</span><span class="s1">)</span>
+
+<span class="s1">pg.quit()</span>
+</pre>
+</body>
+</html>

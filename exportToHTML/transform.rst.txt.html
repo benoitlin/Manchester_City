@@ -1,0 +1,330 @@
+<html>
+<head>
+<title>transform.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+transform.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.transform`</span>
+<span class="s0">=======================</span>
+
+<span class="s0">.. module:: pygame.transform</span>
+   <span class="s0">:synopsis: pygame module to transform surfaces</span>
+
+<span class="s0">| :sl:`pygame module to transform surfaces`</span>
+
+<span class="s0">A Surface transform is an operation that moves or resizes the pixels. All these</span>
+<span class="s0">functions take a Surface to operate on and return a new Surface with the</span>
+<span class="s0">results.</span>
+
+<span class="s0">Some of the transforms are considered destructive. These means every time they</span>
+<span class="s0">are performed they lose pixel data. Common examples of this are resizing and</span>
+<span class="s0">rotating. For this reason, it is better to re-transform the original surface</span>
+<span class="s0">than to keep transforming an image multiple times. (For example, suppose you</span>
+<span class="s0">are animating a bouncing spring which expands and contracts. If you applied the</span>
+<span class="s0">size changes incrementally to the previous images, you would lose detail.</span>
+<span class="s0">Instead, always begin with the original image and scale to the desired size.)</span>
+
+<span class="s0">.. versionchanged:: 2.0.2 transform functions now support keyword arguments.</span>
+
+<span class="s0">.. function:: flip</span>
+
+   <span class="s0">| :sl:`flip vertically and horizontally`</span>
+   <span class="s0">| :sg:`flip(surface, flip_x, flip_y) -&gt; Surface`</span>
+
+   <span class="s0">This can flip a Surface either vertically, horizontally, or both.</span>
+   <span class="s0">The arguments ``flip_x`` and ``flip_y`` are booleans that control whether</span>
+   <span class="s0">to flip each axis. Flipping a Surface is non-destructive and returns a new</span>
+   <span class="s0">Surface with the same dimensions.</span>
+
+   <span class="s0">.. ## pygame.transform.flip ##</span>
+
+<span class="s0">.. function:: scale</span>
+
+   <span class="s0">| :sl:`resize to new resolution`</span>
+   <span class="s0">| :sg:`scale(surface, size, dest_surface=None) -&gt; Surface`</span>
+
+   <span class="s0">Resizes the Surface to a new size, given as (width, height). </span>
+   <span class="s0">This is a fast scale operation that does not sample the results.</span>
+
+   <span class="s0">An optional destination surface can be used, rather than have it create a</span>
+   <span class="s0">new one. This is quicker if you want to repeatedly scale something. However</span>
+   <span class="s0">the destination must be the same size as the size (width, height) passed in. Also</span>
+   <span class="s0">the destination surface must be the same format.</span>
+
+   <span class="s0">.. ## pygame.transform.scale ##</span>
+
+<span class="s0">.. function:: scale_by</span>
+
+   <span class="s0">| :sl:`resize to new resolution, using scalar(s)`</span>
+   <span class="s0">| :sg:`scale_by(surface, factor, dest_surface=None) -&gt; Surface`</span>
+
+   <span class="s0">**Experimental:** feature still in development available for testing and feedback. It may change.</span>
+   <span class="s0">`Please leave scale_by feedback with authors &lt;https://github.com/pygame/pygame/pull/2723&gt;`_</span>
+
+   <span class="s0">Same as :func:`scale()`, but scales by some factor, rather than taking</span>
+   <span class="s0">the new size explicitly. For example, :code:`transform.scale_by(surf, 3)`</span>
+   <span class="s0">will triple the size of the surface in both dimensions. Optionally, the</span>
+   <span class="s0">scale factor can be a sequence of two numbers, controlling x and y scaling</span>
+   <span class="s0">separately. For example, :code:`transform.scale_by(surf, (2, 1))` doubles</span>
+   <span class="s0">the image width but keeps the height the same.</span>
+
+   <span class="s0">.. versionadded:: 2.1.3</span>
+
+   <span class="s0">.. ## pygame.transform.scale_by ##</span>
+
+<span class="s0">.. function:: rotate</span>
+
+   <span class="s0">| :sl:`rotate an image`</span>
+   <span class="s0">| :sg:`rotate(surface, angle) -&gt; Surface`</span>
+
+   <span class="s0">Unfiltered counterclockwise rotation. The angle argument represents degrees</span>
+   <span class="s0">and can be any floating point value. Negative angle amounts will rotate</span>
+   <span class="s0">clockwise.</span>
+
+   <span class="s0">Unless rotating by 90 degree increments, the image will be padded larger to</span>
+   <span class="s0">hold the new size. If the image has pixel alphas, the padded area will be</span>
+   <span class="s0">transparent. Otherwise pygame will pick a color that matches the Surface</span>
+   <span class="s0">colorkey or the topleft pixel value.</span>
+
+   <span class="s0">.. ## pygame.transform.rotate ##</span>
+
+<span class="s0">.. function:: rotozoom</span>
+
+   <span class="s0">| :sl:`filtered scale and rotation`</span>
+   <span class="s0">| :sg:`rotozoom(surface, angle, scale) -&gt; Surface`</span>
+
+   <span class="s0">This is a combined scale and rotation transform. The resulting Surface will</span>
+   <span class="s0">be a filtered 32-bit Surface. The scale argument is a floating point value</span>
+   <span class="s0">that will be multiplied by the current resolution. The angle argument is a</span>
+   <span class="s0">floating point value that represents the counterclockwise degrees to rotate.</span>
+   <span class="s0">A negative rotation angle will rotate clockwise.</span>
+
+   <span class="s0">.. ## pygame.transform.rotozoom ##</span>
+
+<span class="s0">.. function:: scale2x</span>
+
+   <span class="s0">| :sl:`specialized image doubler`</span>
+   <span class="s0">| :sg:`scale2x(surface, dest_surface=None) -&gt; Surface`</span>
+
+   <span class="s0">This will return a new image that is double the size of the original. It</span>
+   <span class="s0">uses the AdvanceMAME Scale2X algorithm which does a 'jaggie-less' scale of</span>
+   <span class="s0">bitmap graphics.</span>
+
+   <span class="s0">This really only has an effect on simple images with solid colors. On</span>
+   <span class="s0">photographic and antialiased images it will look like a regular unfiltered</span>
+   <span class="s0">scale.</span>
+
+   <span class="s0">An optional destination surface can be used, rather than have it create a</span>
+   <span class="s0">new one. This is quicker if you want to repeatedly scale something. However</span>
+   <span class="s0">the destination must be twice the size of the source surface passed in. Also</span>
+   <span class="s0">the destination surface must be the same format.</span>
+
+   <span class="s0">.. ## pygame.transform.scale2x ##</span>
+
+<span class="s0">.. function:: smoothscale</span>
+
+   <span class="s0">| :sl:`scale a surface to an arbitrary size smoothly`</span>
+   <span class="s0">| :sg:`smoothscale(surface, size, dest_surface=None) -&gt; Surface`</span>
+
+   <span class="s0">Uses one of two different algorithms for scaling each dimension of the input</span>
+   <span class="s0">surface as required. For shrinkage, the output pixels are area averages of</span>
+   <span class="s0">the colors they cover. For expansion, a bilinear filter is used. For the</span>
+   <span class="s0">x86-64 and i686 architectures, optimized ``MMX`` routines are included and</span>
+   <span class="s0">will run much faster than other machine types. The size is a 2 number</span>
+   <span class="s0">sequence for (width, height). This function only works for 24-bit or 32-bit</span>
+   <span class="s0">surfaces. An exception will be thrown if the input surface bit depth is less</span>
+   <span class="s0">than 24.</span>
+
+   <span class="s0">.. versionadded:: 1.8</span>
+
+   <span class="s0">.. ## pygame.transform.smoothscale ##</span>
+
+<span class="s0">.. function:: smoothscale_by</span>
+
+   <span class="s0">| :sl:`resize to new resolution, using scalar(s)`</span>
+   <span class="s0">| :sg:`smoothscale_by(surface, factor, dest_surface=None) -&gt; Surface`</span>
+
+   <span class="s0">**Experimental:** feature still in development available for testing and feedback. It may change.</span>
+   <span class="s0">`Please leave smoothscale_by feedback with authors &lt;https://github.com/pygame/pygame/pull/2723&gt;`_</span>
+
+   <span class="s0">Same as :func:`smoothscale()`, but scales by some factor, rather than</span>
+   <span class="s0">taking the new size explicitly. For example,</span>
+   <span class="s0">:code:`transform.smoothscale_by(surf, 3)` will triple the size of the</span>
+   <span class="s0">surface in both dimensions. Optionally, the scale factor can be a sequence</span>
+   <span class="s0">of two numbers, controlling x and y scaling separately. For example,</span>
+   <span class="s0">:code:`transform.smoothscale_by(surf, (2, 1))` doubles the image width but</span>
+   <span class="s0">keeps the height the same.</span>
+
+   <span class="s0">.. versionadded:: 2.1.3</span>
+
+   <span class="s0">.. ## pygame.transform.smoothscale_by ##</span>
+
+<span class="s0">.. function:: get_smoothscale_backend</span>
+
+   <span class="s0">| :sl:`return smoothscale filter version in use: 'GENERIC', 'MMX', or 'SSE'`</span>
+   <span class="s0">| :sg:`get_smoothscale_backend() -&gt; string`</span>
+
+   <span class="s0">Shows whether or not smoothscale is using ``MMX`` or ``SSE`` acceleration.</span>
+   <span class="s0">If no acceleration is available then &quot;GENERIC&quot; is returned. For a x86</span>
+   <span class="s0">processor the level of acceleration to use is determined at runtime.</span>
+
+   <span class="s0">This function is provided for pygame testing and debugging.</span>
+
+   <span class="s0">.. ## pygame.transform.get_smoothscale_backend ##</span>
+
+<span class="s0">.. function:: set_smoothscale_backend</span>
+
+   <span class="s0">| :sl:`set smoothscale filter version to one of: 'GENERIC', 'MMX', or 'SSE'`</span>
+   <span class="s0">| :sg:`set_smoothscale_backend(backend) -&gt; None`</span>
+
+   <span class="s0">Sets smoothscale acceleration. Takes a string argument. A value of 'GENERIC'</span>
+   <span class="s0">turns off acceleration. 'MMX' uses ``MMX`` instructions only. 'SSE' allows</span>
+   <span class="s0">``SSE`` extensions as well. A value error is raised if type is not</span>
+   <span class="s0">recognized or not supported by the current processor.</span>
+
+   <span class="s0">This function is provided for pygame testing and debugging. If smoothscale</span>
+   <span class="s0">causes an invalid instruction error then it is a pygame/SDL bug that should</span>
+   <span class="s0">be reported. Use this function as a temporary fix only.</span>
+
+   <span class="s0">.. ## pygame.transform.set_smoothscale_backend ##</span>
+
+<span class="s0">.. function:: chop</span>
+
+   <span class="s0">| :sl:`gets a copy of an image with an interior area removed`</span>
+   <span class="s0">| :sg:`chop(surface, rect) -&gt; Surface`</span>
+
+   <span class="s0">Extracts a portion of an image. All vertical and horizontal pixels</span>
+   <span class="s0">surrounding the given rectangle area are removed. The corner areas (diagonal</span>
+   <span class="s0">to the rect) are then brought together. (The original image is not altered</span>
+   <span class="s0">by this operation.)</span>
+
+   <span class="s0">``NOTE``: If you want a &quot;crop&quot; that returns the part of an image within a</span>
+   <span class="s0">rect, you can blit with a rect to a new surface or copy a subsurface.</span>
+
+   <span class="s0">.. ## pygame.transform.chop ##</span>
+
+<span class="s0">.. function:: laplacian</span>
+
+   <span class="s0">| :sl:`find edges in a surface`</span>
+   <span class="s0">| :sg:`laplacian(surface, dest_surface=None) -&gt; Surface`</span>
+
+   <span class="s0">Finds the edges in a surface using the laplacian algorithm.</span>
+
+   <span class="s0">.. versionadded:: 1.8</span>
+
+   <span class="s0">.. ## pygame.transform.laplacian ##</span>
+
+<span class="s0">.. function:: average_surfaces</span>
+
+   <span class="s0">| :sl:`find the average surface from many surfaces.`</span>
+   <span class="s0">| :sg:`average_surfaces(surfaces, dest_surface=None, palette_colors=1) -&gt; Surface`</span>
+
+   <span class="s0">Takes a sequence of surfaces and returns a surface with average colors from</span>
+   <span class="s0">each of the surfaces.</span>
+
+   <span class="s0">palette_colors - if true we average the colors in palette, otherwise we</span>
+   <span class="s0">average the pixel values. This is useful if the surface is actually</span>
+   <span class="s0">greyscale colors, and not palette colors.</span>
+
+   <span class="s0">Note, this function currently does not handle palette using surfaces</span>
+   <span class="s0">correctly.</span>
+
+   <span class="s0">.. versionadded:: 1.8</span>
+   <span class="s0">.. versionadded:: 1.9 ``palette_colors`` argument</span>
+
+   <span class="s0">.. ## pygame.transform.average_surfaces ##</span>
+
+<span class="s0">.. function:: average_color</span>
+
+   <span class="s0">| :sl:`finds the average color of a surface`</span>
+   <span class="s0">| :sg:`average_color(surface, rect=None, consider_alpha=False) -&gt; Color`</span>
+
+   <span class="s0">Finds the average color of a Surface or a region of a surface specified by a</span>
+   <span class="s0">Rect, and returns it as a Color. If consider_alpha is set to True, then alpha is</span>
+   <span class="s0">taken into account (removing the black artifacts).</span>
+
+   <span class="s0">.. versionadded:: 2.1.2 ``consider_alpha`` argument</span>
+
+   <span class="s0">.. ## pygame.transform.average_color ##</span>
+
+<span class="s0">.. function:: threshold</span>
+
+   <span class="s0">| :sl:`finds which, and how many pixels in a surface are within a threshold of a 'search_color' or a 'search_surf'.`</span>
+   <span class="s0">| :sg:`threshold(dest_surface, surface, search_color, threshold=(0,0,0,0), set_color=(0,0,0,0), set_behavior=1, search_surf=None, inverse_set=False) -&gt; num_threshold_pixels`</span>
+
+   <span class="s0">This versatile function can be used for find colors in a 'surf' close to a 'search_color'</span>
+   <span class="s0">or close to colors in a separate 'search_surf'.</span>
+
+   <span class="s0">It can also be used to transfer pixels into a 'dest_surf' that match or don't match.</span>
+
+   <span class="s0">By default it sets pixels in the 'dest_surf' where all of the pixels NOT within the</span>
+   <span class="s0">threshold are changed to set_color. If inverse_set is optionally set to True,</span>
+   <span class="s0">the pixels that ARE within the threshold are changed to set_color.</span>
+
+   <span class="s0">If the optional 'search_surf' surface is given, it is used to threshold against</span>
+   <span class="s0">rather than the specified 'set_color'. That is, it will find each pixel in the</span>
+   <span class="s0">'surf' that is within the 'threshold' of the pixel at the same coordinates</span>
+   <span class="s0">of the 'search_surf'.</span>
+
+   <span class="s0">:param dest_surf: Surface we are changing. See 'set_behavior'.</span>
+    <span class="s0">Should be None if counting (set_behavior is 0).</span>
+   <span class="s0">:type dest_surf: pygame.Surface or None</span>
+
+   <span class="s0">:param pygame.Surface surf: Surface we are looking at.</span>
+
+   <span class="s0">:param pygame.Color search_color: Color we are searching for.</span>
+
+   <span class="s0">:param pygame.Color threshold: Within this distance from search_color (or search_surf).</span>
+     <span class="s0">You can use a threshold of (r,g,b,a) where the r,g,b can have different</span>
+     <span class="s0">thresholds. So you could use an r threshold of 40 and a blue threshold of 2</span>
+     <span class="s0">if you like.</span>
+
+   <span class="s0">:param set_color: Color we set in dest_surf.</span>
+   <span class="s0">:type set_color: pygame.Color or None</span>
+
+   <span class="s0">:param int set_behavior:</span>
+    <span class="s0">- set_behavior=1 (default). Pixels in dest_surface will be changed to 'set_color'.</span>
+    <span class="s0">- set_behavior=0 we do not change 'dest_surf', just count. Make dest_surf=None.</span>
+    <span class="s0">- set_behavior=2 pixels set in 'dest_surf' will be from 'surf'.</span>
+
+   <span class="s0">:param search_surf:</span>
+    <span class="s0">- search_surf=None (default). Search against 'search_color' instead.</span>
+    <span class="s0">- search_surf=Surface. Look at the color in 'search_surf' rather than using 'search_color'.</span>
+   <span class="s0">:type search_surf: pygame.Surface or None</span>
+
+   <span class="s0">:param bool inverse_set:</span>
+     <span class="s0">- False, default. Pixels outside of threshold are changed.</span>
+     <span class="s0">- True, Pixels within threshold are changed.</span>
+
+   <span class="s0">:rtype: int</span>
+   <span class="s0">:returns: The number of pixels that are within the 'threshold' in 'surf'</span>
+     <span class="s0">compared to either 'search_color' or `search_surf`.</span>
+
+   <span class="s0">:Examples:</span>
+
+   <span class="s0">See the threshold tests for a full of examples: https://github.com/pygame/pygame/blob/master/test/transform_test.py</span>
+
+   <span class="s0">.. literalinclude:: ../../../test/transform_test.py</span>
+      <span class="s0">:pyobject: TransformModuleTest.test_threshold_dest_surf_not_change</span>
+
+
+   <span class="s0">.. versionadded:: 1.8</span>
+   <span class="s0">.. versionchanged:: 1.9.4</span>
+      <span class="s0">Fixed a lot of bugs and added keyword arguments. Test your code.</span>
+
+   <span class="s0">.. ## pygame.transform.threshold ##</span>
+
+<span class="s0">.. ## pygame.transform ##</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,526 @@
+<html>
+<head>
+<title>event.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+event.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.event`</span>
+<span class="s0">===================</span>
+
+<span class="s0">.. module:: pygame.event</span>
+   <span class="s0">:synopsis: pygame module for interacting with events and queues</span>
+
+<span class="s0">| :sl:`pygame module for interacting with events and queues`</span>
+
+<span class="s0">Pygame handles all its event messaging through an event queue. The routines in</span>
+<span class="s0">this module help you manage that event queue. The input queue is heavily</span>
+<span class="s0">dependent on the :mod:`pygame.display` module. If the display has not been</span>
+<span class="s0">initialized and a video mode not set, the event queue may not work properly.</span>
+
+<span class="s0">The event queue has an upper limit on the number of events it can hold. When</span>
+<span class="s0">the queue becomes full new events are quietly dropped. To prevent lost events,</span>
+<span class="s0">especially input events which signal a quit command, your program must handle</span>
+<span class="s0">events every frame (with ``pygame.event.get()``, ``pygame.event.pump()``,</span>
+<span class="s0">``pygame.event.wait()``, ``pygame.event.peek()`` or ``pygame.event.clear()``)</span>
+<span class="s0">and process them. Not handling events may cause your system to decide your</span>
+<span class="s0">program has locked up. To speed up queue processing use</span>
+<span class="s0">:func:`pygame.event.set_blocked()` to limit which events get queued.</span>
+
+<span class="s0">To get the state of various input devices, you can forego the event queue and</span>
+<span class="s0">access the input devices directly with their appropriate modules:</span>
+<span class="s0">:mod:`pygame.mouse`, :mod:`pygame.key`, and :mod:`pygame.joystick`. If you use</span>
+<span class="s0">this method, remember that pygame requires some form of communication with the</span>
+<span class="s0">system window manager and other parts of the platform. To keep pygame in sync</span>
+<span class="s0">with the system, you will need to call :func:`pygame.event.pump()` to keep</span>
+<span class="s0">everything current. Usually, this should be called once per game loop.</span>
+<span class="s0">Note: Joysticks will not send any events until the device has been initialized.</span>
+
+<span class="s0">The event queue contains :class:`pygame.event.Event` event objects.</span>
+<span class="s0">There are a variety of ways to access the queued events, from simply</span>
+<span class="s0">checking for the existence of events, to grabbing them directly off the stack.</span>
+<span class="s0">The event queue also offers some simple filtering which can slightly help</span>
+<span class="s0">performance by blocking certain event types from the queue. Use</span>
+<span class="s0">:func:`pygame.event.set_allowed()` and :func:`pygame.event.set_blocked()` to</span>
+<span class="s0">change this filtering. By default, all event types can be placed on the queue.</span>
+
+<span class="s0">All :class:`pygame.event.Event` instances contain an event type identifier</span>
+<span class="s0">and attributes specific to that event type. The event type identifier is</span>
+<span class="s0">accessible as the :attr:`pygame.event.Event.type` property. Any of the</span>
+<span class="s0">event specific attributes can be accessed through the</span>
+<span class="s0">:attr:`pygame.event.Event.__dict__` attribute or directly as an attribute</span>
+<span class="s0">of the event object (as member lookups are passed through to the object's</span>
+<span class="s0">dictionary values). The event object has no method functions. Users can create</span>
+<span class="s0">their own new events with the :func:`pygame.event.Event()` function.</span>
+
+<span class="s0">The event type identifier is in between the values of ``NOEVENT`` and</span>
+<span class="s0">``NUMEVENTS``. User defined events should have a value in the inclusive range</span>
+<span class="s0">of ``USEREVENT`` to ``NUMEVENTS - 1``. User defined events can get a custom</span>
+<span class="s0">event number with :func:`pygame.event.custom_type()`. </span>
+<span class="s0">It is recommended all user events follow this system.</span>
+
+<span class="s0">Events support equality and inequality comparisons. Two events are equal if</span>
+<span class="s0">they are the same type and have identical attribute values.</span>
+
+<span class="s0">While debugging and experimenting, you can print an event object for a quick</span>
+<span class="s0">display of its type and members. The function :func:`pygame.event.event_name()`</span>
+<span class="s0">can be used to get a string representing the name of the event type.</span>
+
+<span class="s0">Events that come from the system will have a guaranteed set of member</span>
+<span class="s0">attributes based on the type. The following is a list event types with their</span>
+<span class="s0">specific attributes.</span>
+
+<span class="s0">::</span>
+
+    <span class="s0">QUIT              none</span>
+    <span class="s0">ACTIVEEVENT       gain, state</span>
+    <span class="s0">KEYDOWN           key, mod, unicode, scancode</span>
+    <span class="s0">KEYUP             key, mod, unicode, scancode</span>
+    <span class="s0">MOUSEMOTION       pos, rel, buttons, touch</span>
+    <span class="s0">MOUSEBUTTONUP     pos, button, touch</span>
+    <span class="s0">MOUSEBUTTONDOWN   pos, button, touch</span>
+    <span class="s0">JOYAXISMOTION     joy (deprecated), instance_id, axis, value</span>
+    <span class="s0">JOYBALLMOTION     joy (deprecated), instance_id, ball, rel</span>
+    <span class="s0">JOYHATMOTION      joy (deprecated), instance_id, hat, value</span>
+    <span class="s0">JOYBUTTONUP       joy (deprecated), instance_id, button</span>
+    <span class="s0">JOYBUTTONDOWN     joy (deprecated), instance_id, button</span>
+    <span class="s0">VIDEORESIZE       size, w, h</span>
+    <span class="s0">VIDEOEXPOSE       none</span>
+    <span class="s0">USEREVENT         code</span>
+
+<span class="s0">.. versionchanged:: 2.0.0 The ``joy`` attribute was deprecated, ``instance_id`` was added.</span>
+
+<span class="s0">.. versionchanged:: 2.0.1 The ``unicode`` attribute was added to ``KEYUP`` event.</span>
+
+<span class="s0">Note that ``ACTIVEEVENT``, ``VIDEORESIZE`` and ``VIDEOEXPOSE`` are considered</span>
+<span class="s0">as &quot;legacy&quot; events, the use of pygame2 ``WINDOWEVENT`` API is recommended over</span>
+<span class="s0">the use of this older API.</span>
+
+<span class="s0">You can also find a list of constants for keyboard keys</span>
+<span class="s0">:ref:`here &lt;key-constants-label&gt;`.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">When compiled with SDL2, pygame has these additional events and their</span>
+<span class="s0">attributes.</span>
+
+<span class="s0">::</span>
+
+    <span class="s0">AUDIODEVICEADDED   which, iscapture (SDL backend &gt;= 2.0.4)</span>
+    <span class="s0">AUDIODEVICEREMOVED which, iscapture (SDL backend &gt;= 2.0.4)</span>
+    <span class="s0">FINGERMOTION       touch_id, finger_id, x, y, dx, dy</span>
+    <span class="s0">FINGERDOWN         touch_id, finger_id, x, y, dx, dy</span>
+    <span class="s0">FINGERUP           touch_id, finger_id, x, y, dx, dy</span>
+    <span class="s0">MOUSEWHEEL         which, flipped, x, y, touch, precise_x, precise_y</span>
+    <span class="s0">MULTIGESTURE       touch_id, x, y, pinched, rotated, num_fingers</span>
+    <span class="s0">TEXTEDITING        text, start, length</span>
+    <span class="s0">TEXTINPUT          text</span>
+
+<span class="s0">.. versionadded:: 1.9.5</span>
+
+<span class="s0">.. versionchanged:: 2.0.2 Fixed amount horizontal scroll (x, positive to the right and negative to the left).</span>
+
+<span class="s0">.. versionchanged:: 2.0.2 The ``touch`` attribute was added to all the ``MOUSE`` events.</span>
+
+<span class="s0">The ``touch`` attribute of ``MOUSE`` events indicates whether or not the events were generated</span>
+<span class="s0">by a touch input device, and not a real mouse. You might want to ignore such events, if your application</span>
+<span class="s0">already handles ``FINGERMOTION``, ``FINGERDOWN`` and ``FINGERUP`` events.</span>
+
+<span class="s0">.. versionadded:: 2.1.3 Added ``precise_x`` and ``precise_y`` to ``MOUSEWHEEL`` events</span>
+
+<span class="s0">|</span>
+
+<span class="s0">Many new events were introduced in pygame 2.</span>
+
+<span class="s0">pygame can recognize text or files dropped in its window. If a file</span>
+<span class="s0">is dropped, ``DROPFILE`` event will be sent, ``file`` will be its path.</span>
+<span class="s0">The ``DROPTEXT`` event is only supported on X11.</span>
+
+<span class="s0">``MIDIIN`` and ``MIDIOUT`` are events reserved for :mod:`pygame.midi` use.</span>
+
+<span class="s0">pygame 2 also supports controller hot-plugging</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">Event name               Attributes and notes</span>
+
+   <span class="s0">DROPFILE                 file</span>
+   <span class="s0">DROPBEGIN                (SDL backend &gt;= 2.0.5)</span>
+   <span class="s0">DROPCOMPLETE             (SDL backend &gt;= 2.0.5)</span>
+   <span class="s0">DROPTEXT                 text (SDL backend &gt;= 2.0.5)</span>
+   <span class="s0">MIDIIN</span>
+   <span class="s0">MIDIOUT</span>
+   <span class="s0">CONTROLLERDEVICEADDED    device_index</span>
+   <span class="s0">JOYDEVICEADDED           device_index</span>
+   <span class="s0">CONTROLLERDEVICEREMOVED  instance_id</span>
+   <span class="s0">JOYDEVICEREMOVED         instance_id</span>
+   <span class="s0">CONTROLLERDEVICEREMAPPED instance_id</span>
+   <span class="s0">KEYMAPCHANGED            (SDL backend &gt;= 2.0.4)</span>
+   <span class="s0">CLIPBOARDUPDATE</span>
+   <span class="s0">RENDER_TARGETS_RESET     (SDL backend &gt;= 2.0.2)</span>
+   <span class="s0">RENDER_DEVICE_RESET      (SDL backend &gt;= 2.0.4)</span>
+   <span class="s0">LOCALECHANGED            (SDL backend &gt;= 2.0.14)</span>
+
+<span class="s0">Also in this version, ``instance_id`` attributes were added to joystick events,</span>
+<span class="s0">and the ``joy`` attribute was deprecated.</span>
+
+<span class="s0">``KEYMAPCHANGED`` is a type of an event sent when keymap changes due to a </span>
+<span class="s0">system event such as an input language or keyboard layout change.</span>
+
+<span class="s0">``CLIPBOARDUPDATE`` is an event sent when clipboard changes. This can still</span>
+<span class="s0">be considered as an experimental feature, some kinds of clipboard changes might</span>
+<span class="s0">not trigger this event.</span>
+
+<span class="s0">``LOCALECHANGED`` is an event sent when user locale changes</span>
+
+<span class="s0">.. versionadded:: 2.0.0</span>
+
+<span class="s0">.. versionadded:: 2.1.3 ``KEYMAPCHANGED``, ``CLIPBOARDUPDATE``, </span>
+   <span class="s0">``RENDER_TARGETS_RESET``, ``RENDER_DEVICE_RESET`` and ``LOCALECHANGED``</span>
+
+<span class="s0">|</span>
+
+<span class="s0">Since pygame 2.0.1, there are a new set of events, called window events.</span>
+<span class="s0">Here is a list of all window events, along with a short description</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">Event type                Short description</span>
+
+   <span class="s0">WINDOWSHOWN            Window became shown</span>
+   <span class="s0">WINDOWHIDDEN           Window became hidden</span>
+   <span class="s0">WINDOWEXPOSED          Window got updated by some external event</span>
+   <span class="s0">WINDOWMOVED            Window got moved</span>
+   <span class="s0">WINDOWRESIZED          Window got resized</span>
+   <span class="s0">WINDOWSIZECHANGED      Window changed its size</span>
+   <span class="s0">WINDOWMINIMIZED        Window was minimized</span>
+   <span class="s0">WINDOWMAXIMIZED        Window was maximized</span>
+   <span class="s0">WINDOWRESTORED         Window was restored</span>
+   <span class="s0">WINDOWENTER            Mouse entered the window</span>
+   <span class="s0">WINDOWLEAVE            Mouse left the window</span>
+   <span class="s0">WINDOWFOCUSGAINED      Window gained focus</span>
+   <span class="s0">WINDOWFOCUSLOST        Window lost focus</span>
+   <span class="s0">WINDOWCLOSE            Window was closed</span>
+   <span class="s0">WINDOWTAKEFOCUS        Window was offered focus (SDL backend &gt;= 2.0.5)</span>
+   <span class="s0">WINDOWHITTEST          Window has a special hit test (SDL backend &gt;= 2.0.5)</span>
+   <span class="s0">WINDOWICCPROFCHANGED   Window ICC profile changed (SDL backend &gt;= 2.0.18)</span>
+   <span class="s0">WINDOWDISPLAYCHANGED   Window moved on a new display (SDL backend &gt;= 2.0.18)</span>
+
+
+<span class="s0">``WINDOWMOVED``, ``WINDOWRESIZED`` and ``WINDOWSIZECHANGED`` have ``x`` and</span>
+<span class="s0">``y`` attributes, ``WINDOWDISPLAYCHANGED`` has a ``display_index`` attribute.</span>
+<span class="s0">All windowevents have a ``window`` attribute.</span>
+
+<span class="s0">.. versionadded:: 2.0.1</span>
+
+<span class="s0">.. versionadded:: 2.1.3 ``WINDOWICCPROFCHANGED`` and ``WINDOWDISPLAYCHANGED``</span>
+
+<span class="s0">|</span>
+
+<span class="s0">On Android, the following events can be generated</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">Event type                 Short description</span>
+
+   <span class="s0">APP_TERMINATING           OS is terminating the application</span>
+   <span class="s0">APP_LOWMEMORY             OS is low on memory, try to free memory if possible</span>
+   <span class="s0">APP_WILLENTERBACKGROUND   Application is entering background</span>
+   <span class="s0">APP_DIDENTERBACKGROUND    Application entered background</span>
+   <span class="s0">APP_WILLENTERFOREGROUND   Application is entering foreground</span>
+   <span class="s0">APP_DIDENTERFOREGROUND    Application entered foreground</span>
+
+<span class="s0">.. versionadded:: 2.1.3</span>
+
+<span class="s0">|</span>
+
+<span class="s0">.. function:: pump</span>
+
+   <span class="s0">| :sl:`internally process pygame event handlers`</span>
+   <span class="s0">| :sg:`pump() -&gt; None`</span>
+
+   <span class="s0">For each frame of your game, you will need to make some sort of call to the</span>
+   <span class="s0">event queue. This ensures your program can internally interact with the rest</span>
+   <span class="s0">of the operating system. If you are not using other event functions in your</span>
+   <span class="s0">game, you should call ``pygame.event.pump()`` to allow pygame to handle</span>
+   <span class="s0">internal actions.</span>
+
+   <span class="s0">This function is not necessary if your program is consistently processing</span>
+   <span class="s0">events on the queue through the other :mod:`pygame.event` functions.</span>
+
+   <span class="s0">There are important things that must be dealt with internally in the event</span>
+   <span class="s0">queue. The main window may need to be repainted or respond to the system. If</span>
+   <span class="s0">you fail to make a call to the event queue for too long, the system may</span>
+   <span class="s0">decide your program has locked up.</span>
+
+   <span class="s0">.. caution::</span>
+      <span class="s0">This function should only be called in the thread that initialized :mod:`pygame.display`.</span>
+
+   <span class="s0">.. ## pygame.event.pump ##</span>
+
+<span class="s0">.. function:: get</span>
+
+   <span class="s0">| :sl:`get events from the queue`</span>
+   <span class="s0">| :sg:`get(eventtype=None) -&gt; Eventlist`</span>
+   <span class="s0">| :sg:`get(eventtype=None, pump=True) -&gt; Eventlist`</span>
+   <span class="s0">| :sg:`get(eventtype=None, pump=True, exclude=None) -&gt; Eventlist`</span>
+
+   <span class="s0">This will get all the messages and remove them from the queue. If a type or</span>
+   <span class="s0">sequence of types is given only those messages will be removed from the</span>
+   <span class="s0">queue and returned.</span>
+
+   <span class="s0">If a type or sequence of types is passed in the ``exclude`` argument</span>
+   <span class="s0">instead, then all only *other* messages will be removed from the queue. If</span>
+   <span class="s0">an ``exclude`` parameter is passed, the ``eventtype`` parameter *must* be</span>
+   <span class="s0">None.</span>
+
+   <span class="s0">If you are only taking specific events from the queue, be aware that the</span>
+   <span class="s0">queue could eventually fill up with the events you are not interested.</span>
+
+   <span class="s0">If ``pump`` is ``True`` (the default), then :func:`pygame.event.pump()` will be called.</span>
+
+   <span class="s0">.. versionchanged:: 1.9.5 Added ``pump`` argument</span>
+   <span class="s0">.. versionchanged:: 2.0.2 Added ``exclude`` argument</span>
+
+   <span class="s0">.. ## pygame.event.get ##</span>
+
+<span class="s0">.. function:: poll</span>
+
+   <span class="s0">| :sl:`get a single event from the queue`</span>
+   <span class="s0">| :sg:`poll() -&gt; Event instance`</span>
+
+   <span class="s0">Returns a single event from the queue. If the event queue is empty an event</span>
+   <span class="s0">of type ``pygame.NOEVENT`` will be returned immediately. The returned event</span>
+   <span class="s0">is removed from the queue.</span>
+
+   <span class="s0">.. caution::</span>
+      <span class="s0">This function should only be called in the thread that initialized :mod:`pygame.display`.</span>
+
+   <span class="s0">.. ## pygame.event.poll ##</span>
+
+<span class="s0">.. function:: wait</span>
+
+   <span class="s0">| :sl:`wait for a single event from the queue`</span>
+   <span class="s0">| :sg:`wait() -&gt; Event instance`</span>
+   <span class="s0">| :sg:`wait(timeout) -&gt; Event instance`</span>
+
+   <span class="s0">Returns a single event from the queue. If the queue is empty this function</span>
+   <span class="s0">will wait until one is created. From pygame 2.0.0, if a ``timeout`` argument</span>
+   <span class="s0">is given, the function will return an event of type ``pygame.NOEVENT`` </span>
+   <span class="s0">if no events enter the queue in ``timeout`` milliseconds. The event is removed</span>
+   <span class="s0">from the queue once it has been returned. While the program is waiting it will</span>
+   <span class="s0">sleep in an idle state. This is important for programs that want to share the</span>
+   <span class="s0">system with other applications.</span>
+
+   <span class="s0">.. versionchanged:: 2.0.0.dev13 Added ``timeout`` argument</span>
+
+   <span class="s0">.. caution::</span>
+      <span class="s0">This function should only be called in the thread that initialized :mod:`pygame.display`.</span>
+
+   <span class="s0">.. ## pygame.event.wait ##</span>
+
+<span class="s0">.. function:: peek</span>
+
+   <span class="s0">| :sl:`test if event types are waiting on the queue`</span>
+   <span class="s0">| :sg:`peek(eventtype=None) -&gt; bool`</span>
+   <span class="s0">| :sg:`peek(eventtype=None, pump=True) -&gt; bool`</span>
+
+   <span class="s0">Returns ``True`` if there are any events of the given type waiting on the</span>
+   <span class="s0">queue. If a sequence of event types is passed, this will return ``True`` if</span>
+   <span class="s0">any of those events are on the queue.</span>
+
+   <span class="s0">If ``pump`` is ``True`` (the default), then :func:`pygame.event.pump()` will be called.</span>
+
+   <span class="s0">.. versionchanged:: 1.9.5 Added ``pump`` argument</span>
+
+   <span class="s0">.. ## pygame.event.peek ##</span>
+
+<span class="s0">.. function:: clear</span>
+
+   <span class="s0">| :sl:`remove all events from the queue`</span>
+   <span class="s0">| :sg:`clear(eventtype=None) -&gt; None`</span>
+   <span class="s0">| :sg:`clear(eventtype=None, pump=True) -&gt; None`</span>
+
+   <span class="s0">Removes all events from the queue. If ``eventtype`` is given, removes the given event</span>
+   <span class="s0">or sequence of events. This has the same effect as :func:`pygame.event.get()` except ``None``</span>
+   <span class="s0">is returned. It can be slightly more efficient when clearing a full event queue.</span>
+
+   <span class="s0">If ``pump`` is ``True`` (the default), then :func:`pygame.event.pump()` will be called.</span>
+
+   <span class="s0">.. versionchanged:: 1.9.5 Added ``pump`` argument</span>
+
+   <span class="s0">.. ## pygame.event.clear ##</span>
+
+<span class="s0">.. function:: event_name</span>
+
+   <span class="s0">| :sl:`get the string name from an event id`</span>
+   <span class="s0">| :sg:`event_name(type) -&gt; string`</span>
+
+   <span class="s0">Returns a string representing the name (in CapWords style) of the given</span>
+   <span class="s0">event type.</span>
+
+   <span class="s0">&quot;UserEvent&quot; is returned for all values in the user event id range.</span>
+   <span class="s0">&quot;Unknown&quot; is returned when the event type does not exist.</span>
+
+   <span class="s0">.. ## pygame.event.event_name ##</span>
+
+<span class="s0">.. function:: set_blocked</span>
+
+   <span class="s0">| :sl:`control which events are allowed on the queue`</span>
+   <span class="s0">| :sg:`set_blocked(type) -&gt; None`</span>
+   <span class="s0">| :sg:`set_blocked(typelist) -&gt; None`</span>
+   <span class="s0">| :sg:`set_blocked(None) -&gt; None`</span>
+
+   <span class="s0">The given event types are not allowed to appear on the event queue. By</span>
+   <span class="s0">default all events can be placed on the queue. It is safe to disable an</span>
+   <span class="s0">event type multiple times.</span>
+
+   <span class="s0">If ``None`` is passed as the argument, ALL of the event types are blocked</span>
+   <span class="s0">from being placed on the queue.</span>
+
+   <span class="s0">.. ## pygame.event.set_blocked ##</span>
+
+<span class="s0">.. function:: set_allowed</span>
+
+   <span class="s0">| :sl:`control which events are allowed on the queue`</span>
+   <span class="s0">| :sg:`set_allowed(type) -&gt; None`</span>
+   <span class="s0">| :sg:`set_allowed(typelist) -&gt; None`</span>
+   <span class="s0">| :sg:`set_allowed(None) -&gt; None`</span>
+
+   <span class="s0">The given event types are allowed to appear on the event queue. By default,</span>
+   <span class="s0">all event types can be placed on the queue. It is safe to enable an event</span>
+   <span class="s0">type multiple times.</span>
+
+   <span class="s0">If ``None`` is passed as the argument, ALL of the event types are allowed</span>
+   <span class="s0">to be placed on the queue.</span>
+
+   <span class="s0">.. ## pygame.event.set_allowed ##</span>
+
+<span class="s0">.. function:: get_blocked</span>
+
+   <span class="s0">| :sl:`test if a type of event is blocked from the queue`</span>
+   <span class="s0">| :sg:`get_blocked(type) -&gt; bool`</span>
+   <span class="s0">| :sg:`get_blocked(typelist) -&gt; bool`</span>
+
+   <span class="s0">Returns ``True`` if the given event type is blocked from the queue. If a</span>
+   <span class="s0">sequence of event types is passed, this will return ``True`` if any of those</span>
+   <span class="s0">event types are blocked.</span>
+
+   <span class="s0">.. ## pygame.event.get_blocked ##</span>
+
+<span class="s0">.. function:: set_grab</span>
+
+   <span class="s0">| :sl:`control the sharing of input devices with other applications`</span>
+   <span class="s0">| :sg:`set_grab(bool) -&gt; None`</span>
+
+   <span class="s0">When your program runs in a windowed environment, it will share the mouse</span>
+   <span class="s0">and keyboard devices with other applications that have focus. If your</span>
+   <span class="s0">program sets the event grab to ``True``, it will lock all input into your</span>
+   <span class="s0">program.</span>
+
+   <span class="s0">It is best to not always grab the input, since it prevents the user from</span>
+   <span class="s0">doing other things on their system.</span>
+
+   <span class="s0">.. ## pygame.event.set_grab ##</span>
+
+<span class="s0">.. function:: get_grab</span>
+
+   <span class="s0">| :sl:`test if the program is sharing input devices`</span>
+   <span class="s0">| :sg:`get_grab() -&gt; bool`</span>
+
+   <span class="s0">Returns ``True`` when the input events are grabbed for this application.</span>
+
+   <span class="s0">.. ## pygame.event.get_grab ##</span>
+
+<span class="s0">.. function:: post</span>
+
+   <span class="s0">| :sl:`place a new event on the queue`</span>
+   <span class="s0">| :sg:`post(Event) -&gt; bool`</span>
+
+   <span class="s0">Places the given event at the end of the event queue.</span>
+
+   <span class="s0">This is usually used for placing custom events on the event queue.</span>
+   <span class="s0">Any type of event can be posted, and the events posted can have any attributes.</span>
+
+   <span class="s0">This returns a boolean on whether the event was posted or not. Blocked events</span>
+   <span class="s0">cannot be posted, and this function returns ``False`` if you try to post them.</span>
+
+   <span class="s0">.. versionchanged:: 2.0.1 returns a boolean, previously returned ``None``</span>
+
+   <span class="s0">.. ## pygame.event.post ##</span>
+
+<span class="s0">.. function:: custom_type</span>
+
+   <span class="s0">| :sl:`make custom user event type`</span>
+   <span class="s0">| :sg:`custom_type() -&gt; int`</span>
+
+   <span class="s0">Reserves a ``pygame.USEREVENT`` for a custom use.</span>
+
+   <span class="s0">If too many events are made a :exc:`pygame.error` is raised.</span>
+
+   <span class="s0">.. versionadded:: 2.0.0.dev3</span>
+
+   <span class="s0">.. ## pygame.event.custom_type ##</span>
+
+<span class="s0">.. class:: Event</span>
+
+   <span class="s0">| :sl:`pygame object for representing events`</span>
+   <span class="s0">| :sg:`Event(type, dict) -&gt; Event`</span>
+   <span class="s0">| :sg:`Event(type, \**attributes) -&gt; Event`</span>
+
+   <span class="s0">A pygame object used for representing an event. ``Event`` instances</span>
+   <span class="s0">support attribute assignment and deletion.</span>
+
+   <span class="s0">When creating the object, the attributes may come from a dictionary</span>
+   <span class="s0">argument with string keys or from keyword arguments.</span>
+
+   <span class="s0">.. note::</span>
+      <span class="s0">From version 2.1.3 ``EventType`` is an alias for ``Event``. Beforehand,</span>
+      <span class="s0">``Event`` was a function that returned ``EventType`` instances. Use of</span>
+      <span class="s0">``Event`` is preferred over ``EventType`` wherever it is possible, as</span>
+      <span class="s0">the latter could be deprecated in a future version.</span>
+
+   <span class="s0">.. attribute:: type</span>
+
+      <span class="s0">| :sl:`event type identifier.`</span>
+      <span class="s0">| :sg:`type -&gt; int`</span>
+
+      <span class="s0">Read-only. The event type identifier. For user created event</span>
+      <span class="s0">objects, this is the ``type`` argument passed to</span>
+      <span class="s0">:func:`pygame.event.Event()`.</span>
+
+      <span class="s0">For example, some predefined event identifiers are ``QUIT`` and</span>
+      <span class="s0">``MOUSEMOTION``.</span>
+
+      <span class="s0">.. ## pygame.event.Event.type ##</span>
+
+   <span class="s0">.. attribute:: __dict__</span>
+
+      <span class="s0">| :sl:`event attribute dictionary`</span>
+      <span class="s0">| :sg:`__dict__ -&gt; dict`</span>
+
+      <span class="s0">Read-only. The event type specific attributes of an event. The</span>
+      <span class="s0">``dict`` attribute is a synonym for backward compatibility.</span>
+
+      <span class="s0">For example, the attributes of a ``KEYDOWN`` event would be ``unicode``,</span>
+      <span class="s0">``key``, and ``mod``</span>
+
+      <span class="s0">.. ## pygame.event.Event.__dict__ ##</span>
+
+   <span class="s0">.. versionadded:: 1.9.2 Mutable attributes.</span>
+
+   <span class="s0">.. ## pygame.event.Event ##</span>
+
+<span class="s0">.. ## pygame.event ##</span>
+</pre>
+</body>
+</html>

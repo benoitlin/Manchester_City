@@ -1,0 +1,108 @@
+<html>
+<head>
+<title>fastevent.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #629755; font-style: italic;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+fastevent.py</font>
+</center></td></tr></table>
+<pre><span class="s0">&quot;&quot;&quot; 
+A compatibility shim for pygame.fastevent based on pygame.event. 
+This module was deprecated in pygame 2.2, and is scheduled for removal in a 
+future pygame version. If you are using pygame.fastevent, please migrate to 
+using regular pygame.event module 
+&quot;&quot;&quot;</span>
+
+<span class="s2">import </span><span class="s1">pygame.event</span>
+<span class="s2">import </span><span class="s1">pygame.display</span>
+<span class="s2">from </span><span class="s1">pygame </span><span class="s2">import </span><span class="s1">error</span><span class="s2">, </span><span class="s1">register_quit</span>
+<span class="s2">from </span><span class="s1">pygame.event </span><span class="s2">import </span><span class="s1">Event</span>
+
+<span class="s1">_ft_init = </span><span class="s2">False</span>
+
+
+<span class="s2">def </span><span class="s1">_ft_init_check():</span>
+    <span class="s0">&quot;&quot;&quot; 
+    Raises error if module is not init 
+    &quot;&quot;&quot;</span>
+    <span class="s2">if not </span><span class="s1">_ft_init:</span>
+        <span class="s2">raise </span><span class="s1">error(</span><span class="s3">&quot;fastevent system not initialized&quot;</span><span class="s1">)</span>
+
+
+<span class="s2">def </span><span class="s1">_quit_hook():</span>
+    <span class="s0">&quot;&quot;&quot; 
+    Hook that gets run to quit module 
+    &quot;&quot;&quot;</span>
+    <span class="s2">global </span><span class="s1">_ft_init</span>
+    <span class="s1">_ft_init = </span><span class="s2">False</span>
+
+
+<span class="s2">def </span><span class="s1">init():</span>
+    <span class="s0">&quot;&quot;&quot;init() -&gt; None 
+    initialize pygame.fastevent 
+    &quot;&quot;&quot;</span>
+    <span class="s2">global </span><span class="s1">_ft_init</span>
+    <span class="s2">if not </span><span class="s1">pygame.display.get_init():</span>
+        <span class="s2">raise </span><span class="s1">error(</span><span class="s3">&quot;video system not initialized&quot;</span><span class="s1">)</span>
+
+    <span class="s1">register_quit(_quit_hook)</span>
+    <span class="s1">_ft_init = </span><span class="s2">True</span>
+
+
+<span class="s2">def </span><span class="s1">get_init():</span>
+    <span class="s0">&quot;&quot;&quot;get_init() -&gt; bool 
+    returns True if the fastevent module is currently initialized 
+    &quot;&quot;&quot;</span>
+    <span class="s2">return </span><span class="s1">_ft_init</span>
+
+
+<span class="s2">def </span><span class="s1">pump():</span>
+    <span class="s0">&quot;&quot;&quot;pump() -&gt; None 
+    internally process pygame event handlers 
+    &quot;&quot;&quot;</span>
+    <span class="s1">_ft_init_check()</span>
+    <span class="s1">pygame.event.pump()</span>
+
+
+<span class="s2">def </span><span class="s1">wait():</span>
+    <span class="s0">&quot;&quot;&quot;wait() -&gt; Event 
+    wait for an event 
+    &quot;&quot;&quot;</span>
+    <span class="s1">_ft_init_check()</span>
+    <span class="s2">return </span><span class="s1">pygame.event.wait()</span>
+
+
+<span class="s2">def </span><span class="s1">poll():</span>
+    <span class="s0">&quot;&quot;&quot;poll() -&gt; Event 
+    get an available event 
+    &quot;&quot;&quot;</span>
+    <span class="s1">_ft_init_check()</span>
+    <span class="s2">return </span><span class="s1">pygame.event.poll()</span>
+
+
+<span class="s2">def </span><span class="s1">get():</span>
+    <span class="s0">&quot;&quot;&quot;get() -&gt; list of Events 
+    get all events from the queue 
+    &quot;&quot;&quot;</span>
+    <span class="s1">_ft_init_check()</span>
+    <span class="s2">return </span><span class="s1">pygame.event.get()</span>
+
+
+<span class="s2">def </span><span class="s1">post(event: Event):</span>
+    <span class="s0">&quot;&quot;&quot;post(Event) -&gt; None 
+    place an event on the queue 
+    &quot;&quot;&quot;</span>
+    <span class="s1">_ft_init_check()</span>
+    <span class="s1">pygame.event.post(event)</span>
+</pre>
+</body>
+</html>

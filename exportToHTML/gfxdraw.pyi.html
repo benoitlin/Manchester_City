@@ -1,0 +1,109 @@
+<html>
+<head>
+<title>gfxdraw.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+gfxdraw.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Sequence</span>
+
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">ColorValue</span><span class="s0">, </span><span class="s1">Coordinate</span><span class="s0">, </span><span class="s1">RectValue</span>
+
+<span class="s0">def </span><span class="s1">pixel(surface: Surface</span><span class="s0">, </span><span class="s1">x: int</span><span class="s0">, </span><span class="s1">y: int</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">hline(surface: Surface</span><span class="s0">, </span><span class="s1">x1: int</span><span class="s0">, </span><span class="s1">x2: int</span><span class="s0">, </span><span class="s1">y: int</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">vline(surface: Surface</span><span class="s0">, </span><span class="s1">x: int</span><span class="s0">, </span><span class="s1">y1: int</span><span class="s0">, </span><span class="s1">y2: int</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">line(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">x1: int</span><span class="s0">, </span><span class="s1">y1: int</span><span class="s0">, </span><span class="s1">x2: int</span><span class="s0">, </span><span class="s1">y2: int</span><span class="s0">, </span><span class="s1">color: ColorValue</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">rectangle(surface: Surface</span><span class="s0">, </span><span class="s1">rect: RectValue</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">box(surface: Surface</span><span class="s0">, </span><span class="s1">rect: RectValue</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">circle(surface: Surface</span><span class="s0">, </span><span class="s1">x: int</span><span class="s0">, </span><span class="s1">y: int</span><span class="s0">, </span><span class="s1">r: int</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">aacircle(surface: Surface</span><span class="s0">, </span><span class="s1">x: int</span><span class="s0">, </span><span class="s1">y: int</span><span class="s0">, </span><span class="s1">r: int</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">filled_circle(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">x: int</span><span class="s0">, </span><span class="s1">y: int</span><span class="s0">, </span><span class="s1">r: int</span><span class="s0">, </span><span class="s1">color: ColorValue</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">ellipse(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">x: int</span><span class="s0">, </span><span class="s1">y: int</span><span class="s0">, </span><span class="s1">rx: int</span><span class="s0">, </span><span class="s1">ry: int</span><span class="s0">, </span><span class="s1">color: ColorValue</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">aaellipse(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">x: int</span><span class="s0">, </span><span class="s1">y: int</span><span class="s0">, </span><span class="s1">rx: int</span><span class="s0">, </span><span class="s1">ry: int</span><span class="s0">, </span><span class="s1">color: ColorValue</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">filled_ellipse(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">x: int</span><span class="s0">, </span><span class="s1">y: int</span><span class="s0">, </span><span class="s1">rx: int</span><span class="s0">, </span><span class="s1">ry: int</span><span class="s0">, </span><span class="s1">color: ColorValue</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">arc(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">x: int</span><span class="s0">,</span>
+    <span class="s1">y: int</span><span class="s0">,</span>
+    <span class="s1">r: int</span><span class="s0">,</span>
+    <span class="s1">start_angle: int</span><span class="s0">,</span>
+    <span class="s1">atp_angle: int</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">pie(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">x: int</span><span class="s0">,</span>
+    <span class="s1">y: int</span><span class="s0">,</span>
+    <span class="s1">r: int</span><span class="s0">,</span>
+    <span class="s1">start_angle: int</span><span class="s0">,</span>
+    <span class="s1">atp_angle: int</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">trigon(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">x1: int</span><span class="s0">,</span>
+    <span class="s1">y1: int</span><span class="s0">,</span>
+    <span class="s1">x2: int</span><span class="s0">,</span>
+    <span class="s1">y2: int</span><span class="s0">,</span>
+    <span class="s1">x3: int</span><span class="s0">,</span>
+    <span class="s1">y3: int</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">aatrigon(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">x1: int</span><span class="s0">,</span>
+    <span class="s1">y1: int</span><span class="s0">,</span>
+    <span class="s1">x2: int</span><span class="s0">,</span>
+    <span class="s1">y2: int</span><span class="s0">,</span>
+    <span class="s1">x3: int</span><span class="s0">,</span>
+    <span class="s1">y3: int</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">filled_trigon(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">x1: int</span><span class="s0">,</span>
+    <span class="s1">y1: int</span><span class="s0">,</span>
+    <span class="s1">x2: int</span><span class="s0">,</span>
+    <span class="s1">y2: int</span><span class="s0">,</span>
+    <span class="s1">x3: int</span><span class="s0">,</span>
+    <span class="s1">y3: int</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">polygon(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">points: Sequence[Coordinate]</span><span class="s0">, </span><span class="s1">color: ColorValue</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">aapolygon(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">points: Sequence[Coordinate]</span><span class="s0">, </span><span class="s1">color: ColorValue</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">filled_polygon(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">points: Sequence[Coordinate]</span><span class="s0">, </span><span class="s1">color: ColorValue</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">textured_polygon(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">points: Sequence[Coordinate]</span><span class="s0">, </span><span class="s1">texture: Surface</span><span class="s0">, </span><span class="s1">tx: int</span><span class="s0">, </span><span class="s1">ty: int</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">bezier(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">points: Sequence[Coordinate]</span><span class="s0">, </span><span class="s1">steps: int</span><span class="s0">, </span><span class="s1">color: ColorValue</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+</pre>
+</body>
+</html>

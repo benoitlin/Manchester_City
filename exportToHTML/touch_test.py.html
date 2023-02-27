@@ -1,0 +1,119 @@
+<html>
+<head>
+<title>touch_test.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #6a8759;}
+.s4 { color: #629755; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+touch_test.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">unittest</span>
+<span class="s0">import </span><span class="s1">os</span>
+<span class="s0">import </span><span class="s1">pygame</span>
+<span class="s0">from </span><span class="s1">pygame._sdl2 </span><span class="s0">import </span><span class="s1">touch</span>
+<span class="s0">from </span><span class="s1">pygame.tests.test_utils </span><span class="s0">import </span><span class="s1">question</span>
+
+
+<span class="s1">has_touchdevice = touch.get_num_devices() &gt; </span><span class="s2">0</span>
+
+
+<span class="s0">class </span><span class="s1">TouchTest(unittest.TestCase):</span>
+    <span class="s1">@classmethod</span>
+    <span class="s0">def </span><span class="s1">setUpClass(cls):</span>
+        <span class="s1">pygame.display.init()</span>
+
+    <span class="s1">@classmethod</span>
+    <span class="s0">def </span><span class="s1">tearDownClass(cls):</span>
+        <span class="s1">pygame.display.quit()</span>
+
+    <span class="s0">def </span><span class="s1">test_num_devices(self):</span>
+        <span class="s1">touch.get_num_devices()</span>
+
+    <span class="s1">@unittest.skipIf(</span><span class="s0">not </span><span class="s1">has_touchdevice</span><span class="s0">, </span><span class="s3">&quot;no touch devices found&quot;</span><span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_get_device(self):</span>
+        <span class="s1">touch.get_device(</span><span class="s2">0</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_device__invalid(self):</span>
+        <span class="s1">self.assertRaises(pygame.error</span><span class="s0">, </span><span class="s1">touch.get_device</span><span class="s0">, </span><span class="s1">-</span><span class="s2">1234</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">touch.get_device</span><span class="s0">, </span><span class="s3">&quot;test&quot;</span><span class="s1">)</span>
+
+    <span class="s1">@unittest.skipIf(</span><span class="s0">not </span><span class="s1">has_touchdevice</span><span class="s0">, </span><span class="s3">&quot;no touch devices found&quot;</span><span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_num_fingers(self):</span>
+        <span class="s1">touch.get_num_fingers(touch.get_device(</span><span class="s2">0</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_num_fingers__invalid(self):</span>
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">touch.get_num_fingers</span><span class="s0">, </span><span class="s3">&quot;test&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(pygame.error</span><span class="s0">, </span><span class="s1">touch.get_num_fingers</span><span class="s0">, </span><span class="s1">-</span><span class="s2">1234</span><span class="s1">)</span>
+
+
+<span class="s0">class </span><span class="s1">TouchInteractiveTest(unittest.TestCase):</span>
+
+    <span class="s1">__tags__ = [</span><span class="s3">&quot;interactive&quot;</span><span class="s1">]</span>
+
+    <span class="s1">@unittest.skipIf(</span><span class="s0">not </span><span class="s1">has_touchdevice</span><span class="s0">, </span><span class="s3">&quot;no touch devices found&quot;</span><span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_get_finger(self):</span>
+        <span class="s4">&quot;&quot;&quot;ask for touch input and check the dict&quot;&quot;&quot;</span>
+
+        <span class="s1">pygame.display.init()</span>
+        <span class="s1">pygame.font.init()</span>
+
+        <span class="s1">os.environ[</span><span class="s3">&quot;SDL_VIDEO_WINDOW_POS&quot;</span><span class="s1">] = </span><span class="s3">&quot;50,50&quot;</span>
+        <span class="s1">screen = pygame.display.set_mode((</span><span class="s2">800</span><span class="s0">, </span><span class="s2">600</span><span class="s1">))</span>
+        <span class="s1">screen.fill((</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+
+        <span class="s1">font = pygame.font.Font(</span><span class="s0">None, </span><span class="s2">32</span><span class="s1">)</span>
+        <span class="s1">instructions_str_1 = </span><span class="s3">&quot;Please place some fingers on your touch device&quot;</span>
+        <span class="s1">instructions_str_2 = (</span>
+            <span class="s3">&quot;Close the window when finished, &quot; &quot;and answer the question&quot;</span>
+        <span class="s1">)</span>
+        <span class="s1">inst_1_render = font.render(instructions_str_1</span><span class="s0">, True, </span><span class="s1">pygame.Color(</span><span class="s3">&quot;#000000&quot;</span><span class="s1">))</span>
+        <span class="s1">inst_2_render = font.render(instructions_str_2</span><span class="s0">, True, </span><span class="s1">pygame.Color(</span><span class="s3">&quot;#000000&quot;</span><span class="s1">))</span>
+
+        <span class="s1">running = </span><span class="s0">True</span>
+        <span class="s0">while </span><span class="s1">running:</span>
+            <span class="s0">for </span><span class="s1">event </span><span class="s0">in </span><span class="s1">pygame.event.get():</span>
+                <span class="s0">if </span><span class="s1">event.type == pygame.QUIT:</span>
+                    <span class="s1">running = </span><span class="s0">False</span>
+
+            <span class="s1">finger_data_renders = []</span>
+            <span class="s1">num_devices = pygame._sdl2.touch.get_num_devices()</span>
+            <span class="s0">if </span><span class="s1">num_devices &gt; </span><span class="s2">0</span><span class="s1">:</span>
+                <span class="s1">first_device = pygame._sdl2.touch.get_device(</span><span class="s2">0</span><span class="s1">)</span>
+                <span class="s1">num_fingers = pygame._sdl2.touch.get_num_fingers(first_device)</span>
+                <span class="s0">if </span><span class="s1">num_fingers &gt; </span><span class="s2">0</span><span class="s1">:</span>
+                    <span class="s0">for </span><span class="s1">finger_index </span><span class="s0">in </span><span class="s1">range(</span><span class="s2">0</span><span class="s0">, </span><span class="s1">num_fingers):</span>
+                        <span class="s1">data = pygame._sdl2.touch.get_finger(first_device</span><span class="s0">, </span><span class="s1">finger_index)</span>
+                        <span class="s1">render = font.render(</span>
+                            <span class="s3">f&quot;finger - </span><span class="s0">{</span><span class="s1">data</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s0">, True, </span><span class="s1">pygame.Color(</span><span class="s3">&quot;#000000&quot;</span><span class="s1">)</span>
+                        <span class="s1">)</span>
+
+                        <span class="s1">finger_data_renders.append(render)</span>
+
+            <span class="s1">screen.fill((</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+            <span class="s1">screen.blit(inst_1_render</span><span class="s0">, </span><span class="s1">(</span><span class="s2">5</span><span class="s0">, </span><span class="s2">5</span><span class="s1">))</span>
+            <span class="s1">screen.blit(inst_2_render</span><span class="s0">, </span><span class="s1">(</span><span class="s2">5</span><span class="s0">, </span><span class="s2">40</span><span class="s1">))</span>
+            <span class="s0">for </span><span class="s1">index</span><span class="s0">, </span><span class="s1">finger </span><span class="s0">in </span><span class="s1">enumerate(finger_data_renders):</span>
+                <span class="s1">screen.blit(finger</span><span class="s0">, </span><span class="s1">(</span><span class="s2">5</span><span class="s0">, </span><span class="s2">80 </span><span class="s1">+ (index * </span><span class="s2">40</span><span class="s1">)))</span>
+
+            <span class="s1">pygame.display.update()</span>
+
+        <span class="s1">response = question(</span><span class="s3">&quot;Does the finger data seem correct?&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertTrue(response)</span>
+
+        <span class="s1">pygame.display.quit()</span>
+
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s3">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">unittest.main()</span>
+</pre>
+</body>
+</html>

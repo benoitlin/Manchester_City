@@ -1,0 +1,164 @@
+<html>
+<head>
+<title>pixelarray.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+pixelarray.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.pixelarray 
+ 
+PixelArray does array processing of pixels. 
+Sort of like another array processor called 'numpy' - But for pixels. 
+ 
+    Flip it, 
+            stripe it, 
+                      rotate it. 
+ 
+Controls 
+-------- 
+ 
+To see different effects - press a key or click a mouse. 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">os</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+
+
+<span class="s1">main_dir = os.path.split(os.path.abspath(__file__))[</span><span class="s4">0</span><span class="s1">]</span>
+<span class="s1">data_dir = os.path.join(main_dir</span><span class="s3">, </span><span class="s5">&quot;data&quot;</span><span class="s1">)</span>
+
+
+<span class="s3">def </span><span class="s1">show(image):</span>
+    <span class="s1">screen = pg.display.get_surface()</span>
+    <span class="s1">screen.fill((</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">))</span>
+    <span class="s1">screen.blit(image</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))</span>
+    <span class="s1">pg.display.flip()</span>
+    <span class="s3">while True</span><span class="s1">:</span>
+        <span class="s1">event = pg.event.wait()</span>
+        <span class="s3">if </span><span class="s1">event.type == pg.QUIT:</span>
+            <span class="s1">pg.quit()</span>
+            <span class="s3">raise </span><span class="s1">SystemExit</span>
+        <span class="s3">if </span><span class="s1">event.type </span><span class="s3">in </span><span class="s1">[pg.MOUSEBUTTONDOWN</span><span class="s3">, </span><span class="s1">pg.KEYDOWN]:</span>
+            <span class="s3">break</span>
+
+
+<span class="s3">def </span><span class="s1">main():</span>
+    <span class="s1">pg.init()</span>
+
+    <span class="s1">pg.display.set_mode((</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">))</span>
+    <span class="s1">surface = pg.Surface((</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">))</span>
+
+    <span class="s1">pg.display.flip()</span>
+
+    <span class="s0"># Create the PixelArray.</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+
+    <span class="s0"># Do some easy gradient effect.</span>
+    <span class="s3">for </span><span class="s1">y </span><span class="s3">in </span><span class="s1">range(</span><span class="s4">255</span><span class="s1">):</span>
+        <span class="s1">r</span><span class="s3">, </span><span class="s1">g</span><span class="s3">, </span><span class="s1">b = y</span><span class="s3">, </span><span class="s1">y</span><span class="s3">, </span><span class="s1">y</span>
+        <span class="s1">ar[:</span><span class="s3">, </span><span class="s1">y] = (r</span><span class="s3">, </span><span class="s1">g</span><span class="s3">, </span><span class="s1">b)</span>
+    <span class="s3">del </span><span class="s1">ar</span>
+    <span class="s1">show(surface)</span>
+
+    <span class="s0"># We have made some gradient effect, now flip it.</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">ar[:] = ar[:</span><span class="s3">, </span><span class="s1">::-</span><span class="s4">1</span><span class="s1">]</span>
+    <span class="s3">del </span><span class="s1">ar</span>
+    <span class="s1">show(surface)</span>
+
+    <span class="s0"># Every second column will be made blue</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">ar[::</span><span class="s4">2</span><span class="s1">] = (</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span>
+    <span class="s3">del </span><span class="s1">ar</span>
+    <span class="s1">show(surface)</span>
+
+    <span class="s0"># Every second row will be made green</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">ar[:</span><span class="s3">, </span><span class="s1">::</span><span class="s4">2</span><span class="s1">] = (</span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span>
+    <span class="s3">del </span><span class="s1">ar</span>
+    <span class="s1">show(surface)</span>
+
+    <span class="s0"># Manipulate the image. Flip it around the y axis.</span>
+    <span class="s1">surface = pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s5">&quot;arraydemo.bmp&quot;</span><span class="s1">))</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">ar[:] = ar[:</span><span class="s3">, </span><span class="s1">::-</span><span class="s4">1</span><span class="s1">]</span>
+    <span class="s3">del </span><span class="s1">ar</span>
+    <span class="s1">show(surface)</span>
+
+    <span class="s0"># Flip the image around the x axis.</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">ar[:] = ar[::-</span><span class="s4">1</span><span class="s3">, </span><span class="s1">:]</span>
+    <span class="s3">del </span><span class="s1">ar</span>
+    <span class="s1">show(surface)</span>
+
+    <span class="s0"># Every second column will be made white.</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">ar[::</span><span class="s4">2</span><span class="s1">] = (</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span>
+    <span class="s3">del </span><span class="s1">ar</span>
+    <span class="s1">show(surface)</span>
+
+    <span class="s0"># Flip the image around both axes, restoring its original layout.</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">ar[:] = ar[::-</span><span class="s4">1</span><span class="s3">, </span><span class="s1">::-</span><span class="s4">1</span><span class="s1">]</span>
+    <span class="s3">del </span><span class="s1">ar</span>
+    <span class="s1">show(surface)</span>
+
+    <span class="s0"># Rotate 90 degrees clockwise.</span>
+    <span class="s1">w</span><span class="s3">, </span><span class="s1">h = surface.get_size()</span>
+    <span class="s1">surface2 = pg.Surface((h</span><span class="s3">, </span><span class="s1">w)</span><span class="s3">, </span><span class="s1">surface.get_flags()</span><span class="s3">, </span><span class="s1">surface)</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">ar2 = pg.PixelArray(surface2)</span>
+    <span class="s1">ar2[...] = ar.transpose()[::-</span><span class="s4">1</span><span class="s3">, </span><span class="s1">:]</span>
+    <span class="s3">del </span><span class="s1">ar</span><span class="s3">, </span><span class="s1">ar2</span>
+    <span class="s1">show(surface2)</span>
+
+    <span class="s0"># Scale it by throwing each second pixel away.</span>
+    <span class="s1">surface = pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s5">&quot;arraydemo.bmp&quot;</span><span class="s1">))</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">sf2 = ar[::</span><span class="s4">2</span><span class="s3">, </span><span class="s1">::</span><span class="s4">2</span><span class="s1">].make_surface()</span>
+    <span class="s3">del </span><span class="s1">ar</span>
+    <span class="s1">show(sf2)</span>
+
+    <span class="s0"># Replace anything looking like the blue color from the text.</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">ar.replace((</span><span class="s4">60</span><span class="s3">, </span><span class="s4">60</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s4">0.06</span><span class="s1">)</span>
+    <span class="s3">del </span><span class="s1">ar</span>
+    <span class="s1">show(surface)</span>
+
+    <span class="s0"># Extract anything which might be somewhat black.</span>
+    <span class="s1">surface = pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s5">&quot;arraydemo.bmp&quot;</span><span class="s1">))</span>
+    <span class="s1">ar = pg.PixelArray(surface)</span>
+    <span class="s1">ar2 = ar.extract((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s4">0.07</span><span class="s1">)</span>
+    <span class="s1">sf2 = ar2.surface</span>
+    <span class="s3">del </span><span class="s1">ar</span><span class="s3">, </span><span class="s1">ar2</span>
+    <span class="s1">show(sf2)</span>
+
+    <span class="s0"># Compare two images.</span>
+    <span class="s1">surface = pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s5">&quot;alien1.gif&quot;</span><span class="s1">))</span>
+    <span class="s1">surface2 = pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s5">&quot;alien2.gif&quot;</span><span class="s1">))</span>
+    <span class="s1">ar1 = pg.PixelArray(surface)</span>
+    <span class="s1">ar2 = pg.PixelArray(surface2)</span>
+    <span class="s1">ar3 = ar1.compare(ar2</span><span class="s3">, </span><span class="s4">0.07</span><span class="s1">)</span>
+    <span class="s1">sf3 = ar3.surface</span>
+    <span class="s3">del </span><span class="s1">ar1</span><span class="s3">, </span><span class="s1">ar2</span><span class="s3">, </span><span class="s1">ar3</span>
+    <span class="s1">show(sf3)</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s5">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">main()</span>
+    <span class="s1">pg.quit()</span>
+</pre>
+</body>
+</html>

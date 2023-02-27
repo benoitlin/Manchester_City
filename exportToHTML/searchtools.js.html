@@ -1,0 +1,588 @@
+<html>
+<head>
+<title>searchtools.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #cc7832;}
+.s4 { color: #629755; font-style: italic;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+searchtools.js</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+ * searchtools.js 
+ * ~~~~~~~~~~~~~~~~ 
+ * 
+ * Sphinx JavaScript utilities for the full-text search. 
+ * 
+ * :copyright: Copyright 2007-2023 by the Sphinx team, see AUTHORS. 
+ * :license: BSD, see LICENSE for details. 
+ * 
+ */</span>
+<span class="s2">&quot;use strict&quot;</span><span class="s3">;</span>
+
+<span class="s4">/**</span>
+ <span class="s4">* Simple result scoring code.</span>
+ <span class="s4">*/</span>
+<span class="s3">if </span><span class="s1">(</span><span class="s3">typeof </span><span class="s1">Scorer === </span><span class="s2">&quot;undefined&quot;</span><span class="s1">) {</span>
+  <span class="s3">var </span><span class="s1">Scorer = {</span>
+    <span class="s0">// Implement the following function to further tweak the score for each result</span>
+    <span class="s0">// The function takes a result array [docname, title, anchor, descr, score, filename]</span>
+    <span class="s0">// and returns the new score.</span>
+    <span class="s0">/* 
+    score: result =&gt; { 
+      const [docname, title, anchor, descr, score, filename] = result 
+      return score 
+    }, 
+    */</span>
+
+    <span class="s0">// query matches the full name of an object</span>
+    <span class="s1">objNameMatch: </span><span class="s5">11</span><span class="s3">,</span>
+    <span class="s0">// or matches in the last dotted part of the object name</span>
+    <span class="s1">objPartialMatch: </span><span class="s5">6</span><span class="s3">,</span>
+    <span class="s0">// Additive scores depending on the priority of the object</span>
+    <span class="s1">objPrio: {</span>
+      <span class="s5">0</span><span class="s1">: </span><span class="s5">15</span><span class="s3">, </span><span class="s0">// used to be importantResults</span>
+      <span class="s5">1</span><span class="s1">: </span><span class="s5">5</span><span class="s3">, </span><span class="s0">// used to be objectResults</span>
+      <span class="s5">2</span><span class="s1">: -</span><span class="s5">5</span><span class="s3">, </span><span class="s0">// used to be unimportantResults</span>
+    <span class="s1">}</span><span class="s3">,</span>
+    <span class="s0">//  Used when the priority is not in the mapping.</span>
+    <span class="s1">objPrioDefault: </span><span class="s5">0</span><span class="s3">,</span>
+
+    <span class="s0">// query found in title</span>
+    <span class="s1">title: </span><span class="s5">15</span><span class="s3">,</span>
+    <span class="s1">partialTitle: </span><span class="s5">7</span><span class="s3">,</span>
+    <span class="s0">// query found in terms</span>
+    <span class="s1">term: </span><span class="s5">5</span><span class="s3">,</span>
+    <span class="s1">partialTerm: </span><span class="s5">2</span><span class="s3">,</span>
+  <span class="s1">}</span><span class="s3">;</span>
+<span class="s1">}</span>
+
+<span class="s3">const </span><span class="s1">_removeChildren = (element) =&gt; {</span>
+  <span class="s3">while </span><span class="s1">(element &amp;&amp; element.lastChild) element.removeChild(element.lastChild)</span><span class="s3">;</span>
+<span class="s1">}</span><span class="s3">;</span>
+
+<span class="s4">/**</span>
+ <span class="s4">* See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping</span>
+ <span class="s4">*/</span>
+<span class="s3">const </span><span class="s1">_escapeRegExp = (string) =&gt;</span>
+  <span class="s1">string.replace(</span><span class="s5">/[.*+\-?^${}()|[\]\\]/g</span><span class="s3">, </span><span class="s2">&quot;</span><span class="s3">\\</span><span class="s2">$&amp;&quot;</span><span class="s1">)</span><span class="s3">; </span><span class="s0">// $&amp; means the whole matched string</span>
+
+<span class="s3">const </span><span class="s1">_displayItem = (item</span><span class="s3">, </span><span class="s1">searchTerms) =&gt; {</span>
+  <span class="s3">const </span><span class="s1">docBuilder = DOCUMENTATION_OPTIONS.BUILDER</span><span class="s3">;</span>
+  <span class="s3">const </span><span class="s1">docUrlRoot = DOCUMENTATION_OPTIONS.URL_ROOT</span><span class="s3">;</span>
+  <span class="s3">const </span><span class="s1">docFileSuffix = DOCUMENTATION_OPTIONS.FILE_SUFFIX</span><span class="s3">;</span>
+  <span class="s3">const </span><span class="s1">docLinkSuffix = DOCUMENTATION_OPTIONS.LINK_SUFFIX</span><span class="s3">;</span>
+  <span class="s3">const </span><span class="s1">showSearchSummary = DOCUMENTATION_OPTIONS.SHOW_SEARCH_SUMMARY</span><span class="s3">;</span>
+
+  <span class="s3">const </span><span class="s1">[docName</span><span class="s3">, </span><span class="s1">title</span><span class="s3">, </span><span class="s1">anchor</span><span class="s3">, </span><span class="s1">descr</span><span class="s3">, </span><span class="s1">score</span><span class="s3">, </span><span class="s1">_filename] = item</span><span class="s3">;</span>
+
+  <span class="s3">let </span><span class="s1">listItem = document.createElement(</span><span class="s2">&quot;li&quot;</span><span class="s1">)</span><span class="s3">;</span>
+  <span class="s3">let </span><span class="s1">requestUrl</span><span class="s3">;</span>
+  <span class="s3">let </span><span class="s1">linkUrl</span><span class="s3">;</span>
+  <span class="s3">if </span><span class="s1">(docBuilder === </span><span class="s2">&quot;dirhtml&quot;</span><span class="s1">) {</span>
+    <span class="s0">// dirhtml builder</span>
+    <span class="s3">let </span><span class="s1">dirname = docName + </span><span class="s2">&quot;/&quot;</span><span class="s3">;</span>
+    <span class="s3">if </span><span class="s1">(dirname.match(</span><span class="s5">/\/index\/$/</span><span class="s1">))</span>
+      <span class="s1">dirname = dirname.substring(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">dirname.length - </span><span class="s5">6</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s3">else if </span><span class="s1">(dirname === </span><span class="s2">&quot;index/&quot;</span><span class="s1">) dirname = </span><span class="s2">&quot;&quot;</span><span class="s3">;</span>
+    <span class="s1">requestUrl = docUrlRoot + dirname</span><span class="s3">;</span>
+    <span class="s1">linkUrl = requestUrl</span><span class="s3">;</span>
+  <span class="s1">} </span><span class="s3">else </span><span class="s1">{</span>
+    <span class="s0">// normal html builders</span>
+    <span class="s1">requestUrl = docUrlRoot + docName + docFileSuffix</span><span class="s3">;</span>
+    <span class="s1">linkUrl = docName + docLinkSuffix</span><span class="s3">;</span>
+  <span class="s1">}</span>
+  <span class="s3">let </span><span class="s1">linkEl = listItem.appendChild(document.createElement(</span><span class="s2">&quot;a&quot;</span><span class="s1">))</span><span class="s3">;</span>
+  <span class="s1">linkEl.href = linkUrl + anchor</span><span class="s3">;</span>
+  <span class="s1">linkEl.dataset.score = score</span><span class="s3">;</span>
+  <span class="s1">linkEl.innerHTML = title</span><span class="s3">;</span>
+  <span class="s3">if </span><span class="s1">(descr)</span>
+    <span class="s1">listItem.appendChild(document.createElement(</span><span class="s2">&quot;span&quot;</span><span class="s1">)).innerHTML =</span>
+      <span class="s2">&quot; (&quot; </span><span class="s1">+ descr + </span><span class="s2">&quot;)&quot;</span><span class="s3">;</span>
+  <span class="s3">else if </span><span class="s1">(showSearchSummary)</span>
+    <span class="s1">fetch(requestUrl)</span>
+      <span class="s1">.then((responseData) =&gt; responseData.text())</span>
+      <span class="s1">.then((data) =&gt; {</span>
+        <span class="s3">if </span><span class="s1">(data)</span>
+          <span class="s1">listItem.appendChild(</span>
+            <span class="s1">Search.makeSearchSummary(data</span><span class="s3">, </span><span class="s1">searchTerms)</span>
+          <span class="s1">)</span><span class="s3">;</span>
+      <span class="s1">})</span><span class="s3">;</span>
+  <span class="s1">Search.output.appendChild(listItem)</span><span class="s3">;</span>
+<span class="s1">}</span><span class="s3">;</span>
+<span class="s3">const </span><span class="s1">_finishSearch = (resultCount) =&gt; {</span>
+  <span class="s1">Search.stopPulse()</span><span class="s3">;</span>
+  <span class="s1">Search.title.innerText = _(</span><span class="s2">&quot;Search Results&quot;</span><span class="s1">)</span><span class="s3">;</span>
+  <span class="s3">if </span><span class="s1">(!resultCount)</span>
+    <span class="s1">Search.status.innerText = Documentation.gettext(</span>
+      <span class="s2">&quot;Your search did not match any documents. Please make sure that all words are spelled correctly and that you've selected enough categories.&quot;</span>
+    <span class="s1">)</span><span class="s3">;</span>
+  <span class="s3">else</span>
+    <span class="s1">Search.status.innerText = _(</span>
+      <span class="s2">`Search finished, found </span><span class="s1">${resultCount} </span><span class="s2">page(s) matching the search query.`</span>
+    <span class="s1">)</span><span class="s3">;</span>
+<span class="s1">}</span><span class="s3">;</span>
+<span class="s3">const </span><span class="s1">_displayNextItem = (</span>
+  <span class="s1">results</span><span class="s3">,</span>
+  <span class="s1">resultCount</span><span class="s3">,</span>
+  <span class="s1">searchTerms</span>
+<span class="s1">) =&gt; {</span>
+  <span class="s0">// results left, load the summary and display it</span>
+  <span class="s0">// this is intended to be dynamic (don't sub resultsCount)</span>
+  <span class="s3">if </span><span class="s1">(results.length) {</span>
+    <span class="s1">_displayItem(results.pop()</span><span class="s3">, </span><span class="s1">searchTerms)</span><span class="s3">;</span>
+    <span class="s1">setTimeout(</span>
+      <span class="s1">() =&gt; _displayNextItem(results</span><span class="s3">, </span><span class="s1">resultCount</span><span class="s3">, </span><span class="s1">searchTerms)</span><span class="s3">,</span>
+      <span class="s5">5</span>
+    <span class="s1">)</span><span class="s3">;</span>
+  <span class="s1">}</span>
+  <span class="s0">// search finished, update title and status message</span>
+  <span class="s3">else </span><span class="s1">_finishSearch(resultCount)</span><span class="s3">;</span>
+<span class="s1">}</span><span class="s3">;</span>
+
+<span class="s4">/**</span>
+ <span class="s4">* Default splitQuery function. Can be overridden in ``sphinx.search`` with a</span>
+ <span class="s4">* custom function per language.</span>
+ <span class="s4">*</span>
+ <span class="s4">* The regular expression works by splitting the string on consecutive characters</span>
+ <span class="s4">* that are not Unicode letters, numbers, underscores, or emoji characters.</span>
+ <span class="s4">* This is the same as ``\W+`` in Python, preserving the surrogate pair area.</span>
+ <span class="s4">*/</span>
+<span class="s3">if </span><span class="s1">(</span><span class="s3">typeof </span><span class="s1">splitQuery === </span><span class="s2">&quot;undefined&quot;</span><span class="s1">) {</span>
+  <span class="s3">var </span><span class="s1">splitQuery = (query) =&gt; query</span>
+      <span class="s1">.split(</span><span class="s5">/[^\p{Letter}\p{Number}_\p{Emoji_Presentation}]+/gu</span><span class="s1">)</span>
+      <span class="s1">.filter(term =&gt; term)  </span><span class="s0">// remove remaining empty strings</span>
+<span class="s1">}</span>
+
+<span class="s4">/**</span>
+ <span class="s4">* Search Module</span>
+ <span class="s4">*/</span>
+<span class="s3">const </span><span class="s1">Search = {</span>
+  <span class="s1">_index: </span><span class="s3">null,</span>
+  <span class="s1">_queued_query: </span><span class="s3">null,</span>
+  <span class="s1">_pulse_status: -</span><span class="s5">1</span><span class="s3">,</span>
+
+  <span class="s1">htmlToText: (htmlString) =&gt; {</span>
+    <span class="s3">const </span><span class="s1">htmlElement = </span><span class="s3">new </span><span class="s1">DOMParser().parseFromString(htmlString</span><span class="s3">, </span><span class="s2">'text/html'</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">htmlElement.querySelectorAll(</span><span class="s2">&quot;.headerlink&quot;</span><span class="s1">).forEach((el) =&gt; { el.remove() })</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">docContent = htmlElement.querySelector(</span><span class="s2">'[role=&quot;main&quot;]'</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s3">if </span><span class="s1">(docContent !== undefined) </span><span class="s3">return </span><span class="s1">docContent.textContent</span><span class="s3">;</span>
+    <span class="s1">console.warn(</span>
+      <span class="s2">&quot;Content block not found. Sphinx search tries to obtain it via '[role=main]'. Could you check your theme or template.&quot;</span>
+    <span class="s1">)</span><span class="s3">;</span>
+    <span class="s3">return </span><span class="s2">&quot;&quot;</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s1">init: () =&gt; {</span>
+    <span class="s3">const </span><span class="s1">query = </span><span class="s3">new </span><span class="s1">URLSearchParams(window.location.search).get(</span><span class="s2">&quot;q&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">document</span>
+      <span class="s1">.querySelectorAll(</span><span class="s2">'input[name=&quot;q&quot;]'</span><span class="s1">)</span>
+      <span class="s1">.forEach((el) =&gt; (el.value = query))</span><span class="s3">;</span>
+    <span class="s3">if </span><span class="s1">(query) Search.performSearch(query)</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s1">loadIndex: (url) =&gt;</span>
+    <span class="s1">(document.body.appendChild(document.createElement(</span><span class="s2">&quot;script&quot;</span><span class="s1">)).src = url)</span><span class="s3">,</span>
+
+  <span class="s1">setIndex: (index) =&gt; {</span>
+    <span class="s1">Search._index = index</span><span class="s3">;</span>
+    <span class="s3">if </span><span class="s1">(Search._queued_query !== </span><span class="s3">null</span><span class="s1">) {</span>
+      <span class="s3">const </span><span class="s1">query = Search._queued_query</span><span class="s3">;</span>
+      <span class="s1">Search._queued_query = </span><span class="s3">null;</span>
+      <span class="s1">Search.query(query)</span><span class="s3">;</span>
+    <span class="s1">}</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s1">hasIndex: () =&gt; Search._index !== </span><span class="s3">null,</span>
+
+  <span class="s1">deferQuery: (query) =&gt; (Search._queued_query = query)</span><span class="s3">,</span>
+
+  <span class="s1">stopPulse: () =&gt; (Search._pulse_status = -</span><span class="s5">1</span><span class="s1">)</span><span class="s3">,</span>
+
+  <span class="s1">startPulse: () =&gt; {</span>
+    <span class="s3">if </span><span class="s1">(Search._pulse_status &gt;= </span><span class="s5">0</span><span class="s1">) </span><span class="s3">return;</span>
+
+    <span class="s3">const </span><span class="s1">pulse = () =&gt; {</span>
+      <span class="s1">Search._pulse_status = (Search._pulse_status + </span><span class="s5">1</span><span class="s1">) % </span><span class="s5">4</span><span class="s3">;</span>
+      <span class="s1">Search.dots.innerText = </span><span class="s2">&quot;.&quot;</span><span class="s1">.repeat(Search._pulse_status)</span><span class="s3">;</span>
+      <span class="s3">if </span><span class="s1">(Search._pulse_status &gt;= </span><span class="s5">0</span><span class="s1">) window.setTimeout(pulse</span><span class="s3">, </span><span class="s5">500</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">}</span><span class="s3">;</span>
+    <span class="s1">pulse()</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s4">/**</span>
+   <span class="s4">* perform a search for something (or wait until index is loaded)</span>
+   <span class="s4">*/</span>
+  <span class="s1">performSearch: (query) =&gt; {</span>
+    <span class="s0">// create the required interface elements</span>
+    <span class="s3">const </span><span class="s1">searchText = document.createElement(</span><span class="s2">&quot;h2&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">searchText.textContent = _(</span><span class="s2">&quot;Searching&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">searchSummary = document.createElement(</span><span class="s2">&quot;p&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">searchSummary.classList.add(</span><span class="s2">&quot;search-summary&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">searchSummary.innerText = </span><span class="s2">&quot;&quot;</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">searchList = document.createElement(</span><span class="s2">&quot;ul&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">searchList.classList.add(</span><span class="s2">&quot;search&quot;</span><span class="s1">)</span><span class="s3">;</span>
+
+    <span class="s3">const </span><span class="s1">out = document.getElementById(</span><span class="s2">&quot;search-results&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">Search.title = out.appendChild(searchText)</span><span class="s3">;</span>
+    <span class="s1">Search.dots = Search.title.appendChild(document.createElement(</span><span class="s2">&quot;span&quot;</span><span class="s1">))</span><span class="s3">;</span>
+    <span class="s1">Search.status = out.appendChild(searchSummary)</span><span class="s3">;</span>
+    <span class="s1">Search.output = out.appendChild(searchList)</span><span class="s3">;</span>
+
+    <span class="s3">const </span><span class="s1">searchProgress = document.getElementById(</span><span class="s2">&quot;search-progress&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s0">// Some themes don't use the search progress node</span>
+    <span class="s3">if </span><span class="s1">(searchProgress) {</span>
+      <span class="s1">searchProgress.innerText = _(</span><span class="s2">&quot;Preparing search...&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">}</span>
+    <span class="s1">Search.startPulse()</span><span class="s3">;</span>
+
+    <span class="s0">// index already loaded, the browser was quick!</span>
+    <span class="s3">if </span><span class="s1">(Search.hasIndex()) Search.query(query)</span><span class="s3">;</span>
+    <span class="s3">else </span><span class="s1">Search.deferQuery(query)</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s4">/**</span>
+   <span class="s4">* execute search (requires search index to be loaded)</span>
+   <span class="s4">*/</span>
+  <span class="s1">query: (query) =&gt; {</span>
+    <span class="s3">const </span><span class="s1">filenames = Search._index.filenames</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">docNames = Search._index.docnames</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">titles = Search._index.titles</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">allTitles = Search._index.alltitles</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">indexEntries = Search._index.indexentries</span><span class="s3">;</span>
+
+    <span class="s0">// stem the search terms and add them to the correct list</span>
+    <span class="s3">const </span><span class="s1">stemmer = </span><span class="s3">new </span><span class="s1">Stemmer()</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">searchTerms = </span><span class="s3">new </span><span class="s1">Set()</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">excludedTerms = </span><span class="s3">new </span><span class="s1">Set()</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">highlightTerms = </span><span class="s3">new </span><span class="s1">Set()</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">objectTerms = </span><span class="s3">new </span><span class="s1">Set(splitQuery(query.toLowerCase().trim()))</span><span class="s3">;</span>
+    <span class="s1">splitQuery(query.trim()).forEach((queryTerm) =&gt; {</span>
+      <span class="s3">const </span><span class="s1">queryTermLower = queryTerm.toLowerCase()</span><span class="s3">;</span>
+
+      <span class="s0">// maybe skip this &quot;word&quot;</span>
+      <span class="s0">// stopwords array is from language_data.js</span>
+      <span class="s3">if </span><span class="s1">(</span>
+        <span class="s1">stopwords.indexOf(queryTermLower) !== -</span><span class="s5">1 </span><span class="s1">||</span>
+        <span class="s1">queryTerm.match(</span><span class="s5">/^\d+$/</span><span class="s1">)</span>
+      <span class="s1">)</span>
+        <span class="s3">return;</span>
+
+      <span class="s0">// stem the word</span>
+      <span class="s3">let </span><span class="s1">word = stemmer.stemWord(queryTermLower)</span><span class="s3">;</span>
+      <span class="s0">// select the correct list</span>
+      <span class="s3">if </span><span class="s1">(word[</span><span class="s5">0</span><span class="s1">] === </span><span class="s2">&quot;-&quot;</span><span class="s1">) excludedTerms.add(word.substr(</span><span class="s5">1</span><span class="s1">))</span><span class="s3">;</span>
+      <span class="s3">else </span><span class="s1">{</span>
+        <span class="s1">searchTerms.add(word)</span><span class="s3">;</span>
+        <span class="s1">highlightTerms.add(queryTermLower)</span><span class="s3">;</span>
+      <span class="s1">}</span>
+    <span class="s1">})</span><span class="s3">;</span>
+
+    <span class="s3">if </span><span class="s1">(SPHINX_HIGHLIGHT_ENABLED) {  </span><span class="s0">// set in sphinx_highlight.js</span>
+      <span class="s1">localStorage.setItem(</span><span class="s2">&quot;sphinx_highlight_terms&quot;</span><span class="s3">, </span><span class="s1">[...highlightTerms].join(</span><span class="s2">&quot; &quot;</span><span class="s1">))</span>
+    <span class="s1">}</span>
+
+    <span class="s0">// console.debug(&quot;SEARCH: searching for:&quot;);</span>
+    <span class="s0">// console.info(&quot;required: &quot;, [...searchTerms]);</span>
+    <span class="s0">// console.info(&quot;excluded: &quot;, [...excludedTerms]);</span>
+
+    <span class="s0">// array of [docname, title, anchor, descr, score, filename]</span>
+    <span class="s3">let </span><span class="s1">results = []</span><span class="s3">;</span>
+    <span class="s1">_removeChildren(document.getElementById(</span><span class="s2">&quot;search-progress&quot;</span><span class="s1">))</span><span class="s3">;</span>
+
+    <span class="s3">const </span><span class="s1">queryLower = query.toLowerCase()</span><span class="s3">;</span>
+    <span class="s3">for </span><span class="s1">(</span><span class="s3">const </span><span class="s1">[title</span><span class="s3">, </span><span class="s1">foundTitles] of Object.entries(allTitles)) {</span>
+      <span class="s3">if </span><span class="s1">(title.toLowerCase().includes(queryLower) &amp;&amp; (queryLower.length &gt;= title.length/</span><span class="s5">2</span><span class="s1">)) {</span>
+        <span class="s3">for </span><span class="s1">(</span><span class="s3">const </span><span class="s1">[file</span><span class="s3">, </span><span class="s1">id] of foundTitles) {</span>
+          <span class="s3">let </span><span class="s1">score = Math.round(</span><span class="s5">100 </span><span class="s1">* queryLower.length / title.length)</span>
+          <span class="s1">results.push([</span>
+            <span class="s1">docNames[file]</span><span class="s3">,</span>
+            <span class="s1">titles[file] !== title ? </span><span class="s2">`</span><span class="s1">${titles[file]} </span><span class="s2">&gt; </span><span class="s1">${title}</span><span class="s2">` </span><span class="s1">: title</span><span class="s3">,</span>
+            <span class="s1">id !== </span><span class="s3">null </span><span class="s1">? </span><span class="s2">&quot;#&quot; </span><span class="s1">+ id : </span><span class="s2">&quot;&quot;</span><span class="s3">,</span>
+            <span class="s3">null,</span>
+            <span class="s1">score</span><span class="s3">,</span>
+            <span class="s1">filenames[file]</span><span class="s3">,</span>
+          <span class="s1">])</span><span class="s3">;</span>
+        <span class="s1">}</span>
+      <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">// search for explicit entries in index directives</span>
+    <span class="s3">for </span><span class="s1">(</span><span class="s3">const </span><span class="s1">[entry</span><span class="s3">, </span><span class="s1">foundEntries] of Object.entries(indexEntries)) {</span>
+      <span class="s3">if </span><span class="s1">(entry.includes(queryLower) &amp;&amp; (queryLower.length &gt;= entry.length/</span><span class="s5">2</span><span class="s1">)) {</span>
+        <span class="s3">for </span><span class="s1">(</span><span class="s3">const </span><span class="s1">[file</span><span class="s3">, </span><span class="s1">id] of foundEntries) {</span>
+          <span class="s3">let </span><span class="s1">score = Math.round(</span><span class="s5">100 </span><span class="s1">* queryLower.length / entry.length)</span>
+          <span class="s1">results.push([</span>
+            <span class="s1">docNames[file]</span><span class="s3">,</span>
+            <span class="s1">titles[file]</span><span class="s3">,</span>
+            <span class="s1">id ? </span><span class="s2">&quot;#&quot; </span><span class="s1">+ id : </span><span class="s2">&quot;&quot;</span><span class="s3">,</span>
+            <span class="s3">null,</span>
+            <span class="s1">score</span><span class="s3">,</span>
+            <span class="s1">filenames[file]</span><span class="s3">,</span>
+          <span class="s1">])</span><span class="s3">;</span>
+        <span class="s1">}</span>
+      <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">// lookup as object</span>
+    <span class="s1">objectTerms.forEach((term) =&gt;</span>
+      <span class="s1">results.push(...Search.performObjectSearch(term</span><span class="s3">, </span><span class="s1">objectTerms))</span>
+    <span class="s1">)</span><span class="s3">;</span>
+
+    <span class="s0">// lookup as search terms in fulltext</span>
+    <span class="s1">results.push(...Search.performTermsSearch(searchTerms</span><span class="s3">, </span><span class="s1">excludedTerms))</span><span class="s3">;</span>
+
+    <span class="s0">// let the scorer override scores with a custom scoring function</span>
+    <span class="s3">if </span><span class="s1">(Scorer.score) results.forEach((item) =&gt; (item[</span><span class="s5">4</span><span class="s1">] = Scorer.score(item)))</span><span class="s3">;</span>
+
+    <span class="s0">// now sort the results by score (in opposite order of appearance, since the</span>
+    <span class="s0">// display function below uses pop() to retrieve items) and then</span>
+    <span class="s0">// alphabetically</span>
+    <span class="s1">results.sort((a</span><span class="s3">, </span><span class="s1">b) =&gt; {</span>
+      <span class="s3">const </span><span class="s1">leftScore = a[</span><span class="s5">4</span><span class="s1">]</span><span class="s3">;</span>
+      <span class="s3">const </span><span class="s1">rightScore = b[</span><span class="s5">4</span><span class="s1">]</span><span class="s3">;</span>
+      <span class="s3">if </span><span class="s1">(leftScore === rightScore) {</span>
+        <span class="s0">// same score: sort alphabetically</span>
+        <span class="s3">const </span><span class="s1">leftTitle = a[</span><span class="s5">1</span><span class="s1">].toLowerCase()</span><span class="s3">;</span>
+        <span class="s3">const </span><span class="s1">rightTitle = b[</span><span class="s5">1</span><span class="s1">].toLowerCase()</span><span class="s3">;</span>
+        <span class="s3">if </span><span class="s1">(leftTitle === rightTitle) </span><span class="s3">return </span><span class="s5">0</span><span class="s3">;</span>
+        <span class="s3">return </span><span class="s1">leftTitle &gt; rightTitle ? -</span><span class="s5">1 </span><span class="s1">: </span><span class="s5">1</span><span class="s3">; </span><span class="s0">// inverted is intentional</span>
+      <span class="s1">}</span>
+      <span class="s3">return </span><span class="s1">leftScore &gt; rightScore ? </span><span class="s5">1 </span><span class="s1">: -</span><span class="s5">1</span><span class="s3">;</span>
+    <span class="s1">})</span><span class="s3">;</span>
+
+    <span class="s0">// remove duplicate search results</span>
+    <span class="s0">// note the reversing of results, so that in the case of duplicates, the highest-scoring entry is kept</span>
+    <span class="s3">let </span><span class="s1">seen = </span><span class="s3">new </span><span class="s1">Set()</span><span class="s3">;</span>
+    <span class="s1">results = results.reverse().reduce((acc</span><span class="s3">, </span><span class="s1">result) =&gt; {</span>
+      <span class="s3">let </span><span class="s1">resultStr = result.slice(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">4</span><span class="s1">).concat([result[</span><span class="s5">5</span><span class="s1">]]).map(v =&gt; String(v)).join(</span><span class="s2">','</span><span class="s1">)</span><span class="s3">;</span>
+      <span class="s3">if </span><span class="s1">(!seen.has(resultStr)) {</span>
+        <span class="s1">acc.push(result)</span><span class="s3">;</span>
+        <span class="s1">seen.add(resultStr)</span><span class="s3">;</span>
+      <span class="s1">}</span>
+      <span class="s3">return </span><span class="s1">acc</span><span class="s3">;</span>
+    <span class="s1">}</span><span class="s3">, </span><span class="s1">[])</span><span class="s3">;</span>
+
+    <span class="s1">results = results.reverse()</span><span class="s3">;</span>
+
+    <span class="s0">// for debugging</span>
+    <span class="s0">//Search.lastresults = results.slice();  // a copy</span>
+    <span class="s0">// console.info(&quot;search results:&quot;, Search.lastresults);</span>
+
+    <span class="s0">// print the results</span>
+    <span class="s1">_displayNextItem(results</span><span class="s3">, </span><span class="s1">results.length</span><span class="s3">, </span><span class="s1">searchTerms)</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s4">/**</span>
+   <span class="s4">* search for object names</span>
+   <span class="s4">*/</span>
+  <span class="s1">performObjectSearch: (object</span><span class="s3">, </span><span class="s1">objectTerms) =&gt; {</span>
+    <span class="s3">const </span><span class="s1">filenames = Search._index.filenames</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">docNames = Search._index.docnames</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">objects = Search._index.objects</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">objNames = Search._index.objnames</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">titles = Search._index.titles</span><span class="s3">;</span>
+
+    <span class="s3">const </span><span class="s1">results = []</span><span class="s3">;</span>
+
+    <span class="s3">const </span><span class="s1">objectSearchCallback = (prefix</span><span class="s3">, </span><span class="s1">match) =&gt; {</span>
+      <span class="s3">const </span><span class="s1">name = match[</span><span class="s5">4</span><span class="s1">]</span>
+      <span class="s3">const </span><span class="s1">fullname = (prefix ? prefix + </span><span class="s2">&quot;.&quot; </span><span class="s1">: </span><span class="s2">&quot;&quot;</span><span class="s1">) + name</span><span class="s3">;</span>
+      <span class="s3">const </span><span class="s1">fullnameLower = fullname.toLowerCase()</span><span class="s3">;</span>
+      <span class="s3">if </span><span class="s1">(fullnameLower.indexOf(object) &lt; </span><span class="s5">0</span><span class="s1">) </span><span class="s3">return;</span>
+
+      <span class="s3">let </span><span class="s1">score = </span><span class="s5">0</span><span class="s3">;</span>
+      <span class="s3">const </span><span class="s1">parts = fullnameLower.split(</span><span class="s2">&quot;.&quot;</span><span class="s1">)</span><span class="s3">;</span>
+
+      <span class="s0">// check for different match types: exact matches of full name or</span>
+      <span class="s0">// &quot;last name&quot; (i.e. last dotted part)</span>
+      <span class="s3">if </span><span class="s1">(fullnameLower === object || parts.slice(-</span><span class="s5">1</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">] === object)</span>
+        <span class="s1">score += Scorer.objNameMatch</span><span class="s3">;</span>
+      <span class="s3">else if </span><span class="s1">(parts.slice(-</span><span class="s5">1</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">].indexOf(object) &gt; -</span><span class="s5">1</span><span class="s1">)</span>
+        <span class="s1">score += Scorer.objPartialMatch</span><span class="s3">; </span><span class="s0">// matches in last name</span>
+
+      <span class="s3">const </span><span class="s1">objName = objNames[match[</span><span class="s5">1</span><span class="s1">]][</span><span class="s5">2</span><span class="s1">]</span><span class="s3">;</span>
+      <span class="s3">const </span><span class="s1">title = titles[match[</span><span class="s5">0</span><span class="s1">]]</span><span class="s3">;</span>
+
+      <span class="s0">// If more than one term searched for, we require other words to be</span>
+      <span class="s0">// found in the name/title/description</span>
+      <span class="s3">const </span><span class="s1">otherTerms = </span><span class="s3">new </span><span class="s1">Set(objectTerms)</span><span class="s3">;</span>
+      <span class="s1">otherTerms.delete(object)</span><span class="s3">;</span>
+      <span class="s3">if </span><span class="s1">(otherTerms.size &gt; </span><span class="s5">0</span><span class="s1">) {</span>
+        <span class="s3">const </span><span class="s1">haystack = </span><span class="s2">`</span><span class="s1">${prefix} ${name} ${objName} ${title}</span><span class="s2">`</span><span class="s1">.toLowerCase()</span><span class="s3">;</span>
+        <span class="s3">if </span><span class="s1">(</span>
+          <span class="s1">[...otherTerms].some((otherTerm) =&gt; haystack.indexOf(otherTerm) &lt; </span><span class="s5">0</span><span class="s1">)</span>
+        <span class="s1">)</span>
+          <span class="s3">return;</span>
+      <span class="s1">}</span>
+
+      <span class="s3">let </span><span class="s1">anchor = match[</span><span class="s5">3</span><span class="s1">]</span><span class="s3">;</span>
+      <span class="s3">if </span><span class="s1">(anchor === </span><span class="s2">&quot;&quot;</span><span class="s1">) anchor = fullname</span><span class="s3">;</span>
+      <span class="s3">else if </span><span class="s1">(anchor === </span><span class="s2">&quot;-&quot;</span><span class="s1">) anchor = objNames[match[</span><span class="s5">1</span><span class="s1">]][</span><span class="s5">1</span><span class="s1">] + </span><span class="s2">&quot;-&quot; </span><span class="s1">+ fullname</span><span class="s3">;</span>
+
+      <span class="s3">const </span><span class="s1">descr = objName + _(</span><span class="s2">&quot;, in &quot;</span><span class="s1">) + title</span><span class="s3">;</span>
+
+      <span class="s0">// add custom score for some objects according to scorer</span>
+      <span class="s3">if </span><span class="s1">(Scorer.objPrio.hasOwnProperty(match[</span><span class="s5">2</span><span class="s1">]))</span>
+        <span class="s1">score += Scorer.objPrio[match[</span><span class="s5">2</span><span class="s1">]]</span><span class="s3">;</span>
+      <span class="s3">else </span><span class="s1">score += Scorer.objPrioDefault</span><span class="s3">;</span>
+
+      <span class="s1">results.push([</span>
+        <span class="s1">docNames[match[</span><span class="s5">0</span><span class="s1">]]</span><span class="s3">,</span>
+        <span class="s1">fullname</span><span class="s3">,</span>
+        <span class="s2">&quot;#&quot; </span><span class="s1">+ anchor</span><span class="s3">,</span>
+        <span class="s1">descr</span><span class="s3">,</span>
+        <span class="s1">score</span><span class="s3">,</span>
+        <span class="s1">filenames[match[</span><span class="s5">0</span><span class="s1">]]</span><span class="s3">,</span>
+      <span class="s1">])</span><span class="s3">;</span>
+    <span class="s1">}</span><span class="s3">;</span>
+    <span class="s1">Object.keys(objects).forEach((prefix) =&gt;</span>
+      <span class="s1">objects[prefix].forEach((array) =&gt;</span>
+        <span class="s1">objectSearchCallback(prefix</span><span class="s3">, </span><span class="s1">array)</span>
+      <span class="s1">)</span>
+    <span class="s1">)</span><span class="s3">;</span>
+    <span class="s3">return </span><span class="s1">results</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s4">/**</span>
+   <span class="s4">* search for full-text terms in the index</span>
+   <span class="s4">*/</span>
+  <span class="s1">performTermsSearch: (searchTerms</span><span class="s3">, </span><span class="s1">excludedTerms) =&gt; {</span>
+    <span class="s0">// prepare search</span>
+    <span class="s3">const </span><span class="s1">terms = Search._index.terms</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">titleTerms = Search._index.titleterms</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">filenames = Search._index.filenames</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">docNames = Search._index.docnames</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">titles = Search._index.titles</span><span class="s3">;</span>
+
+    <span class="s3">const </span><span class="s1">scoreMap = </span><span class="s3">new </span><span class="s1">Map()</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">fileMap = </span><span class="s3">new </span><span class="s1">Map()</span><span class="s3">;</span>
+
+    <span class="s0">// perform the search on the required terms</span>
+    <span class="s1">searchTerms.forEach((word) =&gt; {</span>
+      <span class="s3">const </span><span class="s1">files = []</span><span class="s3">;</span>
+      <span class="s3">const </span><span class="s1">arr = [</span>
+        <span class="s1">{ files: terms[word]</span><span class="s3">, </span><span class="s1">score: Scorer.term }</span><span class="s3">,</span>
+        <span class="s1">{ files: titleTerms[word]</span><span class="s3">, </span><span class="s1">score: Scorer.title }</span><span class="s3">,</span>
+      <span class="s1">]</span><span class="s3">;</span>
+      <span class="s0">// add support for partial matches</span>
+      <span class="s3">if </span><span class="s1">(word.length &gt; </span><span class="s5">2</span><span class="s1">) {</span>
+        <span class="s3">const </span><span class="s1">escapedWord = _escapeRegExp(word)</span><span class="s3">;</span>
+        <span class="s1">Object.keys(terms).forEach((term) =&gt; {</span>
+          <span class="s3">if </span><span class="s1">(term.match(escapedWord) &amp;&amp; !terms[word])</span>
+            <span class="s1">arr.push({ files: terms[term]</span><span class="s3">, </span><span class="s1">score: Scorer.partialTerm })</span><span class="s3">;</span>
+        <span class="s1">})</span><span class="s3">;</span>
+        <span class="s1">Object.keys(titleTerms).forEach((term) =&gt; {</span>
+          <span class="s3">if </span><span class="s1">(term.match(escapedWord) &amp;&amp; !titleTerms[word])</span>
+            <span class="s1">arr.push({ files: titleTerms[word]</span><span class="s3">, </span><span class="s1">score: Scorer.partialTitle })</span><span class="s3">;</span>
+        <span class="s1">})</span><span class="s3">;</span>
+      <span class="s1">}</span>
+
+      <span class="s0">// no match but word was a required one</span>
+      <span class="s3">if </span><span class="s1">(arr.every((record) =&gt; record.files === undefined)) </span><span class="s3">return;</span>
+
+      <span class="s0">// found search word in contents</span>
+      <span class="s1">arr.forEach((record) =&gt; {</span>
+        <span class="s3">if </span><span class="s1">(record.files === undefined) </span><span class="s3">return;</span>
+
+        <span class="s3">let </span><span class="s1">recordFiles = record.files</span><span class="s3">;</span>
+        <span class="s3">if </span><span class="s1">(recordFiles.length === undefined) recordFiles = [recordFiles]</span><span class="s3">;</span>
+        <span class="s1">files.push(...recordFiles)</span><span class="s3">;</span>
+
+        <span class="s0">// set score for the word in each file</span>
+        <span class="s1">recordFiles.forEach((file) =&gt; {</span>
+          <span class="s3">if </span><span class="s1">(!scoreMap.has(file)) scoreMap.set(file</span><span class="s3">, </span><span class="s1">{})</span><span class="s3">;</span>
+          <span class="s1">scoreMap.get(file)[word] = record.score</span><span class="s3">;</span>
+        <span class="s1">})</span><span class="s3">;</span>
+      <span class="s1">})</span><span class="s3">;</span>
+
+      <span class="s0">// create the mapping</span>
+      <span class="s1">files.forEach((file) =&gt; {</span>
+        <span class="s3">if </span><span class="s1">(fileMap.has(file) &amp;&amp; fileMap.get(file).indexOf(word) === -</span><span class="s5">1</span><span class="s1">)</span>
+          <span class="s1">fileMap.get(file).push(word)</span><span class="s3">;</span>
+        <span class="s3">else </span><span class="s1">fileMap.set(file</span><span class="s3">, </span><span class="s1">[word])</span><span class="s3">;</span>
+      <span class="s1">})</span><span class="s3">;</span>
+    <span class="s1">})</span><span class="s3">;</span>
+
+    <span class="s0">// now check if the files don't contain excluded terms</span>
+    <span class="s3">const </span><span class="s1">results = []</span><span class="s3">;</span>
+    <span class="s3">for </span><span class="s1">(</span><span class="s3">const </span><span class="s1">[file</span><span class="s3">, </span><span class="s1">wordList] of fileMap) {</span>
+      <span class="s0">// check if all requirements are matched</span>
+
+      <span class="s0">// as search terms with length &lt; 3 are discarded</span>
+      <span class="s3">const </span><span class="s1">filteredTermCount = [...searchTerms].filter(</span>
+        <span class="s1">(term) =&gt; term.length &gt; </span><span class="s5">2</span>
+      <span class="s1">).length</span><span class="s3">;</span>
+      <span class="s3">if </span><span class="s1">(</span>
+        <span class="s1">wordList.length !== searchTerms.size &amp;&amp;</span>
+        <span class="s1">wordList.length !== filteredTermCount</span>
+      <span class="s1">)</span>
+        <span class="s3">continue;</span>
+
+      <span class="s0">// ensure that none of the excluded terms is in the search result</span>
+      <span class="s3">if </span><span class="s1">(</span>
+        <span class="s1">[...excludedTerms].some(</span>
+          <span class="s1">(term) =&gt;</span>
+            <span class="s1">terms[term] === file ||</span>
+            <span class="s1">titleTerms[term] === file ||</span>
+            <span class="s1">(terms[term] || []).includes(file) ||</span>
+            <span class="s1">(titleTerms[term] || []).includes(file)</span>
+        <span class="s1">)</span>
+      <span class="s1">)</span>
+        <span class="s3">break;</span>
+
+      <span class="s0">// select one (max) score for the file.</span>
+      <span class="s3">const </span><span class="s1">score = Math.max(...wordList.map((w) =&gt; scoreMap.get(file)[w]))</span><span class="s3">;</span>
+      <span class="s0">// add result to the result list</span>
+      <span class="s1">results.push([</span>
+        <span class="s1">docNames[file]</span><span class="s3">,</span>
+        <span class="s1">titles[file]</span><span class="s3">,</span>
+        <span class="s2">&quot;&quot;</span><span class="s3">,</span>
+        <span class="s3">null,</span>
+        <span class="s1">score</span><span class="s3">,</span>
+        <span class="s1">filenames[file]</span><span class="s3">,</span>
+      <span class="s1">])</span><span class="s3">;</span>
+    <span class="s1">}</span>
+    <span class="s3">return </span><span class="s1">results</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s4">/**</span>
+   <span class="s4">* helper function to return a node containing the</span>
+   <span class="s4">* search summary for a given text. keywords is a list</span>
+   <span class="s4">* of stemmed words.</span>
+   <span class="s4">*/</span>
+  <span class="s1">makeSearchSummary: (htmlText</span><span class="s3">, </span><span class="s1">keywords) =&gt; {</span>
+    <span class="s3">const </span><span class="s1">text = Search.htmlToText(htmlText)</span><span class="s3">;</span>
+    <span class="s3">if </span><span class="s1">(text === </span><span class="s2">&quot;&quot;</span><span class="s1">) </span><span class="s3">return null;</span>
+
+    <span class="s3">const </span><span class="s1">textLower = text.toLowerCase()</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">actualStartPosition = [...keywords]</span>
+      <span class="s1">.map((k) =&gt; textLower.indexOf(k.toLowerCase()))</span>
+      <span class="s1">.filter((i) =&gt; i &gt; -</span><span class="s5">1</span><span class="s1">)</span>
+      <span class="s1">.slice(-</span><span class="s5">1</span><span class="s1">)[</span><span class="s5">0</span><span class="s1">]</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">startWithContext = Math.max(actualStartPosition - </span><span class="s5">120</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span><span class="s3">;</span>
+
+    <span class="s3">const </span><span class="s1">top = startWithContext === </span><span class="s5">0 </span><span class="s1">? </span><span class="s2">&quot;&quot; </span><span class="s1">: </span><span class="s2">&quot;...&quot;</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">tail = startWithContext + </span><span class="s5">240 </span><span class="s1">&lt; text.length ? </span><span class="s2">&quot;...&quot; </span><span class="s1">: </span><span class="s2">&quot;&quot;</span><span class="s3">;</span>
+
+    <span class="s3">let </span><span class="s1">summary = document.createElement(</span><span class="s2">&quot;p&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">summary.classList.add(</span><span class="s2">&quot;context&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">summary.textContent = top + text.substr(startWithContext</span><span class="s3">, </span><span class="s5">240</span><span class="s1">).trim() + tail</span><span class="s3">;</span>
+
+    <span class="s3">return </span><span class="s1">summary</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+<span class="s1">}</span><span class="s3">;</span>
+
+<span class="s1">_ready(Search.init)</span><span class="s3">;</span>
+</pre>
+</body>
+</html>

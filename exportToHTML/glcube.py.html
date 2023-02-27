@@ -1,0 +1,613 @@
+<html>
+<head>
+<title>glcube.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6a8759;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+glcube.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.glcube 
+ 
+Draw a cube on the screen. 
+ 
+ 
+ 
+Amazing. 
+ 
+Every frame we orbit the camera around a small amount 
+creating the illusion of a spinning object. 
+ 
+First we setup some points of a multicolored cube. Then we then go through 
+a semi-unoptimized loop to draw the cube points onto the screen. 
+ 
+OpenGL does all the hard work for us. :] 
+ 
+ 
+Keyboard Controls 
+----------------- 
+ 
+* ESCAPE key to quit 
+* f key to toggle fullscreen. 
+ 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">math</span>
+<span class="s3">import </span><span class="s1">ctypes</span>
+
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+
+<span class="s3">try</span><span class="s1">:</span>
+    <span class="s3">import </span><span class="s1">OpenGL.GL </span><span class="s3">as </span><span class="s1">GL</span>
+    <span class="s3">import </span><span class="s1">OpenGL.GLU </span><span class="s3">as </span><span class="s1">GLU</span>
+<span class="s3">except </span><span class="s1">ImportError:</span>
+    <span class="s1">print(</span><span class="s4">&quot;pyopengl missing. The GLCUBE example requires: pyopengl numpy&quot;</span><span class="s1">)</span>
+    <span class="s3">raise </span><span class="s1">SystemExit</span>
+
+<span class="s3">try</span><span class="s1">:</span>
+    <span class="s3">from </span><span class="s1">numpy </span><span class="s3">import </span><span class="s1">array</span><span class="s3">, </span><span class="s1">dot</span><span class="s3">, </span><span class="s1">eye</span><span class="s3">, </span><span class="s1">zeros</span><span class="s3">, </span><span class="s1">float32</span><span class="s3">, </span><span class="s1">uint32</span>
+<span class="s3">except </span><span class="s1">ImportError:</span>
+    <span class="s1">print(</span><span class="s4">&quot;numpy missing. The GLCUBE example requires: pyopengl numpy&quot;</span><span class="s1">)</span>
+    <span class="s3">raise </span><span class="s1">SystemExit</span>
+
+
+<span class="s0"># do we want to use the 'modern' OpenGL API or the old one?</span>
+<span class="s0"># This example shows you how to do both.</span>
+<span class="s1">USE_MODERN_GL = </span><span class="s3">True</span>
+
+<span class="s0"># Some simple data for a colored cube here we have the 3D point position</span>
+<span class="s0"># and color for each corner. A list of indices describes each face, and a</span>
+<span class="s0"># list of indices describes each edge.</span>
+
+<span class="s1">CUBE_POINTS = (</span>
+    <span class="s1">(</span><span class="s5">0.5</span><span class="s3">, </span><span class="s1">-</span><span class="s5">0.5</span><span class="s3">, </span><span class="s1">-</span><span class="s5">0.5</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">0.5</span><span class="s3">, </span><span class="s5">0.5</span><span class="s3">, </span><span class="s1">-</span><span class="s5">0.5</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(-</span><span class="s5">0.5</span><span class="s3">, </span><span class="s5">0.5</span><span class="s3">, </span><span class="s1">-</span><span class="s5">0.5</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(-</span><span class="s5">0.5</span><span class="s3">, </span><span class="s1">-</span><span class="s5">0.5</span><span class="s3">, </span><span class="s1">-</span><span class="s5">0.5</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">0.5</span><span class="s3">, </span><span class="s1">-</span><span class="s5">0.5</span><span class="s3">, </span><span class="s5">0.5</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">0.5</span><span class="s3">, </span><span class="s5">0.5</span><span class="s3">, </span><span class="s5">0.5</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(-</span><span class="s5">0.5</span><span class="s3">, </span><span class="s1">-</span><span class="s5">0.5</span><span class="s3">, </span><span class="s5">0.5</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(-</span><span class="s5">0.5</span><span class="s3">, </span><span class="s5">0.5</span><span class="s3">, </span><span class="s5">0.5</span><span class="s1">)</span><span class="s3">,</span>
+<span class="s1">)</span>
+
+<span class="s0"># colors are 0-1 floating values</span>
+<span class="s1">CUBE_COLORS = (</span>
+    <span class="s1">(</span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)</span><span class="s3">,</span>
+<span class="s1">)</span>
+
+<span class="s1">CUBE_QUAD_VERTS = (</span>
+    <span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">2</span><span class="s3">, </span><span class="s5">3</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">3</span><span class="s3">, </span><span class="s5">2</span><span class="s3">, </span><span class="s5">7</span><span class="s3">, </span><span class="s5">6</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">6</span><span class="s3">, </span><span class="s5">7</span><span class="s3">, </span><span class="s5">5</span><span class="s3">, </span><span class="s5">4</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">4</span><span class="s3">, </span><span class="s5">5</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">1</span><span class="s3">, </span><span class="s5">5</span><span class="s3">, </span><span class="s5">7</span><span class="s3">, </span><span class="s5">2</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">4</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">3</span><span class="s3">, </span><span class="s5">6</span><span class="s1">)</span><span class="s3">,</span>
+<span class="s1">)</span>
+
+<span class="s1">CUBE_EDGES = (</span>
+    <span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">3</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">4</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">2</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">2</span><span class="s3">, </span><span class="s5">3</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">2</span><span class="s3">, </span><span class="s5">7</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">6</span><span class="s3">, </span><span class="s5">3</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">6</span><span class="s3">, </span><span class="s5">4</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">6</span><span class="s3">, </span><span class="s5">7</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">5</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">5</span><span class="s3">, </span><span class="s5">4</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s5">5</span><span class="s3">, </span><span class="s5">7</span><span class="s1">)</span><span class="s3">,</span>
+<span class="s1">)</span>
+
+
+<span class="s3">def </span><span class="s1">translate(matrix</span><span class="s3">, </span><span class="s1">x=</span><span class="s5">0.0</span><span class="s3">, </span><span class="s1">y=</span><span class="s5">0.0</span><span class="s3">, </span><span class="s1">z=</span><span class="s5">0.0</span><span class="s1">):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Translate (move) a matrix in the x, y and z axes. 
+ 
+    :param matrix: Matrix to translate. 
+    :param x: direction and magnitude to translate in x axis. Defaults to 0. 
+    :param y: direction and magnitude to translate in y axis. Defaults to 0. 
+    :param z: direction and magnitude to translate in z axis. Defaults to 0. 
+    :return: The translated matrix. 
+    &quot;&quot;&quot;</span>
+    <span class="s1">translation_matrix = array(</span>
+        <span class="s1">[</span>
+            <span class="s1">[</span><span class="s5">1.0</span><span class="s3">, </span><span class="s5">0.0</span><span class="s3">, </span><span class="s5">0.0</span><span class="s3">, </span><span class="s1">x]</span><span class="s3">,</span>
+            <span class="s1">[</span><span class="s5">0.0</span><span class="s3">, </span><span class="s5">1.0</span><span class="s3">, </span><span class="s5">0.0</span><span class="s3">, </span><span class="s1">y]</span><span class="s3">,</span>
+            <span class="s1">[</span><span class="s5">0.0</span><span class="s3">, </span><span class="s5">0.0</span><span class="s3">, </span><span class="s5">1.0</span><span class="s3">, </span><span class="s1">z]</span><span class="s3">,</span>
+            <span class="s1">[</span><span class="s5">0.0</span><span class="s3">, </span><span class="s5">0.0</span><span class="s3">, </span><span class="s5">0.0</span><span class="s3">, </span><span class="s5">1.0</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">dtype=matrix.dtype</span><span class="s3">,</span>
+    <span class="s1">).T</span>
+    <span class="s1">matrix[...] = dot(matrix</span><span class="s3">, </span><span class="s1">translation_matrix)</span>
+    <span class="s3">return </span><span class="s1">matrix</span>
+
+
+<span class="s3">def </span><span class="s1">frustum(left</span><span class="s3">, </span><span class="s1">right</span><span class="s3">, </span><span class="s1">bottom</span><span class="s3">, </span><span class="s1">top</span><span class="s3">, </span><span class="s1">znear</span><span class="s3">, </span><span class="s1">zfar):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Build a perspective matrix from the clipping planes, or camera 'frustrum' 
+    volume. 
+ 
+    :param left: left position of the near clipping plane. 
+    :param right: right position of the near clipping plane. 
+    :param bottom: bottom position of the near clipping plane. 
+    :param top: top position of the near clipping plane. 
+    :param znear: z depth of the near clipping plane. 
+    :param zfar: z depth of the far clipping plane. 
+ 
+    :return: A perspective matrix. 
+    &quot;&quot;&quot;</span>
+    <span class="s1">perspective_matrix = zeros((</span><span class="s5">4</span><span class="s3">, </span><span class="s5">4</span><span class="s1">)</span><span class="s3">, </span><span class="s1">dtype=float32)</span>
+    <span class="s1">perspective_matrix[</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">] = +</span><span class="s5">2.0 </span><span class="s1">* znear / (right - left)</span>
+    <span class="s1">perspective_matrix[</span><span class="s5">2</span><span class="s3">, </span><span class="s5">0</span><span class="s1">] = (right + left) / (right - left)</span>
+    <span class="s1">perspective_matrix[</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">] = +</span><span class="s5">2.0 </span><span class="s1">* znear / (top - bottom)</span>
+    <span class="s1">perspective_matrix[</span><span class="s5">3</span><span class="s3">, </span><span class="s5">1</span><span class="s1">] = (top + bottom) / (top - bottom)</span>
+    <span class="s1">perspective_matrix[</span><span class="s5">2</span><span class="s3">, </span><span class="s5">2</span><span class="s1">] = -(zfar + znear) / (zfar - znear)</span>
+    <span class="s1">perspective_matrix[</span><span class="s5">3</span><span class="s3">, </span><span class="s5">2</span><span class="s1">] = -</span><span class="s5">2.0 </span><span class="s1">* znear * zfar / (zfar - znear)</span>
+    <span class="s1">perspective_matrix[</span><span class="s5">2</span><span class="s3">, </span><span class="s5">3</span><span class="s1">] = -</span><span class="s5">1.0</span>
+    <span class="s3">return </span><span class="s1">perspective_matrix</span>
+
+
+<span class="s3">def </span><span class="s1">perspective(fovy</span><span class="s3">, </span><span class="s1">aspect</span><span class="s3">, </span><span class="s1">znear</span><span class="s3">, </span><span class="s1">zfar):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Build a perspective matrix from field of view, aspect ratio and depth 
+    planes. 
+ 
+    :param fovy: the field of view angle in the y axis. 
+    :param aspect: aspect ratio of our view port. 
+    :param znear: z depth of the near clipping plane. 
+    :param zfar: z depth of the far clipping plane. 
+ 
+    :return: A perspective matrix. 
+    &quot;&quot;&quot;</span>
+    <span class="s1">h = math.tan(fovy / </span><span class="s5">360.0 </span><span class="s1">* math.pi) * znear</span>
+    <span class="s1">w = h * aspect</span>
+    <span class="s3">return </span><span class="s1">frustum(-w</span><span class="s3">, </span><span class="s1">w</span><span class="s3">, </span><span class="s1">-h</span><span class="s3">, </span><span class="s1">h</span><span class="s3">, </span><span class="s1">znear</span><span class="s3">, </span><span class="s1">zfar)</span>
+
+
+<span class="s3">def </span><span class="s1">rotate(matrix</span><span class="s3">, </span><span class="s1">angle</span><span class="s3">, </span><span class="s1">x</span><span class="s3">, </span><span class="s1">y</span><span class="s3">, </span><span class="s1">z):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Rotate a matrix around an axis. 
+ 
+    :param matrix: The matrix to rotate. 
+    :param angle: The angle to rotate by. 
+    :param x: x of axis to rotate around. 
+    :param y: y of axis to rotate around. 
+    :param z: z of axis to rotate around. 
+ 
+    :return: The rotated matrix 
+    &quot;&quot;&quot;</span>
+    <span class="s1">angle = math.pi * angle / </span><span class="s5">180</span>
+    <span class="s1">c</span><span class="s3">, </span><span class="s1">s = math.cos(angle)</span><span class="s3">, </span><span class="s1">math.sin(angle)</span>
+    <span class="s1">n = math.sqrt(x * x + y * y + z * z)</span>
+    <span class="s1">x</span><span class="s3">, </span><span class="s1">y</span><span class="s3">, </span><span class="s1">z = x / n</span><span class="s3">, </span><span class="s1">y / n</span><span class="s3">, </span><span class="s1">z / n</span>
+    <span class="s1">cx</span><span class="s3">, </span><span class="s1">cy</span><span class="s3">, </span><span class="s1">cz = (</span><span class="s5">1 </span><span class="s1">- c) * x</span><span class="s3">, </span><span class="s1">(</span><span class="s5">1 </span><span class="s1">- c) * y</span><span class="s3">, </span><span class="s1">(</span><span class="s5">1 </span><span class="s1">- c) * z</span>
+    <span class="s1">rotation_matrix = array(</span>
+        <span class="s1">[</span>
+            <span class="s1">[cx * x + c</span><span class="s3">, </span><span class="s1">cy * x - z * s</span><span class="s3">, </span><span class="s1">cz * x + y * s</span><span class="s3">, </span><span class="s5">0</span><span class="s1">]</span><span class="s3">,</span>
+            <span class="s1">[cx * y + z * s</span><span class="s3">, </span><span class="s1">cy * y + c</span><span class="s3">, </span><span class="s1">cz * y - x * s</span><span class="s3">, </span><span class="s5">0</span><span class="s1">]</span><span class="s3">,</span>
+            <span class="s1">[cx * z - y * s</span><span class="s3">, </span><span class="s1">cy * z + x * s</span><span class="s3">, </span><span class="s1">cz * z + c</span><span class="s3">, </span><span class="s5">0</span><span class="s1">]</span><span class="s3">,</span>
+            <span class="s1">[</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">dtype=matrix.dtype</span><span class="s3">,</span>
+    <span class="s1">).T</span>
+    <span class="s1">matrix[...] = dot(matrix</span><span class="s3">, </span><span class="s1">rotation_matrix)</span>
+    <span class="s3">return </span><span class="s1">matrix</span>
+
+
+<span class="s3">class </span><span class="s1">Rotation:</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Data class that stores rotation angles in three axes. 
+    &quot;&quot;&quot;</span>
+
+    <span class="s3">def </span><span class="s1">__init__(self):</span>
+        <span class="s1">self.theta = </span><span class="s5">20</span>
+        <span class="s1">self.phi = </span><span class="s5">40</span>
+        <span class="s1">self.psi = </span><span class="s5">25</span>
+
+
+<span class="s3">def </span><span class="s1">drawcube_old():</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Draw the cube using the old open GL methods pre 3.2 core context. 
+    &quot;&quot;&quot;</span>
+    <span class="s1">allpoints = list(zip(CUBE_POINTS</span><span class="s3">, </span><span class="s1">CUBE_COLORS))</span>
+
+    <span class="s1">GL.glBegin(GL.GL_QUADS)</span>
+    <span class="s3">for </span><span class="s1">face </span><span class="s3">in </span><span class="s1">CUBE_QUAD_VERTS:</span>
+        <span class="s3">for </span><span class="s1">vert </span><span class="s3">in </span><span class="s1">face:</span>
+            <span class="s1">pos</span><span class="s3">, </span><span class="s1">color = allpoints[vert]</span>
+            <span class="s1">GL.glColor3fv(color)</span>
+            <span class="s1">GL.glVertex3fv(pos)</span>
+    <span class="s1">GL.glEnd()</span>
+
+    <span class="s1">GL.glColor3f(</span><span class="s5">1.0</span><span class="s3">, </span><span class="s5">1.0</span><span class="s3">, </span><span class="s5">1.0</span><span class="s1">)</span>
+    <span class="s1">GL.glBegin(GL.GL_LINES)</span>
+    <span class="s3">for </span><span class="s1">line </span><span class="s3">in </span><span class="s1">CUBE_EDGES:</span>
+        <span class="s3">for </span><span class="s1">vert </span><span class="s3">in </span><span class="s1">line:</span>
+            <span class="s1">pos</span><span class="s3">, </span><span class="s1">color = allpoints[vert]</span>
+            <span class="s1">GL.glVertex3fv(pos)</span>
+
+    <span class="s1">GL.glEnd()</span>
+
+
+<span class="s3">def </span><span class="s1">init_gl_stuff_old():</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Initialise open GL, prior to core context 3.2 
+    &quot;&quot;&quot;</span>
+    <span class="s1">GL.glEnable(GL.GL_DEPTH_TEST)  </span><span class="s0"># use our zbuffer</span>
+
+    <span class="s0"># setup the camera</span>
+    <span class="s1">GL.glMatrixMode(GL.GL_PROJECTION)</span>
+    <span class="s1">GL.glLoadIdentity()</span>
+    <span class="s1">GLU.gluPerspective(</span><span class="s5">45.0</span><span class="s3">, </span><span class="s5">640 </span><span class="s1">/ </span><span class="s5">480.0</span><span class="s3">, </span><span class="s5">0.1</span><span class="s3">, </span><span class="s5">100.0</span><span class="s1">)  </span><span class="s0"># setup lens</span>
+    <span class="s1">GL.glTranslatef(</span><span class="s5">0.0</span><span class="s3">, </span><span class="s5">0.0</span><span class="s3">, </span><span class="s1">-</span><span class="s5">3.0</span><span class="s1">)  </span><span class="s0"># move back</span>
+    <span class="s1">GL.glRotatef(</span><span class="s5">25</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)  </span><span class="s0"># orbit higher</span>
+
+
+<span class="s3">def </span><span class="s1">init_gl_modern(display_size):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Initialise open GL in the 'modern' open GL style for open GL versions 
+    greater than 3.1. 
+ 
+    :param display_size: Size of the window/viewport. 
+    &quot;&quot;&quot;</span>
+
+    <span class="s0"># Create shaders</span>
+    <span class="s0"># --------------------------------------</span>
+    <span class="s1">vertex_code = </span><span class="s4">&quot;&quot;&quot; 
+ 
+    #version 150 
+    uniform mat4   model; 
+    uniform mat4   view; 
+    uniform mat4   projection; 
+ 
+    uniform vec4   colour_mul; 
+    uniform vec4   colour_add; 
+ 
+    in vec4 vertex_colour;         // vertex colour in 
+    in vec3 vertex_position; 
+ 
+    out vec4   vertex_color_out;            // vertex colour out 
+    void main() 
+    { 
+        vertex_color_out = (colour_mul * vertex_colour) + colour_add; 
+        gl_Position = projection * view * model * vec4(vertex_position, 1.0); 
+    } 
+ 
+    &quot;&quot;&quot;</span>
+
+    <span class="s1">fragment_code = </span><span class="s4">&quot;&quot;&quot; 
+    #version 150 
+    in vec4 vertex_color_out;  // vertex colour from vertex shader 
+    out vec4 fragColor; 
+    void main() 
+    { 
+        fragColor = vertex_color_out; 
+    } 
+    &quot;&quot;&quot;</span>
+
+    <span class="s1">program = GL.glCreateProgram()</span>
+    <span class="s1">vertex = GL.glCreateShader(GL.GL_VERTEX_SHADER)</span>
+    <span class="s1">fragment = GL.glCreateShader(GL.GL_FRAGMENT_SHADER)</span>
+    <span class="s1">GL.glShaderSource(vertex</span><span class="s3">, </span><span class="s1">vertex_code)</span>
+    <span class="s1">GL.glCompileShader(vertex)</span>
+
+    <span class="s0"># this logs issues the shader compiler finds.</span>
+    <span class="s1">log = GL.glGetShaderInfoLog(vertex)</span>
+    <span class="s3">if </span><span class="s1">isinstance(log</span><span class="s3">, </span><span class="s1">bytes):</span>
+        <span class="s1">log = log.decode()</span>
+    <span class="s3">for </span><span class="s1">line </span><span class="s3">in </span><span class="s1">log.split(</span><span class="s4">&quot;</span><span class="s3">\n</span><span class="s4">&quot;</span><span class="s1">):</span>
+        <span class="s1">print(line)</span>
+
+    <span class="s1">GL.glAttachShader(program</span><span class="s3">, </span><span class="s1">vertex)</span>
+    <span class="s1">GL.glShaderSource(fragment</span><span class="s3">, </span><span class="s1">fragment_code)</span>
+    <span class="s1">GL.glCompileShader(fragment)</span>
+
+    <span class="s0"># this logs issues the shader compiler finds.</span>
+    <span class="s1">log = GL.glGetShaderInfoLog(fragment)</span>
+    <span class="s3">if </span><span class="s1">isinstance(log</span><span class="s3">, </span><span class="s1">bytes):</span>
+        <span class="s1">log = log.decode()</span>
+    <span class="s3">for </span><span class="s1">line </span><span class="s3">in </span><span class="s1">log.split(</span><span class="s4">&quot;</span><span class="s3">\n</span><span class="s4">&quot;</span><span class="s1">):</span>
+        <span class="s1">print(line)</span>
+
+    <span class="s1">GL.glAttachShader(program</span><span class="s3">, </span><span class="s1">fragment)</span>
+    <span class="s1">GL.glValidateProgram(program)</span>
+    <span class="s1">GL.glLinkProgram(program)</span>
+
+    <span class="s1">GL.glDetachShader(program</span><span class="s3">, </span><span class="s1">vertex)</span>
+    <span class="s1">GL.glDetachShader(program</span><span class="s3">, </span><span class="s1">fragment)</span>
+    <span class="s1">GL.glUseProgram(program)</span>
+
+    <span class="s0"># Create vertex buffers and shader constants</span>
+    <span class="s0"># ------------------------------------------</span>
+
+    <span class="s0"># Cube Data</span>
+    <span class="s1">vertices = zeros(</span>
+        <span class="s5">8</span><span class="s3">, </span><span class="s1">[(</span><span class="s4">&quot;vertex_position&quot;</span><span class="s3">, </span><span class="s1">float32</span><span class="s3">, </span><span class="s5">3</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">&quot;vertex_colour&quot;</span><span class="s3">, </span><span class="s1">float32</span><span class="s3">, </span><span class="s5">4</span><span class="s1">)]</span>
+    <span class="s1">)</span>
+
+    <span class="s1">vertices[</span><span class="s4">&quot;vertex_position&quot;</span><span class="s1">] = [</span>
+        <span class="s1">[</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[-</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[-</span><span class="s5">1</span><span class="s3">, </span><span class="s1">-</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[</span><span class="s5">1</span><span class="s3">, </span><span class="s1">-</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[</span><span class="s5">1</span><span class="s3">, </span><span class="s1">-</span><span class="s5">1</span><span class="s3">, </span><span class="s1">-</span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s1">-</span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[-</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s1">-</span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[-</span><span class="s5">1</span><span class="s3">, </span><span class="s1">-</span><span class="s5">1</span><span class="s3">, </span><span class="s1">-</span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+    <span class="s1">]</span>
+
+    <span class="s1">vertices[</span><span class="s4">&quot;vertex_colour&quot;</span><span class="s1">] = [</span>
+        <span class="s1">[</span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[</span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[</span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">[</span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s1">]</span><span class="s3">,</span>
+    <span class="s1">]</span>
+
+    <span class="s1">filled_cube_indices = array(</span>
+        <span class="s1">[</span>
+            <span class="s5">0</span><span class="s3">,</span>
+            <span class="s5">1</span><span class="s3">,</span>
+            <span class="s5">2</span><span class="s3">,</span>
+            <span class="s5">0</span><span class="s3">,</span>
+            <span class="s5">2</span><span class="s3">,</span>
+            <span class="s5">3</span><span class="s3">,</span>
+            <span class="s5">0</span><span class="s3">,</span>
+            <span class="s5">3</span><span class="s3">,</span>
+            <span class="s5">4</span><span class="s3">,</span>
+            <span class="s5">0</span><span class="s3">,</span>
+            <span class="s5">4</span><span class="s3">,</span>
+            <span class="s5">5</span><span class="s3">,</span>
+            <span class="s5">0</span><span class="s3">,</span>
+            <span class="s5">5</span><span class="s3">,</span>
+            <span class="s5">6</span><span class="s3">,</span>
+            <span class="s5">0</span><span class="s3">,</span>
+            <span class="s5">6</span><span class="s3">,</span>
+            <span class="s5">1</span><span class="s3">,</span>
+            <span class="s5">1</span><span class="s3">,</span>
+            <span class="s5">6</span><span class="s3">,</span>
+            <span class="s5">7</span><span class="s3">,</span>
+            <span class="s5">1</span><span class="s3">,</span>
+            <span class="s5">7</span><span class="s3">,</span>
+            <span class="s5">2</span><span class="s3">,</span>
+            <span class="s5">7</span><span class="s3">,</span>
+            <span class="s5">4</span><span class="s3">,</span>
+            <span class="s5">3</span><span class="s3">,</span>
+            <span class="s5">7</span><span class="s3">,</span>
+            <span class="s5">3</span><span class="s3">,</span>
+            <span class="s5">2</span><span class="s3">,</span>
+            <span class="s5">4</span><span class="s3">,</span>
+            <span class="s5">7</span><span class="s3">,</span>
+            <span class="s5">6</span><span class="s3">,</span>
+            <span class="s5">4</span><span class="s3">,</span>
+            <span class="s5">6</span><span class="s3">,</span>
+            <span class="s5">5</span><span class="s3">,</span>
+        <span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">dtype=uint32</span><span class="s3">,</span>
+    <span class="s1">)</span>
+
+    <span class="s1">outline_cube_indices = array(</span>
+        <span class="s1">[</span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">2</span><span class="s3">, </span><span class="s5">2</span><span class="s3">, </span><span class="s5">3</span><span class="s3">, </span><span class="s5">3</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">4</span><span class="s3">, </span><span class="s5">7</span><span class="s3">, </span><span class="s5">7</span><span class="s3">, </span><span class="s5">6</span><span class="s3">, </span><span class="s5">6</span><span class="s3">, </span><span class="s5">5</span><span class="s3">, </span><span class="s5">5</span><span class="s3">, </span><span class="s5">4</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">5</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">6</span><span class="s3">, </span><span class="s5">2</span><span class="s3">, </span><span class="s5">7</span><span class="s3">, </span><span class="s5">3</span><span class="s3">, </span><span class="s5">4</span><span class="s1">]</span><span class="s3">,</span>
+        <span class="s1">dtype=uint32</span><span class="s3">,</span>
+    <span class="s1">)</span>
+
+    <span class="s1">shader_data = {</span><span class="s4">&quot;buffer&quot;</span><span class="s1">: {}</span><span class="s3">, </span><span class="s4">&quot;constants&quot;</span><span class="s1">: {}}</span>
+
+    <span class="s1">GL.glBindVertexArray(GL.glGenVertexArrays(</span><span class="s5">1</span><span class="s1">))  </span><span class="s0"># Have to do this first</span>
+
+    <span class="s1">shader_data[</span><span class="s4">&quot;buffer&quot;</span><span class="s1">][</span><span class="s4">&quot;vertices&quot;</span><span class="s1">] = GL.glGenBuffers(</span><span class="s5">1</span><span class="s1">)</span>
+    <span class="s1">GL.glBindBuffer(GL.GL_ARRAY_BUFFER</span><span class="s3">, </span><span class="s1">shader_data[</span><span class="s4">&quot;buffer&quot;</span><span class="s1">][</span><span class="s4">&quot;vertices&quot;</span><span class="s1">])</span>
+    <span class="s1">GL.glBufferData(GL.GL_ARRAY_BUFFER</span><span class="s3">, </span><span class="s1">vertices.nbytes</span><span class="s3">, </span><span class="s1">vertices</span><span class="s3">, </span><span class="s1">GL.GL_DYNAMIC_DRAW)</span>
+
+    <span class="s1">stride = vertices.strides[</span><span class="s5">0</span><span class="s1">]</span>
+    <span class="s1">offset = ctypes.c_void_p(</span><span class="s5">0</span><span class="s1">)</span>
+
+    <span class="s1">loc = GL.glGetAttribLocation(program</span><span class="s3">, </span><span class="s4">&quot;vertex_position&quot;</span><span class="s1">)</span>
+    <span class="s1">GL.glEnableVertexAttribArray(loc)</span>
+    <span class="s1">GL.glVertexAttribPointer(loc</span><span class="s3">, </span><span class="s5">3</span><span class="s3">, </span><span class="s1">GL.GL_FLOAT</span><span class="s3">, False, </span><span class="s1">stride</span><span class="s3">, </span><span class="s1">offset)</span>
+
+    <span class="s1">offset = ctypes.c_void_p(vertices.dtype[</span><span class="s4">&quot;vertex_position&quot;</span><span class="s1">].itemsize)</span>
+
+    <span class="s1">loc = GL.glGetAttribLocation(program</span><span class="s3">, </span><span class="s4">&quot;vertex_colour&quot;</span><span class="s1">)</span>
+    <span class="s1">GL.glEnableVertexAttribArray(loc)</span>
+    <span class="s1">GL.glVertexAttribPointer(loc</span><span class="s3">, </span><span class="s5">4</span><span class="s3">, </span><span class="s1">GL.GL_FLOAT</span><span class="s3">, False, </span><span class="s1">stride</span><span class="s3">, </span><span class="s1">offset)</span>
+
+    <span class="s1">shader_data[</span><span class="s4">&quot;buffer&quot;</span><span class="s1">][</span><span class="s4">&quot;filled&quot;</span><span class="s1">] = GL.glGenBuffers(</span><span class="s5">1</span><span class="s1">)</span>
+    <span class="s1">GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER</span><span class="s3">, </span><span class="s1">shader_data[</span><span class="s4">&quot;buffer&quot;</span><span class="s1">][</span><span class="s4">&quot;filled&quot;</span><span class="s1">])</span>
+    <span class="s1">GL.glBufferData(</span>
+        <span class="s1">GL.GL_ELEMENT_ARRAY_BUFFER</span><span class="s3">,</span>
+        <span class="s1">filled_cube_indices.nbytes</span><span class="s3">,</span>
+        <span class="s1">filled_cube_indices</span><span class="s3">,</span>
+        <span class="s1">GL.GL_STATIC_DRAW</span><span class="s3">,</span>
+    <span class="s1">)</span>
+
+    <span class="s1">shader_data[</span><span class="s4">&quot;buffer&quot;</span><span class="s1">][</span><span class="s4">&quot;outline&quot;</span><span class="s1">] = GL.glGenBuffers(</span><span class="s5">1</span><span class="s1">)</span>
+    <span class="s1">GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER</span><span class="s3">, </span><span class="s1">shader_data[</span><span class="s4">&quot;buffer&quot;</span><span class="s1">][</span><span class="s4">&quot;outline&quot;</span><span class="s1">])</span>
+    <span class="s1">GL.glBufferData(</span>
+        <span class="s1">GL.GL_ELEMENT_ARRAY_BUFFER</span><span class="s3">,</span>
+        <span class="s1">outline_cube_indices.nbytes</span><span class="s3">,</span>
+        <span class="s1">outline_cube_indices</span><span class="s3">,</span>
+        <span class="s1">GL.GL_STATIC_DRAW</span><span class="s3">,</span>
+    <span class="s1">)</span>
+
+    <span class="s1">shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;model&quot;</span><span class="s1">] = GL.glGetUniformLocation(program</span><span class="s3">, </span><span class="s4">&quot;model&quot;</span><span class="s1">)</span>
+    <span class="s1">GL.glUniformMatrix4fv(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;model&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, False, </span><span class="s1">eye(</span><span class="s5">4</span><span class="s1">))</span>
+
+    <span class="s1">shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;view&quot;</span><span class="s1">] = GL.glGetUniformLocation(program</span><span class="s3">, </span><span class="s4">&quot;view&quot;</span><span class="s1">)</span>
+    <span class="s1">view = translate(eye(</span><span class="s5">4</span><span class="s1">)</span><span class="s3">, </span><span class="s1">z=-</span><span class="s5">6</span><span class="s1">)</span>
+    <span class="s1">GL.glUniformMatrix4fv(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;view&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, False, </span><span class="s1">view)</span>
+
+    <span class="s1">shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;projection&quot;</span><span class="s1">] = GL.glGetUniformLocation(</span>
+        <span class="s1">program</span><span class="s3">, </span><span class="s4">&quot;projection&quot;</span>
+    <span class="s1">)</span>
+    <span class="s1">GL.glUniformMatrix4fv(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;projection&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, False, </span><span class="s1">eye(</span><span class="s5">4</span><span class="s1">))</span>
+
+    <span class="s0"># This colour is multiplied with the base vertex colour in producing</span>
+    <span class="s0"># the final output</span>
+    <span class="s1">shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;colour_mul&quot;</span><span class="s1">] = GL.glGetUniformLocation(</span>
+        <span class="s1">program</span><span class="s3">, </span><span class="s4">&quot;colour_mul&quot;</span>
+    <span class="s1">)</span>
+    <span class="s1">GL.glUniform4f(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;colour_mul&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)</span>
+
+    <span class="s0"># This colour is added on to the base vertex colour in producing</span>
+    <span class="s0"># the final output</span>
+    <span class="s1">shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;colour_add&quot;</span><span class="s1">] = GL.glGetUniformLocation(</span>
+        <span class="s1">program</span><span class="s3">, </span><span class="s4">&quot;colour_add&quot;</span>
+    <span class="s1">)</span>
+    <span class="s1">GL.glUniform4f(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;colour_add&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span>
+
+    <span class="s0"># Set GL drawing data</span>
+    <span class="s0"># -------------------</span>
+    <span class="s1">GL.glClearColor(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span>
+    <span class="s1">GL.glPolygonOffset(</span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)</span>
+    <span class="s1">GL.glEnable(GL.GL_LINE_SMOOTH)</span>
+    <span class="s1">GL.glBlendFunc(GL.GL_SRC_ALPHA</span><span class="s3">, </span><span class="s1">GL.GL_ONE_MINUS_SRC_ALPHA)</span>
+    <span class="s1">GL.glDepthFunc(GL.GL_LESS)</span>
+    <span class="s1">GL.glHint(GL.GL_LINE_SMOOTH_HINT</span><span class="s3">, </span><span class="s1">GL.GL_NICEST)</span>
+    <span class="s1">GL.glLineWidth(</span><span class="s5">1.0</span><span class="s1">)</span>
+
+    <span class="s1">projection = perspective(</span><span class="s5">45.0</span><span class="s3">, </span><span class="s1">display_size[</span><span class="s5">0</span><span class="s1">] / float(display_size[</span><span class="s5">1</span><span class="s1">])</span><span class="s3">, </span><span class="s5">2.0</span><span class="s3">, </span><span class="s5">100.0</span><span class="s1">)</span>
+    <span class="s1">GL.glUniformMatrix4fv(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;projection&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, False, </span><span class="s1">projection)</span>
+
+    <span class="s3">return </span><span class="s1">shader_data</span><span class="s3">, </span><span class="s1">filled_cube_indices</span><span class="s3">, </span><span class="s1">outline_cube_indices</span>
+
+
+<span class="s3">def </span><span class="s1">draw_cube_modern(shader_data</span><span class="s3">, </span><span class="s1">filled_cube_indices</span><span class="s3">, </span><span class="s1">outline_cube_indices</span><span class="s3">, </span><span class="s1">rotation):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Draw a cube in the 'modern' Open GL style, for post 3.1 versions of 
+    open GL. 
+ 
+    :param shader_data: compile vertex &amp; pixel shader data for drawing a cube. 
+    :param filled_cube_indices: the indices to draw the 'filled' cube. 
+    :param outline_cube_indices: the indices to draw the 'outline' cube. 
+    :param rotation: the current rotations to apply. 
+    &quot;&quot;&quot;</span>
+
+    <span class="s1">GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)</span>
+
+    <span class="s0"># Filled cube</span>
+    <span class="s1">GL.glDisable(GL.GL_BLEND)</span>
+    <span class="s1">GL.glEnable(GL.GL_DEPTH_TEST)</span>
+    <span class="s1">GL.glEnable(GL.GL_POLYGON_OFFSET_FILL)</span>
+    <span class="s1">GL.glUniform4f(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;colour_mul&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s1">)</span>
+    <span class="s1">GL.glUniform4f(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;colour_add&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0.0</span><span class="s1">)</span>
+    <span class="s1">GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER</span><span class="s3">, </span><span class="s1">shader_data[</span><span class="s4">&quot;buffer&quot;</span><span class="s1">][</span><span class="s4">&quot;filled&quot;</span><span class="s1">])</span>
+    <span class="s1">GL.glDrawElements(</span>
+        <span class="s1">GL.GL_TRIANGLES</span><span class="s3">, </span><span class="s1">len(filled_cube_indices)</span><span class="s3">, </span><span class="s1">GL.GL_UNSIGNED_INT</span><span class="s3">, None</span>
+    <span class="s1">)</span>
+
+    <span class="s0"># Outlined cube</span>
+    <span class="s1">GL.glDisable(GL.GL_POLYGON_OFFSET_FILL)</span>
+    <span class="s1">GL.glEnable(GL.GL_BLEND)</span>
+    <span class="s1">GL.glUniform4f(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;colour_mul&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0.0</span><span class="s1">)</span>
+    <span class="s1">GL.glUniform4f(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;colour_add&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">1.0</span><span class="s1">)</span>
+    <span class="s1">GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER</span><span class="s3">, </span><span class="s1">shader_data[</span><span class="s4">&quot;buffer&quot;</span><span class="s1">][</span><span class="s4">&quot;outline&quot;</span><span class="s1">])</span>
+    <span class="s1">GL.glDrawElements(GL.GL_LINES</span><span class="s3">, </span><span class="s1">len(outline_cube_indices)</span><span class="s3">, </span><span class="s1">GL.GL_UNSIGNED_INT</span><span class="s3">, None</span><span class="s1">)</span>
+
+    <span class="s0"># Rotate cube</span>
+    <span class="s0"># rotation.theta += 1.0  # degrees</span>
+    <span class="s1">rotation.phi += </span><span class="s5">1.0  </span><span class="s0"># degrees</span>
+    <span class="s0"># rotation.psi += 1.0  # degrees</span>
+    <span class="s1">model = eye(</span><span class="s5">4</span><span class="s3">, </span><span class="s1">dtype=float32)</span>
+    <span class="s0"># rotate(model, rotation.theta, 0, 0, 1)</span>
+    <span class="s1">rotate(model</span><span class="s3">, </span><span class="s1">rotation.phi</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span>
+    <span class="s1">rotate(model</span><span class="s3">, </span><span class="s1">rotation.psi</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span>
+    <span class="s1">GL.glUniformMatrix4fv(shader_data[</span><span class="s4">&quot;constants&quot;</span><span class="s1">][</span><span class="s4">&quot;model&quot;</span><span class="s1">]</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, False, </span><span class="s1">model)</span>
+
+
+<span class="s3">def </span><span class="s1">main():</span>
+    <span class="s2">&quot;&quot;&quot;run the demo&quot;&quot;&quot;</span>
+
+    <span class="s0"># initialize pygame and setup an opengl display</span>
+    <span class="s1">pg.init()</span>
+
+    <span class="s1">gl_version = (</span><span class="s5">3</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)  </span><span class="s0"># GL Version number (Major, Minor)</span>
+    <span class="s3">if </span><span class="s1">USE_MODERN_GL:</span>
+        <span class="s1">gl_version = (</span><span class="s5">3</span><span class="s3">, </span><span class="s5">2</span><span class="s1">)  </span><span class="s0"># GL Version number (Major, Minor)</span>
+
+        <span class="s0"># By setting these attributes we can choose which Open GL Profile</span>
+        <span class="s0"># to use, profiles greater than 3.2 use a different rendering path</span>
+        <span class="s1">pg.display.gl_set_attribute(pg.GL_CONTEXT_MAJOR_VERSION</span><span class="s3">, </span><span class="s1">gl_version[</span><span class="s5">0</span><span class="s1">])</span>
+        <span class="s1">pg.display.gl_set_attribute(pg.GL_CONTEXT_MINOR_VERSION</span><span class="s3">, </span><span class="s1">gl_version[</span><span class="s5">1</span><span class="s1">])</span>
+        <span class="s1">pg.display.gl_set_attribute(</span>
+            <span class="s1">pg.GL_CONTEXT_PROFILE_MASK</span><span class="s3">, </span><span class="s1">pg.GL_CONTEXT_PROFILE_CORE</span>
+        <span class="s1">)</span>
+
+    <span class="s1">fullscreen = </span><span class="s3">False  </span><span class="s0"># start in windowed mode</span>
+
+    <span class="s1">display_size = (</span><span class="s5">640</span><span class="s3">, </span><span class="s5">480</span><span class="s1">)</span>
+    <span class="s1">pg.display.set_mode(display_size</span><span class="s3">, </span><span class="s1">pg.OPENGL | pg.DOUBLEBUF | pg.RESIZABLE)</span>
+
+    <span class="s3">if </span><span class="s1">USE_MODERN_GL:</span>
+        <span class="s1">gpu</span><span class="s3">, </span><span class="s1">f_indices</span><span class="s3">, </span><span class="s1">o_indices = init_gl_modern(display_size)</span>
+        <span class="s1">rotation = Rotation()</span>
+    <span class="s3">else</span><span class="s1">:</span>
+        <span class="s1">init_gl_stuff_old()</span>
+
+    <span class="s1">going = </span><span class="s3">True</span>
+    <span class="s3">while </span><span class="s1">going:</span>
+        <span class="s0"># check for quit'n events</span>
+        <span class="s1">events = pg.event.get()</span>
+        <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">events:</span>
+            <span class="s3">if </span><span class="s1">event.type == pg.QUIT </span><span class="s3">or </span><span class="s1">(</span>
+                <span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key == pg.K_ESCAPE</span>
+            <span class="s1">):</span>
+                <span class="s1">going = </span><span class="s3">False</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key == pg.K_f:</span>
+                <span class="s3">if not </span><span class="s1">fullscreen:</span>
+                    <span class="s1">print(</span><span class="s4">&quot;Changing to FULLSCREEN&quot;</span><span class="s1">)</span>
+                    <span class="s1">pg.display.set_mode(</span>
+                        <span class="s1">(</span><span class="s5">640</span><span class="s3">, </span><span class="s5">480</span><span class="s1">)</span><span class="s3">, </span><span class="s1">pg.OPENGL | pg.DOUBLEBUF | pg.FULLSCREEN</span>
+                    <span class="s1">)</span>
+                <span class="s3">else</span><span class="s1">:</span>
+                    <span class="s1">print(</span><span class="s4">&quot;Changing to windowed mode&quot;</span><span class="s1">)</span>
+                    <span class="s1">pg.display.set_mode((</span><span class="s5">640</span><span class="s3">, </span><span class="s5">480</span><span class="s1">)</span><span class="s3">, </span><span class="s1">pg.OPENGL | pg.DOUBLEBUF)</span>
+                <span class="s1">fullscreen = </span><span class="s3">not </span><span class="s1">fullscreen</span>
+                <span class="s3">if </span><span class="s1">gl_version[</span><span class="s5">0</span><span class="s1">] &gt;= </span><span class="s5">4 </span><span class="s3">or </span><span class="s1">(gl_version[</span><span class="s5">0</span><span class="s1">] == </span><span class="s5">3 </span><span class="s3">and </span><span class="s1">gl_version[</span><span class="s5">1</span><span class="s1">] &gt;= </span><span class="s5">2</span><span class="s1">):</span>
+                    <span class="s1">gpu</span><span class="s3">, </span><span class="s1">f_indices</span><span class="s3">, </span><span class="s1">o_indices = init_gl_modern(display_size)</span>
+                    <span class="s1">rotation = Rotation()</span>
+                <span class="s3">else</span><span class="s1">:</span>
+                    <span class="s1">init_gl_stuff_old()</span>
+
+        <span class="s3">if </span><span class="s1">USE_MODERN_GL:</span>
+            <span class="s1">draw_cube_modern(gpu</span><span class="s3">, </span><span class="s1">f_indices</span><span class="s3">, </span><span class="s1">o_indices</span><span class="s3">, </span><span class="s1">rotation)</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s0"># clear screen and move camera</span>
+            <span class="s1">GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)</span>
+            <span class="s0"># orbit camera around by 1 degree</span>
+            <span class="s1">GL.glRotatef(</span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">1</span><span class="s3">, </span><span class="s5">0</span><span class="s1">)</span>
+            <span class="s1">drawcube_old()</span>
+
+        <span class="s1">pg.display.flip()</span>
+        <span class="s1">pg.time.wait(</span><span class="s5">10</span><span class="s1">)</span>
+
+    <span class="s1">pg.quit()</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s4">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">main()</span>
+</pre>
+</body>
+</html>

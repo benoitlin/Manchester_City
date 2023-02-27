@@ -1,0 +1,87 @@
+<html>
+<head>
+<title>pgimport.h</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+pgimport.h</font>
+</center></td></tr></table>
+<pre><span class="s0">#ifndef </span><span class="s1">PGIMPORT_H</span>
+<span class="s0">#define </span><span class="s1">PGIMPORT_H</span>
+
+<span class="s2">/* Prefix when importing module */</span>
+<span class="s0">#define </span><span class="s1">IMPPREFIX </span><span class="s3">&quot;pygame.&quot;</span>
+
+<span class="s0">#include </span><span class="s3">&quot;pgcompat.h&quot;</span>
+
+<span class="s0">#define </span><span class="s1">PYGAMEAPI_LOCAL_ENTRY </span><span class="s3">&quot;_PYGAME_C_API&quot;</span>
+<span class="s0">#define </span><span class="s1">PG_CAPSULE_NAME(m) (IMPPREFIX m </span><span class="s3">&quot;.&quot; </span><span class="s1">PYGAMEAPI_LOCAL_ENTRY)</span>
+
+<span class="s2">/* 
+ * fill API slots defined by PYGAMEAPI_DEFINE_SLOTS/PYGAMEAPI_EXTERN_SLOTS 
+ */</span>
+<span class="s0">#define </span><span class="s1">_IMPORT_PYGAME_MODULE(module)                                         \</span>
+    <span class="s1">{                                                                         \</span>
+        <span class="s1">PyObject *_mod_##module = PyImport_ImportModule(IMPPREFIX #module);   \</span>
+                                                                              <span class="s1">\</span>
+        <span class="s0">if </span><span class="s1">(_mod_##module != NULL) {                                          \</span>
+            <span class="s1">PyObject *_c_api =                                                \</span>
+                <span class="s1">PyObject_GetAttrString(_mod_##module, PYGAMEAPI_LOCAL_ENTRY); \</span>
+                                                                              <span class="s1">\</span>
+            <span class="s1">Py_DECREF(_mod_##module);                                         \</span>
+            <span class="s0">if </span><span class="s1">(_c_api != NULL &amp;&amp; PyCapsule_CheckExact(_c_api)) {             \</span>
+                <span class="s0">void </span><span class="s1">**localptr = (</span><span class="s0">void </span><span class="s1">**)PyCapsule_GetPointer(              \</span>
+                    <span class="s1">_c_api, PG_CAPSULE_NAME(#module));                        \</span>
+                <span class="s1">_PGSLOTS_##module = localptr;                                 \</span>
+            <span class="s1">}                                                                 \</span>
+            <span class="s1">Py_XDECREF(_c_api);                                               \</span>
+        <span class="s1">}                                                                     \</span>
+    <span class="s1">}</span>
+
+<span class="s0">#define </span><span class="s1">PYGAMEAPI_IS_IMPORTED(module) (_PGSLOTS_##module != NULL)</span>
+
+<span class="s2">/* 
+ * source file must include one of these in order to use _IMPORT_PYGAME_MODULE. 
+ * this is set by import_pygame_*() functions. 
+ * disable with NO_PYGAME_C_API 
+ */</span>
+<span class="s0">#define </span><span class="s1">PYGAMEAPI_DEFINE_SLOTS(module) </span><span class="s0">void </span><span class="s1">**_PGSLOTS_##module = NULL</span>
+<span class="s0">#define </span><span class="s1">PYGAMEAPI_EXTERN_SLOTS(module) </span><span class="s0">extern void </span><span class="s1">**_PGSLOTS_##module</span>
+<span class="s0">#define </span><span class="s1">PYGAMEAPI_GET_SLOT(module, index) _PGSLOTS_##module[(index)]</span>
+
+<span class="s2">/* 
+ * disabled API with NO_PYGAME_C_API; do nothing instead 
+ */</span>
+<span class="s0">#ifdef </span><span class="s1">NO_PYGAME_C_API</span>
+
+<span class="s0">#undef </span><span class="s1">PYGAMEAPI_DEFINE_SLOTS</span>
+<span class="s0">#undef </span><span class="s1">PYGAMEAPI_EXTERN_SLOTS</span>
+
+<span class="s0">#define </span><span class="s1">PYGAMEAPI_DEFINE_SLOTS(module)</span>
+<span class="s0">#define </span><span class="s1">PYGAMEAPI_EXTERN_SLOTS(module)</span>
+
+<span class="s2">/* intentionally leave this defined to cause a compiler error * 
+#define PYGAMEAPI_GET_SLOT(api_root, index) 
+#undef PYGAMEAPI_GET_SLOT*/</span>
+
+<span class="s0">#undef </span><span class="s1">_IMPORT_PYGAME_MODULE</span>
+<span class="s0">#define </span><span class="s1">_IMPORT_PYGAME_MODULE(module)</span>
+
+<span class="s0">#endif </span><span class="s2">/* NO_PYGAME_C_API */</span>
+
+<span class="s0">#define </span><span class="s1">encapsulate_api(ptr, module) \</span>
+    <span class="s1">PyCapsule_New(ptr, PG_CAPSULE_NAME(module), NULL)</span>
+
+<span class="s0">#endif </span><span class="s2">/* ~PGIMPORT_H */</span>
+</pre>
+</body>
+</html>

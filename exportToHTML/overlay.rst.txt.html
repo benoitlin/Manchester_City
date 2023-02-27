@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>overlay.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+overlay.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.Overlay`</span>
+<span class="s0">=====================</span>
+
+<span class="s0">.. currentmodule:: pygame</span>
+
+<span class="s0">.. warning::</span>
+	<span class="s0">This module is non functional in pygame 2.0 and above, unless you have manually compiled pygame with SDL1.</span>
+	<span class="s0">This module will not be supported in the future.</span>
+
+<span class="s0">.. class:: Overlay</span>
+
+   <span class="s0">| :sl:`pygame object for video overlay graphics`</span>
+   <span class="s0">| :sg:`Overlay(format, (width, height)) -&gt; Overlay`</span>
+
+   <span class="s0">The Overlay objects provide support for accessing hardware video overlays.</span>
+   <span class="s0">Video overlays do not use standard ``RGB`` pixel formats, and can use</span>
+   <span class="s0">multiple resolutions of data to create a single image.</span>
+
+   <span class="s0">The Overlay objects represent lower level access to the display hardware. To</span>
+   <span class="s0">use the object you must understand the technical details of video overlays.</span>
+
+   <span class="s0">The Overlay format determines the type of pixel data used. Not all hardware</span>
+   <span class="s0">will support all types of overlay formats. Here is a list of available</span>
+   <span class="s0">format types:</span>
+
+   <span class="s0">::</span>
+
+     <span class="s0">YV12_OVERLAY, IYUV_OVERLAY, YUY2_OVERLAY, UYVY_OVERLAY, YVYU_OVERLAY</span>
+
+   <span class="s0">The width and height arguments control the size for the overlay image data.</span>
+   <span class="s0">The overlay image can be displayed at any size, not just the resolution of</span>
+   <span class="s0">the overlay.</span>
+
+   <span class="s0">The overlay objects are always visible, and always show above the regular</span>
+   <span class="s0">display contents.</span>
+
+   <span class="s0">.. method:: display</span>
+
+      <span class="s0">| :sl:`set the overlay pixel data`</span>
+      <span class="s0">| :sg:`display((y, u, v)) -&gt; None`</span>
+      <span class="s0">| :sg:`display() -&gt; None`</span>
+
+      <span class="s0">Display the YUV data in SDL's overlay planes. The y, u, and v arguments</span>
+      <span class="s0">are strings of binary data. The data must be in the correct format used</span>
+      <span class="s0">to create the Overlay.</span>
+
+      <span class="s0">If no argument is passed in, the Overlay will simply be redrawn with the</span>
+      <span class="s0">current data. This can be useful when the Overlay is not really hardware</span>
+      <span class="s0">accelerated.</span>
+
+      <span class="s0">The strings are not validated, and improperly sized strings could crash</span>
+      <span class="s0">the program.</span>
+
+      <span class="s0">.. ## Overlay.display ##</span>
+
+   <span class="s0">.. method:: set_location</span>
+
+      <span class="s0">| :sl:`control where the overlay is displayed`</span>
+      <span class="s0">| :sg:`set_location(rect) -&gt; None`</span>
+
+      <span class="s0">Set the location for the overlay. The overlay will always be shown</span>
+      <span class="s0">relative to the main display Surface. This does not actually redraw the</span>
+      <span class="s0">overlay, it will be updated on the next call to ``Overlay.display()``.</span>
+
+      <span class="s0">.. ## Overlay.set_location ##</span>
+
+   <span class="s0">.. method:: get_hardware</span>
+
+      <span class="s0">| :sl:`test if the Overlay is hardware accelerated`</span>
+      <span class="s0">| :sg:`get_hardware(rect) -&gt; int`</span>
+
+      <span class="s0">Returns a True value when the Overlay is hardware accelerated. If the</span>
+      <span class="s0">platform does not support acceleration, software rendering is used.</span>
+
+      <span class="s0">.. ## Overlay.get_hardware ##</span>
+
+   <span class="s0">.. ## pygame.Overlay ##</span>
+</pre>
+</body>
+</html>

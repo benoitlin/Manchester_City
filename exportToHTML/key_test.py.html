@@ -1,0 +1,320 @@
+<html>
+<head>
+<title>key_test.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+.s4 { color: #629755; font-style: italic;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+key_test.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">os</span>
+<span class="s0">import </span><span class="s1">time</span>
+<span class="s0">import </span><span class="s1">unittest</span>
+
+<span class="s0">import </span><span class="s1">pygame</span>
+<span class="s0">import </span><span class="s1">pygame.key</span>
+
+<span class="s2"># keys that are not tested for const-name match</span>
+<span class="s1">SKIPPED_KEYS = {</span><span class="s3">&quot;K_UNKNOWN&quot;</span><span class="s1">}</span>
+
+<span class="s2"># This is the expected compat output</span>
+<span class="s1">KEY_NAME_COMPAT = {</span>
+    <span class="s3">&quot;K_0&quot;</span><span class="s1">: </span><span class="s3">&quot;0&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_1&quot;</span><span class="s1">: </span><span class="s3">&quot;1&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_2&quot;</span><span class="s1">: </span><span class="s3">&quot;2&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_3&quot;</span><span class="s1">: </span><span class="s3">&quot;3&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_4&quot;</span><span class="s1">: </span><span class="s3">&quot;4&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_5&quot;</span><span class="s1">: </span><span class="s3">&quot;5&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_6&quot;</span><span class="s1">: </span><span class="s3">&quot;6&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_7&quot;</span><span class="s1">: </span><span class="s3">&quot;7&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_8&quot;</span><span class="s1">: </span><span class="s3">&quot;8&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_9&quot;</span><span class="s1">: </span><span class="s3">&quot;9&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_AC_BACK&quot;</span><span class="s1">: </span><span class="s3">&quot;AC Back&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_AMPERSAND&quot;</span><span class="s1">: </span><span class="s3">&quot;&amp;&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_ASTERISK&quot;</span><span class="s1">: </span><span class="s3">&quot;*&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_AT&quot;</span><span class="s1">: </span><span class="s3">&quot;@&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_BACKQUOTE&quot;</span><span class="s1">: </span><span class="s3">&quot;`&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_BACKSLASH&quot;</span><span class="s1">: </span><span class="s3">&quot;</span><span class="s0">\\</span><span class="s3">&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_BACKSPACE&quot;</span><span class="s1">: </span><span class="s3">&quot;backspace&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_BREAK&quot;</span><span class="s1">: </span><span class="s3">&quot;break&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_CAPSLOCK&quot;</span><span class="s1">: </span><span class="s3">&quot;caps lock&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_CARET&quot;</span><span class="s1">: </span><span class="s3">&quot;^&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_CLEAR&quot;</span><span class="s1">: </span><span class="s3">&quot;clear&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_COLON&quot;</span><span class="s1">: </span><span class="s3">&quot;:&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_COMMA&quot;</span><span class="s1">: </span><span class="s3">&quot;,&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_CURRENCYSUBUNIT&quot;</span><span class="s1">: </span><span class="s3">&quot;CurrencySubUnit&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_CURRENCYUNIT&quot;</span><span class="s1">: </span><span class="s3">&quot;euro&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_DELETE&quot;</span><span class="s1">: </span><span class="s3">&quot;delete&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_DOLLAR&quot;</span><span class="s1">: </span><span class="s3">&quot;$&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_DOWN&quot;</span><span class="s1">: </span><span class="s3">&quot;down&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_END&quot;</span><span class="s1">: </span><span class="s3">&quot;end&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_EQUALS&quot;</span><span class="s1">: </span><span class="s3">&quot;=&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_ESCAPE&quot;</span><span class="s1">: </span><span class="s3">&quot;escape&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_EURO&quot;</span><span class="s1">: </span><span class="s3">&quot;euro&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_EXCLAIM&quot;</span><span class="s1">: </span><span class="s3">&quot;!&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F1&quot;</span><span class="s1">: </span><span class="s3">&quot;f1&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F10&quot;</span><span class="s1">: </span><span class="s3">&quot;f10&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F11&quot;</span><span class="s1">: </span><span class="s3">&quot;f11&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F12&quot;</span><span class="s1">: </span><span class="s3">&quot;f12&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F13&quot;</span><span class="s1">: </span><span class="s3">&quot;f13&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F14&quot;</span><span class="s1">: </span><span class="s3">&quot;f14&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F15&quot;</span><span class="s1">: </span><span class="s3">&quot;f15&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F2&quot;</span><span class="s1">: </span><span class="s3">&quot;f2&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F3&quot;</span><span class="s1">: </span><span class="s3">&quot;f3&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F4&quot;</span><span class="s1">: </span><span class="s3">&quot;f4&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F5&quot;</span><span class="s1">: </span><span class="s3">&quot;f5&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F6&quot;</span><span class="s1">: </span><span class="s3">&quot;f6&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F7&quot;</span><span class="s1">: </span><span class="s3">&quot;f7&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F8&quot;</span><span class="s1">: </span><span class="s3">&quot;f8&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_F9&quot;</span><span class="s1">: </span><span class="s3">&quot;f9&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_GREATER&quot;</span><span class="s1">: </span><span class="s3">&quot;&gt;&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_HASH&quot;</span><span class="s1">: </span><span class="s3">&quot;#&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_HELP&quot;</span><span class="s1">: </span><span class="s3">&quot;help&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_HOME&quot;</span><span class="s1">: </span><span class="s3">&quot;home&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_INSERT&quot;</span><span class="s1">: </span><span class="s3">&quot;insert&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP0&quot;</span><span class="s1">: </span><span class="s3">&quot;[0]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP1&quot;</span><span class="s1">: </span><span class="s3">&quot;[1]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP2&quot;</span><span class="s1">: </span><span class="s3">&quot;[2]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP3&quot;</span><span class="s1">: </span><span class="s3">&quot;[3]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP4&quot;</span><span class="s1">: </span><span class="s3">&quot;[4]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP5&quot;</span><span class="s1">: </span><span class="s3">&quot;[5]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP6&quot;</span><span class="s1">: </span><span class="s3">&quot;[6]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP7&quot;</span><span class="s1">: </span><span class="s3">&quot;[7]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP8&quot;</span><span class="s1">: </span><span class="s3">&quot;[8]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP9&quot;</span><span class="s1">: </span><span class="s3">&quot;[9]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_0&quot;</span><span class="s1">: </span><span class="s3">&quot;[0]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_1&quot;</span><span class="s1">: </span><span class="s3">&quot;[1]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_2&quot;</span><span class="s1">: </span><span class="s3">&quot;[2]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_3&quot;</span><span class="s1">: </span><span class="s3">&quot;[3]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_4&quot;</span><span class="s1">: </span><span class="s3">&quot;[4]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_5&quot;</span><span class="s1">: </span><span class="s3">&quot;[5]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_6&quot;</span><span class="s1">: </span><span class="s3">&quot;[6]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_7&quot;</span><span class="s1">: </span><span class="s3">&quot;[7]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_8&quot;</span><span class="s1">: </span><span class="s3">&quot;[8]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_9&quot;</span><span class="s1">: </span><span class="s3">&quot;[9]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_DIVIDE&quot;</span><span class="s1">: </span><span class="s3">&quot;[/]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_ENTER&quot;</span><span class="s1">: </span><span class="s3">&quot;enter&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_EQUALS&quot;</span><span class="s1">: </span><span class="s3">&quot;equals&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_MINUS&quot;</span><span class="s1">: </span><span class="s3">&quot;[-]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_MULTIPLY&quot;</span><span class="s1">: </span><span class="s3">&quot;[*]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_PERIOD&quot;</span><span class="s1">: </span><span class="s3">&quot;[.]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_KP_PLUS&quot;</span><span class="s1">: </span><span class="s3">&quot;[+]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_LALT&quot;</span><span class="s1">: </span><span class="s3">&quot;left alt&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_LCTRL&quot;</span><span class="s1">: </span><span class="s3">&quot;left ctrl&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_LEFT&quot;</span><span class="s1">: </span><span class="s3">&quot;left&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_LEFTBRACKET&quot;</span><span class="s1">: </span><span class="s3">&quot;[&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_LEFTPAREN&quot;</span><span class="s1">: </span><span class="s3">&quot;(&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_LESS&quot;</span><span class="s1">: </span><span class="s3">&quot;&lt;&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_LGUI&quot;</span><span class="s1">: </span><span class="s3">&quot;left meta&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_LMETA&quot;</span><span class="s1">: </span><span class="s3">&quot;left meta&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_LSHIFT&quot;</span><span class="s1">: </span><span class="s3">&quot;left shift&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_LSUPER&quot;</span><span class="s1">: </span><span class="s3">&quot;left meta&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_MENU&quot;</span><span class="s1">: </span><span class="s3">&quot;menu&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_MINUS&quot;</span><span class="s1">: </span><span class="s3">&quot;-&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_MODE&quot;</span><span class="s1">: </span><span class="s3">&quot;alt gr&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_NUMLOCK&quot;</span><span class="s1">: </span><span class="s3">&quot;numlock&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_NUMLOCKCLEAR&quot;</span><span class="s1">: </span><span class="s3">&quot;numlock&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_PAGEDOWN&quot;</span><span class="s1">: </span><span class="s3">&quot;page down&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_PAGEUP&quot;</span><span class="s1">: </span><span class="s3">&quot;page up&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_PAUSE&quot;</span><span class="s1">: </span><span class="s3">&quot;break&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_PERCENT&quot;</span><span class="s1">: </span><span class="s3">&quot;%&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_PERIOD&quot;</span><span class="s1">: </span><span class="s3">&quot;.&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_PLUS&quot;</span><span class="s1">: </span><span class="s3">&quot;+&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_POWER&quot;</span><span class="s1">: </span><span class="s3">&quot;power&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_PRINT&quot;</span><span class="s1">: </span><span class="s3">&quot;print screen&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_PRINTSCREEN&quot;</span><span class="s1">: </span><span class="s3">&quot;print screen&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_QUESTION&quot;</span><span class="s1">: </span><span class="s3">&quot;?&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_QUOTE&quot;</span><span class="s1">: </span><span class="s3">&quot;'&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_QUOTEDBL&quot;</span><span class="s1">: </span><span class="s3">'&quot;'</span><span class="s0">,</span>
+    <span class="s3">&quot;K_RALT&quot;</span><span class="s1">: </span><span class="s3">&quot;right alt&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_RCTRL&quot;</span><span class="s1">: </span><span class="s3">&quot;right ctrl&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_RETURN&quot;</span><span class="s1">: </span><span class="s3">&quot;return&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_RGUI&quot;</span><span class="s1">: </span><span class="s3">&quot;right meta&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_RIGHT&quot;</span><span class="s1">: </span><span class="s3">&quot;right&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_RIGHTBRACKET&quot;</span><span class="s1">: </span><span class="s3">&quot;]&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_RIGHTPAREN&quot;</span><span class="s1">: </span><span class="s3">&quot;)&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_RMETA&quot;</span><span class="s1">: </span><span class="s3">&quot;right meta&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_RSHIFT&quot;</span><span class="s1">: </span><span class="s3">&quot;right shift&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_RSUPER&quot;</span><span class="s1">: </span><span class="s3">&quot;right meta&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_SCROLLLOCK&quot;</span><span class="s1">: </span><span class="s3">&quot;scroll lock&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_SCROLLOCK&quot;</span><span class="s1">: </span><span class="s3">&quot;scroll lock&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_SEMICOLON&quot;</span><span class="s1">: </span><span class="s3">&quot;;&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_SLASH&quot;</span><span class="s1">: </span><span class="s3">&quot;/&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_SPACE&quot;</span><span class="s1">: </span><span class="s3">&quot;space&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_SYSREQ&quot;</span><span class="s1">: </span><span class="s3">&quot;sys req&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_TAB&quot;</span><span class="s1">: </span><span class="s3">&quot;tab&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_UNDERSCORE&quot;</span><span class="s1">: </span><span class="s3">&quot;_&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_UP&quot;</span><span class="s1">: </span><span class="s3">&quot;up&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_a&quot;</span><span class="s1">: </span><span class="s3">&quot;a&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_b&quot;</span><span class="s1">: </span><span class="s3">&quot;b&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_c&quot;</span><span class="s1">: </span><span class="s3">&quot;c&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_d&quot;</span><span class="s1">: </span><span class="s3">&quot;d&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_e&quot;</span><span class="s1">: </span><span class="s3">&quot;e&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_f&quot;</span><span class="s1">: </span><span class="s3">&quot;f&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_g&quot;</span><span class="s1">: </span><span class="s3">&quot;g&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_h&quot;</span><span class="s1">: </span><span class="s3">&quot;h&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_i&quot;</span><span class="s1">: </span><span class="s3">&quot;i&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_j&quot;</span><span class="s1">: </span><span class="s3">&quot;j&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_k&quot;</span><span class="s1">: </span><span class="s3">&quot;k&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_l&quot;</span><span class="s1">: </span><span class="s3">&quot;l&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_m&quot;</span><span class="s1">: </span><span class="s3">&quot;m&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_n&quot;</span><span class="s1">: </span><span class="s3">&quot;n&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_o&quot;</span><span class="s1">: </span><span class="s3">&quot;o&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_p&quot;</span><span class="s1">: </span><span class="s3">&quot;p&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_q&quot;</span><span class="s1">: </span><span class="s3">&quot;q&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_r&quot;</span><span class="s1">: </span><span class="s3">&quot;r&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_s&quot;</span><span class="s1">: </span><span class="s3">&quot;s&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_t&quot;</span><span class="s1">: </span><span class="s3">&quot;t&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_u&quot;</span><span class="s1">: </span><span class="s3">&quot;u&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_v&quot;</span><span class="s1">: </span><span class="s3">&quot;v&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_w&quot;</span><span class="s1">: </span><span class="s3">&quot;w&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_x&quot;</span><span class="s1">: </span><span class="s3">&quot;x&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_y&quot;</span><span class="s1">: </span><span class="s3">&quot;y&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;K_z&quot;</span><span class="s1">: </span><span class="s3">&quot;z&quot;</span><span class="s0">,</span>
+<span class="s1">}</span>
+
+
+<span class="s0">class </span><span class="s1">KeyModuleTest(unittest.TestCase):</span>
+    <span class="s1">@classmethod</span>
+    <span class="s0">def </span><span class="s1">setUpClass(cls):</span>
+        <span class="s1">pygame.init()</span>
+
+    <span class="s1">@classmethod</span>
+    <span class="s0">def </span><span class="s1">tearDownClass(cls):</span>
+        <span class="s1">pygame.quit()</span>
+
+    <span class="s0">def </span><span class="s1">setUp(self):</span>
+        <span class="s2"># This makes sure pygame is always initialized before each test (in</span>
+        <span class="s2"># case a test calls pygame.quit()).</span>
+        <span class="s0">if not </span><span class="s1">pygame.get_init():</span>
+            <span class="s1">pygame.init()</span>
+        <span class="s0">if not </span><span class="s1">pygame.display.get_init():</span>
+            <span class="s1">pygame.display.init()</span>
+
+    <span class="s0">def </span><span class="s1">test_import(self):</span>
+        <span class="s4">&quot;&quot;&quot;does it import?&quot;&quot;&quot;</span>
+        <span class="s0">import </span><span class="s1">pygame.key</span>
+
+    <span class="s2"># fixme: test_get_focused failing systematically in some linux</span>
+    <span class="s2"># fixme: test_get_focused failing on SDL 2.0.18 on Windows</span>
+    <span class="s1">@unittest.skip(</span><span class="s3">&quot;flaky test, and broken on 2.0.18 windows&quot;</span><span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_get_focused(self):</span>
+        <span class="s2"># This test fails in SDL2 in some linux</span>
+        <span class="s2"># This test was skipped in SDL1.</span>
+        <span class="s1">focused = pygame.key.get_focused()</span>
+        <span class="s1">self.assertFalse(focused)  </span><span class="s2"># No window to focus</span>
+        <span class="s1">self.assertIsInstance(focused</span><span class="s0">, </span><span class="s1">int)</span>
+        <span class="s2"># Dummy video driver never gets keyboard focus.</span>
+        <span class="s0">if </span><span class="s1">os.environ.get(</span><span class="s3">&quot;SDL_VIDEODRIVER&quot;</span><span class="s1">) != </span><span class="s3">&quot;dummy&quot;</span><span class="s1">:</span>
+            <span class="s2"># Positive test, fullscreen with events grabbed</span>
+            <span class="s1">display_sizes = pygame.display.list_modes()</span>
+            <span class="s0">if </span><span class="s1">display_sizes == -</span><span class="s5">1</span><span class="s1">:</span>
+                <span class="s1">display_sizes = [(</span><span class="s5">500</span><span class="s0">, </span><span class="s5">500</span><span class="s1">)]</span>
+            <span class="s1">pygame.display.set_mode(size=display_sizes[-</span><span class="s5">1</span><span class="s1">]</span><span class="s0">, </span><span class="s1">flags=pygame.FULLSCREEN)</span>
+            <span class="s1">pygame.event.set_grab(</span><span class="s0">True</span><span class="s1">)</span>
+            <span class="s2"># Pump event queue to get window focus on macos</span>
+            <span class="s1">pygame.event.pump()</span>
+            <span class="s1">focused = pygame.key.get_focused()</span>
+            <span class="s1">self.assertIsInstance(focused</span><span class="s0">, </span><span class="s1">int)</span>
+            <span class="s1">self.assertTrue(focused)</span>
+            <span class="s2"># Now test negative, iconify takes away focus</span>
+            <span class="s1">pygame.event.clear()</span>
+            <span class="s2"># TODO: iconify test fails in windows</span>
+            <span class="s0">if </span><span class="s1">os.name != </span><span class="s3">&quot;nt&quot;</span><span class="s1">:</span>
+                <span class="s1">pygame.display.iconify()</span>
+                <span class="s2"># Apparent need to pump event queue in order to make sure iconify</span>
+                <span class="s2"># happens. See display_test.py's test_get_active_iconify</span>
+                <span class="s0">for </span><span class="s1">_ </span><span class="s0">in </span><span class="s1">range(</span><span class="s5">50</span><span class="s1">):</span>
+                    <span class="s1">time.sleep(</span><span class="s5">0.01</span><span class="s1">)</span>
+                    <span class="s1">pygame.event.pump()</span>
+                <span class="s1">self.assertFalse(pygame.key.get_focused())</span>
+                <span class="s2"># Test if focus is returned when iconify is gone</span>
+                <span class="s1">pygame.display.set_mode(size=display_sizes[-</span><span class="s5">1</span><span class="s1">]</span><span class="s0">, </span><span class="s1">flags=pygame.FULLSCREEN)</span>
+                <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s5">50</span><span class="s1">):</span>
+                    <span class="s1">time.sleep(</span><span class="s5">0.01</span><span class="s1">)</span>
+                    <span class="s1">pygame.event.pump()</span>
+                <span class="s1">self.assertTrue(pygame.key.get_focused())</span>
+        <span class="s2"># Test if a quit display raises an error:</span>
+        <span class="s1">pygame.display.quit()</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(pygame.error) </span><span class="s0">as </span><span class="s1">cm:</span>
+            <span class="s1">pygame.key.get_focused()</span>
+
+    <span class="s0">def </span><span class="s1">test_get_pressed(self):</span>
+        <span class="s1">states = pygame.key.get_pressed()</span>
+        <span class="s1">self.assertEqual(states[pygame.K_RIGHT]</span><span class="s0">, </span><span class="s5">0</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_name_and_key_code(self):</span>
+        <span class="s0">for </span><span class="s1">const_name </span><span class="s0">in </span><span class="s1">dir(pygame):</span>
+            <span class="s0">if not </span><span class="s1">const_name.startswith(</span><span class="s3">&quot;K_&quot;</span><span class="s1">) </span><span class="s0">or </span><span class="s1">const_name </span><span class="s0">in </span><span class="s1">SKIPPED_KEYS:</span>
+                <span class="s0">continue</span>
+
+            <span class="s0">try</span><span class="s1">:</span>
+                <span class="s1">expected_str_name = KEY_NAME_COMPAT[const_name]</span>
+            <span class="s0">except </span><span class="s1">KeyError:</span>
+                <span class="s1">self.fail(</span>
+                    <span class="s3">&quot;If you are seeing this error in a test run, you probably added a &quot;</span>
+                    <span class="s3">&quot;new pygame key constant, but forgot to update key_test unitests&quot;</span>
+                <span class="s1">)</span>
+
+            <span class="s1">const_val = getattr(pygame</span><span class="s0">, </span><span class="s1">const_name)</span>
+
+            <span class="s2"># with these tests below, we also make sure that key.name and key.key_code</span>
+            <span class="s2"># can work together and handle each others outputs</span>
+
+            <span class="s2"># test positional args</span>
+            <span class="s1">self.assertEqual(pygame.key.name(const_val)</span><span class="s0">, </span><span class="s1">expected_str_name)</span>
+            <span class="s2"># test kwarg</span>
+            <span class="s1">self.assertEqual(pygame.key.name(key=const_val)</span><span class="s0">, </span><span class="s1">expected_str_name)</span>
+
+            <span class="s2"># test positional args</span>
+            <span class="s1">self.assertEqual(pygame.key.key_code(expected_str_name)</span><span class="s0">, </span><span class="s1">const_val)</span>
+            <span class="s2"># test kwarg</span>
+            <span class="s1">self.assertEqual(pygame.key.key_code(name=expected_str_name)</span><span class="s0">, </span><span class="s1">const_val)</span>
+
+            <span class="s1">alt_name = pygame.key.name(const_val</span><span class="s0">, </span><span class="s1">use_compat=</span><span class="s0">False</span><span class="s1">)</span>
+            <span class="s1">self.assertIsInstance(alt_name</span><span class="s0">, </span><span class="s1">str)</span>
+
+            <span class="s2"># This is a test for an implementation detail of name with use_compat=False</span>
+            <span class="s2"># If this test breaks in the future for any key, it is safe to put skips on</span>
+            <span class="s2"># failing keys (the implementation detail is documented as being unreliable)</span>
+            <span class="s1">self.assertEqual(pygame.key.key_code(alt_name)</span><span class="s0">, </span><span class="s1">const_val)</span>
+
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">pygame.key.name</span><span class="s0">, </span><span class="s3">&quot;fizzbuzz&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">pygame.key.key_code</span><span class="s0">, </span><span class="s1">pygame.K_a)</span>
+
+        <span class="s1">self.assertRaises(ValueError</span><span class="s0">, </span><span class="s1">pygame.key.key_code</span><span class="s0">, </span><span class="s3">&quot;fizzbuzz&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_set_and_get_mods(self):</span>
+        <span class="s1">pygame.key.set_mods(pygame.KMOD_CTRL)</span>
+        <span class="s1">self.assertEqual(pygame.key.get_mods()</span><span class="s0">, </span><span class="s1">pygame.KMOD_CTRL)</span>
+
+        <span class="s1">pygame.key.set_mods(pygame.KMOD_ALT)</span>
+        <span class="s1">self.assertEqual(pygame.key.get_mods()</span><span class="s0">, </span><span class="s1">pygame.KMOD_ALT)</span>
+        <span class="s1">pygame.key.set_mods(pygame.KMOD_CTRL | pygame.KMOD_ALT)</span>
+        <span class="s1">self.assertEqual(pygame.key.get_mods()</span><span class="s0">, </span><span class="s1">pygame.KMOD_CTRL | pygame.KMOD_ALT)</span>
+
+    <span class="s0">def </span><span class="s1">test_set_and_get_repeat(self):</span>
+        <span class="s1">self.assertEqual(pygame.key.get_repeat()</span><span class="s0">, </span><span class="s1">(</span><span class="s5">0</span><span class="s0">, </span><span class="s5">0</span><span class="s1">))</span>
+
+        <span class="s1">pygame.key.set_repeat(</span><span class="s5">10</span><span class="s0">, </span><span class="s5">15</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(pygame.key.get_repeat()</span><span class="s0">, </span><span class="s1">(</span><span class="s5">10</span><span class="s0">, </span><span class="s5">15</span><span class="s1">))</span>
+
+        <span class="s1">pygame.key.set_repeat()</span>
+        <span class="s1">self.assertEqual(pygame.key.get_repeat()</span><span class="s0">, </span><span class="s1">(</span><span class="s5">0</span><span class="s0">, </span><span class="s5">0</span><span class="s1">))</span>
+
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s3">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">unittest.main()</span>
+</pre>
+</body>
+</html>

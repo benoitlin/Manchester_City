@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>display.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+display.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Union</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">List</span><span class="s0">, </span><span class="s1">Optional</span><span class="s0">, </span><span class="s1">Dict</span><span class="s0">, </span><span class="s1">Sequence</span><span class="s0">, </span><span class="s1">overload</span>
+
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+<span class="s0">from </span><span class="s1">pygame.constants </span><span class="s0">import </span><span class="s1">FULLSCREEN</span>
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">Coordinate</span><span class="s0">, </span><span class="s1">RectValue</span><span class="s0">, </span><span class="s1">ColorValue</span><span class="s0">, </span><span class="s1">RGBAOutput</span>
+
+<span class="s0">class </span><span class="s1">_VidInfo:</span>
+    <span class="s1">hw: int</span>
+    <span class="s1">wm: int</span>
+    <span class="s1">video_mem: int</span>
+    <span class="s1">bitsize: int</span>
+    <span class="s1">bytesize: int</span>
+    <span class="s1">masks: RGBAOutput</span>
+    <span class="s1">shifts: RGBAOutput</span>
+    <span class="s1">losses: RGBAOutput</span>
+    <span class="s1">blit_hw: int</span>
+    <span class="s1">blit_hw_CC: int</span>
+    <span class="s1">blit_hw_A: int</span>
+    <span class="s1">blit_sw: int</span>
+    <span class="s1">blit_sw_CC: int</span>
+    <span class="s1">blit_sw_A: int</span>
+    <span class="s1">current_h: int</span>
+    <span class="s1">current_w: int</span>
+
+<span class="s0">def </span><span class="s1">init() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">quit() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_init() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">set_mode(</span>
+    <span class="s1">size: Coordinate = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">flags: int = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">depth: int = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">display: int = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">vsync: int = </span><span class="s2">0</span><span class="s0">,</span>
+<span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">get_surface() -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">flip() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s1">@overload</span>
+<span class="s0">def </span><span class="s1">update(</span>
+    <span class="s1">rectangle: Optional[Union[RectValue</span><span class="s0">, </span><span class="s1">Sequence[Optional[RectValue]]]] = </span><span class="s0">None</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s1">@overload</span>
+<span class="s0">def </span><span class="s1">update(x: int</span><span class="s0">, </span><span class="s1">y: int</span><span class="s0">, </span><span class="s1">w: int</span><span class="s0">, </span><span class="s1">h: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s1">@overload</span>
+<span class="s0">def </span><span class="s1">update(xy: Coordinate</span><span class="s0">, </span><span class="s1">wh: Coordinate) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_driver() -&gt; str: ...</span>
+<span class="s0">def </span><span class="s1">Info() -&gt; _VidInfo: ...</span>
+<span class="s0">def </span><span class="s1">get_wm_info() -&gt; Dict[str</span><span class="s0">, </span><span class="s1">int]: ...</span>
+<span class="s0">def </span><span class="s1">list_modes(</span>
+    <span class="s1">depth: int = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">flags: int = FULLSCREEN</span><span class="s0">,</span>
+    <span class="s1">display: int = </span><span class="s2">0</span><span class="s0">,</span>
+<span class="s1">) -&gt; List[Tuple[int</span><span class="s0">, </span><span class="s1">int]]: ...</span>
+<span class="s0">def </span><span class="s1">mode_ok(</span>
+    <span class="s1">size: Union[Sequence[int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]]</span><span class="s0">,</span>
+    <span class="s1">flags: int = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">depth: int = </span><span class="s2">0</span><span class="s0">,</span>
+    <span class="s1">display: int = </span><span class="s2">0</span><span class="s0">,</span>
+<span class="s1">) -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">gl_get_attribute(flag: int) -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">gl_set_attribute(flag: int</span><span class="s0">, </span><span class="s1">value: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_active() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">iconify() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">toggle_fullscreen() -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">set_gamma(red: float</span><span class="s0">, </span><span class="s1">green: float = ...</span><span class="s0">, </span><span class="s1">blue: float = ...) -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">set_gamma_ramp(</span>
+    <span class="s1">red: Sequence[int]</span><span class="s0">, </span><span class="s1">green: Sequence[int]</span><span class="s0">, </span><span class="s1">blue: Sequence[int]</span>
+<span class="s1">) -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">set_icon(surface: Surface) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">set_caption(title: str</span><span class="s0">, </span><span class="s1">icontitle: Optional[str] = </span><span class="s0">None</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_caption() -&gt; Tuple[str</span><span class="s0">, </span><span class="s1">str]: ...</span>
+<span class="s0">def </span><span class="s1">set_palette(palette: Sequence[ColorValue]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_num_displays() -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">get_window_size() -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+<span class="s0">def </span><span class="s1">get_allow_screensaver() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">set_allow_screensaver(value: bool = </span><span class="s0">True</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_desktop_sizes() -&gt; List[Tuple[int</span><span class="s0">, </span><span class="s1">int]]: ...</span>
+<span class="s0">def </span><span class="s1">is_fullscreen() -&gt; bool: ...</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<html>
+<head>
+<title>music.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+music.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.mixer.music`</span>
+<span class="s0">=========================</span>
+
+<span class="s0">.. module:: pygame.mixer.music</span>
+   <span class="s0">:synopsis: pygame module for controlling streamed audio</span>
+
+<span class="s0">| :sl:`pygame module for controlling streamed audio`</span>
+
+<span class="s0">The music module is closely tied to :mod:`pygame.mixer`. Use the music module</span>
+<span class="s0">to control the playback of music in the sound mixer.</span>
+
+<span class="s0">The difference between the music playback and regular Sound playback is that</span>
+<span class="s0">the music is streamed, and never actually loaded all at once. The mixer system</span>
+<span class="s0">only supports a single music stream at once.</span>
+
+<span class="s0">On older pygame versions, ``MP3`` support was limited under Mac and Linux. This</span>
+<span class="s0">changed in pygame ``v2.0.2`` which got improved MP3 support. Consider using</span>
+<span class="s0">``OGG`` file format for music as that can give slightly better compression than</span>
+<span class="s0">MP3 in most cases.</span>
+
+<span class="s0">.. function:: load</span>
+
+   <span class="s0">| :sl:`Load a music file for playback`</span>
+   <span class="s0">| :sg:`load(filename) -&gt; None`</span>
+   <span class="s0">| :sg:`load(fileobj, namehint=&quot;&quot;) -&gt; None`</span>
+
+   <span class="s0">This will load a music filename/file object and prepare it for playback. If</span>
+   <span class="s0">a music stream is already playing it will be stopped. This does not start</span>
+   <span class="s0">the music playing.</span>
+
+   <span class="s0">If you are loading from a file object, the namehint parameter can be used to specify</span>
+   <span class="s0">the type of music data in the object. For example: :code:`load(fileobj, &quot;ogg&quot;)`.</span>
+
+   <span class="s0">.. versionchanged:: 2.0.2 Added optional ``namehint`` argument</span>
+
+   <span class="s0">.. ## pygame.mixer.music.load ##</span>
+
+<span class="s0">.. function:: unload</span>
+
+   <span class="s0">| :sl:`Unload the currently loaded music to free up resources`</span>
+   <span class="s0">| :sg:`unload() -&gt; None`</span>
+
+   <span class="s0">This closes resources like files for any music that may be loaded.</span>
+
+   <span class="s0">.. versionadded:: 2.0.0</span>
+
+   <span class="s0">.. ## pygame.mixer.music.load ##</span>
+
+
+<span class="s0">.. function:: play</span>
+
+   <span class="s0">| :sl:`Start the playback of the music stream`</span>
+   <span class="s0">| :sg:`play(loops=0, start=0.0, fade_ms=0) -&gt; None`</span>
+
+   <span class="s0">This will play the loaded music stream. If the music is already playing it</span>
+   <span class="s0">will be restarted.</span>
+   
+   <span class="s0">``loops`` is an optional integer argument, which is ``0`` by default, which </span>
+   <span class="s0">indicates how many times to repeat the music. The music repeats indefinitely if </span>
+   <span class="s0">this argument is set to ``-1``. </span>
+   
+   <span class="s0">``start`` is an optional float argument, which is ``0.0`` by default, which </span>
+   <span class="s0">denotes the position in time from which the music starts playing. The starting </span>
+   <span class="s0">position depends on the format of the music played. ``MP3`` and ``OGG`` use </span>
+   <span class="s0">the position as time in seconds. For ``MP3`` files the start time position</span>
+   <span class="s0">selected may not be accurate as things like variable bit rate encoding and ID3</span>
+   <span class="s0">tags can throw off the timing calculations. For ``MOD``  music it is the pattern </span>
+   <span class="s0">order number. Passing a start position will raise a NotImplementedError if </span>
+   <span class="s0">the start position cannot be set.</span>
+
+   <span class="s0">``fade_ms`` is an optional integer argument, which is ``0`` by default,</span>
+   <span class="s0">which denotes the period of time (in milliseconds) over which the music</span>
+   <span class="s0">will fade up from volume level ``0.0`` to full volume (or the volume level</span>
+   <span class="s0">previously set by :func:`set_volume`). The sample may end before the fade-in</span>
+   <span class="s0">is complete. If the music is already streaming ``fade_ms`` is ignored.</span>
+   
+   <span class="s0">.. versionchanged:: 2.0.0 Added optional ``fade_ms`` argument</span>
+
+   <span class="s0">.. ## pygame.mixer.music.play ##</span>
+
+<span class="s0">.. function:: rewind</span>
+
+   <span class="s0">| :sl:`restart music`</span>
+   <span class="s0">| :sg:`rewind() -&gt; None`</span>
+
+   <span class="s0">Resets playback of the current music to the beginning. If :func:`pause` has</span>
+   <span class="s0">previoulsy been used to pause the music, the music will remain paused.</span>
+   
+   <span class="s0">.. note:: :func:`rewind` supports a limited number of file types and notably</span>
+             <span class="s0">``WAV`` files are NOT supported. For unsupported file types use :func:`play`</span>
+             <span class="s0">which will restart the music that's already playing (note that this</span>
+             <span class="s0">will start the music playing again even if previously paused).</span>
+
+   <span class="s0">.. ## pygame.mixer.music.rewind ##</span>
+
+<span class="s0">.. function:: stop</span>
+
+   <span class="s0">| :sl:`stop the music playback`</span>
+   <span class="s0">| :sg:`stop() -&gt; None`</span>
+
+   <span class="s0">Stops the music playback if it is currently playing.</span>
+   <span class="s0">endevent will be triggered, if set.</span>
+   <span class="s0">It won't unload the music.</span>
+
+   <span class="s0">.. ## pygame.mixer.music.stop ##</span>
+
+<span class="s0">.. function:: pause</span>
+
+   <span class="s0">| :sl:`temporarily stop music playback`</span>
+   <span class="s0">| :sg:`pause() -&gt; None`</span>
+
+   <span class="s0">Temporarily stop playback of the music stream. It can be resumed with the</span>
+   <span class="s0">:func:`unpause` function.</span>
+
+   <span class="s0">.. ## pygame.mixer.music.pause ##</span>
+
+<span class="s0">.. function:: unpause</span>
+
+   <span class="s0">| :sl:`resume paused music`</span>
+   <span class="s0">| :sg:`unpause() -&gt; None`</span>
+
+   <span class="s0">This will resume the playback of a music stream after it has been paused.</span>
+
+   <span class="s0">.. ## pygame.mixer.music.unpause ##</span>
+
+<span class="s0">.. function:: fadeout</span>
+
+   <span class="s0">| :sl:`stop music playback after fading out`</span>
+   <span class="s0">| :sg:`fadeout(time) -&gt; None`</span>
+
+   <span class="s0">Fade out and stop the currently playing music.</span>
+
+   <span class="s0">The ``time`` argument denotes the integer milliseconds for which the </span>
+   <span class="s0">fading effect is generated.</span>
+
+   <span class="s0">Note, that this function blocks until the music has faded out. Calls </span>
+   <span class="s0">to :func:`fadeout` and :func:`set_volume` will have no effect during </span>
+   <span class="s0">this time. If an event was set using :func:`set_endevent` it will be </span>
+   <span class="s0">called after the music has faded.</span>
+
+   <span class="s0">.. ## pygame.mixer.music.fadeout ##</span>
+
+<span class="s0">.. function:: set_volume</span>
+
+   <span class="s0">| :sl:`set the music volume`</span>
+   <span class="s0">| :sg:`set_volume(volume) -&gt; None`</span>
+
+   <span class="s0">Set the volume of the music playback.</span>
+   
+   <span class="s0">The ``volume`` argument is a float between ``0.0`` and ``1.0`` that sets </span>
+   <span class="s0">the volume level. When new music is loaded the volume is reset to full</span>
+   <span class="s0">volume. If ``volume`` is a negative value it will be ignored and the</span>
+   <span class="s0">volume will remain set at the current level. If the ``volume`` argument</span>
+   <span class="s0">is greater than ``1.0``, the volume will be set to ``1.0``.</span>
+
+   <span class="s0">.. ## pygame.mixer.music.set_volume ##</span>
+
+<span class="s0">.. function:: get_volume</span>
+
+   <span class="s0">| :sl:`get the music volume`</span>
+   <span class="s0">| :sg:`get_volume() -&gt; value`</span>
+
+   <span class="s0">Returns the current volume for the mixer. The value will be between ``0.0`` </span>
+   <span class="s0">and ``1.0``.</span>
+
+   <span class="s0">.. ## pygame.mixer.music.get_volume ##</span>
+
+<span class="s0">.. function:: get_busy</span>
+
+   <span class="s0">| :sl:`check if the music stream is playing`</span>
+   <span class="s0">| :sg:`get_busy() -&gt; bool`</span>
+
+   <span class="s0">Returns True when the music stream is actively playing. When the music is</span>
+   <span class="s0">idle this returns False. In pygame 2.0.1 and above this function returns</span>
+   <span class="s0">False when the music is paused. In pygame 1 it returns True when the music</span>
+   <span class="s0">is paused.</span>
+
+   <span class="s0">.. versionchanged:: 2.0.1 Returns False when music paused.</span>
+
+   <span class="s0">.. ## pygame.mixer.music.get_busy ##</span>
+
+<span class="s0">.. function:: set_pos</span>
+
+   <span class="s0">| :sl:`set position to play from`</span>
+   <span class="s0">| :sg:`set_pos(pos) -&gt; None`</span>
+
+   <span class="s0">This sets the position in the music file where playback will start.</span>
+   <span class="s0">The meaning of &quot;pos&quot;, a float (or a number that can be converted to a float),</span>
+   <span class="s0">depends on the music format.</span>
+   
+   <span class="s0">For ``MOD`` files, pos is the integer pattern number in the module.</span>
+   <span class="s0">For ``OGG`` it is the absolute position, in seconds, from</span>
+   <span class="s0">the beginning of the sound. For ``MP3`` files, it is the relative position,</span>
+   <span class="s0">in seconds, from the current position. For absolute positioning in an ``MP3``</span>
+   <span class="s0">file, first call :func:`rewind`.</span>
+
+   <span class="s0">Other file formats are unsupported. Newer versions of SDL_mixer have</span>
+   <span class="s0">better positioning support than earlier ones. An SDLError is raised if a</span>
+   <span class="s0">particular format does not support positioning.</span>
+
+   <span class="s0">Function :func:`set_pos` calls underlining SDL_mixer function</span>
+   <span class="s0">``Mix_SetMusicPosition``.</span>
+
+   <span class="s0">.. versionadded:: 1.9.2</span>
+
+   <span class="s0">.. ## pygame.mixer.music.set_pos ##</span>
+
+<span class="s0">.. function:: get_pos</span>
+
+   <span class="s0">| :sl:`get the music play time`</span>
+   <span class="s0">| :sg:`get_pos() -&gt; time`</span>
+
+   <span class="s0">This gets the number of milliseconds that the music has been playing for.</span>
+   <span class="s0">The returned time only represents how long the music has been playing; it</span>
+   <span class="s0">does not take into account any starting position offsets.</span>
+
+   <span class="s0">.. ## pygame.mixer.music.get_pos ##</span>
+
+<span class="s0">.. function:: queue</span>
+
+   <span class="s0">| :sl:`queue a sound file to follow the current`</span>
+   <span class="s0">| :sg:`queue(filename) -&gt; None`</span>
+   <span class="s0">| :sg:`queue(fileobj, namehint=&quot;&quot;, loops=0) -&gt; None`</span>
+
+   <span class="s0">This will load a sound file and queue it. A queued sound file will begin as</span>
+   <span class="s0">soon as the current sound naturally ends. Only one sound can be queued at a</span>
+   <span class="s0">time. Queuing a new sound while another sound is queued will result in the</span>
+   <span class="s0">new sound becoming the queued sound. Also, if the current sound is ever</span>
+   <span class="s0">stopped or changed, the queued sound will be lost.</span>
+
+   <span class="s0">If you are loading from a file object, the namehint parameter can be used to specify</span>
+   <span class="s0">the type of music data in the object. For example: :code:`queue(fileobj, &quot;ogg&quot;)`.</span>
+
+   <span class="s0">The following example will play music by Bach six times, then play music by</span>
+   <span class="s0">Mozart once:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">pygame.mixer.music.load('bach.ogg')</span>
+       <span class="s0">pygame.mixer.music.play(5)        # Plays six times, not five!</span>
+       <span class="s0">pygame.mixer.music.queue('mozart.ogg')</span>
+
+   <span class="s0">.. versionchanged:: 2.0.2 Added optional ``namehint`` argument</span>
+
+   <span class="s0">.. ## pygame.mixer.music.queue ##</span>
+
+<span class="s0">.. function:: set_endevent</span>
+
+   <span class="s0">| :sl:`have the music send an event when playback stops`</span>
+   <span class="s0">| :sg:`set_endevent() -&gt; None`</span>
+   <span class="s0">| :sg:`set_endevent(type) -&gt; None`</span>
+
+   <span class="s0">This causes pygame to signal (by means of the event queue) when the music is</span>
+   <span class="s0">done playing. The argument determines the type of event that will be queued.</span>
+
+   <span class="s0">The event will be queued every time the music finishes, not just the first</span>
+   <span class="s0">time. To stop the event from being queued, call this method with no</span>
+   <span class="s0">argument.</span>
+
+   <span class="s0">.. ## pygame.mixer.music.set_endevent ##</span>
+
+<span class="s0">.. function:: get_endevent</span>
+
+   <span class="s0">| :sl:`get the event a channel sends when playback stops`</span>
+   <span class="s0">| :sg:`get_endevent() -&gt; type`</span>
+
+   <span class="s0">Returns the event type to be sent every time the music finishes playback. If</span>
+   <span class="s0">there is no endevent the function returns ``pygame.NOEVENT``.</span>
+
+   <span class="s0">.. ## pygame.mixer.music.get_endevent ##</span>
+
+<span class="s0">.. ## pygame.mixer.music ##</span>
+</pre>
+</body>
+</html>

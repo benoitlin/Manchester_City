@@ -1,0 +1,115 @@
+<html>
+<head>
+<title>imageext_test.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #808080;}
+.s4 { color: #6897bb;}
+.s5 { color: #629755; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+imageext_test.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">os</span>
+<span class="s0">import </span><span class="s1">os.path</span>
+<span class="s0">import </span><span class="s1">sys</span>
+<span class="s0">import </span><span class="s1">unittest</span>
+
+<span class="s0">from </span><span class="s1">pygame.tests.test_utils </span><span class="s0">import </span><span class="s1">example_path</span>
+<span class="s0">import </span><span class="s1">pygame</span><span class="s0">, </span><span class="s1">pygame.image</span><span class="s0">, </span><span class="s1">pygame.pkgdata</span>
+
+
+<span class="s1">imageext = sys.modules[</span><span class="s2">&quot;pygame.imageext&quot;</span><span class="s1">]</span>
+
+
+<span class="s0">class </span><span class="s1">ImageextModuleTest(unittest.TestCase):</span>
+    <span class="s3"># Most of the testing is done indirectly through image_test.py</span>
+    <span class="s3"># This just confirms file path encoding and error handling.</span>
+    <span class="s0">def </span><span class="s1">test_save_non_string_file(self):</span>
+        <span class="s1">im = pygame.Surface((</span><span class="s4">10</span><span class="s0">, </span><span class="s4">10</span><span class="s1">)</span><span class="s0">, </span><span class="s4">0</span><span class="s0">, </span><span class="s4">32</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">imageext.save_extended</span><span class="s0">, </span><span class="s1">im</span><span class="s0">, </span><span class="s1">[])</span>
+
+    <span class="s0">def </span><span class="s1">test_load_non_string_file(self):</span>
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">imageext.load_extended</span><span class="s0">, </span><span class="s1">[])</span>
+
+    <span class="s1">@unittest.skip(</span><span class="s2">&quot;SDL silently removes invalid characters&quot;</span><span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_save_bad_filename(self):</span>
+        <span class="s1">im = pygame.Surface((</span><span class="s4">10</span><span class="s0">, </span><span class="s4">10</span><span class="s1">)</span><span class="s0">, </span><span class="s4">0</span><span class="s0">, </span><span class="s4">32</span><span class="s1">)</span>
+        <span class="s1">u = </span><span class="s2">&quot;a</span><span class="s0">\x00</span><span class="s2">b</span><span class="s0">\x00</span><span class="s2">c.png&quot;</span>
+        <span class="s1">self.assertRaises(pygame.error</span><span class="s0">, </span><span class="s1">imageext.save_extended</span><span class="s0">, </span><span class="s1">im</span><span class="s0">, </span><span class="s1">u)</span>
+
+    <span class="s1">@unittest.skip(</span><span class="s2">&quot;SDL silently removes invalid characters&quot;</span><span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_load_bad_filename(self):</span>
+        <span class="s1">u = </span><span class="s2">&quot;a</span><span class="s0">\x00</span><span class="s2">b</span><span class="s0">\x00</span><span class="s2">c.png&quot;</span>
+        <span class="s1">self.assertRaises(pygame.error</span><span class="s0">, </span><span class="s1">imageext.load_extended</span><span class="s0">, </span><span class="s1">u)</span>
+
+    <span class="s0">def </span><span class="s1">test_save_unknown_extension(self):</span>
+        <span class="s1">im = pygame.Surface((</span><span class="s4">10</span><span class="s0">, </span><span class="s4">10</span><span class="s1">)</span><span class="s0">, </span><span class="s4">0</span><span class="s0">, </span><span class="s4">32</span><span class="s1">)</span>
+        <span class="s1">s = </span><span class="s2">&quot;foo.bar&quot;</span>
+        <span class="s1">self.assertRaises(pygame.error</span><span class="s0">, </span><span class="s1">imageext.save_extended</span><span class="s0">, </span><span class="s1">im</span><span class="s0">, </span><span class="s1">s)</span>
+
+    <span class="s0">def </span><span class="s1">test_load_unknown_extension(self):</span>
+        <span class="s1">s = </span><span class="s2">&quot;foo.bar&quot;</span>
+        <span class="s1">self.assertRaises(FileNotFoundError</span><span class="s0">, </span><span class="s1">imageext.load_extended</span><span class="s0">, </span><span class="s1">s)</span>
+
+    <span class="s0">def </span><span class="s1">test_load_unknown_file(self):</span>
+        <span class="s1">s = </span><span class="s2">&quot;nonexistent.png&quot;</span>
+        <span class="s1">self.assertRaises(FileNotFoundError</span><span class="s0">, </span><span class="s1">imageext.load_extended</span><span class="s0">, </span><span class="s1">s)</span>
+
+    <span class="s0">def </span><span class="s1">test_load_unicode_path_0(self):</span>
+        <span class="s1">u = example_path(</span><span class="s2">&quot;data/alien1.png&quot;</span><span class="s1">)</span>
+        <span class="s1">im = imageext.load_extended(u)</span>
+
+    <span class="s0">def </span><span class="s1">test_load_unicode_path_1(self):</span>
+        <span class="s5">&quot;&quot;&quot;non-ASCII unicode&quot;&quot;&quot;</span>
+        <span class="s0">import </span><span class="s1">shutil</span>
+
+        <span class="s1">orig = example_path(</span><span class="s2">&quot;data/alien1.png&quot;</span><span class="s1">)</span>
+        <span class="s1">temp = os.path.join(example_path(</span><span class="s2">&quot;data&quot;</span><span class="s1">)</span><span class="s0">, </span><span class="s2">&quot;你好.png&quot;</span><span class="s1">)</span>
+        <span class="s1">shutil.copy(orig</span><span class="s0">, </span><span class="s1">temp)</span>
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s1">im = imageext.load_extended(temp)</span>
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s1">os.remove(temp)</span>
+
+    <span class="s0">def </span><span class="s1">_unicode_save(self</span><span class="s0">, </span><span class="s1">temp_file):</span>
+        <span class="s1">im = pygame.Surface((</span><span class="s4">10</span><span class="s0">, </span><span class="s4">10</span><span class="s1">)</span><span class="s0">, </span><span class="s4">0</span><span class="s0">, </span><span class="s4">32</span><span class="s1">)</span>
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s0">with </span><span class="s1">open(temp_file</span><span class="s0">, </span><span class="s2">&quot;w&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">f:</span>
+                <span class="s0">pass</span>
+            <span class="s1">os.remove(temp_file)</span>
+        <span class="s0">except </span><span class="s1">OSError:</span>
+            <span class="s0">raise </span><span class="s1">unittest.SkipTest(</span><span class="s2">&quot;the path cannot be opened&quot;</span><span class="s1">)</span>
+
+        <span class="s1">self.assertFalse(os.path.exists(temp_file))</span>
+
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s1">imageext.save_extended(im</span><span class="s0">, </span><span class="s1">temp_file)</span>
+
+            <span class="s1">self.assertGreater(os.path.getsize(temp_file)</span><span class="s0">, </span><span class="s4">10</span><span class="s1">)</span>
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s0">try</span><span class="s1">:</span>
+                <span class="s1">os.remove(temp_file)</span>
+            <span class="s0">except </span><span class="s1">OSError:</span>
+                <span class="s0">pass</span>
+
+    <span class="s0">def </span><span class="s1">test_save_unicode_path_0(self):</span>
+        <span class="s5">&quot;&quot;&quot;unicode object with ASCII chars&quot;&quot;&quot;</span>
+        <span class="s1">self._unicode_save(</span><span class="s2">&quot;temp_file.png&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_save_unicode_path_1(self):</span>
+        <span class="s1">self._unicode_save(</span><span class="s2">&quot;你好.png&quot;</span><span class="s1">)</span>
+
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s2">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">unittest.main()</span>
+</pre>
+</body>
+</html>

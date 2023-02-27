@@ -1,0 +1,267 @@
+<html>
+<head>
+<title>cursors.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+cursors.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.cursors`</span>
+<span class="s0">=====================</span>
+
+<span class="s0">.. module:: pygame.cursors</span>
+   <span class="s0">:synopsis: pygame module for cursor resources</span>
+
+<span class="s0">| :sl:`pygame module for cursor resources`</span>
+
+<span class="s0">Pygame offers control over the system hardware cursor. Pygame supports</span>
+<span class="s0">black and white cursors (bitmap cursors), as well as system variant cursors and color cursors.</span>
+<span class="s0">You control the cursor with functions inside :mod:`pygame.mouse`.</span>
+
+<span class="s0">This cursors module contains functions for loading and decoding various</span>
+<span class="s0">cursor formats. These allow you to easily store your cursors in external files</span>
+<span class="s0">or directly as encoded python strings.</span>
+
+<span class="s0">The module includes several standard cursors. The :func:`pygame.mouse.set_cursor()`</span>
+<span class="s0">function takes several arguments. All those arguments have been stored in a</span>
+<span class="s0">single tuple you can call like this:</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">&gt;&gt;&gt; pygame.mouse.set_cursor(*pygame.cursors.arrow)</span>
+   
+<span class="s0">The following variables can be passed to ``pygame.mouse.set_cursor`` function:</span>
+
+   <span class="s0">* ``pygame.cursors.arrow``</span>
+
+   <span class="s0">* ``pygame.cursors.diamond``</span>
+
+   <span class="s0">* ``pygame.cursors.broken_x``</span>
+
+   <span class="s0">* ``pygame.cursors.tri_left``</span>
+
+   <span class="s0">* ``pygame.cursors.tri_right``</span>
+
+<span class="s0">This module also contains a few cursors as formatted strings. You'll need to</span>
+<span class="s0">pass these to ``pygame.cursors.compile()`` function before you can use them.</span>
+<span class="s0">The example call would look like this:</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">&gt;&gt;&gt; cursor = pygame.cursors.compile(pygame.cursors.textmarker_strings)</span>
+   <span class="s0">&gt;&gt;&gt; pygame.mouse.set_cursor((8, 16), (0, 0), *cursor)</span>
+
+<span class="s0">The following strings can be converted into cursor bitmaps with</span>
+<span class="s0">``pygame.cursors.compile()`` :</span>
+
+   <span class="s0">* ``pygame.cursors.thickarrow_strings``</span>
+
+   <span class="s0">* ``pygame.cursors.sizer_x_strings``</span>
+
+   <span class="s0">* ``pygame.cursors.sizer_y_strings``</span>
+
+   <span class="s0">* ``pygame.cursors.sizer_xy_strings``</span>
+   
+   <span class="s0">* ``pygame.cursor.textmarker_strings``</span>
+
+<span class="s0">.. function:: compile</span>
+
+   <span class="s0">| :sl:`create binary cursor data from simple strings`</span>
+   <span class="s0">| :sg:`compile(strings, black='X', white='.', xor='o') -&gt; data, mask`</span>
+
+   <span class="s0">A sequence of strings can be used to create binary cursor data for the</span>
+   <span class="s0">system cursor. This returns the binary data in the form of two tuples.</span>
+   <span class="s0">Those can be passed as the third and fourth arguments respectively of the </span>
+   <span class="s0">:func:`pygame.mouse.set_cursor()` function.</span>
+
+   <span class="s0">If you are creating your own cursor strings, you can use any value represent</span>
+   <span class="s0">the black and white pixels. Some system allow you to set a special toggle</span>
+   <span class="s0">color for the system color, this is also called the xor color. If the system</span>
+   <span class="s0">does not support xor cursors, that color will simply be black.</span>
+   
+   <span class="s0">The height must be divisible by 8. The width of the strings must all be equal </span>
+   <span class="s0">and be divisible by 8. If these two conditions are not met, ``ValueError`` is</span>
+   <span class="s0">raised.</span>
+   <span class="s0">An example set of cursor strings looks like this</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">thickarrow_strings = (               #sized 24x24</span>
+         <span class="s0">&quot;XX                      &quot;,</span>
+         <span class="s0">&quot;XXX                     &quot;,</span>
+         <span class="s0">&quot;XXXX                    &quot;,</span>
+         <span class="s0">&quot;XX.XX                   &quot;,</span>
+         <span class="s0">&quot;XX..XX                  &quot;,</span>
+         <span class="s0">&quot;XX...XX                 &quot;,</span>
+         <span class="s0">&quot;XX....XX                &quot;,</span>
+         <span class="s0">&quot;XX.....XX               &quot;,</span>
+         <span class="s0">&quot;XX......XX              &quot;,</span>
+         <span class="s0">&quot;XX.......XX             &quot;,</span>
+         <span class="s0">&quot;XX........XX            &quot;,</span>
+         <span class="s0">&quot;XX........XXX           &quot;,</span>
+         <span class="s0">&quot;XX......XXXXX           &quot;,</span>
+         <span class="s0">&quot;XX.XXX..XX              &quot;,</span>
+         <span class="s0">&quot;XXXX XX..XX             &quot;,</span>
+         <span class="s0">&quot;XX   XX..XX             &quot;,</span>
+         <span class="s0">&quot;     XX..XX             &quot;,</span>
+         <span class="s0">&quot;      XX..XX            &quot;,</span>
+         <span class="s0">&quot;      XX..XX            &quot;,</span>
+         <span class="s0">&quot;       XXXX             &quot;,</span>
+         <span class="s0">&quot;       XX               &quot;,</span>
+         <span class="s0">&quot;                        &quot;,</span>
+         <span class="s0">&quot;                        &quot;,</span>
+         <span class="s0">&quot;                        &quot;)</span>
+
+   <span class="s0">.. ## pygame.cursors.compile ##</span>
+
+<span class="s0">.. function:: load_xbm</span>
+
+   <span class="s0">| :sl:`load cursor data from an XBM file`</span>
+   <span class="s0">| :sg:`load_xbm(cursorfile) -&gt; cursor_args`</span>
+   <span class="s0">| :sg:`load_xbm(cursorfile, maskfile) -&gt; cursor_args`</span>
+
+   <span class="s0">This loads cursors for a simple subset of ``XBM`` files. ``XBM`` files are</span>
+   <span class="s0">traditionally used to store cursors on UNIX systems, they are an ASCII</span>
+   <span class="s0">format used to represent simple images.</span>
+
+   <span class="s0">Sometimes the black and white color values will be split into two separate</span>
+   <span class="s0">``XBM`` files. You can pass a second maskfile argument to load the two</span>
+   <span class="s0">images into a single cursor.</span>
+
+   <span class="s0">The cursorfile and maskfile arguments can either be filenames or file-like</span>
+   <span class="s0">object with the readlines method.</span>
+
+   <span class="s0">The return value cursor_args can be passed directly to the</span>
+   <span class="s0">``pygame.mouse.set_cursor()`` function.</span>
+
+   <span class="s0">.. ## pygame.cursors.load_xbm ##</span>
+
+
+
+<span class="s0">.. class:: Cursor</span>
+
+   <span class="s0">| :sl:`pygame object representing a cursor`</span>
+   <span class="s0">| :sg:`Cursor(size, hotspot, xormasks, andmasks) -&gt; Cursor`</span>
+   <span class="s0">| :sg:`Cursor(hotspot, surface) -&gt; Cursor`</span>
+   <span class="s0">| :sg:`Cursor(constant) -&gt; Cursor`</span>
+   <span class="s0">| :sg:`Cursor(Cursor) -&gt; Cursor`</span>
+   <span class="s0">| :sg:`Cursor() -&gt; Cursor`</span>
+
+   <span class="s0">In pygame 2, there are 3 types of cursors you can create to give your</span>
+   <span class="s0">game that little bit of extra polish. There's **bitmap** type cursors,</span>
+   <span class="s0">which existed in pygame 1.x, and are compiled from a string or load from an xbm file.</span>
+   <span class="s0">Then there are **system** type cursors, where you choose a preset that will </span>
+   <span class="s0">convey the same meaning but look native across different operating systems. </span>
+   <span class="s0">Finally you can create a **color** cursor, which displays a pygame surface as the cursor.</span>
+
+   <span class="s0">**Creating a system cursor**</span>
+
+   <span class="s0">Choose a constant from this list, pass it into ``pygame.cursors.Cursor(constant)``, </span>
+   <span class="s0">and you're good to go. Be advised that not all systems support every system</span>
+   <span class="s0">cursor, and you may get a substitution instead. For example, on MacOS,</span>
+   <span class="s0">WAIT/WAITARROW should show up as an arrow, and SIZENWSE/SIZENESW/SIZEALL</span>
+   <span class="s0">should show up as a closed hand. And on Wayland, every SIZE cursor should </span>
+   <span class="s0">show up as a hand.</span>
+
+   <span class="s0">::</span>
+
+      <span class="s0">Pygame Cursor Constant           Description</span>
+      <span class="s0">--------------------------------------------</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_ARROW       arrow</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_IBEAM       i-beam</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_WAIT        wait</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_CROSSHAIR   crosshair</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_WAITARROW   small wait cursor </span>
+                                       <span class="s0">(or wait if not available)</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_SIZENWSE    double arrow pointing </span>
+                                       <span class="s0">northwest and southeast</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_SIZENESW    double arrow pointing</span>
+                                       <span class="s0">northeast and southwest</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_SIZEWE      double arrow pointing</span>
+                                       <span class="s0">west and east</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_SIZENS      double arrow pointing </span>
+                                       <span class="s0">north and south</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_SIZEALL     four pointed arrow pointing</span>
+                                       <span class="s0">north, south, east, and west</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_NO          slashed circle or crossbones</span>
+      <span class="s0">pygame.SYSTEM_CURSOR_HAND        hand</span>
+
+   <span class="s0">**Creating a cursor without passing arguments**</span>
+   
+   <span class="s0">In addition to the cursor constants available and described above,</span>
+   <span class="s0">you can also call ``pygame.cursors.Cursor()``, and your cursor is ready (doing that is the same as</span>
+   <span class="s0">calling ``pygame.cursors.Cursor(pygame.SYSTEM_CURSOR_ARROW)``.</span>
+   <span class="s0">Doing one of those calls actually creates a system cursor using the default native image.</span>
+
+   <span class="s0">**Creating a color cursor**</span>
+
+   <span class="s0">To create a color cursor, create a ``Cursor`` from a ``hotspot`` and a ``surface``.</span>
+   <span class="s0">``hotspot`` is an (x,y) coordinate that determines where in the cursor the exact point is.</span>
+   <span class="s0">The hotspot position must be within the bounds of the ``surface``.</span>
+
+   <span class="s0">**Creating a bitmap cursor**</span>
+
+   <span class="s0">When the mouse cursor is visible, it will be displayed as a black and white</span>
+   <span class="s0">bitmap using the given bitmask arrays. The ``size`` is a sequence containing </span>
+   <span class="s0">the cursor width and height. ``hotspot`` is a sequence containing the cursor </span>
+   <span class="s0">hotspot position. </span>
+   
+   <span class="s0">A cursor has a width and height, but a mouse position is represented by a </span>
+   <span class="s0">set of point coordinates. So the value passed into the cursor ``hotspot`` </span>
+   <span class="s0">variable helps pygame to actually determine at what exact point the cursor </span>
+   <span class="s0">is at.</span>
+   
+   <span class="s0">``xormasks`` is a sequence of bytes containing the cursor xor data masks. </span>
+   <span class="s0">Lastly ``andmasks``, a sequence of bytes containing the cursor bitmask data.</span>
+   <span class="s0">To create these variables, we can make use of the </span>
+   <span class="s0">:func:`pygame.cursors.compile()` function.</span>
+
+   <span class="s0">Width and height must be a multiple of 8, and the mask arrays must be the </span>
+   <span class="s0">correct size for the given width and height. Otherwise an exception is raised.</span>
+   
+   <span class="s0">.. method:: copy</span>
+      <span class="s0">| :sl:`copy the current cursor`</span>
+      <span class="s0">| :sg:`copy() -&gt; Cursor`</span>
+      
+      <span class="s0">Returns a new Cursor object with the same data and hotspot as the original.</span>
+   <span class="s0">.. ## pygame.cursors.Cursor.copy ##</span>
+   
+
+   <span class="s0">.. attribute:: type</span>
+   
+      <span class="s0">| :sl:`Gets the cursor type`</span>
+      <span class="s0">| :sg:`type -&gt; string`</span>
+
+      <span class="s0">The type will be ``&quot;system&quot;``, ``&quot;bitmap&quot;``, or ``&quot;color&quot;``.</span>
+
+   <span class="s0">.. ## pygame.cursors.Cursor.type ##</span>
+
+   <span class="s0">.. attribute:: data</span>
+
+      <span class="s0">| :sl:`Gets the cursor data`</span>
+      <span class="s0">| :sg:`data -&gt; tuple`</span>
+
+      <span class="s0">Returns the data that was used to create this cursor object, wrapped up in a tuple.</span>
+
+   <span class="s0">.. ## pygame.cursors.Cursor.data ##</span>
+
+   <span class="s0">.. versionadded:: 2.0.1</span>
+
+   <span class="s0">.. ## pygame.cursors.Cursor ##</span>
+   
+<span class="s0">.. ## pygame.cursors ##</span>
+
+<span class="s0">Example code for creating and settings cursors. (Click the mouse to switch cursor)</span>
+
+<span class="s0">.. literalinclude:: code_examples/cursors_module_example.py</span>
+</pre>
+</body>
+</html>

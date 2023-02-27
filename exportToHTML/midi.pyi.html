@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>midi.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+midi.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">List</span><span class="s0">, </span><span class="s1">Sequence</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">Union</span>
+
+<span class="s0">from </span><span class="s1">pygame.event </span><span class="s0">import </span><span class="s1">Event</span>
+
+<span class="s1">MIDIIN: int</span>
+<span class="s1">MIDIOUT: int</span>
+
+<span class="s0">class </span><span class="s1">MidiException(Exception):</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">value: str) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s0">def </span><span class="s1">init() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">quit() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_init() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">get_count() -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">get_default_input_id() -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">get_default_output_id() -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">get_device_info(an_id: int) -&gt; Tuple[str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+<span class="s0">def </span><span class="s1">midis2events(</span>
+    <span class="s1">midis: Sequence[Sequence[Union[Sequence[int]</span><span class="s0">, </span><span class="s1">int]]]</span><span class="s0">, </span><span class="s1">device_id: int</span>
+<span class="s1">) -&gt; List[Event]: ...</span>
+<span class="s0">def </span><span class="s1">time() -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">frequency_to_midi(frequency: float) -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">midi_to_frequency(midi_note: int) -&gt; float: ...</span>
+<span class="s0">def </span><span class="s1">midi_to_ansi_note(midi_note: int) -&gt; str: ...</span>
+
+<span class="s0">class </span><span class="s1">Input:</span>
+    <span class="s1">device_id: int</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">device_id: int</span><span class="s0">, </span><span class="s1">buffer_size: int = </span><span class="s2">4096</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">close(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">poll(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">read(self</span><span class="s0">, </span><span class="s1">num_events: int) -&gt; List[List[Union[List[int]</span><span class="s0">, </span><span class="s1">int]]]: ...</span>
+
+<span class="s0">class </span><span class="s1">Output:</span>
+    <span class="s1">device_id: int</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">device_id: int</span><span class="s0">,</span>
+        <span class="s1">latency: int = </span><span class="s2">0</span><span class="s0">,</span>
+        <span class="s1">buffer_size: int = </span><span class="s2">4096</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">abort(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">close(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">note_off(self</span><span class="s0">, </span><span class="s1">note: int</span><span class="s0">, </span><span class="s1">velocity: int = </span><span class="s2">0</span><span class="s0">, </span><span class="s1">channel: int = </span><span class="s2">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">note_on(self</span><span class="s0">, </span><span class="s1">note: int</span><span class="s0">, </span><span class="s1">velocity: int</span><span class="s0">, </span><span class="s1">channel: int = </span><span class="s2">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">set_instrument(self</span><span class="s0">, </span><span class="s1">instrument_id: int</span><span class="s0">, </span><span class="s1">channel: int = </span><span class="s2">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">pitch_bend(self</span><span class="s0">, </span><span class="s1">value: int = </span><span class="s2">0</span><span class="s0">, </span><span class="s1">channel: int = </span><span class="s2">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">write(self</span><span class="s0">, </span><span class="s1">data: List[List[Union[List[int]</span><span class="s0">, </span><span class="s1">int]]]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">write_short(self</span><span class="s0">, </span><span class="s1">status: int</span><span class="s0">, </span><span class="s1">data1: int = </span><span class="s2">0</span><span class="s0">, </span><span class="s1">data2: int = </span><span class="s2">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">write_sys_ex(self</span><span class="s0">, </span><span class="s1">when: int</span><span class="s0">, </span><span class="s1">msg: Union[List[int]</span><span class="s0">, </span><span class="s1">str]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+</pre>
+</body>
+</html>

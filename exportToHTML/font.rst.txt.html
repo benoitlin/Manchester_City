@@ -1,0 +1,494 @@
+<html>
+<head>
+<title>font.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+font.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.font`</span>
+<span class="s0">==================</span>
+
+<span class="s0">.. module:: pygame.font</span>
+   <span class="s0">:synopsis: pygame module for loading and rendering fonts</span>
+
+<span class="s0">| :sl:`pygame module for loading and rendering fonts`</span>
+
+<span class="s0">The font module allows for rendering TrueType fonts into Surface objects.</span>
+<span class="s0">This module is built on top of the SDL_ttf library, which comes with all</span>
+<span class="s0">normal pygame installations.</span>
+
+<span class="s0">Most of the work done with fonts are done by using the actual Font objects.</span>
+<span class="s0">The module by itself only has routines to support the creation of Font objects</span>
+<span class="s0">with :func:`pygame.font.Font`.</span>
+
+<span class="s0">You can load fonts from the system by using the :func:`pygame.font.SysFont`</span>
+<span class="s0">function. There are a few other functions to help look up the system fonts.</span>
+
+<span class="s0">Pygame comes with a builtin default font, freesansbold. This can always be</span>
+<span class="s0">accessed by passing ``None`` as the font name.</span>
+
+<span class="s0">Before pygame 2.0.3, pygame.font accepts any UCS-2 / UTF-16 character</span>
+<span class="s0">('\\u0001' to '\\uFFFF'). After 2.0.3, pygame.font built with SDL_ttf</span>
+<span class="s0">2.0.15 accepts any valid UCS-4 / UTF-32 character </span>
+<span class="s0">(like emojis, if the font has them) ('\\U00000001' to '\\U0010FFFF')).</span>
+<span class="s0">More about this in :func:`Font.render`.</span>
+
+<span class="s0">Before pygame 2.0.3, this character space restriction can be avoided by</span>
+<span class="s0">using the  :mod:`pygame.freetype` based ``pygame.ftfont`` to emulate the Font</span>
+<span class="s0">module. This can be used by defining the environment variable PYGAME_FREETYPE</span>
+<span class="s0">before the first import of :mod:`pygame`. Since the problem ``pygame.ftfont``</span>
+<span class="s0">solves no longer exists, it will likely be removed in the future.</span>
+
+<span class="s0">.. function:: init</span>
+
+   <span class="s0">| :sl:`initialize the font module`</span>
+   <span class="s0">| :sg:`init() -&gt; None`</span>
+
+   <span class="s0">This method is called automatically by ``pygame.init()``. It initializes the</span>
+   <span class="s0">font module. The module must be initialized before any other functions will</span>
+   <span class="s0">work.</span>
+
+   <span class="s0">It is safe to call this function more than once.</span>
+
+   <span class="s0">.. ## pygame.font.init ##</span>
+
+<span class="s0">.. function:: quit</span>
+
+   <span class="s0">| :sl:`uninitialize the font module`</span>
+   <span class="s0">| :sg:`quit() -&gt; None`</span>
+
+   <span class="s0">Manually uninitialize SDL_ttf's font system. This is called automatically by</span>
+   <span class="s0">``pygame.quit()``.</span>
+
+   <span class="s0">It is safe to call this function even if font is currently not initialized.</span>
+
+   <span class="s0">.. ## pygame.font.quit ##</span>
+
+<span class="s0">.. function:: get_init</span>
+
+   <span class="s0">| :sl:`true if the font module is initialized`</span>
+   <span class="s0">| :sg:`get_init() -&gt; bool`</span>
+
+   <span class="s0">Test if the font module is initialized or not.</span>
+
+   <span class="s0">.. ## pygame.font.get_init ##</span>
+
+<span class="s0">.. function:: get_default_font</span>
+
+   <span class="s0">| :sl:`get the filename of the default font`</span>
+   <span class="s0">| :sg:`get_default_font() -&gt; string`</span>
+
+   <span class="s0">Return the filename of the system font. This is not the full path to the</span>
+   <span class="s0">file. This file can usually be found in the same directory as the font</span>
+   <span class="s0">module, but it can also be bundled in separate archives.</span>
+
+   <span class="s0">.. ## pygame.font.get_default_font ##</span>
+
+<span class="s0">.. function:: get_sdl_ttf_version</span>
+
+   <span class="s0">| :sl:`gets SDL_ttf version`</span>
+   <span class="s0">| :sg:`get_sdl_ttf_version(linked=True) -&gt; (major, minor, patch)`</span>
+
+   <span class="s0">**Experimental:** feature still in development available for testing and feedback. It may change.</span>
+   <span class="s0">`Please leave get_sdl_ttf_version feedback with authors &lt;https://github.com/pygame/pygame/pull/3095&gt;`_</span>
+
+   <span class="s0">Returns a tuple of integers that identify SDL_ttf's version.</span>
+   <span class="s0">SDL_ttf is the underlying font rendering library, written in C,</span>
+   <span class="s0">on which pygame's font module depends. If 'linked' is True (the default), </span>
+   <span class="s0">the function returns the version of the linked TTF library. </span>
+   <span class="s0">Otherwise this function returns the version of TTF pygame was compiled with</span>
+
+   <span class="s0">.. versionadded:: 2.1.3</span>
+
+   <span class="s0">.. ## pygame.font.get_sdl_ttf_version ##</span>
+
+<span class="s0">.. function:: get_fonts</span>
+
+   <span class="s0">| :sl:`get all available fonts`</span>
+   <span class="s0">| :sg:`get_fonts() -&gt; list of strings`</span>
+
+   <span class="s0">Returns a list of all the fonts available on the system. The names of the</span>
+   <span class="s0">fonts will be set to lowercase with all spaces and punctuation removed. This</span>
+   <span class="s0">works on most systems, but some will return an empty list if they cannot</span>
+   <span class="s0">find fonts.</span>
+
+   <span class="s0">.. versionchanged:: 2.1.3 Checks through user fonts instead of just global fonts for Windows.</span>
+
+   <span class="s0">.. ## pygame.font.get_fonts ##</span>
+
+<span class="s0">.. function:: match_font</span>
+
+   <span class="s0">| :sl:`find a specific font on the system`</span>
+   <span class="s0">| :sg:`match_font(name, bold=False, italic=False) -&gt; path`</span>
+
+   <span class="s0">Returns the full path to a font file on the system. If bold or italic are</span>
+   <span class="s0">set to true, this will attempt to find the correct family of font.</span>
+
+   <span class="s0">The font name can also be an iterable of font names, a string of</span>
+   <span class="s0">comma-separated font names, or a bytes of comma-separated font names, in</span>
+   <span class="s0">which case the set of names will be searched in order.</span>
+   <span class="s0">If none of the given names are found, None is returned.</span>
+
+   <span class="s0">.. versionadded:: 2.0.1 Accept an iterable of font names.</span>
+
+   <span class="s0">.. versionchanged:: 2.1.3 Checks through user fonts instead of just global fonts for Windows.</span>
+
+   <span class="s0">Example:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">print pygame.font.match_font('bitstreamverasans')</span>
+       <span class="s0"># output is: /usr/share/fonts/truetype/ttf-bitstream-vera/Vera.ttf</span>
+       <span class="s0"># (but only if you have Vera on your system)</span>
+
+   <span class="s0">.. ## pygame.font.match_font ##</span>
+
+<span class="s0">.. function:: SysFont</span>
+
+   <span class="s0">| :sl:`create a Font object from the system fonts`</span>
+   <span class="s0">| :sg:`SysFont(name, size, bold=False, italic=False) -&gt; Font`</span>
+
+   <span class="s0">Return a new Font object that is loaded from the system fonts. The font will</span>
+   <span class="s0">match the requested bold and italic flags. Pygame uses a small set of common</span>
+   <span class="s0">font aliases. If the specific font you ask for is not available, a reasonable</span>
+   <span class="s0">alternative may be used. If a suitable system font is not found this will</span>
+   <span class="s0">fall back on loading the default pygame font.</span>
+
+   <span class="s0">The font name can also be an iterable of font names, a string of</span>
+   <span class="s0">comma-separated font names, or a bytes of comma-separated font names, in</span>
+   <span class="s0">which case the set of names will be searched in order.</span>
+
+   <span class="s0">.. versionadded:: 2.0.1 Accept an iterable of font names.</span>
+
+   <span class="s0">.. versionchanged:: 2.1.3 Checks through user fonts instead of just global fonts for Windows.</span>
+
+   <span class="s0">.. ## pygame.font.SysFont ##</span>
+
+<span class="s0">.. class:: Font</span>
+
+   <span class="s0">| :sl:`create a new Font object from a file`</span>
+   <span class="s0">| :sg:`Font(filename, size) -&gt; Font`</span>
+   <span class="s0">| :sg:`Font(pathlib.Path, size) -&gt; Font`</span>
+   <span class="s0">| :sg:`Font(object, size) -&gt; Font`</span>
+
+   <span class="s0">Load a new font from a given filename or a python file object. The size is</span>
+   <span class="s0">the height of the font in pixels. If the filename is ``None`` the pygame</span>
+   <span class="s0">default font will be loaded. If a font cannot be loaded from the arguments</span>
+   <span class="s0">given an exception will be raised. Once the font is created the size cannot</span>
+   <span class="s0">be changed.</span>
+
+   <span class="s0">Font objects are mainly used to render text into new Surface objects. The</span>
+   <span class="s0">render can emulate bold or italic features, but it is better to load from a</span>
+   <span class="s0">font with actual italic or bold glyphs.</span>
+
+   <span class="s0">.. attribute:: bold</span>
+
+      <span class="s0">| :sl:`Gets or sets whether the font should be rendered in (faked) bold.`</span>
+      <span class="s0">| :sg:`bold -&gt; bool`</span>
+
+      <span class="s0">Whether the font should be rendered in bold.</span>
+
+      <span class="s0">When set to True, this enables the bold rendering of text. This</span>
+      <span class="s0">is a fake stretching of the font that doesn't look good on many</span>
+      <span class="s0">font types. If possible load the font from a real bold font</span>
+      <span class="s0">file. While bold, the font will have a different width than when</span>
+      <span class="s0">normal. This can be mixed with the italic, underline and</span>
+      <span class="s0">strikethrough modes.</span>
+
+      <span class="s0">.. versionadded:: 2.0.0</span>
+
+      <span class="s0">.. ## Font.bold ##</span>
+
+   <span class="s0">.. attribute:: italic</span>
+
+      <span class="s0">| :sl:`Gets or sets whether the font should be rendered in (faked) italics.`</span>
+      <span class="s0">| :sg:`italic -&gt; bool`</span>
+
+      <span class="s0">Whether the font should be rendered in italic.</span>
+
+      <span class="s0">When set to True, this enables fake rendering of italic</span>
+      <span class="s0">text. This is a fake skewing of the font that doesn't look good</span>
+      <span class="s0">on many font types. If possible load the font from a real italic</span>
+      <span class="s0">font file. While italic the font will have a different width</span>
+      <span class="s0">than when normal. This can be mixed with the bold, underline and</span>
+      <span class="s0">strikethrough modes.</span>
+
+      <span class="s0">.. versionadded:: 2.0.0</span>
+
+      <span class="s0">.. ## Font.italic ##</span>
+
+   <span class="s0">.. attribute:: underline</span>
+
+      <span class="s0">| :sl:`Gets or sets whether the font should be rendered with an underline.`</span>
+      <span class="s0">| :sg:`underline -&gt; bool`</span>
+
+      <span class="s0">Whether the font should be rendered in underline.</span>
+
+      <span class="s0">When set to True, all rendered fonts will include an</span>
+      <span class="s0">underline. The underline is always one pixel thick, regardless</span>
+      <span class="s0">of font size. This can be mixed with the bold, italic and</span>
+      <span class="s0">strikethrough modes.</span>
+
+      <span class="s0">.. versionadded:: 2.0.0</span>
+
+      <span class="s0">.. ## Font.underline ##</span>
+   
+   <span class="s0">.. attribute:: strikethrough</span>
+
+      <span class="s0">| :sl:`Gets or sets whether the font should be rendered with a strikethrough.`</span>
+      <span class="s0">| :sg:`strikethrough -&gt; bool`</span>
+
+      <span class="s0">Whether the font should be rendered with a strikethrough.</span>
+
+      <span class="s0">When set to True, all rendered fonts will include an</span>
+      <span class="s0">strikethrough. The strikethrough is always one pixel thick,</span>
+      <span class="s0">regardless of font size. This can be mixed with the bold,</span>
+      <span class="s0">italic and underline modes.</span>
+
+      <span class="s0">.. versionadded:: 2.1.3</span>
+
+      <span class="s0">.. ## Font.strikethrough ##</span>
+
+   <span class="s0">.. method:: render</span>
+
+      <span class="s0">| :sl:`draw text on a new Surface`</span>
+      <span class="s0">| :sg:`render(text, antialias, color, background=None) -&gt; Surface`</span>
+
+      <span class="s0">This creates a new Surface with the specified text rendered on it. </span>
+      <span class="s0">:mod:`pygame.font` provides no way to directly draw text on an existing</span>
+      <span class="s0">Surface: instead you must use :func:`Font.render` to create an image</span>
+      <span class="s0">(Surface) of the text, then blit this image onto another Surface.</span>
+
+      <span class="s0">The text can only be a single line: newline characters are not rendered.</span>
+      <span class="s0">Null characters ('\x00') raise a TypeError. Both Unicode and char (byte)</span>
+      <span class="s0">strings are accepted. For Unicode strings only UCS-2 characters</span>
+      <span class="s0">('\\u0001' to '\\uFFFF') were previously supported and any greater</span>
+      <span class="s0">unicode codepoint would raise a UnicodeError. Now, characters in the</span>
+      <span class="s0">UCS-4 range are supported. For char strings a ``LATIN1`` encoding is</span>
+      <span class="s0">assumed. The antialias argument is a boolean: if True the characters</span>
+      <span class="s0">will have smooth edges. The color argument is the color of the text</span>
+      <span class="s0">[e.g.: (0,0,255) for blue]. The optional background argument is a color</span>
+      <span class="s0">to use for the text background. If no background is passed the area</span>
+      <span class="s0">outside the text will be transparent.</span>
+
+      <span class="s0">The Surface returned will be of the dimensions required to hold the text.</span>
+      <span class="s0">(the same as those returned by :func:`Font.size`). If an empty string is passed</span>
+      <span class="s0">for the text, a blank surface will be returned that is zero pixel wide and</span>
+      <span class="s0">the height of the font.</span>
+
+      <span class="s0">Depending on the type of background and antialiasing used, this returns</span>
+      <span class="s0">different types of Surfaces. For performance reasons, it is good to know</span>
+      <span class="s0">what type of image will be used. If antialiasing is not used, the return</span>
+      <span class="s0">image will always be an 8-bit image with a two-color palette. If the</span>
+      <span class="s0">background is transparent a colorkey will be set. Antialiased images are</span>
+      <span class="s0">rendered to 24-bit ``RGB`` images. If the background is transparent a</span>
+      <span class="s0">pixel alpha will be included.</span>
+
+      <span class="s0">Optimization: if you know that the final destination for the text (on the</span>
+      <span class="s0">screen) will always have a solid background, and the text is antialiased,</span>
+      <span class="s0">you can improve performance by specifying the background color. This will</span>
+      <span class="s0">cause the resulting image to maintain transparency information by</span>
+      <span class="s0">colorkey rather than (much less efficient) alpha values.</span>
+
+      <span class="s0">If you render '\\n' an unknown char will be rendered. Usually a</span>
+      <span class="s0">rectangle. Instead you need to handle newlines yourself.</span>
+
+      <span class="s0">Font rendering is not thread safe: only a single thread can render text</span>
+      <span class="s0">at any time.</span>
+
+      <span class="s0">.. versionchanged:: 2.0.3 Rendering UCS4 unicode works and does not</span>
+        <span class="s0">raise an exception. Use `if hasattr(pygame.font, &quot;UCS4&quot;):` to see if</span>
+        <span class="s0">pygame supports rendering UCS4 unicode including more languages and</span>
+        <span class="s0">emoji.</span>
+
+      <span class="s0">.. ## Font.render ##</span>
+
+   <span class="s0">.. method:: size</span>
+
+      <span class="s0">| :sl:`determine the amount of space needed to render text`</span>
+      <span class="s0">| :sg:`size(text) -&gt; (width, height)`</span>
+
+      <span class="s0">Returns the dimensions needed to render the text. This can be used to</span>
+      <span class="s0">help determine the positioning needed for text before it is rendered. It</span>
+      <span class="s0">can also be used for word wrapping and other layout effects.</span>
+
+      <span class="s0">Be aware that most fonts use kerning which adjusts the widths for</span>
+      <span class="s0">specific letter pairs. For example, the width for &quot;ae&quot; will not always</span>
+      <span class="s0">match the width for &quot;a&quot; + &quot;e&quot;.</span>
+
+      <span class="s0">.. ## Font.size ##</span>
+
+   <span class="s0">.. method:: set_underline</span>
+
+      <span class="s0">| :sl:`control if text is rendered with an underline`</span>
+      <span class="s0">| :sg:`set_underline(bool) -&gt; None`</span>
+
+      <span class="s0">When enabled, all rendered fonts will include an underline. The underline</span>
+      <span class="s0">is always one pixel thick, regardless of font size. This can be mixed</span>
+      <span class="s0">with the bold, italic and strikethrough modes.</span>
+
+      <span class="s0">.. note:: This is the same as the :attr:`underline` attribute.</span>
+
+      <span class="s0">.. ## Font.set_underline ##</span>
+
+   <span class="s0">.. method:: get_underline</span>
+
+      <span class="s0">| :sl:`check if text will be rendered with an underline`</span>
+      <span class="s0">| :sg:`get_underline() -&gt; bool`</span>
+
+      <span class="s0">Return True when the font underline is enabled.</span>
+
+       <span class="s0">.. note:: This is the same as the :attr:`underline` attribute.</span>
+
+      <span class="s0">.. ## Font.get_underline ##</span>
+   
+   <span class="s0">.. method:: set_strikethrough</span>
+
+      <span class="s0">| :sl:`control if text is rendered with a strikethrough`</span>
+      <span class="s0">| :sg:`set_strikethrough(bool) -&gt; None`</span>
+
+      <span class="s0">When enabled, all rendered fonts will include a strikethrough. The</span>
+      <span class="s0">strikethrough is always one pixel thick, regardless of font size.</span>
+      <span class="s0">This can be mixed with the bold, italic and underline modes.</span>
+
+      <span class="s0">.. note:: This is the same as the :attr:`strikethrough` attribute.</span>
+      
+      <span class="s0">.. versionadded:: 2.1.3</span>
+
+      <span class="s0">.. ## Font.set_strikethrough ##</span>
+
+   <span class="s0">.. method:: get_strikethrough</span>
+
+      <span class="s0">| :sl:`check if text will be rendered with a strikethrough`</span>
+      <span class="s0">| :sg:`get_strikethrough() -&gt; bool`</span>
+
+      <span class="s0">Return True when the font strikethrough is enabled.</span>
+
+       <span class="s0">.. note:: This is the same as the :attr:`strikethrough` attribute.</span>
+       
+       <span class="s0">.. versionadded:: 2.1.3</span>
+
+      <span class="s0">.. ## Font.get_strikethrough ##</span>
+
+   <span class="s0">.. method:: set_bold</span>
+
+      <span class="s0">| :sl:`enable fake rendering of bold text`</span>
+      <span class="s0">| :sg:`set_bold(bool) -&gt; None`</span>
+
+      <span class="s0">Enables the bold rendering of text. This is a fake stretching of the font</span>
+      <span class="s0">that doesn't look good on many font types. If possible load the font from</span>
+      <span class="s0">a real bold font file. While bold, the font will have a different width</span>
+      <span class="s0">than when normal. This can be mixed with the italic, underline and</span>
+      <span class="s0">strikethrough modes.</span>
+
+      <span class="s0">.. note:: This is the same as the :attr:`bold` attribute.</span>
+
+      <span class="s0">.. ## Font.set_bold ##</span>
+
+   <span class="s0">.. method:: get_bold</span>
+
+      <span class="s0">| :sl:`check if text will be rendered bold`</span>
+      <span class="s0">| :sg:`get_bold() -&gt; bool`</span>
+
+      <span class="s0">Return True when the font bold rendering mode is enabled.</span>
+
+      <span class="s0">.. note:: This is the same as the :attr:`bold` attribute.</span>
+
+      <span class="s0">.. ## Font.get_bold ##</span>
+
+   <span class="s0">.. method:: set_italic</span>
+
+      <span class="s0">| :sl:`enable fake rendering of italic text`</span>
+      <span class="s0">| :sg:`set_italic(bool) -&gt; None`</span>
+
+      <span class="s0">Enables fake rendering of italic text. This is a fake skewing of the font</span>
+      <span class="s0">that doesn't look good on many font types. If possible load the font from</span>
+      <span class="s0">a real italic font file. While italic the font will have a different</span>
+      <span class="s0">width than when normal. This can be mixed with the bold, underline and</span>
+      <span class="s0">strikethrough modes.</span>
+
+      <span class="s0">.. note:: This is the same as the :attr:`italic` attribute.</span>
+
+      <span class="s0">.. ## Font.set_italic ##</span>
+
+   <span class="s0">.. method:: metrics</span>
+
+      <span class="s0">| :sl:`gets the metrics for each character in the passed string`</span>
+      <span class="s0">| :sg:`metrics(text) -&gt; list`</span>
+
+      <span class="s0">The list contains tuples for each character, which contain the minimum</span>
+      <span class="s0">``X`` offset, the maximum ``X`` offset, the minimum ``Y`` offset, the</span>
+      <span class="s0">maximum ``Y`` offset and the advance offset (bearing plus width) of the</span>
+      <span class="s0">character. [(minx, maxx, miny, maxy, advance), (minx, maxx, miny, maxy,</span>
+      <span class="s0">advance), ...]. None is entered in the list for each unrecognized</span>
+      <span class="s0">character.</span>
+
+      <span class="s0">.. ## Font.metrics ##</span>
+
+   <span class="s0">.. method:: get_italic</span>
+
+      <span class="s0">| :sl:`check if the text will be rendered italic`</span>
+      <span class="s0">| :sg:`get_italic() -&gt; bool`</span>
+
+      <span class="s0">Return True when the font italic rendering mode is enabled.</span>
+
+      <span class="s0">.. note:: This is the same as the :attr:`italic` attribute.</span>
+
+      <span class="s0">.. ## Font.get_italic ##</span>
+
+   <span class="s0">.. method:: get_linesize</span>
+
+      <span class="s0">| :sl:`get the line space of the font text`</span>
+      <span class="s0">| :sg:`get_linesize() -&gt; int`</span>
+
+      <span class="s0">Return the height in pixels for a line of text with the font. When</span>
+      <span class="s0">rendering multiple lines of text this is the recommended amount of space</span>
+      <span class="s0">between lines.</span>
+
+      <span class="s0">.. ## Font.get_linesize ##</span>
+
+   <span class="s0">.. method:: get_height</span>
+
+      <span class="s0">| :sl:`get the height of the font`</span>
+      <span class="s0">| :sg:`get_height() -&gt; int`</span>
+
+      <span class="s0">Return the height in pixels of the actual rendered text. This is the</span>
+      <span class="s0">average size for each glyph in the font.</span>
+
+      <span class="s0">.. ## Font.get_height ##</span>
+
+   <span class="s0">.. method:: get_ascent</span>
+
+      <span class="s0">| :sl:`get the ascent of the font`</span>
+      <span class="s0">| :sg:`get_ascent() -&gt; int`</span>
+
+      <span class="s0">Return the height in pixels for the font ascent. The ascent is the number</span>
+      <span class="s0">of pixels from the font baseline to the top of the font.</span>
+
+      <span class="s0">.. ## Font.get_ascent ##</span>
+
+   <span class="s0">.. method:: get_descent</span>
+
+      <span class="s0">| :sl:`get the descent of the font`</span>
+      <span class="s0">| :sg:`get_descent() -&gt; int`</span>
+
+      <span class="s0">Return the height in pixels for the font descent. The descent is the</span>
+      <span class="s0">number of pixels from the font baseline to the bottom of the font.</span>
+
+      <span class="s0">.. ## Font.get_descent ##</span>
+
+   <span class="s0">.. ## pygame.font.Font ##</span>
+
+<span class="s0">.. ## pygame.font ##</span>
+</pre>
+</body>
+</html>

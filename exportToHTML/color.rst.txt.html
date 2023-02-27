@@ -1,0 +1,291 @@
+<html>
+<head>
+<title>color.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+color.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.Color`</span>
+<span class="s0">===================</span>
+
+<span class="s0">.. currentmodule:: pygame</span>
+
+<span class="s0">.. class:: Color</span>
+
+   <span class="s0">| :sl:`pygame object for color representations`</span>
+   <span class="s0">| :sg:`Color(r, g, b) -&gt; Color`</span>
+   <span class="s0">| :sg:`Color(r, g, b, a=255) -&gt; Color`</span>
+   <span class="s0">| :sg:`Color(color_value) -&gt; Color`</span>
+
+   <span class="s0">The ``Color`` class represents ``RGBA`` color values using a value range of</span>
+   <span class="s0">0 to 255 inclusive. It allows basic arithmetic operations — binary</span>
+   <span class="s0">operations ``+``, ``-``, ``*``, ``//``, ``%``, and unary operation ``~`` — to</span>
+   <span class="s0">create new colors, supports conversions to other color spaces such as ``HSV``</span>
+   <span class="s0">or ``HSL`` and lets you adjust single color channels.</span>
+   <span class="s0">Alpha defaults to 255 (fully opaque) when not given.</span>
+   <span class="s0">The arithmetic operations and ``correct_gamma()`` method preserve subclasses.</span>
+   <span class="s0">For the binary operators, the class of the returned color is that of the</span>
+   <span class="s0">left hand color object of the operator.</span>
+
+   <span class="s0">Color objects support equality comparison with other color objects and 3 or</span>
+   <span class="s0">4 element tuples of integers. There was a bug in pygame 1.8.1</span>
+   <span class="s0">where the default alpha was 0, not 255 like previously.</span>
+
+   <span class="s0">Color objects export the C level array interface. The interface exports a</span>
+   <span class="s0">read-only one dimensional unsigned byte array of the same assigned length</span>
+   <span class="s0">as the color. The new buffer interface is also exported, with the same</span>
+   <span class="s0">characteristics as the array interface.</span>
+
+   <span class="s0">The floor division, ``//``, and modulus, ``%``, operators do not raise</span>
+   <span class="s0">an exception for division by zero. Instead, if a color, or alpha, channel</span>
+   <span class="s0">in the right hand color is 0, then the result is 0. For example: ::</span>
+
+       <span class="s0"># These expressions are True</span>
+       <span class="s0">Color(255, 255, 255, 255) // Color(0, 64, 64, 64) == Color(0, 3, 3, 3)</span>
+       <span class="s0">Color(255, 255, 255, 255) % Color(64, 64, 64, 0) == Color(63, 63, 63, 0)</span>
+
+   <span class="s0">Use ``int(color)`` to return the immutable integer value of the color,</span>
+   <span class="s0">usable as a ``dict`` key. This integer value differs from the mapped</span>
+   <span class="s0">pixel values of :meth:`pygame.Surface.get_at_mapped`,</span>
+   <span class="s0">:meth:`pygame.Surface.map_rgb` and :meth:`pygame.Surface.unmap_rgb`.</span>
+   <span class="s0">It can be passed as a ``color_value`` argument to :class:`Color`</span>
+   <span class="s0">(useful with sets).</span>
+
+   <span class="s0">See :doc:`color_list` for samples of the available named colors.</span>
+
+   <span class="s0">:param int r: red value in the range of 0 to 255 inclusive</span>
+   <span class="s0">:param int g: green value in the range of 0 to 255 inclusive</span>
+   <span class="s0">:param int b: blue value in the range of 0 to 255 inclusive</span>
+   <span class="s0">:param int a: (optional) alpha value in the range of 0 to 255 inclusive,</span>
+      <span class="s0">default is 255</span>
+   <span class="s0">:param color_value: color value (see note below for the supported formats)</span>
+
+      <span class="s0">.. note::</span>
+         <span class="s0">Supported ``color_value`` formats:</span>
+            <span class="s0">| - **Color object:** clones the given :class:`Color` object</span>
+            <span class="s0">| - **Color name: str:** name of the color to use, e.g. ``'red'``</span>
+              <span class="s0">(all the supported name strings can be found in the</span>
+               <span class="s0">:doc:`color_list`, with sample swatches)</span>
+            <span class="s0">| - **HTML color format str:** ``'#rrggbbaa'`` or ``'#rrggbb'``,</span>
+              <span class="s0">where rr, gg, bb, and aa are 2-digit hex numbers in the range</span>
+              <span class="s0">of 0 to 0xFF inclusive, the aa (alpha) value defaults to 0xFF</span>
+              <span class="s0">if not provided</span>
+            <span class="s0">| - **hex number str:** ``'0xrrggbbaa'`` or ``'0xrrggbb'``, where</span>
+              <span class="s0">rr, gg, bb, and aa are 2-digit hex numbers in the range of 0x00</span>
+              <span class="s0">to 0xFF inclusive, the aa (alpha) value defaults to 0xFF if not</span>
+              <span class="s0">provided</span>
+            <span class="s0">| - **int:** int value of the color to use, using hex numbers can</span>
+              <span class="s0">make this parameter more readable, e.g. ``0xrrggbbaa``, where rr,</span>
+              <span class="s0">gg, bb, and aa are 2-digit hex numbers in the range of 0x00 to</span>
+              <span class="s0">0xFF inclusive, note that the aa (alpha) value is not optional for</span>
+              <span class="s0">the int format and must be provided</span>
+            <span class="s0">| - **tuple/list of int color values:** ``(R, G, B, A)`` or</span>
+              <span class="s0">``(R, G, B)``, where R, G, B, and A are int values in the range of</span>
+              <span class="s0">0 to 255 inclusive, the A (alpha) value defaults to 255 if not</span>
+              <span class="s0">provided</span>
+
+   <span class="s0">:type color_value: Color or str or int or tuple(int, int, int, [int]) or</span>
+      <span class="s0">list(int, int, int, [int])</span>
+
+   <span class="s0">:returns: a newly created :class:`Color` object</span>
+   <span class="s0">:rtype: Color</span>
+
+   <span class="s0">.. versionchanged:: 2.0.0</span>
+      <span class="s0">Support for tuples, lists, and :class:`Color` objects when creating</span>
+      <span class="s0">:class:`Color` objects.</span>
+   <span class="s0">.. versionchanged:: 1.9.2 Color objects export the C level array interface.</span>
+   <span class="s0">.. versionchanged:: 1.9.0 Color objects support 4-element tuples of integers.</span>
+   <span class="s0">.. versionchanged:: 1.8.1 New implementation of the class.</span>
+
+   <span class="s0">.. attribute:: r</span>
+
+      <span class="s0">| :sl:`Gets or sets the red value of the Color.`</span>
+      <span class="s0">| :sg:`r -&gt; int`</span>
+
+      <span class="s0">The red value of the Color.</span>
+
+      <span class="s0">.. ## Color.r ##</span>
+
+   <span class="s0">.. attribute:: g</span>
+
+      <span class="s0">| :sl:`Gets or sets the green value of the Color.`</span>
+      <span class="s0">| :sg:`g -&gt; int`</span>
+
+      <span class="s0">The green value of the Color.</span>
+
+      <span class="s0">.. ## Color.g ##</span>
+
+   <span class="s0">.. attribute:: b</span>
+
+      <span class="s0">| :sl:`Gets or sets the blue value of the Color.`</span>
+      <span class="s0">| :sg:`b -&gt; int`</span>
+
+      <span class="s0">The blue value of the Color.</span>
+
+      <span class="s0">.. ## Color.b ##</span>
+
+   <span class="s0">.. attribute:: a</span>
+
+      <span class="s0">| :sl:`Gets or sets the alpha value of the Color.`</span>
+      <span class="s0">| :sg:`a -&gt; int`</span>
+
+      <span class="s0">The alpha value of the Color.</span>
+
+      <span class="s0">.. ## Color.a ##</span>
+
+   <span class="s0">.. attribute:: cmy</span>
+
+      <span class="s0">| :sl:`Gets or sets the CMY representation of the Color.`</span>
+      <span class="s0">| :sg:`cmy -&gt; tuple`</span>
+
+      <span class="s0">The ``CMY`` representation of the Color. The ``CMY`` components are in</span>
+      <span class="s0">the ranges ``C`` = [0, 1], ``M`` = [0, 1], ``Y`` = [0, 1]. Note that this</span>
+      <span class="s0">will not return the absolutely exact ``CMY`` values for the set ``RGB``</span>
+      <span class="s0">values in all cases. Due to the ``RGB`` mapping from 0-255 and the</span>
+      <span class="s0">``CMY`` mapping from 0-1 rounding errors may cause the ``CMY`` values to</span>
+      <span class="s0">differ slightly from what you might expect.</span>
+
+      <span class="s0">.. ## Color.cmy ##</span>
+
+   <span class="s0">.. attribute:: hsva</span>
+
+      <span class="s0">| :sl:`Gets or sets the HSVA representation of the Color.`</span>
+      <span class="s0">| :sg:`hsva -&gt; tuple`</span>
+
+      <span class="s0">The ``HSVA`` representation of the Color. The ``HSVA`` components are in</span>
+      <span class="s0">the ranges ``H`` = [0, 360], ``S`` = [0, 100], ``V`` = [0, 100], A = [0,</span>
+      <span class="s0">100]. Note that this will not return the absolutely exact ``HSV`` values</span>
+      <span class="s0">for the set ``RGB`` values in all cases. Due to the ``RGB`` mapping from</span>
+      <span class="s0">0-255 and the ``HSV`` mapping from 0-100 and 0-360 rounding errors may</span>
+      <span class="s0">cause the ``HSV`` values to differ slightly from what you might expect.</span>
+
+      <span class="s0">.. ## Color.hsva ##</span>
+
+   <span class="s0">.. attribute:: hsla</span>
+
+      <span class="s0">| :sl:`Gets or sets the HSLA representation of the Color.`</span>
+      <span class="s0">| :sg:`hsla -&gt; tuple`</span>
+
+      <span class="s0">The ``HSLA`` representation of the Color. The ``HSLA`` components are in</span>
+      <span class="s0">the ranges ``H`` = [0, 360], ``S`` = [0, 100], ``V`` = [0, 100], A = [0,</span>
+      <span class="s0">100]. Note that this will not return the absolutely exact ``HSL`` values</span>
+      <span class="s0">for the set ``RGB`` values in all cases. Due to the ``RGB`` mapping from</span>
+      <span class="s0">0-255 and the ``HSL`` mapping from 0-100 and 0-360 rounding errors may</span>
+      <span class="s0">cause the ``HSL`` values to differ slightly from what you might expect.</span>
+
+      <span class="s0">.. ## Color.hsla ##</span>
+
+   <span class="s0">.. attribute:: i1i2i3</span>
+
+      <span class="s0">| :sl:`Gets or sets the I1I2I3 representation of the Color.`</span>
+      <span class="s0">| :sg:`i1i2i3 -&gt; tuple`</span>
+
+      <span class="s0">The ``I1I2I3`` representation of the Color. The ``I1I2I3`` components are</span>
+      <span class="s0">in the ranges ``I1`` = [0, 1], ``I2`` = [-0.5, 0.5], ``I3`` = [-0.5,</span>
+      <span class="s0">0.5]. Note that this will not return the absolutely exact ``I1I2I3``</span>
+      <span class="s0">values for the set ``RGB`` values in all cases. Due to the ``RGB``</span>
+      <span class="s0">mapping from 0-255 and the ``I1I2I3`` mapping from 0-1 rounding errors</span>
+      <span class="s0">may cause the ``I1I2I3`` values to differ slightly from what you might</span>
+      <span class="s0">expect.</span>
+
+      <span class="s0">.. ## Color.i1i2i3 ##</span>
+
+   <span class="s0">.. method:: normalize</span>
+
+      <span class="s0">| :sl:`Returns the normalized RGBA values of the Color.`</span>
+      <span class="s0">| :sg:`normalize() -&gt; tuple`</span>
+
+      <span class="s0">Returns the normalized ``RGBA`` values of the Color as floating point</span>
+      <span class="s0">values.</span>
+
+      <span class="s0">.. ## Color.normalize ##</span>
+
+   <span class="s0">.. method:: correct_gamma</span>
+
+      <span class="s0">| :sl:`Applies a certain gamma value to the Color.`</span>
+      <span class="s0">| :sg:`correct_gamma (gamma) -&gt; Color`</span>
+
+      <span class="s0">Applies a certain gamma value to the Color and returns a new Color with</span>
+      <span class="s0">the adjusted ``RGBA`` values.</span>
+
+      <span class="s0">.. ## Color.correct_gamma ##</span>
+
+   <span class="s0">.. method:: set_length</span>
+
+      <span class="s0">| :sl:`Set the number of elements in the Color to 1,2,3, or 4.`</span>
+      <span class="s0">| :sg:`set_length(len) -&gt; None`</span>
+
+      <span class="s0">DEPRECATED: You may unpack the values you need like so, </span>
+      <span class="s0">``r, g, b, _ = pygame.Color(100, 100, 100)``</span>
+      <span class="s0">If you only want r, g and b</span>
+      <span class="s0">Or </span>
+      <span class="s0">``r, g, *_ = pygame.Color(100, 100, 100)`` </span>
+      <span class="s0">if you only want r and g</span>
+
+      <span class="s0">The default Color length is 4. Colors can have lengths 1,2,3 or 4. This</span>
+      <span class="s0">is useful if you want to unpack to r,g,b and not r,g,b,a. If you want to</span>
+      <span class="s0">get the length of a Color do ``len(acolor)``.</span>
+
+      <span class="s0">.. deprecated:: 2.1.3</span>
+      <span class="s0">.. versionadded:: 1.9.0</span>
+
+      <span class="s0">.. ## Color.set_length ##</span>
+
+   <span class="s0">.. method:: lerp</span>
+
+      <span class="s0">| :sl:`returns a linear interpolation to the given Color.`</span>
+      <span class="s0">| :sg:`lerp(Color, float) -&gt; Color`</span>
+
+      <span class="s0">Returns a Color which is a linear interpolation between self and the</span>
+      <span class="s0">given Color in RGBA space. The second parameter determines how far</span>
+      <span class="s0">between self and other the result is going to be.</span>
+      <span class="s0">It must be a value between 0 and 1 where 0 means self and 1 means</span>
+      <span class="s0">other will be returned.</span>
+
+      <span class="s0">.. versionadded:: 2.0.1</span>
+
+      <span class="s0">.. ## Color.lerp ##</span>
+
+   <span class="s0">.. method:: premul_alpha</span>
+
+      <span class="s0">| :sl:`returns a Color where the r,g,b components have been multiplied by the alpha.`</span>
+      <span class="s0">| :sg:`premul_alpha() -&gt; Color`</span>
+
+      <span class="s0">Returns a new Color where each of the red, green and blue colour</span>
+      <span class="s0">channels have been multiplied by the alpha channel of the original</span>
+      <span class="s0">color. The alpha channel remains unchanged.</span>
+
+      <span class="s0">This is useful when working with the ``BLEND_PREMULTIPLIED`` blending mode</span>
+      <span class="s0">flag for :meth:`pygame.Surface.blit()`, which assumes that all surfaces using</span>
+      <span class="s0">it are using pre-multiplied alpha colors.</span>
+
+      <span class="s0">.. versionadded:: 2.0.0</span>
+
+      <span class="s0">.. ## Color.premul_alpha ##</span>
+
+   <span class="s0">.. method:: update</span>
+
+      <span class="s0">| :sl:`Sets the elements of the color`</span>
+      <span class="s0">| :sg:`update(r, g, b) -&gt; None`</span>
+      <span class="s0">| :sg:`update(r, g, b, a=255) -&gt; None`</span>
+      <span class="s0">| :sg:`update(color_value) -&gt; None`</span>
+
+      <span class="s0">Sets the elements of the color. See parameters for :meth:`pygame.Color` for the</span>
+      <span class="s0">parameters of this function. If the alpha value was not set it will not change.</span>
+
+      <span class="s0">.. versionadded:: 2.0.1</span>
+
+      <span class="s0">.. ## Color.update ##</span>
+   <span class="s0">.. ## pygame.Color ##</span>
+</pre>
+</body>
+</html>

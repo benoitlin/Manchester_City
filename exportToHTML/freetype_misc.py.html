@@ -1,0 +1,179 @@
+<html>
+<head>
+<title>freetype_misc.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6a8759;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+freetype_misc.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.freetype_misc 
+ 
+ 
+Miscellaneous (or misc) means: 
+  &quot;consisting of a mixture of various things that are not 
+   usually connected with each other&quot; 
+   Adjective 
+ 
+ 
+All those words you read on computers, magazines, books, and such over the years? 
+Probably a lot of them were constructed with... 
+ 
+The FreeType Project:  a free, high-quality and portable Font engine. 
+https://freetype.org 
+ 
+Next time you're reading something. Think of them. 
+ 
+ 
+Herein lies a *BOLD* demo consisting of a mixture of various things. 
+ 
+        Not only is it a *BOLD* demo, it's an 
+        italics demo, 
+        a rotated demo, 
+        it's a blend, 
+        and is sized to go nicely with a cup of tea*. 
+ 
+        * also goes well with coffee. 
+ 
+Enjoy! 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">os</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+<span class="s3">import </span><span class="s1">pygame.freetype </span><span class="s3">as </span><span class="s1">freetype</span>
+
+
+<span class="s3">def </span><span class="s1">run():</span>
+    <span class="s1">pg.init()</span>
+
+    <span class="s1">fontdir = os.path.dirname(os.path.abspath(__file__))</span>
+    <span class="s1">font = freetype.Font(os.path.join(fontdir</span><span class="s3">, </span><span class="s4">&quot;data&quot;</span><span class="s3">, </span><span class="s4">&quot;sans.ttf&quot;</span><span class="s1">))</span>
+
+    <span class="s1">screen = pg.display.set_mode((</span><span class="s5">800</span><span class="s3">, </span><span class="s5">600</span><span class="s1">))</span>
+    <span class="s1">screen.fill(</span><span class="s4">&quot;gray&quot;</span><span class="s1">)</span>
+
+    <span class="s1">font.underline_adjustment = </span><span class="s5">0.5</span>
+    <span class="s1">font.pad = </span><span class="s3">True</span>
+    <span class="s1">font.render_to(</span>
+        <span class="s1">screen</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s5">32</span><span class="s3">, </span><span class="s5">32</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s4">&quot;Hello World&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;red3&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;dimgray&quot;</span><span class="s3">,</span>
+        <span class="s1">size=</span><span class="s5">64</span><span class="s3">,</span>
+        <span class="s1">style=freetype.STYLE_UNDERLINE | freetype.STYLE_OBLIQUE</span><span class="s3">,</span>
+    <span class="s1">)</span>
+    <span class="s1">font.pad = </span><span class="s3">False</span>
+
+    <span class="s1">font.render_to(</span>
+        <span class="s1">screen</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s5">32</span><span class="s3">, </span><span class="s5">128</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s4">&quot;abcdefghijklm&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;dimgray&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;green3&quot;</span><span class="s3">,</span>
+        <span class="s1">size=</span><span class="s5">64</span><span class="s3">,</span>
+    <span class="s1">)</span>
+
+    <span class="s1">font.vertical = </span><span class="s3">True</span>
+    <span class="s1">font.render_to(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s5">32</span><span class="s3">, </span><span class="s5">200</span><span class="s1">)</span><span class="s3">, </span><span class="s4">&quot;Vertical?&quot;</span><span class="s3">, </span><span class="s4">&quot;blue3&quot;</span><span class="s3">, None, </span><span class="s1">size=</span><span class="s5">32</span><span class="s1">)</span>
+    <span class="s1">font.vertical = </span><span class="s3">False</span>
+
+    <span class="s1">font.render_to(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s5">64</span><span class="s3">, </span><span class="s5">190</span><span class="s1">)</span><span class="s3">, </span><span class="s4">&quot;Let's spin!&quot;</span><span class="s3">, </span><span class="s4">&quot;red3&quot;</span><span class="s3">, None, </span><span class="s1">size=</span><span class="s5">48</span><span class="s3">, </span><span class="s1">rotation=</span><span class="s5">55</span><span class="s1">)</span>
+
+    <span class="s1">font.render_to(</span>
+        <span class="s1">screen</span><span class="s3">, </span><span class="s1">(</span><span class="s5">160</span><span class="s3">, </span><span class="s5">290</span><span class="s1">)</span><span class="s3">, </span><span class="s4">&quot;All around!&quot;</span><span class="s3">, </span><span class="s4">&quot;green3&quot;</span><span class="s3">, None, </span><span class="s1">size=</span><span class="s5">48</span><span class="s3">, </span><span class="s1">rotation=-</span><span class="s5">55</span>
+    <span class="s1">)</span>
+
+    <span class="s1">font.render_to(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s5">250</span><span class="s3">, </span><span class="s5">220</span><span class="s1">)</span><span class="s3">, </span><span class="s4">&quot;and BLEND&quot;</span><span class="s3">, </span><span class="s1">(</span><span class="s5">255</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">0</span><span class="s3">, </span><span class="s5">128</span><span class="s1">)</span><span class="s3">, None, </span><span class="s1">size=</span><span class="s5">64</span><span class="s1">)</span>
+
+    <span class="s1">font.render_to(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s5">265</span><span class="s3">, </span><span class="s5">237</span><span class="s1">)</span><span class="s3">, </span><span class="s4">&quot;or BLAND!&quot;</span><span class="s3">, </span><span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0xCC</span><span class="s3">, </span><span class="s5">28</span><span class="s3">, </span><span class="s5">128</span><span class="s1">)</span><span class="s3">, None, </span><span class="s1">size=</span><span class="s5">64</span><span class="s1">)</span>
+
+    <span class="s0"># Some pinwheels</span>
+    <span class="s1">font.origin = </span><span class="s3">True</span>
+    <span class="s3">for </span><span class="s1">angle </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">360</span><span class="s3">, </span><span class="s5">45</span><span class="s1">):</span>
+        <span class="s1">font.render_to(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s5">150</span><span class="s3">, </span><span class="s5">420</span><span class="s1">)</span><span class="s3">, </span><span class="s4">&quot;)&quot;</span><span class="s3">, </span><span class="s4">&quot;black&quot;</span><span class="s3">, </span><span class="s1">size=</span><span class="s5">48</span><span class="s3">, </span><span class="s1">rotation=angle)</span>
+    <span class="s1">font.vertical = </span><span class="s3">True</span>
+    <span class="s3">for </span><span class="s1">angle </span><span class="s3">in </span><span class="s1">range(</span><span class="s5">15</span><span class="s3">, </span><span class="s5">375</span><span class="s3">, </span><span class="s5">30</span><span class="s1">):</span>
+        <span class="s1">font.render_to(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s5">600</span><span class="s3">, </span><span class="s5">400</span><span class="s1">)</span><span class="s3">, </span><span class="s4">&quot;|^*&quot;</span><span class="s3">, </span><span class="s4">&quot;orange&quot;</span><span class="s3">, </span><span class="s1">size=</span><span class="s5">48</span><span class="s3">, </span><span class="s1">rotation=angle)</span>
+    <span class="s1">font.vertical = </span><span class="s3">False</span>
+    <span class="s1">font.origin = </span><span class="s3">False</span>
+
+    <span class="s1">utext = </span><span class="s4">&quot;I </span><span class="s3">\u2665 </span><span class="s4">Unicode&quot;</span>
+    <span class="s1">font.render_to(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s5">298</span><span class="s3">, </span><span class="s5">320</span><span class="s1">)</span><span class="s3">, </span><span class="s1">utext</span><span class="s3">, </span><span class="s1">(</span><span class="s5">0</span><span class="s3">, </span><span class="s5">0xCC</span><span class="s3">, </span><span class="s5">0xDD</span><span class="s1">)</span><span class="s3">, None, </span><span class="s1">size=</span><span class="s5">64</span><span class="s1">)</span>
+
+    <span class="s1">utext = </span><span class="s4">&quot;</span><span class="s3">\u2665</span><span class="s4">&quot;</span>
+    <span class="s1">font.render_to(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s5">480</span><span class="s3">, </span><span class="s5">32</span><span class="s1">)</span><span class="s3">, </span><span class="s1">utext</span><span class="s3">, </span><span class="s4">&quot;gray&quot;</span><span class="s3">, </span><span class="s4">&quot;red3&quot;</span><span class="s3">, </span><span class="s1">size=</span><span class="s5">148</span><span class="s1">)</span>
+
+    <span class="s1">font.render_to(</span>
+        <span class="s1">screen</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s5">380</span><span class="s3">, </span><span class="s5">380</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s4">&quot;...yes, this is an SDL surface&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;black&quot;</span><span class="s3">,</span>
+        <span class="s3">None,</span>
+        <span class="s1">size=</span><span class="s5">24</span><span class="s3">,</span>
+        <span class="s1">style=freetype.STYLE_STRONG</span><span class="s3">,</span>
+    <span class="s1">)</span>
+
+    <span class="s1">font.origin = </span><span class="s3">True</span>
+    <span class="s1">r = font.render_to(</span>
+        <span class="s1">screen</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s5">100</span><span class="s3">, </span><span class="s5">530</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s4">&quot;stretch&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;red3&quot;</span><span class="s3">,</span>
+        <span class="s3">None,</span>
+        <span class="s1">size=(</span><span class="s5">24</span><span class="s3">, </span><span class="s5">24</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s1">style=freetype.STYLE_NORMAL</span><span class="s3">,</span>
+    <span class="s1">)</span>
+    <span class="s1">font.render_to(</span>
+        <span class="s1">screen</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s5">100 </span><span class="s1">+ r.width</span><span class="s3">, </span><span class="s5">530</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s4">&quot; VERTICAL&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;red3&quot;</span><span class="s3">,</span>
+        <span class="s3">None,</span>
+        <span class="s1">size=(</span><span class="s5">24</span><span class="s3">, </span><span class="s5">48</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s1">style=freetype.STYLE_NORMAL</span><span class="s3">,</span>
+    <span class="s1">)</span>
+
+    <span class="s1">r = font.render_to(</span>
+        <span class="s1">screen</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s5">100</span><span class="s3">, </span><span class="s5">580</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s4">&quot;stretch&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;blue3&quot;</span><span class="s3">,</span>
+        <span class="s3">None,</span>
+        <span class="s1">size=(</span><span class="s5">24</span><span class="s3">, </span><span class="s5">24</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s1">style=freetype.STYLE_NORMAL</span><span class="s3">,</span>
+    <span class="s1">)</span>
+    <span class="s1">font.render_to(</span>
+        <span class="s1">screen</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s5">100 </span><span class="s1">+ r.width</span><span class="s3">, </span><span class="s5">580</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s4">&quot; HORIZONTAL&quot;</span><span class="s3">,</span>
+        <span class="s4">&quot;blue3&quot;</span><span class="s3">,</span>
+        <span class="s3">None,</span>
+        <span class="s1">size=(</span><span class="s5">48</span><span class="s3">, </span><span class="s5">24</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s1">style=freetype.STYLE_NORMAL</span><span class="s3">,</span>
+    <span class="s1">)</span>
+
+    <span class="s1">pg.display.flip()</span>
+
+    <span class="s3">while True</span><span class="s1">:</span>
+        <span class="s3">if </span><span class="s1">pg.event.wait().type </span><span class="s3">in </span><span class="s1">(pg.QUIT</span><span class="s3">, </span><span class="s1">pg.KEYDOWN</span><span class="s3">, </span><span class="s1">pg.MOUSEBUTTONDOWN):</span>
+            <span class="s3">break</span>
+
+    <span class="s1">pg.quit()</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s4">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">run()</span>
+</pre>
+</body>
+</html>

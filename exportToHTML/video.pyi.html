@@ -1,0 +1,179 @@
+<html>
+<head>
+<title>video.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+video.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Any</span><span class="s0">, </span><span class="s1">Generator</span><span class="s0">, </span><span class="s1">Iterable</span><span class="s0">, </span><span class="s1">Optional</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">Union</span>
+
+<span class="s0">from </span><span class="s1">pygame.color </span><span class="s0">import </span><span class="s1">Color</span>
+<span class="s0">from </span><span class="s1">pygame.rect </span><span class="s0">import </span><span class="s1">Rect</span>
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+
+<span class="s0">from </span><span class="s1">.._common </span><span class="s0">import </span><span class="s1">RectValue</span><span class="s0">, </span><span class="s1">Literal</span>
+
+<span class="s1">WINDOWPOS_UNDEFINED: int</span>
+<span class="s1">WINDOWPOS_CENTERED: int</span>
+
+<span class="s1">MESSAGEBOX_ERROR: int</span>
+<span class="s1">MESSAGEBOX_WARNING: int</span>
+<span class="s1">MESSAGEBOX_INFORMATION: int</span>
+
+<span class="s0">class </span><span class="s1">RendererDriverInfo:</span>
+    <span class="s1">name: str</span>
+    <span class="s1">flags: int</span>
+    <span class="s1">num_texture_formats: int</span>
+    <span class="s1">max_texture_width: int</span>
+    <span class="s1">max_texture_height: int</span>
+
+<span class="s0">def </span><span class="s1">get_drivers() -&gt; Generator[RendererDriverInfo</span><span class="s0">, None, None</span><span class="s1">]: ...</span>
+<span class="s0">def </span><span class="s1">get_grabbed_window() -&gt; Optional[Window]: ...</span>
+<span class="s0">def </span><span class="s1">messagebox(</span>
+    <span class="s1">title: str</span><span class="s0">,</span>
+    <span class="s1">message: str</span><span class="s0">,</span>
+    <span class="s1">window: Optional[Window] = </span><span class="s0">None,</span>
+    <span class="s1">info: bool = </span><span class="s0">False,</span>
+    <span class="s1">warn: bool = </span><span class="s0">False,</span>
+    <span class="s1">error: bool = </span><span class="s0">False,</span>
+    <span class="s1">buttons: Tuple[str</span><span class="s0">, </span><span class="s1">...] = (</span><span class="s2">&quot;OK&quot;</span><span class="s0">,</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">return_button: int = </span><span class="s3">0</span><span class="s0">,</span>
+    <span class="s1">escape_button: int = </span><span class="s3">0</span><span class="s0">,</span>
+<span class="s1">) -&gt; int: ...</span>
+
+<span class="s0">class </span><span class="s1">Window:</span>
+    <span class="s1">DEFAULT_SIZE: Tuple[Literal[</span><span class="s3">640</span><span class="s1">]</span><span class="s0">, </span><span class="s1">Literal[</span><span class="s3">480</span><span class="s1">]]</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">title: str = </span><span class="s2">&quot;pygame&quot;</span><span class="s0">,</span>
+        <span class="s1">size: Iterable[int] = (</span><span class="s3">640</span><span class="s0">, </span><span class="s3">480</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s1">position: Optional[Iterable[int]] = </span><span class="s0">None,</span>
+        <span class="s1">fullscreen: bool = </span><span class="s0">False,</span>
+        <span class="s1">fullscreen_desktop: bool = </span><span class="s0">False,</span>
+        <span class="s1">**kwargs: bool</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@classmethod</span>
+    <span class="s0">def </span><span class="s1">from_display_module(cls) -&gt; Window: ...</span>
+    <span class="s1">grab: bool</span>
+    <span class="s1">relative_mouse: bool</span>
+    <span class="s0">def </span><span class="s1">set_windowed(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">set_fullscreen(self</span><span class="s0">, </span><span class="s1">desktop: bool = </span><span class="s0">False</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">title: str</span>
+    <span class="s0">def </span><span class="s1">destroy(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">hide(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">show(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">focus(self</span><span class="s0">, </span><span class="s1">input_only: bool = </span><span class="s0">False</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">restore(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">maximize(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">minimize(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">resizable: bool</span>
+    <span class="s1">borderless: bool</span>
+    <span class="s0">def </span><span class="s1">set_icon(self</span><span class="s0">, </span><span class="s1">surface: Surface) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">id: int</span>
+    <span class="s1">size: Iterable[int]</span>
+    <span class="s1">position: Union[int</span><span class="s0">, </span><span class="s1">Iterable[int]]</span>
+    <span class="s1">opacity: float</span>
+    <span class="s1">brightness: float</span>
+    <span class="s1">display_index: int</span>
+    <span class="s0">def </span><span class="s1">set_modal_for(self</span><span class="s0">, </span><span class="s1">Window) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s0">class </span><span class="s1">Texture:</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">renderer: Renderer</span><span class="s0">,</span>
+        <span class="s1">size: Iterable[int]</span><span class="s0">,</span>
+        <span class="s1">static: bool = </span><span class="s0">False,</span>
+        <span class="s1">streaming: bool = </span><span class="s0">False,</span>
+        <span class="s1">target: bool = </span><span class="s0">False,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@staticmethod</span>
+    <span class="s0">def </span><span class="s1">from_surface(renderer: Renderer</span><span class="s0">, </span><span class="s1">surface: Surface) -&gt; Texture: ...</span>
+    <span class="s1">renderer: Renderer</span>
+    <span class="s1">width: int</span>
+    <span class="s1">height: int</span>
+    <span class="s1">alpha: int</span>
+    <span class="s1">blend_mode: int</span>
+    <span class="s1">color: Color</span>
+    <span class="s0">def </span><span class="s1">get_rect(self</span><span class="s0">, </span><span class="s1">**kwargs: Any) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">draw(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">srcrect: Optional[RectValue] = </span><span class="s0">None,</span>
+        <span class="s1">dstrect: Optional[RectValue] = </span><span class="s0">None,</span>
+        <span class="s1">angle: int = </span><span class="s3">0</span><span class="s0">,</span>
+        <span class="s1">origin: Optional[Iterable[int]] = </span><span class="s0">None,</span>
+        <span class="s1">flip_x: bool = </span><span class="s0">False,</span>
+        <span class="s1">flip_y: bool = </span><span class="s0">False,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">area: Optional[RectValue] = </span><span class="s0">None</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s0">class </span><span class="s1">Image:</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">textureOrImage: Union[Texture</span><span class="s0">, </span><span class="s1">Image]</span><span class="s0">,</span>
+        <span class="s1">srcrect: Optional[RectValue] = </span><span class="s0">None,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_rect(self</span><span class="s0">, </span><span class="s1">**kwargs: Any) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">draw(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">srcrect: Optional[RectValue] = </span><span class="s0">None, </span><span class="s1">dstrect: Optional[RectValue] = </span><span class="s0">None</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">angle: float</span>
+    <span class="s1">origin: Optional[Iterable[float]]</span>
+    <span class="s1">flip_x: bool</span>
+    <span class="s1">flip_y: bool</span>
+    <span class="s1">color: Color</span>
+    <span class="s1">alpha: float</span>
+    <span class="s1">blend_mode: int</span>
+    <span class="s1">texture: Texture</span>
+    <span class="s1">srcrect: Rect</span>
+
+<span class="s0">class </span><span class="s1">Renderer:</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">window: Window</span><span class="s0">,</span>
+        <span class="s1">index: int = -</span><span class="s3">1</span><span class="s0">,</span>
+        <span class="s1">accelerated: int = -</span><span class="s3">1</span><span class="s0">,</span>
+        <span class="s1">vsync: bool = </span><span class="s0">False,</span>
+        <span class="s1">target_texture: bool = </span><span class="s0">False,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@classmethod</span>
+    <span class="s0">def </span><span class="s1">from_window(cls</span><span class="s0">, </span><span class="s1">window: Window) -&gt; Renderer: ...</span>
+    <span class="s1">draw_blend_mode: int</span>
+    <span class="s1">draw_color: Color</span>
+    <span class="s0">def </span><span class="s1">clear(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">present(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_viewport(self) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">set_viewport(self</span><span class="s0">, </span><span class="s1">area: Optional[RectValue]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">logical_size: Iterable[int]</span>
+    <span class="s1">scale: Iterable[float]</span>
+    <span class="s1">target: Optional[Texture]</span>
+    <span class="s0">def </span><span class="s1">blit(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">source: Union[Texture</span><span class="s0">, </span><span class="s1">Image]</span><span class="s0">,</span>
+        <span class="s1">dest: Optional[RectValue] = </span><span class="s0">None,</span>
+        <span class="s1">area: Optional[RectValue] = </span><span class="s0">None,</span>
+        <span class="s1">special_flags: int = </span><span class="s3">0</span><span class="s0">,</span>
+    <span class="s1">) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">draw_line(self</span><span class="s0">, </span><span class="s1">p1: Iterable[int]</span><span class="s0">, </span><span class="s1">p2: Iterable[int]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">draw_point(self</span><span class="s0">, </span><span class="s1">point: Iterable[int]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">draw_rect(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">fill_rect(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">to_surface(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">surface: Optional[Surface] = </span><span class="s0">None, </span><span class="s1">area: Optional[RectValue] = </span><span class="s0">None</span>
+    <span class="s1">) -&gt; Surface: ...</span>
+    <span class="s1">@staticmethod</span>
+    <span class="s0">def </span><span class="s1">compose_custom_blend_mode(</span>
+        <span class="s1">color_mode: Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">alpha_mode: Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">) -&gt; int: ...</span>
+</pre>
+</body>
+</html>

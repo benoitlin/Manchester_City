@@ -1,0 +1,108 @@
+<html>
+<head>
+<title>pgplatform.h</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #6897bb;}
+.s4 { color: #ab51ba;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+pgplatform.h</font>
+</center></td></tr></table>
+<pre><span class="s0">/* platform/compiler adjustments */</span>
+<span class="s2">#ifndef </span><span class="s1">PG_PLATFORM_H</span>
+<span class="s2">#define </span><span class="s1">PG_PLATFORM_H</span>
+
+<span class="s2">#if </span><span class="s1">defined(HAVE_SNPRINTF) </span><span class="s0">/* defined in python.h (pyerrors.h) and SDL.h \ 
+                              (SDL_config.h) */</span>
+<span class="s2">#undef </span><span class="s1">HAVE_SNPRINTF       </span><span class="s0">/* remove GCC redefine warning */</span>
+<span class="s2">#endif                     </span><span class="s0">/* HAVE_SNPRINTF */</span>
+
+<span class="s2">#ifndef </span><span class="s1">PG_INLINE</span>
+<span class="s2">#if </span><span class="s1">defined(__clang__)</span>
+<span class="s2">#define </span><span class="s1">PG_INLINE __inline__ __attribute__((__unused__))</span>
+<span class="s1">#elif defined(__GNUC__)</span>
+<span class="s2">#define </span><span class="s1">PG_INLINE __inline__</span>
+<span class="s1">#elif defined(_MSC_VER)</span>
+<span class="s2">#define </span><span class="s1">PG_INLINE __inline</span>
+<span class="s1">#elif defined(__STDC_VERSION__) &amp;&amp; __STDC_VERSION__ &gt;= </span><span class="s3">199901</span><span class="s1">L</span>
+<span class="s2">#define </span><span class="s1">PG_INLINE </span><span class="s4">inline</span>
+<span class="s2">#else</span>
+<span class="s2">#define </span><span class="s1">PG_INLINE</span>
+<span class="s2">#endif</span>
+<span class="s2">#endif </span><span class="s0">/* ~PG_INLINE */</span>
+
+<span class="s0">// Worth trying this on MSVC/win32 builds to see if provides any speed up</span>
+<span class="s2">#ifndef </span><span class="s1">PG_FORCEINLINE</span>
+<span class="s2">#if </span><span class="s1">defined(__clang__)</span>
+<span class="s2">#define </span><span class="s1">PG_FORCEINLINE __inline__ __attribute__((__unused__))</span>
+<span class="s1">#elif defined(__GNUC__)</span>
+<span class="s2">#define </span><span class="s1">PG_FORCEINLINE __inline__</span>
+<span class="s1">#elif defined(_MSC_VER)</span>
+<span class="s2">#define </span><span class="s1">PG_FORCEINLINE __forceinline</span>
+<span class="s1">#elif defined(__STDC_VERSION__) &amp;&amp; __STDC_VERSION__ &gt;= </span><span class="s3">199901</span><span class="s1">L</span>
+<span class="s2">#define </span><span class="s1">PG_FORCEINLINE </span><span class="s4">inline</span>
+<span class="s2">#else</span>
+<span class="s2">#define </span><span class="s1">PG_FORCEINLINE</span>
+<span class="s2">#endif</span>
+<span class="s2">#endif </span><span class="s0">/* ~PG_FORCEINLINE */</span>
+
+<span class="s0">/* This is unconditionally defined in Python.h */</span>
+<span class="s2">#if </span><span class="s1">defined(_POSIX_C_SOURCE)</span>
+<span class="s2">#undef </span><span class="s1">_POSIX_C_SOURCE</span>
+<span class="s2">#endif</span>
+
+<span class="s2">#if </span><span class="s1">defined(HAVE_SNPRINTF)</span>
+<span class="s2">#undef </span><span class="s1">HAVE_SNPRINTF</span>
+<span class="s2">#endif</span>
+
+<span class="s0">/* SDL needs WIN32 */</span>
+<span class="s2">#if </span><span class="s1">!defined(WIN32) &amp;&amp;                                           \</span>
+    <span class="s1">(defined(MS_WIN32) || defined(_WIN32) || defined(__WIN32) || \</span>
+     <span class="s1">defined(__WIN32__) || defined(_WINDOWS))</span>
+<span class="s2">#define </span><span class="s1">WIN32</span>
+<span class="s2">#endif</span>
+
+<span class="s0">/* Commenting out SSE4_2 stuff because it does not do runtime detection. 
+#ifndef PG_TARGET_SSE4_2 
+#if defined(__clang__) || (defined(__GNUC__) &amp;&amp; ((__GNUC__ == 4 &amp;&amp; 
+__GNUC_MINOR__ &gt;= 9) || __GNUC__ &gt;= 5 )) 
+//The old gcc 4.8 on centos used by manylinux1 does not seem to get sse4.2 
+intrinsics #define PG_FUNCTION_TARGET_SSE4_2 __attribute__((target(&quot;sse4.2&quot;))) 
+// No else; we define the fallback later 
+#endif 
+#endif 
+*/</span>
+<span class="s0">/* ~PG_TARGET_SSE4_2 */</span>
+
+<span class="s0">/* 
+#ifdef PG_FUNCTION_TARGET_SSE4_2 
+#if !defined(__SSE4_2__) &amp;&amp; !defined(PG_COMPILE_SSE4_2) 
+#if defined(__x86_64__) || defined(__i386__) 
+#define PG_COMPILE_SSE4_2 1 
+#endif 
+#endif 
+#endif 
+*/</span>
+<span class="s0">/* ~PG_TARGET_SSE4_2 */</span>
+
+<span class="s0">/* Fallback definition of target attribute */</span>
+<span class="s2">#ifndef </span><span class="s1">PG_FUNCTION_TARGET_SSE4_2</span>
+<span class="s2">#define </span><span class="s1">PG_FUNCTION_TARGET_SSE4_2</span>
+<span class="s2">#endif</span>
+
+<span class="s2">#ifndef </span><span class="s1">PG_COMPILE_SSE4_2</span>
+<span class="s2">#define </span><span class="s1">PG_COMPILE_SSE4_2 </span><span class="s3">0</span>
+<span class="s2">#endif</span>
+
+<span class="s2">#endif </span><span class="s0">/* ~PG_PLATFORM_H */</span>
+</pre>
+</body>
+</html>

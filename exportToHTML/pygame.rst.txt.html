@@ -1,0 +1,505 @@
+<html>
+<head>
+<title>pygame.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+pygame.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame`</span>
+<span class="s0">=============</span>
+
+<span class="s0">.. module:: pygame</span>
+   <span class="s0">:synopsis: the top level pygame package</span>
+
+<span class="s0">| :sl:`the top level pygame package`</span>
+
+<span class="s0">The pygame package represents the top-level package for others to use. Pygame</span>
+<span class="s0">itself is broken into many submodules, but this does not affect programs that</span>
+<span class="s0">use pygame.</span>
+
+<span class="s0">As a convenience, most of the top-level variables in pygame have been placed</span>
+<span class="s0">inside a module named :mod:`pygame.locals`. This is meant to be used with</span>
+<span class="s0">``from pygame.locals import *``, in addition to ``import pygame``.</span>
+
+<span class="s0">When you ``import pygame`` all available pygame submodules are automatically</span>
+<span class="s0">imported. Be aware that some of the pygame modules are considered *optional*,</span>
+<span class="s0">and may not be available. In that case, pygame will provide a placeholder</span>
+<span class="s0">object instead of the module, which can be used to test for availability.</span>
+
+<span class="s0">.. function:: init</span>
+
+   <span class="s0">| :sl:`initialize all imported pygame modules`</span>
+   <span class="s0">| :sg:`init() -&gt; (numpass, numfail)`</span>
+
+   <span class="s0">Initialize all imported pygame modules. No exceptions will be raised if a</span>
+   <span class="s0">module fails, but the total number if successful and failed inits will be</span>
+   <span class="s0">returned as a tuple. You can always initialize individual modules manually,</span>
+   <span class="s0">but :func:`pygame.init` is a convenient way to get everything started. The</span>
+   <span class="s0">``init()`` functions for individual modules will raise exceptions when they</span>
+   <span class="s0">fail.</span>
+
+   <span class="s0">You may want to initialize the different modules separately to speed up your</span>
+   <span class="s0">program or to not use modules your game does not require.</span>
+
+   <span class="s0">It is safe to call this ``init()`` more than once as repeated calls will have</span>
+   <span class="s0">no effect. This is true even if you have ``pygame.quit()`` all the modules.</span>
+
+   <span class="s0">.. ## pygame.init ##</span>
+
+<span class="s0">.. function:: quit</span>
+
+   <span class="s0">| :sl:`uninitialize all pygame modules`</span>
+   <span class="s0">| :sg:`quit() -&gt; None`</span>
+
+   <span class="s0">Uninitialize all pygame modules that have previously been initialized. When</span>
+   <span class="s0">the Python interpreter shuts down, this method is called regardless, so your</span>
+   <span class="s0">program should not need it, except when it wants to terminate its pygame</span>
+   <span class="s0">resources and continue. It is safe to call this function more than once as</span>
+   <span class="s0">repeated calls have no effect.</span>
+
+   <span class="s0">.. note::</span>
+      <span class="s0">Calling :func:`pygame.quit` will not exit your program. Consider letting</span>
+      <span class="s0">your program end in the same way a normal Python program will end.</span>
+
+   <span class="s0">.. ## pygame.quit ##</span>
+
+<span class="s0">.. function:: get_init</span>
+
+   <span class="s0">| :sl:`returns True if pygame is currently initialized`</span>
+   <span class="s0">| :sg:`get_init() -&gt; bool`</span>
+
+   <span class="s0">Returns ``True`` if pygame is currently initialized.</span>
+
+   <span class="s0">.. versionadded:: 1.9.5</span>
+
+   <span class="s0">.. ## pygame.get_init ##</span>
+
+<span class="s0">.. exception:: error</span>
+
+   <span class="s0">| :sl:`standard pygame exception`</span>
+   <span class="s0">| :sg:`raise pygame.error(message)`</span>
+
+   <span class="s0">This exception is raised whenever a pygame or SDL operation fails. You</span>
+   <span class="s0">can catch any anticipated problems and deal with the error. The exception is</span>
+   <span class="s0">always raised with a descriptive message about the problem.</span>
+
+   <span class="s0">Derived from the ``RuntimeError`` exception, which can also be used to catch</span>
+   <span class="s0">these raised errors.</span>
+
+   <span class="s0">.. ## pygame.error ##</span>
+
+<span class="s0">.. function:: get_error</span>
+
+   <span class="s0">| :sl:`get the current error message`</span>
+   <span class="s0">| :sg:`get_error() -&gt; errorstr`</span>
+
+   <span class="s0">SDL maintains an internal error message. This message will usually be</span>
+   <span class="s0">given to you when :func:`pygame.error` is raised, so this function will</span>
+   <span class="s0">rarely be needed.</span>
+
+   <span class="s0">.. ## pygame.get_error ##</span>
+
+<span class="s0">.. function:: set_error</span>
+
+   <span class="s0">| :sl:`set the current error message`</span>
+   <span class="s0">| :sg:`set_error(error_msg) -&gt; None`</span>
+
+   <span class="s0">SDL maintains an internal error message. This message will usually be</span>
+   <span class="s0">given to you when :func:`pygame.error` is raised, so this function will</span>
+   <span class="s0">rarely be needed.</span>
+
+   <span class="s0">.. ## pygame.set_error ##</span>
+
+<span class="s0">.. function:: get_sdl_version</span>
+
+   <span class="s0">| :sl:`get the version number of SDL`</span>
+   <span class="s0">| :sg:`get_sdl_version() -&gt; major, minor, patch`</span>
+
+   <span class="s0">Returns the three version numbers of the SDL library. This version is built</span>
+   <span class="s0">at compile time. It can be used to detect which features may or may not be</span>
+   <span class="s0">available through pygame.</span>
+
+   <span class="s0">.. versionadded:: 1.7.0</span>
+
+   <span class="s0">.. ## pygame.get_sdl_version ##</span>
+
+<span class="s0">.. function:: get_sdl_byteorder</span>
+
+   <span class="s0">| :sl:`get the byte order of SDL`</span>
+   <span class="s0">| :sg:`get_sdl_byteorder() -&gt; int`</span>
+
+   <span class="s0">Returns the byte order of the SDL library. It returns ``1234`` for little</span>
+   <span class="s0">endian byte order and ``4321`` for big endian byte order.</span>
+
+   <span class="s0">.. versionadded:: 1.8</span>
+
+   <span class="s0">.. ## pygame.get_sdl_byteorder ##</span>
+
+<span class="s0">.. function:: register_quit</span>
+
+   <span class="s0">| :sl:`register a function to be called when pygame quits`</span>
+   <span class="s0">| :sg:`register_quit(callable) -&gt; None`</span>
+
+   <span class="s0">When :func:`pygame.quit` is called, all registered quit functions are</span>
+   <span class="s0">called. Pygame modules do this automatically when they are initializing, so</span>
+   <span class="s0">this function will rarely be needed.</span>
+
+   <span class="s0">.. ## pygame.register_quit ##</span>
+
+<span class="s0">.. function:: encode_string</span>
+
+   <span class="s0">| :sl:`Encode a Unicode or bytes object`</span>
+   <span class="s0">| :sg:`encode_string([obj [, encoding [, errors [, etype]]]]) -&gt; bytes or None`</span>
+
+   <span class="s0">obj: If Unicode, encode; if bytes, return unaltered; if anything else,</span>
+   <span class="s0">return ``None``; if not given, raise ``SyntaxError``.</span>
+
+   <span class="s0">encoding (string): If present, encoding to use. The default is</span>
+   <span class="s0">``'unicode_escape'``.</span>
+
+   <span class="s0">errors (string): If given, how to handle unencodable characters. The default</span>
+   <span class="s0">is ``'backslashreplace'``.</span>
+
+   <span class="s0">etype (exception type): If given, the exception type to raise for an</span>
+   <span class="s0">encoding error. The default is ``UnicodeEncodeError``, as returned by</span>
+   <span class="s0">``PyUnicode_AsEncodedString()``. For the default encoding and errors values</span>
+   <span class="s0">there should be no encoding errors.</span>
+
+   <span class="s0">This function is used in encoding file paths. Keyword arguments are</span>
+   <span class="s0">supported.</span>
+
+   <span class="s0">.. versionadded:: 1.9.2 (primarily for use in unit tests)</span>
+
+   <span class="s0">.. ## pygame.encode_string ##</span>
+
+<span class="s0">.. function:: encode_file_path</span>
+
+   <span class="s0">| :sl:`Encode a Unicode or bytes object as a file system path`</span>
+   <span class="s0">| :sg:`encode_file_path([obj [, etype]]) -&gt; bytes or None`</span>
+
+   <span class="s0">obj: If Unicode, encode; if bytes, return unaltered; if anything else,</span>
+   <span class="s0">return ``None``; if not given, raise ``SyntaxError``.</span>
+
+   <span class="s0">etype (exception type): If given, the exception type to raise for an</span>
+   <span class="s0">encoding error. The default is ``UnicodeEncodeError``, as returned by</span>
+   <span class="s0">``PyUnicode_AsEncodedString()``.</span>
+
+   <span class="s0">This function is used to encode file paths in pygame. Encoding is to the</span>
+   <span class="s0">codec as returned by ``sys.getfilesystemencoding()``. Keyword arguments are</span>
+   <span class="s0">supported.</span>
+
+   <span class="s0">.. versionadded:: 1.9.2 (primarily for use in unit tests)</span>
+
+   <span class="s0">.. ## pygame.encode_file_path ##</span>
+
+
+<span class="s0">:mod:`pygame.version`</span>
+<span class="s0">=====================</span>
+
+<span class="s0">.. module:: pygame.version</span>
+   <span class="s0">:synopsis: small module containing version information</span>
+
+<span class="s0">| :sl:`small module containing version information`</span>
+
+<span class="s0">This module is automatically imported into the pygame package and can be used to</span>
+<span class="s0">check which version of pygame has been imported.</span>
+
+<span class="s0">.. data:: ver</span>
+
+   <span class="s0">| :sl:`version number as a string`</span>
+   <span class="s0">| :sg:`ver = '1.2'`</span>
+
+   <span class="s0">This is the version represented as a string. It can contain a micro release</span>
+   <span class="s0">number as well, e.g. ``'1.5.2'``</span>
+
+   <span class="s0">.. ## pygame.version.ver ##</span>
+
+<span class="s0">.. data:: vernum</span>
+
+   <span class="s0">| :sl:`tupled integers of the version`</span>
+   <span class="s0">| :sg:`vernum = (1, 5, 3)`</span>
+
+   <span class="s0">This version information can easily be compared with other version</span>
+   <span class="s0">numbers of the same format. An example of checking pygame version numbers</span>
+   <span class="s0">would look like this:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">if pygame.version.vernum &lt; (1, 5):</span>
+           <span class="s0">print('Warning, older version of pygame (%s)' %  pygame.version.ver)</span>
+           <span class="s0">disable_advanced_features = True</span>
+
+   <span class="s0">.. versionadded:: 1.9.6 Attributes ``major``, ``minor``, and ``patch``.</span>
+
+   <span class="s0">::</span>
+
+      <span class="s0">vernum.major == vernum[0]</span>
+      <span class="s0">vernum.minor == vernum[1]</span>
+      <span class="s0">vernum.patch == vernum[2]</span>
+
+   <span class="s0">.. versionchanged:: 1.9.6</span>
+      <span class="s0">``str(pygame.version.vernum)`` returns a string like ``&quot;2.0.0&quot;`` instead</span>
+      <span class="s0">of ``&quot;(2, 0, 0)&quot;``.</span>
+
+   <span class="s0">.. versionchanged:: 1.9.6</span>
+      <span class="s0">``repr(pygame.version.vernum)`` returns a string like</span>
+      <span class="s0">``&quot;PygameVersion(major=2, minor=0, patch=0)&quot;`` instead of ``&quot;(2, 0, 0)&quot;``.</span>
+
+   <span class="s0">.. ## pygame.version.vernum ##</span>
+
+<span class="s0">.. data:: rev</span>
+
+   <span class="s0">| :sl:`repository revision of the build`</span>
+   <span class="s0">| :sg:`rev = 'a6f89747b551+'`</span>
+
+   <span class="s0">The Mercurial node identifier of the repository checkout from which this</span>
+   <span class="s0">package was built. If the identifier ends with a plus sign '+' then the</span>
+   <span class="s0">package contains uncommitted changes. Please include this revision number</span>
+   <span class="s0">in bug reports, especially for non-release pygame builds.</span>
+   
+   <span class="s0">Important note: pygame development has moved to github, this variable is </span>
+   <span class="s0">obsolete now. As soon as development shifted to github, this variable started</span>
+   <span class="s0">returning an empty string ``&quot;&quot;``. </span>
+   <span class="s0">It has always been returning an empty string since ``v1.9.5``.</span>
+   
+   <span class="s0">.. versionchanged:: 1.9.5</span>
+      <span class="s0">Always returns an empty string ``&quot;&quot;``.</span>
+
+   <span class="s0">.. ## pygame.version.rev ##</span>
+
+<span class="s0">.. data:: SDL</span>
+
+   <span class="s0">| :sl:`tupled integers of the SDL library version`</span>
+   <span class="s0">| :sg:`SDL = '(2, 0, 12)'`</span>
+
+   <span class="s0">This is the SDL library version represented as an extended tuple. It also has</span>
+   <span class="s0">attributes 'major', 'minor' &amp; 'patch' that can be accessed like this:</span>
+
+   <span class="s0">::</span>
+
+     <span class="s0">&gt;&gt;&gt; pygame.version.SDL.major</span>
+     <span class="s0">2</span>
+
+   <span class="s0">printing the whole thing returns a string like this:</span>
+
+   <span class="s0">::</span>
+
+    <span class="s0">&gt;&gt;&gt; pygame.version.SDL</span>
+    <span class="s0">SDLVersion(major=2, minor=0, patch=12)</span>
+
+   <span class="s0">.. versionadded:: 2.0.0</span>
+
+   <span class="s0">.. ## pygame.version.SDL ##</span>
+
+<span class="s0">.. ## pygame.version ##</span>
+
+<span class="s0">.. ## pygame ##</span>
+
+<span class="s0">.. _environment-variables:</span>
+
+<span class="s0">**Setting Environment Variables**</span>
+
+<span class="s0">Some aspects of pygame's behaviour can be controlled by setting environment variables, they cover a wide</span>
+<span class="s0">range of the library's functionality. Some of the variables are from pygame itself, while others come from</span>
+<span class="s0">the underlying C SDL library that pygame uses.</span>
+
+<span class="s0">In python, environment variables are usually set in code like this::</span>
+
+     <span class="s0">import os</span>
+     <span class="s0">os.environ['NAME_OF_ENVIRONMENT_VARIABLE'] = 'value_to_set'</span>
+
+<span class="s0">Or to preserve users ability to override the variable::</span>
+
+     <span class="s0">import os</span>
+     <span class="s0">os.environ['ENV_VAR'] = os.environ.get('ENV_VAR', 'value')</span>
+
+<span class="s0">If the variable is more useful for users of an app to set than the developer then they can set it like this:</span>
+
+<span class="s0">**Windows**::</span>
+
+    <span class="s0">set NAME_OF_ENVIRONMENT_VARIABLE=value_to_set</span>
+    <span class="s0">python my_application.py</span>
+
+<span class="s0">**Linux/Mac**::</span>
+
+    <span class="s0">ENV_VAR=value python my_application.py</span>
+
+<span class="s0">For some variables they need to be set before initialising pygame, some must be set before even importing pygame,</span>
+<span class="s0">and others can simply be set right before the area of code they control is run.</span>
+
+<span class="s0">Below is a list of environment variables, their settable values, and a brief description of what they do.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">**Pygame Environment Variables**</span>
+
+<span class="s0">These variables are defined by pygame itself.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">PYGAME_DISPLAY - Experimental (subject to change)</span>
+ <span class="s0">Set index of the display to use, &quot;0&quot; is the default.</span>
+
+<span class="s0">This sets the display where pygame will open its window</span>
+<span class="s0">or screen. The value set here will be used if set before</span>
+<span class="s0">calling :func:`pygame.display.set_mode()`, and as long as no</span>
+<span class="s0">'display' parameter is passed into :func:`pygame.display.set_mode()`.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">PYGAME_FORCE_SCALE -</span>
+ <span class="s0">Set to &quot;photo&quot; or &quot;default&quot;.</span>
+
+<span class="s0">This forces set_mode() to use the SCALED display mode and,</span>
+<span class="s0">if &quot;photo&quot; is set, makes the scaling use the slowest, but</span>
+<span class="s0">highest quality anisotropic scaling algorithm, if it is</span>
+<span class="s0">available. Must be set before calling :func:`pygame.display.set_mode()`.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">PYGAME_BLEND_ALPHA_SDL2 - New in pygame 2.0.0</span>
+ <span class="s0">Set to &quot;1&quot; to enable the SDL2 blitter.</span>
+
+<span class="s0">This makes pygame use the SDL2 blitter for all alpha</span>
+<span class="s0">blending. The SDL2 blitter is sometimes faster than</span>
+<span class="s0">the default blitter but uses a different formula so</span>
+<span class="s0">the final colours may differ. Must be set before</span>
+<span class="s0">:func:`pygame.init()` is called.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">PYGAME_HIDE_SUPPORT_PROMPT -</span>
+ <span class="s0">Set to &quot;1&quot; to hide the prompt.</span>
+
+<span class="s0">This stops the welcome message popping up in the</span>
+<span class="s0">console that tells you which version of python,</span>
+<span class="s0">pygame &amp; SDL you are using. Must be set before</span>
+<span class="s0">importing pygame.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">PYGAME_FREETYPE -</span>
+ <span class="s0">Set to &quot;1&quot; to enable.</span>
+
+<span class="s0">This switches the pygame.font module to a pure</span>
+<span class="s0">freetype implementation that bypasses SDL_ttf.</span>
+<span class="s0">See the font module for why you might want to</span>
+<span class="s0">do this. Must be set before importing pygame.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">PYGAME_CAMERA -</span>
+ <span class="s0">Set to &quot;opencv&quot; or &quot;vidcapture&quot;</span>
+
+<span class="s0">Forces the library backend used in the camera</span>
+<span class="s0">module, overriding the platform defaults. Must</span>
+<span class="s0">be set before calling :func:`pygame.camera.init()`.</span>
+
+<span class="s0">In pygame 2.0.3, backends can be set programmatically instead, and the old</span>
+<span class="s0">OpenCV backend has been replaced with one on top of &quot;opencv-python,&quot; rather</span>
+<span class="s0">than the old &quot;highgui&quot; OpenCV port. Also, there is a new native Windows</span>
+<span class="s0">backend available.</span>
+
+<span class="s0">|</span>
+<span class="s0">|</span>
+
+<span class="s0">**SDL Environment Variables**</span>
+
+<span class="s0">These variables are defined by SDL.</span>
+
+<span class="s0">For documentation on the environment variables available in</span>
+<span class="s0">pygame 1 try `here</span>
+<span class="s0">&lt;https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlenvvars.html&gt;`__.</span>
+<span class="s0">For Pygame 2, some selected environment variables are listed below.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">SDL_VIDEO_CENTERED -</span>
+ <span class="s0">Set to &quot;1&quot; to enable centering the window.</span>
+
+<span class="s0">This will make the pygame window open in the centre of the display.</span>
+<span class="s0">Must be set before calling :func:`pygame.display.set_mode()`.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">SDL_VIDEO_WINDOW_POS -</span>
+ <span class="s0">Set to &quot;x,y&quot; to position the top left corner of the window.</span>
+
+<span class="s0">This allows control over the placement of the pygame window within</span>
+<span class="s0">the display. Must be set before calling :func:`pygame.display.set_mode()`.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">SDL_VIDEODRIVER -</span>
+ <span class="s0">Set to &quot;drivername&quot; to change the video driver used.</span>
+
+<span class="s0">On some platforms there are multiple video drivers available and</span>
+<span class="s0">this allows users to pick between them. More information is available</span>
+<span class="s0">`here &lt;https://wiki.libsdl.org/FAQUsingSDL&gt;`__. Must be set before</span>
+<span class="s0">calling :func:`pygame.init()` or :func:`pygame.display.init()`.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">SDL_AUDIODRIVER -</span>
+ <span class="s0">Set to &quot;drivername&quot; to change the audio driver used.</span>
+
+<span class="s0">On some platforms there are multiple audio drivers available and</span>
+<span class="s0">this allows users to pick between them. More information is available</span>
+<span class="s0">`here &lt;https://wiki.libsdl.org/FAQUsingSDL&gt;`__. Must be set before</span>
+<span class="s0">calling :func:`pygame.init()` or :func:`pygame.mixer.init()`.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">SDL_VIDEO_ALLOW_SCREENSAVER</span>
+ <span class="s0">Set to &quot;1&quot; to allow screensavers while pygame apps are running.</span>
+
+<span class="s0">By default pygame apps disable screensavers while</span>
+<span class="s0">they are running. Setting this environment variable allows users or</span>
+<span class="s0">developers to change that and make screensavers run again.</span>
+
+<span class="s0">|</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR</span>
+ <span class="s0">Set to &quot;0&quot; to re-enable the compositor.</span>
+
+<span class="s0">By default SDL tries to disable the X11 compositor for all pygame</span>
+<span class="s0">apps. This is usually a good thing as it's faster, however if you</span>
+<span class="s0">have an app which *doesn't* update every frame and are using linux</span>
+<span class="s0">you may want to disable this bypass. The bypass has reported problems</span>
+<span class="s0">on KDE linux. This variable is only used on x11/linux platforms.</span>
+</pre>
+</body>
+</html>

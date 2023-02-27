@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>pixelarray.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+pixelarray.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Any</span><span class="s0">, </span><span class="s1">Dict</span><span class="s0">, </span><span class="s1">Sequence</span><span class="s0">, </span><span class="s1">Tuple</span>
+
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">ColorValue</span>
+
+<span class="s0">class </span><span class="s1">PixelArray:</span>
+    <span class="s1">surface: Surface</span>
+    <span class="s1">itemsize: int</span>
+    <span class="s1">ndim: int</span>
+    <span class="s1">shape: Tuple[int</span><span class="s0">, </span><span class="s1">...]</span>
+    <span class="s1">strides: Tuple[int</span><span class="s0">, </span><span class="s1">...]</span>
+    <span class="s2"># possibly going to be deprecated/removed soon, in which case these</span>
+    <span class="s2"># typestubs must be removed too</span>
+    <span class="s1">__array_interface__: Dict[str</span><span class="s0">, </span><span class="s1">Any]</span>
+    <span class="s1">__array_struct__: Any</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">surface: Surface) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__enter__(self) -&gt; PixelArray: ...</span>
+    <span class="s0">def </span><span class="s1">__exit__(self</span><span class="s0">, </span><span class="s1">*args</span><span class="s0">, </span><span class="s1">**kwargs) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">make_surface(self) -&gt; Surface: ...</span>
+    <span class="s0">def </span><span class="s1">replace(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">color: ColorValue</span><span class="s0">,</span>
+        <span class="s1">repcolor: ColorValue</span><span class="s0">,</span>
+        <span class="s1">distance: float = </span><span class="s3">0</span><span class="s0">,</span>
+        <span class="s1">weights: Sequence[float] = (</span><span class="s3">0.299</span><span class="s0">, </span><span class="s3">0.587</span><span class="s0">, </span><span class="s3">0.114</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">extract(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">color: ColorValue</span><span class="s0">,</span>
+        <span class="s1">distance: float = </span><span class="s3">0</span><span class="s0">,</span>
+        <span class="s1">weights: Sequence[float] = (</span><span class="s3">0.299</span><span class="s0">, </span><span class="s3">0.587</span><span class="s0">, </span><span class="s3">0.114</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">) -&gt; PixelArray: ...</span>
+    <span class="s0">def </span><span class="s1">compare(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">array: PixelArray</span><span class="s0">,</span>
+        <span class="s1">distance: float = </span><span class="s3">0</span><span class="s0">,</span>
+        <span class="s1">weights: Sequence[float] = (</span><span class="s3">0.299</span><span class="s0">, </span><span class="s3">0.587</span><span class="s0">, </span><span class="s3">0.114</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">) -&gt; PixelArray: ...</span>
+    <span class="s0">def </span><span class="s1">transpose(self) -&gt; PixelArray: ...</span>
+    <span class="s0">def </span><span class="s1">close(self) -&gt; PixelArray: ...</span>
+</pre>
+</body>
+</html>

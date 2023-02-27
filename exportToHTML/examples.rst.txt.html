@@ -1,0 +1,468 @@
+<html>
+<head>
+<title>examples.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+examples.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.examples`</span>
+<span class="s0">======================</span>
+
+<span class="s0">.. module:: pygame.examples</span>
+   <span class="s0">:synopsis: module of example programs</span>
+
+<span class="s0">| :sl:`module of example programs`</span>
+
+<span class="s0">These examples should help get you started with pygame. Here is a brief rundown</span>
+<span class="s0">of what you get. The source code for these examples is in the public domain.</span>
+<span class="s0">Feel free to use for your own projects.</span>
+
+<span class="s0">There are several ways to run the examples. First they can be run as</span>
+<span class="s0">stand-alone programs. Second they can be imported and their ``main()`` methods</span>
+<span class="s0">called (see below). Finally, the easiest way is to use the python -m option:</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">python -m pygame.examples.&lt;example name&gt; &lt;example arguments&gt;</span>
+
+<span class="s0">eg:</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">python -m pygame.examples.scaletest someimage.png</span>
+
+<span class="s0">Resources such as images and sounds for the examples are found in the </span>
+<span class="s0">pygame/examples/data subdirectory.</span>
+
+<span class="s0">You can find where the example files are installed by using the following</span>
+<span class="s0">commands inside the python interpreter.</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">&gt;&gt;&gt; import pygame.examples.scaletest</span>
+   <span class="s0">&gt;&gt;&gt; pygame.examples.scaletest.__file__</span>
+   <span class="s0">'/usr/lib/python2.6/site-packages/pygame/examples/scaletest.py'</span>
+
+<span class="s0">On each OS and version of Python the location will be slightly different.</span>
+<span class="s0">For example on Windows it might be in 'C:/Python26/Lib/site-packages/pygame/examples/'</span>
+<span class="s0">On Mac OS X it might be in '/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/site-packages/pygame/examples/'</span>
+
+
+<span class="s0">You can also run the examples in the python interpreter by calling each modules main() function.</span>
+
+<span class="s0">::</span>
+
+   <span class="s0">&gt;&gt;&gt; import pygame.examples.scaletest</span>
+   <span class="s0">&gt;&gt;&gt; pygame.examples.scaletest.main()</span>
+
+
+<span class="s0">We're always on the lookout for more examples and/or example requests. Code</span>
+<span class="s0">like this is probably the best way to start getting involved with python</span>
+<span class="s0">gaming.</span>
+
+<span class="s0">examples as a package is new to pygame 1.9.0. But most of the examples came with</span>
+<span class="s0">pygame much earlier.</span>
+
+<span class="s0">.. function:: aliens.main</span>
+
+   <span class="s0">| :sl:`play the full aliens example`</span>
+   <span class="s0">| :sg:`aliens.main() -&gt; None`</span>
+
+   <span class="s0">This started off as a port of the ``SDL`` demonstration, Aliens. Now it has</span>
+   <span class="s0">evolved into something sort of resembling fun. This demonstrates a lot of</span>
+   <span class="s0">different uses of sprites and optimized blitting. Also transparency,</span>
+   <span class="s0">colorkeys, fonts, sound, music, joystick, and more. (PS, my high score is</span>
+   <span class="s0">117! goodluck)</span>
+
+   <span class="s0">.. ## pygame.examples.aliens.main ##</span>
+
+<span class="s0">.. function:: stars.main</span>
+
+   <span class="s0">| :sl:`run a simple starfield example`</span>
+   <span class="s0">| :sg:`stars.main() -&gt; None`</span>
+
+   <span class="s0">A simple starfield example. You can change the center of perspective by</span>
+   <span class="s0">leftclicking the mouse on the screen.</span>
+
+   <span class="s0">.. ## pygame.examples.stars.main ##</span>
+
+<span class="s0">.. function:: chimp.main</span>
+
+   <span class="s0">| :sl:`hit the moving chimp`</span>
+   <span class="s0">| :sg:`chimp.main() -&gt; None`</span>
+
+   <span class="s0">This simple example is derived from the line-by-line tutorial that comes</span>
+   <span class="s0">with pygame. It is based on a 'popular' web banner. Note there are comments</span>
+   <span class="s0">here, but for the full explanation, follow along in the tutorial.</span>
+
+   <span class="s0">.. ## pygame.examples.chimp.main ##</span>
+
+<span class="s0">.. function:: moveit.main</span>
+
+   <span class="s0">| :sl:`display animated objects on the screen`</span>
+   <span class="s0">| :sg:`moveit.main() -&gt; None`</span>
+
+   <span class="s0">This is the full and final example from the Pygame Tutorial, &quot;How Do I Make</span>
+   <span class="s0">It Move&quot;. It creates 10 objects and animates them on the screen.</span>
+
+   <span class="s0">Note it's a bit scant on error checking, but it's easy to read. :]</span>
+   <span class="s0">Fortunately, this is python, and we needn't wrestle with a pile of error</span>
+   <span class="s0">codes.</span>
+
+   <span class="s0">.. ## pygame.examples.moveit.main ##</span>
+
+<span class="s0">.. function:: fonty.main</span>
+
+   <span class="s0">| :sl:`run a font rendering example`</span>
+   <span class="s0">| :sg:`fonty.main() -&gt; None`</span>
+
+   <span class="s0">Super quick, super simple application demonstrating the different ways to</span>
+   <span class="s0">render fonts with the font module</span>
+
+   <span class="s0">.. ## pygame.examples.fonty.main ##</span>
+
+<span class="s0">.. function:: freetype_misc.main</span>
+
+   <span class="s0">| :sl:`run a FreeType rendering example`</span>
+   <span class="s0">| :sg:`freetype_misc.main() -&gt; None`</span>
+
+   <span class="s0">A showcase of rendering features the :class:`pygame.freetype.Font`</span>
+   <span class="s0">class provides in addition to those available with :class:`pygame.font.Font`.</span>
+   <span class="s0">It is a demonstration of direct to surface rendering, with vertical text</span>
+   <span class="s0">and rotated text, opaque text and semi transparent text, horizontally</span>
+   <span class="s0">stretched text and vertically stretched text.</span>
+
+   <span class="s0">.. ## pygame.examples.fonty.main ##</span>
+
+<span class="s0">.. function:: vgrade.main</span>
+
+   <span class="s0">| :sl:`display a vertical gradient`</span>
+   <span class="s0">| :sg:`vgrade.main() -&gt; None`</span>
+
+   <span class="s0">Demonstrates creating a vertical gradient with pixelcopy and NumPy python.</span>
+   <span class="s0">The app will create a new gradient every half second and report the time</span>
+   <span class="s0">needed to create and display the image. If you're not prepared to start</span>
+   <span class="s0">working with the NumPy arrays, don't worry about the source for this one :]</span>
+
+   <span class="s0">.. ## pygame.examples.vgrade.main ##</span>
+
+<span class="s0">.. function:: eventlist.main</span>
+
+   <span class="s0">| :sl:`display pygame events`</span>
+   <span class="s0">| :sg:`eventlist.main() -&gt; None`</span>
+
+   <span class="s0">Eventlist is a sloppy style of pygame, but is a handy tool for learning</span>
+   <span class="s0">about pygame events and input. At the top of the screen are the state of</span>
+   <span class="s0">several device values, and a scrolling list of events are displayed on the</span>
+   <span class="s0">bottom.</span>
+
+   <span class="s0">This is not quality 'ui' code at all, but you can see how to implement very</span>
+   <span class="s0">non-interactive status displays, or even a crude text output control.</span>
+
+   <span class="s0">.. ## pygame.examples.eventlist.main ##</span>
+
+<span class="s0">.. function:: arraydemo.main</span>
+
+   <span class="s0">| :sl:`show various surfarray effects`</span>
+   <span class="s0">| :sg:`arraydemo.main(arraytype=None) -&gt; None`</span>
+
+   <span class="s0">Another example filled with various surfarray effects. It requires the</span>
+   <span class="s0">surfarray and image modules to be installed. This little demo can also make</span>
+   <span class="s0">a good starting point for any of your own tests with surfarray</span>
+
+   <span class="s0">The ``arraytype`` parameter is deprecated; passing any value besides 'numpy'</span>
+   <span class="s0">will raise ValueError.</span>
+
+   <span class="s0">.. ## pygame.examples.arraydemo.main ##</span>
+
+<span class="s0">.. function:: sound.main</span>
+
+   <span class="s0">| :sl:`load and play a sound`</span>
+   <span class="s0">| :sg:`sound.main(file_path=None) -&gt; None`</span>
+
+   <span class="s0">Extremely basic testing of the mixer module. Load a sound and play it. All</span>
+   <span class="s0">from the command shell, no graphics.</span>
+
+   <span class="s0">If provided, use the audio file 'file_path', otherwise use a default file.</span>
+
+   <span class="s0">``sound.py`` optional command line argument: an audio file</span>
+
+   <span class="s0">.. ## pygame.examples.sound.main ##</span>
+
+<span class="s0">.. function:: sound_array_demos.main</span>
+
+   <span class="s0">| :sl:`play various sndarray effects`</span>
+   <span class="s0">| :sg:`sound_array_demos.main(arraytype=None) -&gt; None`</span>
+
+
+   <span class="s0">Uses sndarray and NumPy to create offset faded copies of the</span>
+   <span class="s0">original sound. Currently it just uses hardcoded values for the number of</span>
+   <span class="s0">echoes and the delay. Easy for you to recreate as needed.</span>
+
+   <span class="s0">The ``arraytype`` parameter is deprecated; passing any value besides 'numpy'</span>
+   <span class="s0">will raise ValueError.</span>
+
+   <span class="s0">.. ## pygame.examples.sound_array_demos.main ##</span>
+
+<span class="s0">.. function:: liquid.main</span>
+
+   <span class="s0">| :sl:`display an animated liquid effect`</span>
+   <span class="s0">| :sg:`liquid.main() -&gt; None`</span>
+
+   <span class="s0">This example was created in a quick comparison with the BlitzBasic gaming</span>
+   <span class="s0">language. Nonetheless, it demonstrates a quick 8-bit setup (with colormap).</span>
+
+   <span class="s0">.. ## pygame.examples.liquid.main ##</span>
+
+<span class="s0">.. function:: glcube.main</span>
+
+   <span class="s0">| :sl:`display an animated 3D cube using OpenGL`</span>
+   <span class="s0">| :sg:`glcube.main() -&gt; None`</span>
+
+   <span class="s0">Using PyOpenGL and pygame, this creates a spinning 3D multicolored cube.</span>
+
+   <span class="s0">.. ## pygame.examples.glcube.main ##</span>
+
+<span class="s0">.. function:: scrap_clipboard.main</span>
+
+   <span class="s0">| :sl:`access the clipboard`</span>
+   <span class="s0">| :sg:`scrap_clipboard.main() -&gt; None`</span>
+
+   <span class="s0">A simple demonstration example for the clipboard support.</span>
+
+   <span class="s0">.. ## pygame.examples.scrap_clipboard.main ##</span>
+
+<span class="s0">.. function:: mask.main</span>
+
+   <span class="s0">| :sl:`display multiple images bounce off each other using collision detection`</span>
+   <span class="s0">| :sg:`mask.main(*args) -&gt; None`</span>
+
+   <span class="s0">Positional arguments:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">one or more image file names.</span>
+
+   <span class="s0">This ``pygame.masks`` demo will display multiple moving sprites bouncing off</span>
+   <span class="s0">each other. More than one sprite image can be provided.</span>
+
+   <span class="s0">If run as a program then ``mask.py`` takes one or more image files as</span>
+   <span class="s0">command line arguments.</span>
+
+   <span class="s0">.. ## pygame.examples.mask.main ##</span>
+
+<span class="s0">.. function:: testsprite.main</span>
+
+   <span class="s0">| :sl:`show lots of sprites moving around`</span>
+   <span class="s0">| :sg:`testsprite.main(update_rects = True, use_static = False, use_FastRenderGroup = False, screen_dims = [640, 480], use_alpha = False, flags = 0) -&gt; None`</span>
+
+   <span class="s0">Optional keyword arguments:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">update_rects - use the RenderUpdate sprite group class</span>
+       <span class="s0">use_static - include non-moving images</span>
+       <span class="s0">use_FastRenderGroup - Use the FastRenderGroup sprite group</span>
+       <span class="s0">screen_dims - pygame window dimensions</span>
+       <span class="s0">use_alpha - use alpha blending</span>
+       <span class="s0">flags - additional display mode flags</span>
+
+   <span class="s0">Like the ``testsprite.c`` that comes with SDL, this pygame version shows</span>
+   <span class="s0">lots of sprites moving around.</span>
+
+   <span class="s0">If run as a stand-alone program then no command line arguments are taken.</span>
+
+   <span class="s0">.. ## pygame.examples.testsprite.main ##</span>
+
+<span class="s0">.. function:: headless_no_windows_needed.main</span>
+
+   <span class="s0">| :sl:`write an image file that is smoothscaled copy of an input file`</span>
+   <span class="s0">| :sg:`headless_no_windows_needed.main(fin, fout, w, h) -&gt; None`</span>
+
+   <span class="s0">arguments:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">fin - name of an input image file</span>
+       <span class="s0">fout - name of the output file to create/overwrite</span>
+       <span class="s0">w, h - size of the rescaled image, as integer width and height</span>
+
+   <span class="s0">How to use pygame with no windowing system, like on headless servers.</span>
+
+   <span class="s0">Thumbnail generation with scaling is an example of what you can do with</span>
+   <span class="s0">pygame.</span>
+
+   <span class="s0">``NOTE``: the pygame scale function uses MMX/SSE if available, and can be</span>
+   <span class="s0">run in multiple threads.</span>
+
+   <span class="s0">If ``headless_no_windows_needed.py`` is run as a program it takes the</span>
+   <span class="s0">following command line arguments:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">-scale inputimage outputimage new_width new_height</span>
+       <span class="s0">eg. -scale in.png outpng 50 50</span>
+
+   <span class="s0">.. ## pygame.examples.headless_no_windows_needed.main ##</span>
+
+<span class="s0">.. function:: joystick.main</span>
+
+   <span class="s0">| :sl:`demonstrate joystick functionality`</span>
+   <span class="s0">| :sg:`joystick.main() -&gt; None`</span>
+
+   <span class="s0">A demo showing full joystick support.</span>
+
+   <span class="s0">.. versionadded:: 2.0.2</span>
+
+   <span class="s0">.. ## pygame.examples.joystick.main ##</span>
+
+<span class="s0">.. function:: blend_fill.main</span>
+
+   <span class="s0">| :sl:`demonstrate the various surface.fill method blend options`</span>
+   <span class="s0">| :sg:`blend_fill.main() -&gt; None`</span>
+
+   <span class="s0">A interactive demo that lets one choose which BLEND_xxx option to apply to a</span>
+   <span class="s0">surface.</span>
+
+   <span class="s0">.. ## pygame.examples.blend_fill.main ##</span>
+
+<span class="s0">.. function:: blit_blends.main</span>
+
+   <span class="s0">| :sl:`uses alternative additive fill to that of surface.fill`</span>
+   <span class="s0">| :sg:`blit_blends.main() -&gt; None`</span>
+
+   <span class="s0">Fake additive blending. Using NumPy. it doesn't clamp. Press r,g,b Somewhat</span>
+   <span class="s0">like blend_fill.</span>
+
+   <span class="s0">.. ## pygame.examples.blit_blends.main ##</span>
+
+<span class="s0">.. function:: cursors.main</span>
+
+   <span class="s0">| :sl:`display two different custom cursors`</span>
+   <span class="s0">| :sg:`cursors.main() -&gt; None`</span>
+
+   <span class="s0">Display an arrow or circle with crossbar cursor.</span>
+
+   <span class="s0">.. ## pygame.examples.cursors.main ##</span>
+
+<span class="s0">.. function:: pixelarray.main</span>
+
+   <span class="s0">| :sl:`display various pixelarray generated effects`</span>
+   <span class="s0">| :sg:`pixelarray.main() -&gt; None`</span>
+
+   <span class="s0">Display various pixelarray generated effects.</span>
+
+   <span class="s0">.. ## pygame.examples.pixelarray.main ##</span>
+
+<span class="s0">.. function:: scaletest.main</span>
+
+   <span class="s0">| :sl:`interactively scale an image using smoothscale`</span>
+   <span class="s0">| :sg:`scaletest.main(imagefile, convert_alpha=False, run_speed_test=True) -&gt; None`</span>
+
+   <span class="s0">arguments:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">imagefile - file name of source image (required)</span>
+       <span class="s0">convert_alpha - use convert_alpha() on the surf (default False)</span>
+       <span class="s0">run_speed_test - (default False)</span>
+
+   <span class="s0">A smoothscale example that resized an image on the screen. Vertical and</span>
+   <span class="s0">horizontal arrow keys are used to change the width and height of the</span>
+   <span class="s0">displayed image. If the convert_alpha option is True then the source image</span>
+   <span class="s0">is forced to have source alpha, whether or not the original images does. If</span>
+   <span class="s0">run_speed_test is True then a background timing test is performed instead of</span>
+   <span class="s0">the interactive scaler.</span>
+
+   <span class="s0">If ``scaletest.py`` is run as a program then the command line options are:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">ImageFile [-t] [-convert_alpha]</span>
+       <span class="s0">[-t] = Run Speed Test</span>
+       <span class="s0">[-convert_alpha] = Use convert_alpha() on the surf.</span>
+
+   <span class="s0">.. ## pygame.examples.scaletest.main ##</span>
+
+<span class="s0">.. function:: midi.main</span>
+
+   <span class="s0">| :sl:`run a midi example`</span>
+   <span class="s0">| :sg:`midi.main(mode='output', device_id=None) -&gt; None`</span>
+
+   <span class="s0">Arguments:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">mode - if 'output' run a midi keyboard output example</span>
+                 <span class="s0">'input' run a midi event logger input example</span>
+                 <span class="s0">'list' list available midi devices</span>
+              <span class="s0">(default 'output')</span>
+       <span class="s0">device_id - midi device number; if None then use the default midi input or</span>
+                   <span class="s0">output device for the system</span>
+
+   <span class="s0">The output example shows how to translate mouse clicks or computer keyboard</span>
+   <span class="s0">events into midi notes. It implements a rudimentary button widget and state</span>
+   <span class="s0">machine.</span>
+
+   <span class="s0">The input example shows how to translate midi input to pygame events.</span>
+
+   <span class="s0">With the use of a virtual midi patch cord the output and input examples can</span>
+   <span class="s0">be run as separate processes and connected so the keyboard output is</span>
+   <span class="s0">displayed on a console.</span>
+
+   <span class="s0">new to pygame 1.9.0</span>
+
+   <span class="s0">.. ## pygame.examples.midi.main ##</span>
+
+<span class="s0">.. function:: scroll.main</span>
+
+   <span class="s0">| :sl:`run a Surface.scroll example that shows a magnified image`</span>
+   <span class="s0">| :sg:`scroll.main(image_file=None) -&gt; None`</span>
+
+   <span class="s0">This example shows a scrollable image that has a zoom factor of eight. It</span>
+   <span class="s0">uses the :meth:`Surface.scroll() &lt;pygame.Surface.scroll&gt;`</span>
+   <span class="s0">function to shift the image on the display surface.</span>
+   <span class="s0">A clip rectangle protects a margin area. If called as a function,</span>
+   <span class="s0">the example accepts an optional image file path. If run as a program it</span>
+   <span class="s0">takes an optional file path command line argument. If no file is provided a</span>
+   <span class="s0">default image file is used.</span>
+
+   <span class="s0">When running click on a black triangle to move one pixel in the direction</span>
+   <span class="s0">the triangle points. Or use the arrow keys. Close the window or press</span>
+   <span class="s0">``ESC`` to quit.</span>
+
+   <span class="s0">.. ## pygame.examples.scroll.main ##</span>
+
+<span class="s0">.. function:: camera.main</span>
+
+   <span class="s0">| :sl:`display video captured live from an attached camera`</span>
+   <span class="s0">| :sg:`camera.main() -&gt; None`</span>
+
+   <span class="s0">A simple live video player, it uses the first available camera it finds on</span>
+   <span class="s0">the system.</span>
+
+   <span class="s0">.. ## pygame.examples.camera.main ##</span>
+
+<span class="s0">.. function:: playmus.main</span>
+
+   <span class="s0">| :sl:`play an audio file`</span>
+   <span class="s0">| :sg:`playmus.main(file_path) -&gt; None`</span>
+
+   <span class="s0">A simple music player with window and keyboard playback control. Playback can</span>
+   <span class="s0">be paused and rewound to the beginning.</span>
+
+   <span class="s0">.. ## pygame.examples.playmus.main ##</span>
+
+<span class="s0">.. ## pygame.examples ##</span>
+</pre>
+</body>
+</html>

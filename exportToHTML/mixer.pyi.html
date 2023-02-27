@@ -1,0 +1,118 @@
+<html>
+<head>
+<title>mixer.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+mixer.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Any</span><span class="s0">, </span><span class="s1">Dict</span><span class="s0">, </span><span class="s1">Optional</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">Union</span><span class="s0">, </span><span class="s1">final</span><span class="s0">, </span><span class="s1">overload</span>
+
+<span class="s0">import </span><span class="s1">numpy</span>
+
+<span class="s0">from </span><span class="s1">pygame.event </span><span class="s0">import </span><span class="s1">Event</span>
+
+<span class="s0">from </span><span class="s1">. </span><span class="s0">import </span><span class="s1">mixer_music</span>
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">FileArg</span>
+
+<span class="s2"># export mixer_music as mixer.music</span>
+<span class="s1">music = mixer_music</span>
+
+<span class="s0">def </span><span class="s1">init(</span>
+    <span class="s1">frequency: int = </span><span class="s3">44100</span><span class="s0">,</span>
+    <span class="s1">size: int = -</span><span class="s3">16</span><span class="s0">,</span>
+    <span class="s1">channels: int = </span><span class="s3">2</span><span class="s0">,</span>
+    <span class="s1">buffer: int = </span><span class="s3">512</span><span class="s0">,</span>
+    <span class="s1">devicename: Optional[str] = </span><span class="s0">None,</span>
+    <span class="s1">allowedchanges: int = </span><span class="s3">5</span><span class="s0">,</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">pre_init(</span>
+    <span class="s1">frequency: int = </span><span class="s3">44100</span><span class="s0">,</span>
+    <span class="s1">size: int = -</span><span class="s3">16</span><span class="s0">,</span>
+    <span class="s1">channels: int = </span><span class="s3">2</span><span class="s0">,</span>
+    <span class="s1">buffer: int = </span><span class="s3">512</span><span class="s0">,</span>
+    <span class="s1">devicename: Optional[str] = </span><span class="s0">None,</span>
+    <span class="s1">allowedchanges: int = </span><span class="s3">5</span><span class="s0">,</span>
+<span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">quit() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_init() -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+<span class="s0">def </span><span class="s1">stop() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">pause() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">unpause() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">fadeout(time: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">set_num_channels(count: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_num_channels() -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">set_reserved(count: int) -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">find_channel(force: bool = </span><span class="s0">False</span><span class="s1">) -&gt; Channel: ...</span>
+<span class="s0">def </span><span class="s1">get_busy() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">get_sdl_mixer_version(linked: bool = </span><span class="s0">True</span><span class="s1">) -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+
+<span class="s0">class </span><span class="s1">Sound:</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">file: FileArg) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">buffer: Any</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...  </span><span class="s2"># Buffer protocol is still not implemented in typing</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">array: numpy.ndarray</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...  </span><span class="s2"># Buffer protocol is still not implemented in typing</span>
+    <span class="s0">def </span><span class="s1">play(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">loops: int = </span><span class="s3">0</span><span class="s0">,</span>
+        <span class="s1">maxtime: int = </span><span class="s3">0</span><span class="s0">,</span>
+        <span class="s1">fade_ms: int = </span><span class="s3">0</span><span class="s0">,</span>
+    <span class="s1">) -&gt; Channel: ...</span>
+    <span class="s2"># possibly going to be deprecated/removed soon, in which case these</span>
+    <span class="s2"># typestubs must be removed too</span>
+    <span class="s1">__array_interface__: Dict[str</span><span class="s0">, </span><span class="s1">Any]</span>
+    <span class="s1">__array_struct__: Any</span>
+    <span class="s0">def </span><span class="s1">stop(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">fadeout(self</span><span class="s0">, </span><span class="s1">time: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">set_volume(self</span><span class="s0">, </span><span class="s1">value: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_volume(self) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">get_num_channels(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_length(self) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">get_raw(self) -&gt; bytes: ...</span>
+
+<span class="s1">@final</span>
+<span class="s0">class </span><span class="s1">Channel:</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">id: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">play(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">sound: Sound</span><span class="s0">,</span>
+        <span class="s1">loops: int = </span><span class="s3">0</span><span class="s0">,</span>
+        <span class="s1">maxtime: int = </span><span class="s3">0</span><span class="s0">,</span>
+        <span class="s1">fade_ms: int = </span><span class="s3">0</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">stop(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">pause(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">unpause(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">fadeout(self</span><span class="s0">, </span><span class="s1">time: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">queue(self</span><span class="s0">, </span><span class="s1">sound: Sound) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">set_volume(self</span><span class="s0">, </span><span class="s1">value: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">set_volume(self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">right: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_volume(self) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">get_busy(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">get_sound(self) -&gt; Sound: ...</span>
+    <span class="s0">def </span><span class="s1">get_queue(self) -&gt; Sound: ...</span>
+    <span class="s0">def </span><span class="s1">set_endevent(self</span><span class="s0">, </span><span class="s1">type: Union[int</span><span class="s0">, </span><span class="s1">Event] = </span><span class="s3">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_endevent(self) -&gt; int: ...</span>
+
+<span class="s1">SoundType = Sound</span>
+<span class="s1">ChannelType = Channel</span>
+</pre>
+</body>
+</html>

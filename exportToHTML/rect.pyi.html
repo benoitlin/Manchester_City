@@ -1,0 +1,219 @@
+<html>
+<head>
+<title>rect.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #6a8759;}
+.s4 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+rect.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">sys</span>
+<span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">(</span>
+    <span class="s1">Dict</span><span class="s0">,</span>
+    <span class="s1">Iterator</span><span class="s0">,</span>
+    <span class="s1">List</span><span class="s0">,</span>
+    <span class="s1">Sequence</span><span class="s0">,</span>
+    <span class="s1">Tuple</span><span class="s0">,</span>
+    <span class="s1">TypeVar</span><span class="s0">,</span>
+    <span class="s1">Union</span><span class="s0">,</span>
+    <span class="s1">overload</span><span class="s0">,</span>
+    <span class="s1">Callable</span><span class="s0">,</span>
+    <span class="s1">Any</span><span class="s0">,</span>
+    <span class="s1">Optional</span><span class="s0">,</span>
+<span class="s1">)</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">Coordinate</span><span class="s0">, </span><span class="s1">Literal</span><span class="s0">, </span><span class="s1">RectValue</span>
+
+<span class="s0">if </span><span class="s1">sys.version_info &gt;= (</span><span class="s2">3</span><span class="s0">, </span><span class="s2">9</span><span class="s1">):</span>
+    <span class="s0">from </span><span class="s1">collections.abc </span><span class="s0">import </span><span class="s1">Collection</span>
+<span class="s0">else</span><span class="s1">:</span>
+    <span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Collection</span>
+
+<span class="s1">_K = TypeVar(</span><span class="s3">&quot;_K&quot;</span><span class="s1">)</span>
+<span class="s1">_V = TypeVar(</span><span class="s3">&quot;_V&quot;</span><span class="s1">)</span>
+<span class="s1">_T = TypeVar(</span><span class="s3">&quot;_T&quot;</span><span class="s1">)</span>
+
+<span class="s4"># Rect confirms to the Collection ABC, since it also confirms to</span>
+<span class="s4"># Sized, Iterable and Container ABCs</span>
+<span class="s0">class </span><span class="s1">Rect(Collection[int]):</span>
+    <span class="s1">x: int</span>
+    <span class="s1">y: int</span>
+    <span class="s1">top: int</span>
+    <span class="s1">left: int</span>
+    <span class="s1">bottom: int</span>
+    <span class="s1">right: int</span>
+    <span class="s1">topleft: Tuple[int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">bottomleft: Tuple[int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">topright: Tuple[int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">bottomright: Tuple[int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">midtop: Tuple[int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">midleft: Tuple[int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">midbottom: Tuple[int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">midright: Tuple[int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">center: Tuple[int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">centerx: int</span>
+    <span class="s1">centery: int</span>
+    <span class="s1">size: Tuple[int</span><span class="s0">, </span><span class="s1">int]</span>
+    <span class="s1">width: int</span>
+    <span class="s1">height: int</span>
+    <span class="s1">w: int</span>
+    <span class="s1">h: int</span>
+    <span class="s1">__hash__: </span><span class="s0">None  </span><span class="s4"># type: ignore</span>
+    <span class="s1">__safe_for_unpickling__: Literal[</span><span class="s0">True</span><span class="s1">]</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">single_arg: RectValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__len__(self) -&gt; Literal[</span><span class="s2">4</span><span class="s1">]: ...</span>
+    <span class="s0">def </span><span class="s1">__iter__(self) -&gt; Iterator[int]: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__getitem__(self</span><span class="s0">, </span><span class="s1">i: int) -&gt; int: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__getitem__(self</span><span class="s0">, </span><span class="s1">s: slice) -&gt; List[int]: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__setitem__(self</span><span class="s0">, </span><span class="s1">key: int</span><span class="s0">, </span><span class="s1">value: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__setitem__(self</span><span class="s0">, </span><span class="s1">key: slice</span><span class="s0">, </span><span class="s1">value: Union[int</span><span class="s0">, </span><span class="s1">Rect]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__copy__(self) -&gt; Rect: ...</span>
+    <span class="s1">copy = __copy__</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">move(self</span><span class="s0">, </span><span class="s1">x: float</span><span class="s0">, </span><span class="s1">y: float) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">move(self</span><span class="s0">, </span><span class="s1">move_by: Coordinate) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">move_ip(self</span><span class="s0">, </span><span class="s1">x: float</span><span class="s0">, </span><span class="s1">y: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">move_ip(self</span><span class="s0">, </span><span class="s1">move_by: Coordinate) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">inflate(self</span><span class="s0">, </span><span class="s1">x: float</span><span class="s0">, </span><span class="s1">y: float) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">inflate(self</span><span class="s0">, </span><span class="s1">inflate_by: Coordinate) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">inflate_ip(self</span><span class="s0">, </span><span class="s1">x: float</span><span class="s0">, </span><span class="s1">y: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">inflate_ip(self</span><span class="s0">, </span><span class="s1">inflate_by: Coordinate) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">single_arg: RectValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clamp(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clamp(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clamp(self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clamp_ip(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clamp_ip(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clamp_ip(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clip(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clip(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clip(self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clipline(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">x1: float</span><span class="s0">, </span><span class="s1">x2: float</span><span class="s0">, </span><span class="s1">x3: float</span><span class="s0">, </span><span class="s1">x4: float</span>
+    <span class="s1">) -&gt; Union[Tuple[Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]]</span><span class="s0">, </span><span class="s1">Tuple[()]]: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clipline(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">first_coordinate: Coordinate</span><span class="s0">, </span><span class="s1">second_coordinate: Coordinate</span>
+    <span class="s1">) -&gt; Union[Tuple[Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]]</span><span class="s0">, </span><span class="s1">Tuple[()]]: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">clipline(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">rect_arg: RectValue</span>
+    <span class="s1">) -&gt; Union[Tuple[Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]]</span><span class="s0">, </span><span class="s1">Tuple[()]]: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">union(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">union(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">union(self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">union_ip(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">union_ip(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">union_ip(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">unionall(self</span><span class="s0">, </span><span class="s1">rect: Sequence[RectValue]) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">unionall_ip(self</span><span class="s0">, </span><span class="s1">rect_sequence: Sequence[RectValue]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">fit(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">fit(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">fit(self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">normalize(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__contains__(self</span><span class="s0">, </span><span class="s1">rect: Union[RectValue</span><span class="s0">, </span><span class="s1">int]) -&gt; bool: ...  </span><span class="s4"># type: ignore[override]</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">contains(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; bool: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">contains(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; bool: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">contains(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float</span>
+    <span class="s1">) -&gt; bool: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">collidepoint(self</span><span class="s0">, </span><span class="s1">x: float</span><span class="s0">, </span><span class="s1">y: float) -&gt; bool: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">collidepoint(self</span><span class="s0">, </span><span class="s1">x_y: Coordinate) -&gt; bool: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">colliderect(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; bool: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">colliderect(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; bool: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">colliderect(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float</span>
+    <span class="s1">) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">collidelist(self</span><span class="s0">, </span><span class="s1">rect_list: Sequence[RectValue]) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">collidelistall(self</span><span class="s0">, </span><span class="s1">rect_list: Sequence[RectValue]) -&gt; List[int]: ...</span>
+    <span class="s0">def </span><span class="s1">collideobjectsall(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">objects: Sequence[_T]</span><span class="s0">, </span><span class="s1">key: Optional[Callable[[_T]</span><span class="s0">, </span><span class="s1">RectValue]] = </span><span class="s0">None</span>
+    <span class="s1">) -&gt; List[_T]: ...</span>
+    <span class="s0">def </span><span class="s1">collideobjects(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">objects: Sequence[_T]</span><span class="s0">, </span><span class="s1">key: Optional[Callable[[_T]</span><span class="s0">, </span><span class="s1">RectValue]] = </span><span class="s0">None</span>
+    <span class="s1">) -&gt; Optional[_T]: ...</span>
+    <span class="s4"># Also undocumented: the dict collision methods take a 'values' argument</span>
+    <span class="s4"># that defaults to False. If it is False, the keys in rect_dict must be</span>
+    <span class="s4"># Rect-like; otherwise, the values must be Rects.</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">collidedict(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">rect_dict: Dict[RectValue</span><span class="s0">, </span><span class="s1">_V]</span><span class="s0">, </span><span class="s1">values: bool = ...</span>
+    <span class="s1">) -&gt; Tuple[RectValue</span><span class="s0">, </span><span class="s1">_V]: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">collidedict(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">rect_dict: Dict[_K</span><span class="s0">, </span><span class="s3">&quot;Rect&quot;</span><span class="s1">]</span><span class="s0">, </span><span class="s1">values: bool</span>
+    <span class="s1">) -&gt; Tuple[_K</span><span class="s0">, </span><span class="s3">&quot;Rect&quot;</span><span class="s1">]: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">collidedictall(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">rect_dict: Dict[RectValue</span><span class="s0">, </span><span class="s1">_V]</span><span class="s0">, </span><span class="s1">values: bool = ...</span>
+    <span class="s1">) -&gt; List[Tuple[RectValue</span><span class="s0">, </span><span class="s1">_V]]: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">collidedictall(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">rect_dict: Dict[_K</span><span class="s0">, </span><span class="s3">&quot;Rect&quot;</span><span class="s1">]</span><span class="s0">, </span><span class="s1">values: bool</span>
+    <span class="s1">) -&gt; List[Tuple[_K</span><span class="s0">, </span><span class="s3">&quot;Rect&quot;</span><span class="s1">]]: ...</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<html>
+<head>
+<title>joystick.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+joystick.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">final</span>
+
+<span class="s0">def </span><span class="s1">init() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">quit() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_init() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">get_count() -&gt; int: ...</span>
+<span class="s1">@final</span>
+<span class="s0">class </span><span class="s1">JoystickType:</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">id: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">init(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">quit(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_init(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">get_id(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_instance_id(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_guid(self) -&gt; str: ...</span>
+    <span class="s0">def </span><span class="s1">get_power_level(self) -&gt; str: ...</span>
+    <span class="s0">def </span><span class="s1">get_name(self) -&gt; str: ...</span>
+    <span class="s0">def </span><span class="s1">get_numaxes(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_axis(self</span><span class="s0">, </span><span class="s1">axis_number: int) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">get_numballs(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_ball(self</span><span class="s0">, </span><span class="s1">ball_number: int) -&gt; Tuple[float</span><span class="s0">, </span><span class="s1">float]: ...</span>
+    <span class="s0">def </span><span class="s1">get_numbuttons(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_button(self</span><span class="s0">, </span><span class="s1">button: int) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">get_numhats(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_hat(self</span><span class="s0">, </span><span class="s1">hat_number: int) -&gt; Tuple[float</span><span class="s0">, </span><span class="s1">float]: ...</span>
+    <span class="s0">def </span><span class="s1">rumble(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">low_frequency: float</span><span class="s0">, </span><span class="s1">high_frequency: float</span><span class="s0">, </span><span class="s1">duration: int</span>
+    <span class="s1">) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">stop_rumble(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s2"># according to the current implementation, Joystick is a function that returns</span>
+<span class="s2"># a JoystickType instance. In the future, when the C implementation is fixed to</span>
+<span class="s2"># add __init__/__new__ to Joystick and it's exported directly, the typestubs</span>
+<span class="s2"># here must be updated too</span>
+<span class="s0">def </span><span class="s1">Joystick(id: int) -&gt; JoystickType: ...</span>
+</pre>
+</body>
+</html>

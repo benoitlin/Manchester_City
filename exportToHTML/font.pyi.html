@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>font.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+font.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Callable</span><span class="s0">, </span><span class="s1">Hashable</span><span class="s0">, </span><span class="s1">Iterable</span><span class="s0">, </span><span class="s1">List</span><span class="s0">, </span><span class="s1">Optional</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">Union</span>
+
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">ColorValue</span><span class="s0">, </span><span class="s1">FileArg</span><span class="s0">, </span><span class="s1">Literal</span>
+
+<span class="s2"># TODO: Figure out a way to type this attribute such that mypy knows it's not</span>
+<span class="s2"># always defined at runtime</span>
+<span class="s1">UCS4: Literal[</span><span class="s3">1</span><span class="s1">]</span>
+
+<span class="s0">def </span><span class="s1">init() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">quit() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_init() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">get_sdl_ttf_version(linked: bool = </span><span class="s0">True</span><span class="s1">) -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+<span class="s0">def </span><span class="s1">get_default_font() -&gt; str: ...</span>
+<span class="s0">def </span><span class="s1">get_fonts() -&gt; List[str]: ...</span>
+<span class="s0">def </span><span class="s1">match_font(</span>
+    <span class="s1">name: Union[str</span><span class="s0">, </span><span class="s1">bytes</span><span class="s0">, </span><span class="s1">Iterable[Union[str</span><span class="s0">, </span><span class="s1">bytes]]]</span><span class="s0">,</span>
+    <span class="s1">bold: Hashable = </span><span class="s0">False,</span>
+    <span class="s1">italic: Hashable = </span><span class="s0">False,</span>
+<span class="s1">) -&gt; str: ...</span>
+<span class="s0">def </span><span class="s1">SysFont(</span>
+    <span class="s1">name: Union[str</span><span class="s0">, </span><span class="s1">bytes</span><span class="s0">, </span><span class="s1">Iterable[Union[str</span><span class="s0">, </span><span class="s1">bytes]]]</span><span class="s0">,</span>
+    <span class="s1">size: int</span><span class="s0">,</span>
+    <span class="s1">bold: Hashable = </span><span class="s0">False,</span>
+    <span class="s1">italic: Hashable = </span><span class="s0">False,</span>
+    <span class="s1">constructor: Optional[Callable[[Optional[str]</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">bool</span><span class="s0">, </span><span class="s1">bool]</span><span class="s0">, </span><span class="s1">Font]] = </span><span class="s0">None,</span>
+<span class="s1">) -&gt; Font: ...</span>
+
+<span class="s0">class </span><span class="s1">Font:</span>
+    <span class="s1">bold: bool</span>
+    <span class="s1">italic: bool</span>
+    <span class="s1">underline: bool</span>
+    <span class="s1">strikethrough: bool</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">name: Optional[FileArg]</span><span class="s0">, </span><span class="s1">size: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">render(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">text: Union[str</span><span class="s0">, </span><span class="s1">bytes</span><span class="s0">, None</span><span class="s1">]</span><span class="s0">,</span>
+        <span class="s1">antialias: bool</span><span class="s0">,</span>
+        <span class="s1">color: ColorValue</span><span class="s0">,</span>
+        <span class="s1">background: Optional[ColorValue] = </span><span class="s0">None,</span>
+    <span class="s1">) -&gt; Surface: ...</span>
+    <span class="s0">def </span><span class="s1">size(self</span><span class="s0">, </span><span class="s1">text: Union[str</span><span class="s0">, </span><span class="s1">bytes]) -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+    <span class="s0">def </span><span class="s1">set_underline(self</span><span class="s0">, </span><span class="s1">value: bool) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_underline(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">set_strikethrough(self</span><span class="s0">, </span><span class="s1">value: bool) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_strikethrough(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">set_bold(self</span><span class="s0">, </span><span class="s1">value: bool) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_bold(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">set_italic(self</span><span class="s0">, </span><span class="s1">value: bool) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">metrics(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">text: Union[str</span><span class="s0">, </span><span class="s1">bytes]</span>
+    <span class="s1">) -&gt; List[Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]]: ...</span>
+    <span class="s0">def </span><span class="s1">get_italic(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">get_linesize(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_height(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_ascent(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_descent(self) -&gt; int: ...</span>
+
+<span class="s1">FontType = Font</span>
+</pre>
+</body>
+</html>

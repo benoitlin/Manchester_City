@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>pygame_freetype.h</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #6a8759;}
+.s4 { color: #6897bb;}
+.s5 { color: #0f9795;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+pygame_freetype.h</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+  pygame - Python Game Library 
+  Copyright (C) 2009 Vicent Marti 
+ 
+  This library is free software; you can redistribute it and/or 
+  modify it under the terms of the GNU Library General Public 
+  License as published by the Free Software Foundation; either 
+  version 2 of the License, or (at your option) any later version. 
+ 
+  This library is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+  Library General Public License for more details. 
+ 
+  You should have received a copy of the GNU Library General Public 
+  License along with this library; if not, write to the Free 
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+ 
+*/</span>
+<span class="s2">#ifndef </span><span class="s1">PYGAME_FREETYPE_H_</span>
+<span class="s2">#define </span><span class="s1">PYGAME_FREETYPE_H_</span>
+
+<span class="s2">#include </span><span class="s3">&quot;pgplatform.h&quot;</span>
+<span class="s2">#include </span><span class="s3">&quot;pgimport.h&quot;</span>
+<span class="s2">#include </span><span class="s3">&quot;pgcompat.h&quot;</span>
+
+<span class="s2">#ifndef </span><span class="s1">PYGAME_FREETYPE_INTERNAL</span>
+
+<span class="s1">PYGAMEAPI_DEFINE_SLOTS(_freetype);</span>
+
+<span class="s2">#define </span><span class="s1">pgFont_Type (*(PyTypeObject *)PYGAMEAPI_GET_SLOT(_freetype, </span><span class="s4">0</span><span class="s1">))</span>
+
+<span class="s2">#define </span><span class="s1">pgFont_Check(x) ((x)</span><span class="s5">-&gt;</span><span class="s1">ob_type == &amp;pgFont_Type)</span>
+
+<span class="s2">#define </span><span class="s1">pgFont_New \</span>
+    <span class="s1">(*(PyObject * (*)(</span><span class="s2">const char </span><span class="s1">*, </span><span class="s2">long</span><span class="s1">)) PYGAMEAPI_GET_SLOT(_freetype, </span><span class="s4">1</span><span class="s1">))</span>
+
+<span class="s2">#define </span><span class="s1">import_pygame_freetype() _IMPORT_PYGAME_MODULE(_freetype)</span>
+
+<span class="s2">#endif </span><span class="s0">/* PYGAME_FREETYPE_INTERNAL */</span>
+
+<span class="s2">#endif </span><span class="s0">/* PYGAME_FREETYPE_H_ */</span>
+</pre>
+</body>
+</html>

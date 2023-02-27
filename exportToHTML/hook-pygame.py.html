@@ -1,0 +1,65 @@
+<html>
+<head>
+<title>hook-pygame.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #629755; font-style: italic;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #808080;}
+.s4 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+hook-pygame.py</font>
+</center></td></tr></table>
+<pre><span class="s0">&quot;&quot;&quot; 
+binaries hook for pygame seems to be required for pygame 2.0 Windows. 
+Otherwise some essential DLLs will not be transferred to the exe. 
+ 
+And also put hooks for datas, resources that pygame uses, to work 
+correctly with pyinstaller 
+&quot;&quot;&quot;</span>
+
+<span class="s2">import </span><span class="s1">os</span>
+<span class="s2">import </span><span class="s1">platform</span>
+
+<span class="s2">from </span><span class="s1">pygame </span><span class="s2">import </span><span class="s1">__file__ </span><span class="s2">as </span><span class="s1">pygame_main_file</span>
+
+<span class="s3"># Get pygame's folder</span>
+<span class="s1">pygame_folder = os.path.dirname(os.path.abspath(pygame_main_file))</span>
+
+<span class="s3"># datas is the variable that pyinstaller looks for while processing hooks</span>
+<span class="s1">datas = []</span>
+
+<span class="s3"># A helper to append the relative path of a resource to hook variable - datas</span>
+<span class="s2">def </span><span class="s1">_append_to_datas(file_path):</span>
+    <span class="s1">res_path = os.path.join(pygame_folder</span><span class="s2">, </span><span class="s1">file_path)</span>
+    <span class="s2">if </span><span class="s1">os.path.exists(res_path):</span>
+        <span class="s1">datas.append((res_path</span><span class="s2">, </span><span class="s4">&quot;pygame&quot;</span><span class="s1">))</span>
+
+
+<span class="s3"># First append the font file, then based on the OS, append pygame icon file</span>
+<span class="s1">_append_to_datas(</span><span class="s4">&quot;freesansbold.ttf&quot;</span><span class="s1">)</span>
+<span class="s2">if </span><span class="s1">platform.system() == </span><span class="s4">&quot;Darwin&quot;</span><span class="s1">:</span>
+    <span class="s1">_append_to_datas(</span><span class="s4">&quot;pygame_icon_mac.bmp&quot;</span><span class="s1">)</span>
+<span class="s2">else</span><span class="s1">:</span>
+    <span class="s1">_append_to_datas(</span><span class="s4">&quot;pygame_icon.bmp&quot;</span><span class="s1">)</span>
+
+<span class="s2">if </span><span class="s1">platform.system() == </span><span class="s4">&quot;Windows&quot;</span><span class="s1">:</span>
+    <span class="s2">from </span><span class="s1">PyInstaller.utils.hooks </span><span class="s2">import </span><span class="s1">collect_dynamic_libs</span>
+
+    <span class="s1">pre_binaries = collect_dynamic_libs(</span><span class="s4">&quot;pygame&quot;</span><span class="s1">)</span>
+    <span class="s1">binaries = []</span>
+
+    <span class="s2">for </span><span class="s1">b </span><span class="s2">in </span><span class="s1">pre_binaries:</span>
+        <span class="s1">binary</span><span class="s2">, </span><span class="s1">location = b</span>
+        <span class="s3"># settles all the DLLs into the top level folder, which prevents duplication</span>
+        <span class="s3"># with the DLLs already being put there.</span>
+        <span class="s1">binaries.append((binary</span><span class="s2">, </span><span class="s4">&quot;.&quot;</span><span class="s1">))</span>
+</pre>
+</body>
+</html>

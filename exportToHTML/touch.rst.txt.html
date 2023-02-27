@@ -1,0 +1,83 @@
+<html>
+<head>
+<title>touch.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+touch.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame._sdl2.touch`</span>
+<span class="s0">=========================</span>
+
+<span class="s0">.. module:: pygame._sdl2.touch</span>
+   <span class="s0">:synopsis: pygame module to work with touch input</span>
+
+<span class="s0">| :sl:`pygame module to work with touch input`</span>
+
+<span class="s0">.. versionadded:: 2 This module requires SDL2.</span>
+
+<span class="s0">.. function:: get_num_devices</span>
+
+   <span class="s0">| :sl:`get the number of touch devices`</span>
+   <span class="s0">| :sg:`get_num_devices() -&gt; int`</span>
+
+   <span class="s0">Return the number of available touch devices.</span>
+
+   <span class="s0">.. ## pygame._sdl2.touch.get_num_devices ##</span>
+
+<span class="s0">.. function:: get_device</span>
+
+   <span class="s0">| :sl:`get the a touch device id for a given index`</span>
+   <span class="s0">| :sg:`get_device(index) -&gt; touchid`</span>
+
+   <span class="s0">:param int index: This number is at least 0 and less than the</span>
+                     <span class="s0">:func:`number of devices &lt;pygame._sdl2.touch.get_num_devices()&gt;`.</span>
+
+   <span class="s0">Return an integer id associated with the given ``index``.</span>
+
+   <span class="s0">.. ## pygame._sdl2.touch.get_device ##</span>
+
+<span class="s0">.. function:: get_num_fingers</span>
+
+   <span class="s0">| :sl:`the number of active fingers for a given touch device`</span>
+   <span class="s0">| :sg:`get_num_fingers(touchid) -&gt; int`</span>
+
+   <span class="s0">Return the number of fingers active for the touch device</span>
+   <span class="s0">whose id is `touchid`.</span>
+
+   <span class="s0">.. ## pygame._sdl2.touch.get_num_fingers ##</span>
+
+<span class="s0">.. function:: get_finger</span>
+
+   <span class="s0">| :sl:`get information about an active finger`</span>
+   <span class="s0">| :sg:`get_finger(touchid, index) -&gt; int`</span>
+
+   <span class="s0">:param int touchid: The touch device id.</span>
+   <span class="s0">:param int index: The index of the finger to return</span>
+                     <span class="s0">information about, between 0 and the</span>
+                     <span class="s0">:func:`number of active fingers &lt;pygame._sdl2.touch.get_num_fingers()&gt;`.</span>
+
+   <span class="s0">Return a dict for the finger ``index`` active on ``touchid``.</span>
+   <span class="s0">The dict contains these keys:</span>
+
+   <span class="s0">::</span>
+
+      <span class="s0">id         the id of the finger (an integer).</span>
+      <span class="s0">x          the normalized x position of the finger, between 0 and 1.</span>
+      <span class="s0">y          the normalized y position of the finger, between 0 and 1.</span>
+      <span class="s0">pressure   the amount of pressure applied by the finger, between 0 and 1.</span>
+
+   <span class="s0">.. ## pygame._sdl2.touch.get_finger ##</span>
+
+<span class="s0">.. ## pygame._sdl2.touch ##</span>
+</pre>
+</body>
+</html>

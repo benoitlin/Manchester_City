@@ -1,0 +1,221 @@
+<html>
+<head>
+<title>language_data.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #6a8759;}
+.s4 { color: #629755; font-style: italic;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+language_data.js</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+ * language_data.js 
+ * ~~~~~~~~~~~~~~~~ 
+ * 
+ * This script contains the language-specific data used by searchtools.js, 
+ * namely the list of stopwords, stemmer, scorer and splitter. 
+ * 
+ * :copyright: Copyright 2007-2023 by the Sphinx team, see AUTHORS. 
+ * :license: BSD, see LICENSE for details. 
+ * 
+ */</span>
+
+<span class="s2">var </span><span class="s1">stopwords = [</span><span class="s3">&quot;a&quot;</span><span class="s2">, </span><span class="s3">&quot;and&quot;</span><span class="s2">, </span><span class="s3">&quot;are&quot;</span><span class="s2">, </span><span class="s3">&quot;as&quot;</span><span class="s2">, </span><span class="s3">&quot;at&quot;</span><span class="s2">, </span><span class="s3">&quot;be&quot;</span><span class="s2">, </span><span class="s3">&quot;but&quot;</span><span class="s2">, </span><span class="s3">&quot;by&quot;</span><span class="s2">, </span><span class="s3">&quot;for&quot;</span><span class="s2">, </span><span class="s3">&quot;if&quot;</span><span class="s2">, </span><span class="s3">&quot;in&quot;</span><span class="s2">, </span><span class="s3">&quot;into&quot;</span><span class="s2">, </span><span class="s3">&quot;is&quot;</span><span class="s2">, </span><span class="s3">&quot;it&quot;</span><span class="s2">, </span><span class="s3">&quot;near&quot;</span><span class="s2">, </span><span class="s3">&quot;no&quot;</span><span class="s2">, </span><span class="s3">&quot;not&quot;</span><span class="s2">, </span><span class="s3">&quot;of&quot;</span><span class="s2">, </span><span class="s3">&quot;on&quot;</span><span class="s2">, </span><span class="s3">&quot;or&quot;</span><span class="s2">, </span><span class="s3">&quot;such&quot;</span><span class="s2">, </span><span class="s3">&quot;that&quot;</span><span class="s2">, </span><span class="s3">&quot;the&quot;</span><span class="s2">, </span><span class="s3">&quot;their&quot;</span><span class="s2">, </span><span class="s3">&quot;then&quot;</span><span class="s2">, </span><span class="s3">&quot;there&quot;</span><span class="s2">, </span><span class="s3">&quot;these&quot;</span><span class="s2">, </span><span class="s3">&quot;they&quot;</span><span class="s2">, </span><span class="s3">&quot;this&quot;</span><span class="s2">, </span><span class="s3">&quot;to&quot;</span><span class="s2">, </span><span class="s3">&quot;was&quot;</span><span class="s2">, </span><span class="s3">&quot;will&quot;</span><span class="s2">, </span><span class="s3">&quot;with&quot;</span><span class="s1">]</span><span class="s2">;</span>
+
+
+<span class="s0">/* Non-minified version is copied as a separate JS file, is available */</span>
+
+<span class="s4">/**</span>
+ <span class="s4">* Porter Stemmer</span>
+ <span class="s4">*/</span>
+<span class="s2">var </span><span class="s1">Stemmer = </span><span class="s2">function</span><span class="s1">() {</span>
+
+  <span class="s2">var </span><span class="s1">step2list = {</span>
+    <span class="s1">ational: </span><span class="s3">'ate'</span><span class="s2">,</span>
+    <span class="s1">tional: </span><span class="s3">'tion'</span><span class="s2">,</span>
+    <span class="s1">enci: </span><span class="s3">'ence'</span><span class="s2">,</span>
+    <span class="s1">anci: </span><span class="s3">'ance'</span><span class="s2">,</span>
+    <span class="s1">izer: </span><span class="s3">'ize'</span><span class="s2">,</span>
+    <span class="s1">bli: </span><span class="s3">'ble'</span><span class="s2">,</span>
+    <span class="s1">alli: </span><span class="s3">'al'</span><span class="s2">,</span>
+    <span class="s1">entli: </span><span class="s3">'ent'</span><span class="s2">,</span>
+    <span class="s1">eli: </span><span class="s3">'e'</span><span class="s2">,</span>
+    <span class="s1">ousli: </span><span class="s3">'ous'</span><span class="s2">,</span>
+    <span class="s1">ization: </span><span class="s3">'ize'</span><span class="s2">,</span>
+    <span class="s1">ation: </span><span class="s3">'ate'</span><span class="s2">,</span>
+    <span class="s1">ator: </span><span class="s3">'ate'</span><span class="s2">,</span>
+    <span class="s1">alism: </span><span class="s3">'al'</span><span class="s2">,</span>
+    <span class="s1">iveness: </span><span class="s3">'ive'</span><span class="s2">,</span>
+    <span class="s1">fulness: </span><span class="s3">'ful'</span><span class="s2">,</span>
+    <span class="s1">ousness: </span><span class="s3">'ous'</span><span class="s2">,</span>
+    <span class="s1">aliti: </span><span class="s3">'al'</span><span class="s2">,</span>
+    <span class="s1">iviti: </span><span class="s3">'ive'</span><span class="s2">,</span>
+    <span class="s1">biliti: </span><span class="s3">'ble'</span><span class="s2">,</span>
+    <span class="s1">logi: </span><span class="s3">'log'</span>
+  <span class="s1">}</span><span class="s2">;</span>
+
+  <span class="s2">var </span><span class="s1">step3list = {</span>
+    <span class="s1">icate: </span><span class="s3">'ic'</span><span class="s2">,</span>
+    <span class="s1">ative: </span><span class="s3">''</span><span class="s2">,</span>
+    <span class="s1">alize: </span><span class="s3">'al'</span><span class="s2">,</span>
+    <span class="s1">iciti: </span><span class="s3">'ic'</span><span class="s2">,</span>
+    <span class="s1">ical: </span><span class="s3">'ic'</span><span class="s2">,</span>
+    <span class="s1">ful: </span><span class="s3">''</span><span class="s2">,</span>
+    <span class="s1">ness: </span><span class="s3">''</span>
+  <span class="s1">}</span><span class="s2">;</span>
+
+  <span class="s2">var </span><span class="s1">c = </span><span class="s3">&quot;[^aeiou]&quot;</span><span class="s2">;          </span><span class="s0">// consonant</span>
+  <span class="s2">var </span><span class="s1">v = </span><span class="s3">&quot;[aeiouy]&quot;</span><span class="s2">;          </span><span class="s0">// vowel</span>
+  <span class="s2">var </span><span class="s1">C = c + </span><span class="s3">&quot;[^aeiouy]*&quot;</span><span class="s2">;    </span><span class="s0">// consonant sequence</span>
+  <span class="s2">var </span><span class="s1">V = v + </span><span class="s3">&quot;[aeiou]*&quot;</span><span class="s2">;      </span><span class="s0">// vowel sequence</span>
+
+  <span class="s2">var </span><span class="s1">mgr0 = </span><span class="s3">&quot;^(&quot; </span><span class="s1">+ C + </span><span class="s3">&quot;)?&quot; </span><span class="s1">+ V + C</span><span class="s2">;                      </span><span class="s0">// [C]VC... is m&gt;0</span>
+  <span class="s2">var </span><span class="s1">meq1 = </span><span class="s3">&quot;^(&quot; </span><span class="s1">+ C + </span><span class="s3">&quot;)?&quot; </span><span class="s1">+ V + C + </span><span class="s3">&quot;(&quot; </span><span class="s1">+ V + </span><span class="s3">&quot;)?$&quot;</span><span class="s2">;    </span><span class="s0">// [C]VC[V] is m=1</span>
+  <span class="s2">var </span><span class="s1">mgr1 = </span><span class="s3">&quot;^(&quot; </span><span class="s1">+ C + </span><span class="s3">&quot;)?&quot; </span><span class="s1">+ V + C + V + C</span><span class="s2">;              </span><span class="s0">// [C]VCVC... is m&gt;1</span>
+  <span class="s2">var </span><span class="s1">s_v   = </span><span class="s3">&quot;^(&quot; </span><span class="s1">+ C + </span><span class="s3">&quot;)?&quot; </span><span class="s1">+ v</span><span class="s2">;                         </span><span class="s0">// vowel in stem</span>
+
+  <span class="s2">this</span><span class="s1">.stemWord = </span><span class="s2">function </span><span class="s1">(w) {</span>
+    <span class="s2">var </span><span class="s1">stem</span><span class="s2">;</span>
+    <span class="s2">var </span><span class="s1">suffix</span><span class="s2">;</span>
+    <span class="s2">var </span><span class="s1">firstch</span><span class="s2">;</span>
+    <span class="s2">var </span><span class="s1">origword = w</span><span class="s2">;</span>
+
+    <span class="s2">if </span><span class="s1">(w.length &lt; </span><span class="s5">3</span><span class="s1">)</span>
+      <span class="s2">return </span><span class="s1">w</span><span class="s2">;</span>
+
+    <span class="s2">var </span><span class="s1">re</span><span class="s2">;</span>
+    <span class="s2">var </span><span class="s1">re2</span><span class="s2">;</span>
+    <span class="s2">var </span><span class="s1">re3</span><span class="s2">;</span>
+    <span class="s2">var </span><span class="s1">re4</span><span class="s2">;</span>
+
+    <span class="s1">firstch = w.substr(</span><span class="s5">0</span><span class="s2">,</span><span class="s5">1</span><span class="s1">)</span><span class="s2">;</span>
+    <span class="s2">if </span><span class="s1">(firstch == </span><span class="s3">&quot;y&quot;</span><span class="s1">)</span>
+      <span class="s1">w = firstch.toUpperCase() + w.substr(</span><span class="s5">1</span><span class="s1">)</span><span class="s2">;</span>
+
+    <span class="s0">// Step 1a</span>
+    <span class="s1">re = </span><span class="s5">/^(.+?)(ss|i)es$/</span><span class="s2">;</span>
+    <span class="s1">re2 = </span><span class="s5">/^(.+?)([^s])s$/</span><span class="s2">;</span>
+
+    <span class="s2">if </span><span class="s1">(re.test(w))</span>
+      <span class="s1">w = w.replace(re</span><span class="s2">,</span><span class="s3">&quot;$1$2&quot;</span><span class="s1">)</span><span class="s2">;</span>
+    <span class="s2">else if </span><span class="s1">(re2.test(w))</span>
+      <span class="s1">w = w.replace(re2</span><span class="s2">,</span><span class="s3">&quot;$1$2&quot;</span><span class="s1">)</span><span class="s2">;</span>
+
+    <span class="s0">// Step 1b</span>
+    <span class="s1">re = </span><span class="s5">/^(.+?)eed$/</span><span class="s2">;</span>
+    <span class="s1">re2 = </span><span class="s5">/^(.+?)(ed|ing)$/</span><span class="s2">;</span>
+    <span class="s2">if </span><span class="s1">(re.test(w)) {</span>
+      <span class="s2">var </span><span class="s1">fp = re.exec(w)</span><span class="s2">;</span>
+      <span class="s1">re = </span><span class="s2">new </span><span class="s1">RegExp(mgr0)</span><span class="s2">;</span>
+      <span class="s2">if </span><span class="s1">(re.test(fp[</span><span class="s5">1</span><span class="s1">])) {</span>
+        <span class="s1">re = </span><span class="s5">/.$/</span><span class="s2">;</span>
+        <span class="s1">w = w.replace(re</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+      <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s2">else if </span><span class="s1">(re2.test(w)) {</span>
+      <span class="s2">var </span><span class="s1">fp = re2.exec(w)</span><span class="s2">;</span>
+      <span class="s1">stem = fp[</span><span class="s5">1</span><span class="s1">]</span><span class="s2">;</span>
+      <span class="s1">re2 = </span><span class="s2">new </span><span class="s1">RegExp(s_v)</span><span class="s2">;</span>
+      <span class="s2">if </span><span class="s1">(re2.test(stem)) {</span>
+        <span class="s1">w = stem</span><span class="s2">;</span>
+        <span class="s1">re2 = </span><span class="s5">/(at|bl|iz)$/</span><span class="s2">;</span>
+        <span class="s1">re3 = </span><span class="s2">new </span><span class="s1">RegExp(</span><span class="s3">&quot;([^aeiouylsz])</span><span class="s2">\\</span><span class="s3">1$&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">re4 = </span><span class="s2">new </span><span class="s1">RegExp(</span><span class="s3">&quot;^&quot; </span><span class="s1">+ C + v + </span><span class="s3">&quot;[^aeiouwxy]$&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s2">if </span><span class="s1">(re2.test(w))</span>
+          <span class="s1">w = w + </span><span class="s3">&quot;e&quot;</span><span class="s2">;</span>
+        <span class="s2">else if </span><span class="s1">(re3.test(w)) {</span>
+          <span class="s1">re = </span><span class="s5">/.$/</span><span class="s2">;</span>
+          <span class="s1">w = w.replace(re</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+        <span class="s1">}</span>
+        <span class="s2">else if </span><span class="s1">(re4.test(w))</span>
+          <span class="s1">w = w + </span><span class="s3">&quot;e&quot;</span><span class="s2">;</span>
+      <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">// Step 1c</span>
+    <span class="s1">re = </span><span class="s5">/^(.+?)y$/</span><span class="s2">;</span>
+    <span class="s2">if </span><span class="s1">(re.test(w)) {</span>
+      <span class="s2">var </span><span class="s1">fp = re.exec(w)</span><span class="s2">;</span>
+      <span class="s1">stem = fp[</span><span class="s5">1</span><span class="s1">]</span><span class="s2">;</span>
+      <span class="s1">re = </span><span class="s2">new </span><span class="s1">RegExp(s_v)</span><span class="s2">;</span>
+      <span class="s2">if </span><span class="s1">(re.test(stem))</span>
+        <span class="s1">w = stem + </span><span class="s3">&quot;i&quot;</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">// Step 2</span>
+    <span class="s1">re = </span><span class="s5">/^(.+?)(ational|tional|enci|anci|izer|bli|alli|entli|eli|ousli|ization|ation|ator|alism|iveness|fulness|ousness|aliti|iviti|biliti|logi)$/</span><span class="s2">;</span>
+    <span class="s2">if </span><span class="s1">(re.test(w)) {</span>
+      <span class="s2">var </span><span class="s1">fp = re.exec(w)</span><span class="s2">;</span>
+      <span class="s1">stem = fp[</span><span class="s5">1</span><span class="s1">]</span><span class="s2">;</span>
+      <span class="s1">suffix = fp[</span><span class="s5">2</span><span class="s1">]</span><span class="s2">;</span>
+      <span class="s1">re = </span><span class="s2">new </span><span class="s1">RegExp(mgr0)</span><span class="s2">;</span>
+      <span class="s2">if </span><span class="s1">(re.test(stem))</span>
+        <span class="s1">w = stem + step2list[suffix]</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">// Step 3</span>
+    <span class="s1">re = </span><span class="s5">/^(.+?)(icate|ative|alize|iciti|ical|ful|ness)$/</span><span class="s2">;</span>
+    <span class="s2">if </span><span class="s1">(re.test(w)) {</span>
+      <span class="s2">var </span><span class="s1">fp = re.exec(w)</span><span class="s2">;</span>
+      <span class="s1">stem = fp[</span><span class="s5">1</span><span class="s1">]</span><span class="s2">;</span>
+      <span class="s1">suffix = fp[</span><span class="s5">2</span><span class="s1">]</span><span class="s2">;</span>
+      <span class="s1">re = </span><span class="s2">new </span><span class="s1">RegExp(mgr0)</span><span class="s2">;</span>
+      <span class="s2">if </span><span class="s1">(re.test(stem))</span>
+        <span class="s1">w = stem + step3list[suffix]</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">// Step 4</span>
+    <span class="s1">re = </span><span class="s5">/^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/</span><span class="s2">;</span>
+    <span class="s1">re2 = </span><span class="s5">/^(.+?)(s|t)(ion)$/</span><span class="s2">;</span>
+    <span class="s2">if </span><span class="s1">(re.test(w)) {</span>
+      <span class="s2">var </span><span class="s1">fp = re.exec(w)</span><span class="s2">;</span>
+      <span class="s1">stem = fp[</span><span class="s5">1</span><span class="s1">]</span><span class="s2">;</span>
+      <span class="s1">re = </span><span class="s2">new </span><span class="s1">RegExp(mgr1)</span><span class="s2">;</span>
+      <span class="s2">if </span><span class="s1">(re.test(stem))</span>
+        <span class="s1">w = stem</span><span class="s2">;</span>
+    <span class="s1">}</span>
+    <span class="s2">else if </span><span class="s1">(re2.test(w)) {</span>
+      <span class="s2">var </span><span class="s1">fp = re2.exec(w)</span><span class="s2">;</span>
+      <span class="s1">stem = fp[</span><span class="s5">1</span><span class="s1">] + fp[</span><span class="s5">2</span><span class="s1">]</span><span class="s2">;</span>
+      <span class="s1">re2 = </span><span class="s2">new </span><span class="s1">RegExp(mgr1)</span><span class="s2">;</span>
+      <span class="s2">if </span><span class="s1">(re2.test(stem))</span>
+        <span class="s1">w = stem</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">// Step 5</span>
+    <span class="s1">re = </span><span class="s5">/^(.+?)e$/</span><span class="s2">;</span>
+    <span class="s2">if </span><span class="s1">(re.test(w)) {</span>
+      <span class="s2">var </span><span class="s1">fp = re.exec(w)</span><span class="s2">;</span>
+      <span class="s1">stem = fp[</span><span class="s5">1</span><span class="s1">]</span><span class="s2">;</span>
+      <span class="s1">re = </span><span class="s2">new </span><span class="s1">RegExp(mgr1)</span><span class="s2">;</span>
+      <span class="s1">re2 = </span><span class="s2">new </span><span class="s1">RegExp(meq1)</span><span class="s2">;</span>
+      <span class="s1">re3 = </span><span class="s2">new </span><span class="s1">RegExp(</span><span class="s3">&quot;^&quot; </span><span class="s1">+ C + v + </span><span class="s3">&quot;[^aeiouwxy]$&quot;</span><span class="s1">)</span><span class="s2">;</span>
+      <span class="s2">if </span><span class="s1">(re.test(stem) || (re2.test(stem) &amp;&amp; !(re3.test(stem))))</span>
+        <span class="s1">w = stem</span><span class="s2">;</span>
+    <span class="s1">}</span>
+    <span class="s1">re = </span><span class="s5">/ll$/</span><span class="s2">;</span>
+    <span class="s1">re2 = </span><span class="s2">new </span><span class="s1">RegExp(mgr1)</span><span class="s2">;</span>
+    <span class="s2">if </span><span class="s1">(re.test(w) &amp;&amp; re2.test(w)) {</span>
+      <span class="s1">re = </span><span class="s5">/.$/</span><span class="s2">;</span>
+      <span class="s1">w = w.replace(re</span><span class="s2">,</span><span class="s3">&quot;&quot;</span><span class="s1">)</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">// and turn initial Y back to y</span>
+    <span class="s2">if </span><span class="s1">(firstch == </span><span class="s3">&quot;y&quot;</span><span class="s1">)</span>
+      <span class="s1">w = firstch.toLowerCase() + w.substr(</span><span class="s5">1</span><span class="s1">)</span><span class="s2">;</span>
+    <span class="s2">return </span><span class="s1">w</span><span class="s2">;</span>
+  <span class="s1">}</span>
+<span class="s1">}</span>
+
+</pre>
+</body>
+</html>

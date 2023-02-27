@@ -1,0 +1,184 @@
+<html>
+<head>
+<title>video.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+video.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pg.examples.video 
+ 
+Experimental! 
+ 
+* dialog message boxes with messagebox. 
+* multiple windows with Window 
+* driver selection 
+* Renderer, Texture, and Image classes 
+* Drawing lines, rects, and such onto Renderers. 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">os</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+
+<span class="s3">if </span><span class="s1">pg.get_sdl_version()[</span><span class="s4">0</span><span class="s1">] &lt; </span><span class="s4">2</span><span class="s1">:</span>
+    <span class="s3">raise </span><span class="s1">SystemExit(</span>
+        <span class="s5">&quot;This example requires pygame 2 and SDL2. _sdl2 is experimental and will change.&quot;</span>
+    <span class="s1">)</span>
+<span class="s3">from </span><span class="s1">pygame._sdl2 </span><span class="s3">import </span><span class="s1">Window</span><span class="s3">, </span><span class="s1">Texture</span><span class="s3">, </span><span class="s1">Image</span><span class="s3">, </span><span class="s1">Renderer</span><span class="s3">, </span><span class="s1">get_drivers</span><span class="s3">, </span><span class="s1">messagebox</span>
+
+<span class="s1">data_dir = os.path.join(os.path.split(os.path.abspath(__file__))[</span><span class="s4">0</span><span class="s1">]</span><span class="s3">, </span><span class="s5">&quot;data&quot;</span><span class="s1">)</span>
+
+
+<span class="s3">def </span><span class="s1">load_img(file):</span>
+    <span class="s3">return </span><span class="s1">pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s1">file))</span>
+
+
+<span class="s1">pg.display.init()</span>
+<span class="s1">pg.key.set_repeat(</span><span class="s4">1000</span><span class="s3">, </span><span class="s4">10</span><span class="s1">)</span>
+
+<span class="s3">for </span><span class="s1">driver </span><span class="s3">in </span><span class="s1">get_drivers():</span>
+    <span class="s1">print(driver)</span>
+
+<span class="s3">import </span><span class="s1">random</span>
+
+<span class="s1">answer = messagebox(</span>
+    <span class="s5">&quot;I will open two windows! Continue?&quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;Hello!&quot;</span><span class="s3">,</span>
+    <span class="s1">info=</span><span class="s3">True,</span>
+    <span class="s1">buttons=(</span><span class="s5">&quot;Yes&quot;</span><span class="s3">, </span><span class="s5">&quot;No&quot;</span><span class="s3">, </span><span class="s5">&quot;Chance&quot;</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">return_button=</span><span class="s4">0</span><span class="s3">,</span>
+    <span class="s1">escape_button=</span><span class="s4">1</span><span class="s3">,</span>
+<span class="s1">)</span>
+<span class="s3">if </span><span class="s1">answer == </span><span class="s4">1 </span><span class="s3">or </span><span class="s1">(answer == </span><span class="s4">2 </span><span class="s3">and </span><span class="s1">random.random() &lt; </span><span class="s4">0.5</span><span class="s1">):</span>
+    <span class="s3">import </span><span class="s1">sys</span>
+
+    <span class="s1">sys.exit(</span><span class="s4">0</span><span class="s1">)</span>
+
+<span class="s1">win = Window(</span><span class="s5">&quot;asdf&quot;</span><span class="s3">, </span><span class="s1">resizable=</span><span class="s3">True</span><span class="s1">)</span>
+<span class="s1">renderer = Renderer(win)</span>
+<span class="s1">tex = Texture.from_surface(renderer</span><span class="s3">, </span><span class="s1">load_img(</span><span class="s5">&quot;alien1.gif&quot;</span><span class="s1">))</span>
+
+<span class="s1">running = </span><span class="s3">True</span>
+
+<span class="s1">x</span><span class="s3">, </span><span class="s1">y = </span><span class="s4">250</span><span class="s3">, </span><span class="s4">50</span>
+<span class="s1">clock = pg.time.Clock()</span>
+
+<span class="s1">backgrounds = [(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)]</span>
+<span class="s1">bg_index = </span><span class="s4">0</span>
+
+<span class="s1">renderer.draw_color = backgrounds[bg_index]</span>
+
+<span class="s1">win2 = Window(</span><span class="s5">&quot;2nd window&quot;</span><span class="s3">, </span><span class="s1">size=(</span><span class="s4">256</span><span class="s3">, </span><span class="s4">256</span><span class="s1">)</span><span class="s3">, </span><span class="s1">always_on_top=</span><span class="s3">True</span><span class="s1">)</span>
+<span class="s1">win2.opacity = </span><span class="s4">0.5</span>
+<span class="s1">win2.set_icon(load_img(</span><span class="s5">&quot;bomb.gif&quot;</span><span class="s1">))</span>
+<span class="s1">renderer2 = Renderer(win2)</span>
+<span class="s1">tex2 = Texture.from_surface(renderer2</span><span class="s3">, </span><span class="s1">load_img(</span><span class="s5">&quot;asprite.bmp&quot;</span><span class="s1">))</span>
+<span class="s1">renderer2.clear()</span>
+<span class="s1">tex2.draw()</span>
+<span class="s1">renderer2.present()</span>
+<span class="s3">del </span><span class="s1">tex2</span>
+
+<span class="s1">full = </span><span class="s4">0</span>
+
+<span class="s1">tex = Image(tex)</span>
+
+
+<span class="s1">surf = pg.Surface((</span><span class="s4">64</span><span class="s3">, </span><span class="s4">64</span><span class="s1">))</span>
+<span class="s1">streamtex = Texture(renderer</span><span class="s3">, </span><span class="s1">(</span><span class="s4">64</span><span class="s3">, </span><span class="s4">64</span><span class="s1">)</span><span class="s3">, </span><span class="s1">streaming=</span><span class="s3">True</span><span class="s1">)</span>
+<span class="s1">tex_update_interval = </span><span class="s4">1000</span>
+<span class="s1">next_tex_update = pg.time.get_ticks()</span>
+
+
+<span class="s3">while </span><span class="s1">running:</span>
+    <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">pg.event.get():</span>
+        <span class="s3">if </span><span class="s1">event.type == pg.QUIT:</span>
+            <span class="s1">running = </span><span class="s3">False</span>
+        <span class="s3">elif </span><span class="s1">getattr(event</span><span class="s3">, </span><span class="s5">&quot;window&quot;</span><span class="s3">, None</span><span class="s1">) == win2:</span>
+            <span class="s3">if </span><span class="s1">(</span>
+                <span class="s1">event.type == pg.KEYDOWN</span>
+                <span class="s3">and </span><span class="s1">event.key == pg.K_ESCAPE</span>
+                <span class="s3">or </span><span class="s1">event.type == pg.WINDOWCLOSE</span>
+            <span class="s1">):</span>
+                <span class="s1">win2.destroy()</span>
+        <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN:</span>
+            <span class="s3">if </span><span class="s1">event.key == pg.K_ESCAPE:</span>
+                <span class="s1">running = </span><span class="s3">False</span>
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_LEFT:</span>
+                <span class="s1">x -= </span><span class="s4">5</span>
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_RIGHT:</span>
+                <span class="s1">x += </span><span class="s4">5</span>
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_DOWN:</span>
+                <span class="s1">y += </span><span class="s4">5</span>
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_UP:</span>
+                <span class="s1">y -= </span><span class="s4">5</span>
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_f:</span>
+                <span class="s3">if </span><span class="s1">full == </span><span class="s4">0</span><span class="s1">:</span>
+                    <span class="s1">win.set_fullscreen(</span><span class="s3">True</span><span class="s1">)</span>
+                    <span class="s1">full = </span><span class="s4">1</span>
+                <span class="s3">else</span><span class="s1">:</span>
+                    <span class="s1">win.set_windowed()</span>
+                    <span class="s1">full = </span><span class="s4">0</span>
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_s:</span>
+                <span class="s1">readsurf = renderer.to_surface()</span>
+                <span class="s1">pg.image.save(readsurf</span><span class="s3">, </span><span class="s5">&quot;test.png&quot;</span><span class="s1">)</span>
+
+            <span class="s3">elif </span><span class="s1">event.key == pg.K_SPACE:</span>
+                <span class="s1">bg_index = (bg_index + </span><span class="s4">1</span><span class="s1">) % len(backgrounds)</span>
+                <span class="s1">renderer.draw_color = backgrounds[bg_index]</span>
+
+    <span class="s1">renderer.clear()</span>
+
+    <span class="s0"># update texture</span>
+    <span class="s1">curtime = pg.time.get_ticks()</span>
+    <span class="s3">if </span><span class="s1">curtime &gt;= next_tex_update:</span>
+        <span class="s3">for </span><span class="s1">x_ </span><span class="s3">in </span><span class="s1">range(streamtex.width // </span><span class="s4">4</span><span class="s1">):</span>
+            <span class="s3">for </span><span class="s1">y_ </span><span class="s3">in </span><span class="s1">range(streamtex.height // </span><span class="s4">4</span><span class="s1">):</span>
+                <span class="s1">newcol = (</span>
+                    <span class="s1">random.randint(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">,</span>
+                    <span class="s1">random.randint(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">,</span>
+                    <span class="s1">random.randint(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">,</span>
+                    <span class="s4">255</span><span class="s3">,</span>
+                <span class="s1">)</span>
+                <span class="s1">area = (</span><span class="s4">4 </span><span class="s1">* x_</span><span class="s3">, </span><span class="s4">4 </span><span class="s1">* y_</span><span class="s3">, </span><span class="s4">4</span><span class="s3">, </span><span class="s4">4</span><span class="s1">)</span>
+                <span class="s1">surf.fill(newcol</span><span class="s3">, </span><span class="s1">area)</span>
+        <span class="s1">streamtex.update(surf)</span>
+        <span class="s1">next_tex_update = curtime + tex_update_interval</span>
+    <span class="s1">streamtex.draw(dstrect=pg.Rect(</span><span class="s4">64</span><span class="s3">, </span><span class="s4">128</span><span class="s3">, </span><span class="s4">64</span><span class="s3">, </span><span class="s4">64</span><span class="s1">))</span>
+
+    <span class="s1">tex.draw(dstrect=(x</span><span class="s3">, </span><span class="s1">y))</span>
+
+    <span class="s0"># TODO: should these be?</span>
+    <span class="s0"># - line instead of draw_line</span>
+    <span class="s0"># - point instead of draw_point</span>
+    <span class="s0"># - rect(rect, width=1)-&gt;draw 1 pixel, instead of draw_rect</span>
+    <span class="s0"># - rect(rect, width=0)-&gt;filled ? , instead of fill_rect</span>
+    <span class="s0">#</span>
+    <span class="s0"># TODO: should these work with pg.draw.line(renderer, ...) functions?</span>
+    <span class="s1">renderer.draw_color = (</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span>
+    <span class="s1">renderer.draw_line((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">64</span><span class="s3">, </span><span class="s4">64</span><span class="s1">))</span>
+    <span class="s1">renderer.draw_line((</span><span class="s4">64</span><span class="s3">, </span><span class="s4">64</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">128</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))</span>
+    <span class="s1">renderer.draw_point((</span><span class="s4">72</span><span class="s3">, </span><span class="s4">32</span><span class="s1">))</span>
+    <span class="s1">renderer.draw_rect(pg.Rect(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">64</span><span class="s3">, </span><span class="s4">64</span><span class="s3">, </span><span class="s4">64</span><span class="s1">))</span>
+    <span class="s1">renderer.fill_rect(pg.Rect(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">128</span><span class="s3">, </span><span class="s4">64</span><span class="s3">, </span><span class="s4">64</span><span class="s1">))</span>
+    <span class="s1">renderer.draw_color = backgrounds[bg_index]</span>
+
+    <span class="s1">renderer.present()</span>
+
+    <span class="s1">clock.tick(</span><span class="s4">60</span><span class="s1">)</span>
+    <span class="s1">win.title = str(</span><span class="s5">f&quot;FPS: </span><span class="s3">{</span><span class="s1">clock.get_fps()</span><span class="s3">}</span><span class="s5">&quot;</span><span class="s1">)</span>
+
+<span class="s1">pg.quit()</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<html>
+<head>
+<title>joystick.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6897bb;}
+.s4 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+joystick.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">pygame</span>
+
+<span class="s1">pygame.init()</span>
+<span class="s2"># This is a simple class that will help us print to the screen.</span>
+<span class="s2"># It has nothing to do with the joysticks, just outputting the</span>
+<span class="s2"># information.</span>
+<span class="s0">class </span><span class="s1">TextPrint:</span>
+    <span class="s0">def </span><span class="s1">__init__(self):</span>
+        <span class="s1">self.reset()</span>
+        <span class="s1">self.font = pygame.font.Font(</span><span class="s0">None, </span><span class="s3">25</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">tprint(self</span><span class="s0">, </span><span class="s1">screen</span><span class="s0">, </span><span class="s1">text):</span>
+        <span class="s1">text_bitmap = self.font.render(text</span><span class="s0">, True, </span><span class="s1">(</span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s1">))</span>
+        <span class="s1">screen.blit(text_bitmap</span><span class="s0">, </span><span class="s1">(self.x</span><span class="s0">, </span><span class="s1">self.y))</span>
+        <span class="s1">self.y += self.line_height</span>
+
+    <span class="s0">def </span><span class="s1">reset(self):</span>
+        <span class="s1">self.x = </span><span class="s3">10</span>
+        <span class="s1">self.y = </span><span class="s3">10</span>
+        <span class="s1">self.line_height = </span><span class="s3">15</span>
+
+    <span class="s0">def </span><span class="s1">indent(self):</span>
+        <span class="s1">self.x += </span><span class="s3">10</span>
+
+    <span class="s0">def </span><span class="s1">unindent(self):</span>
+        <span class="s1">self.x -= </span><span class="s3">10</span>
+
+
+<span class="s0">def </span><span class="s1">main():</span>
+    <span class="s2"># Set the width and height of the screen (width, height), and name the window.</span>
+    <span class="s1">screen = pygame.display.set_mode((</span><span class="s3">500</span><span class="s0">, </span><span class="s3">700</span><span class="s1">))</span>
+    <span class="s1">pygame.display.set_caption(</span><span class="s4">&quot;Joystick example&quot;</span><span class="s1">)</span>
+
+    <span class="s2"># Used to manage how fast the screen updates.</span>
+    <span class="s1">clock = pygame.time.Clock()</span>
+
+    <span class="s2"># Get ready to print.</span>
+    <span class="s1">text_print = TextPrint()</span>
+
+    <span class="s2"># This dict can be left as-is, since pygame will generate a</span>
+    <span class="s2"># pygame.JOYDEVICEADDED event for every joystick connected</span>
+    <span class="s2"># at the start of the program.</span>
+    <span class="s1">joysticks = {}</span>
+
+    <span class="s1">done = </span><span class="s0">False</span>
+    <span class="s0">while not </span><span class="s1">done:</span>
+        <span class="s2"># Event processing step.</span>
+        <span class="s2"># Possible joystick events: JOYAXISMOTION, JOYBALLMOTION, JOYBUTTONDOWN,</span>
+        <span class="s2"># JOYBUTTONUP, JOYHATMOTION, JOYDEVICEADDED, JOYDEVICEREMOVED</span>
+        <span class="s0">for </span><span class="s1">event </span><span class="s0">in </span><span class="s1">pygame.event.get():</span>
+            <span class="s0">if </span><span class="s1">event.type == pygame.QUIT:</span>
+                <span class="s1">done = </span><span class="s0">True  </span><span class="s2"># Flag that we are done so we exit this loop.</span>
+
+            <span class="s0">if </span><span class="s1">event.type == pygame.JOYBUTTONDOWN:</span>
+                <span class="s1">print(</span><span class="s4">&quot;Joystick button pressed.&quot;</span><span class="s1">)</span>
+                <span class="s0">if </span><span class="s1">event.button == </span><span class="s3">0</span><span class="s1">:</span>
+                    <span class="s1">joystick = joysticks[event.instance_id]</span>
+                    <span class="s0">if </span><span class="s1">joystick.rumble(</span><span class="s3">0</span><span class="s0">, </span><span class="s3">0.7</span><span class="s0">, </span><span class="s3">500</span><span class="s1">):</span>
+                        <span class="s1">print(</span><span class="s4">f&quot;Rumble effect played on joystick </span><span class="s0">{</span><span class="s1">event.instance_id</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+
+            <span class="s0">if </span><span class="s1">event.type == pygame.JOYBUTTONUP:</span>
+                <span class="s1">print(</span><span class="s4">&quot;Joystick button released.&quot;</span><span class="s1">)</span>
+
+            <span class="s2"># Handle hotplugging</span>
+            <span class="s0">if </span><span class="s1">event.type == pygame.JOYDEVICEADDED:</span>
+                <span class="s2"># This event will be generated when the program starts for every</span>
+                <span class="s2"># joystick, filling up the list without needing to create them manually.</span>
+                <span class="s1">joy = pygame.joystick.Joystick(event.device_index)</span>
+                <span class="s1">joysticks[joy.get_instance_id()] = joy</span>
+                <span class="s1">print(</span><span class="s4">f&quot;Joystick </span><span class="s0">{</span><span class="s1">joy.get_instance_id()</span><span class="s0">} </span><span class="s4">connencted&quot;</span><span class="s1">)</span>
+
+            <span class="s0">if </span><span class="s1">event.type == pygame.JOYDEVICEREMOVED:</span>
+                <span class="s0">del </span><span class="s1">joysticks[event.instance_id]</span>
+                <span class="s1">print(</span><span class="s4">f&quot;Joystick </span><span class="s0">{</span><span class="s1">event.instance_id</span><span class="s0">} </span><span class="s4">disconnected&quot;</span><span class="s1">)</span>
+
+        <span class="s2"># Drawing step</span>
+        <span class="s2"># First, clear the screen to white. Don't put other drawing commands</span>
+        <span class="s2"># above this, or they will be erased with this command.</span>
+        <span class="s1">screen.fill((</span><span class="s3">255</span><span class="s0">, </span><span class="s3">255</span><span class="s0">, </span><span class="s3">255</span><span class="s1">))</span>
+        <span class="s1">text_print.reset()</span>
+
+        <span class="s2"># Get count of joysticks.</span>
+        <span class="s1">joystick_count = pygame.joystick.get_count()</span>
+
+        <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;Number of joysticks: </span><span class="s0">{</span><span class="s1">joystick_count</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+        <span class="s1">text_print.indent()</span>
+
+        <span class="s2"># For each joystick:</span>
+        <span class="s0">for </span><span class="s1">joystick </span><span class="s0">in </span><span class="s1">joysticks.values():</span>
+            <span class="s1">jid = joystick.get_instance_id()</span>
+
+            <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;Joystick </span><span class="s0">{</span><span class="s1">jid</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+            <span class="s1">text_print.indent()</span>
+
+            <span class="s2"># Get the name from the OS for the controller/joystick.</span>
+            <span class="s1">name = joystick.get_name()</span>
+            <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;Joystick name: </span><span class="s0">{</span><span class="s1">name</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+
+            <span class="s1">guid = joystick.get_guid()</span>
+            <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;GUID: </span><span class="s0">{</span><span class="s1">guid</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+
+            <span class="s1">power_level = joystick.get_power_level()</span>
+            <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;Joystick's power level: </span><span class="s0">{</span><span class="s1">power_level</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+
+            <span class="s2"># Usually axis run in pairs, up/down for one, and left/right for</span>
+            <span class="s2"># the other. Triggers count as axes.</span>
+            <span class="s1">axes = joystick.get_numaxes()</span>
+            <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;Number of axes: </span><span class="s0">{</span><span class="s1">axes</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+            <span class="s1">text_print.indent()</span>
+
+            <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(axes):</span>
+                <span class="s1">axis = joystick.get_axis(i)</span>
+                <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;Axis </span><span class="s0">{</span><span class="s1">i</span><span class="s0">} </span><span class="s4">value: </span><span class="s0">{</span><span class="s1">axis</span><span class="s0">:</span><span class="s4">&gt;6.3f</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+            <span class="s1">text_print.unindent()</span>
+
+            <span class="s1">buttons = joystick.get_numbuttons()</span>
+            <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;Number of buttons: </span><span class="s0">{</span><span class="s1">buttons</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+            <span class="s1">text_print.indent()</span>
+
+            <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(buttons):</span>
+                <span class="s1">button = joystick.get_button(i)</span>
+                <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;Button </span><span class="s0">{</span><span class="s1">i</span><span class="s0">:</span><span class="s4">&gt;2</span><span class="s0">} </span><span class="s4">value: </span><span class="s0">{</span><span class="s1">button</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+            <span class="s1">text_print.unindent()</span>
+
+            <span class="s1">hats = joystick.get_numhats()</span>
+            <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;Number of hats: </span><span class="s0">{</span><span class="s1">hats</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+            <span class="s1">text_print.indent()</span>
+
+            <span class="s2"># Hat position. All or nothing for direction, not a float like</span>
+            <span class="s2"># get_axis(). Position is a tuple of int values (x, y).</span>
+            <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(hats):</span>
+                <span class="s1">hat = joystick.get_hat(i)</span>
+                <span class="s1">text_print.tprint(screen</span><span class="s0">, </span><span class="s4">f&quot;Hat </span><span class="s0">{</span><span class="s1">i</span><span class="s0">} </span><span class="s4">value: </span><span class="s0">{</span><span class="s1">str(hat)</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+            <span class="s1">text_print.unindent()</span>
+
+            <span class="s1">text_print.unindent()</span>
+
+        <span class="s2"># Go ahead and update the screen with what we've drawn.</span>
+        <span class="s1">pygame.display.flip()</span>
+
+        <span class="s2"># Limit to 30 frames per second.</span>
+        <span class="s1">clock.tick(</span><span class="s3">30</span><span class="s1">)</span>
+
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s4">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">main()</span>
+    <span class="s2"># If you forget this line, the program will 'hang'</span>
+    <span class="s2"># on exit if running from IDLE.</span>
+    <span class="s1">pygame.quit()</span>
+</pre>
+</body>
+</html>

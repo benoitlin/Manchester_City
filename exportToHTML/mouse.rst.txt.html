@@ -1,0 +1,236 @@
+<html>
+<head>
+<title>mouse.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+mouse.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.mouse`</span>
+<span class="s0">===================</span>
+
+<span class="s0">.. module:: pygame.mouse</span>
+   <span class="s0">:synopsis: pygame module to work with the mouse</span>
+
+<span class="s0">| :sl:`pygame module to work with the mouse`</span>
+
+<span class="s0">The mouse functions can be used to get the current state of the mouse device.</span>
+<span class="s0">These functions can also alter the system cursor for the mouse.</span>
+
+<span class="s0">When the display mode is set, the event queue will start receiving mouse</span>
+<span class="s0">events. The mouse buttons generate ``pygame.MOUSEBUTTONDOWN`` and</span>
+<span class="s0">``pygame.MOUSEBUTTONUP`` events when they are pressed and released. These</span>
+<span class="s0">events contain a button attribute representing which button was pressed. The</span>
+<span class="s0">mouse wheel will generate ``pygame.MOUSEBUTTONDOWN`` and </span>
+<span class="s0">``pygame.MOUSEBUTTONUP`` events when rolled. The button will be set to 4 </span>
+<span class="s0">when the wheel is rolled up, and to button 5 when the wheel is rolled down. </span>
+<span class="s0">Whenever the mouse is moved it generates a ``pygame.MOUSEMOTION`` event. The </span>
+<span class="s0">mouse movement is broken into small and accurate motion events. As the mouse </span>
+<span class="s0">is moving many motion events will be placed on the queue. Mouse motion events </span>
+<span class="s0">that are not properly cleaned from the event queue are the primary reason the </span>
+<span class="s0">event queue fills up.</span>
+
+<span class="s0">If the mouse cursor is hidden, and input is grabbed to the current display the</span>
+<span class="s0">mouse will enter a virtual input mode, where the relative movements of the</span>
+<span class="s0">mouse will never be stopped by the borders of the screen. See the functions</span>
+<span class="s0">``pygame.mouse.set_visible()`` and ``pygame.event.set_grab()`` to get this</span>
+<span class="s0">configured.</span>
+
+
+<span class="s0">**Mouse Wheel Behavior in pygame 2**</span>
+
+<span class="s0">There is proper functionality for mouse wheel behaviour with pygame 2 supporting</span>
+<span class="s0">``pygame.MOUSEWHEEL`` events.  The new events support horizontal and vertical </span>
+<span class="s0">scroll movements, with signed integer values representing the amount scrolled </span>
+<span class="s0">(``x`` and ``y``), as well as ``flipped`` direction (the set positive and </span>
+<span class="s0">negative values for each axis is flipped). Read more about SDL2 </span>
+<span class="s0">input-related changes here `&lt;https://wiki.libsdl.org/MigrationGuide#Input&gt;`_</span>
+
+<span class="s0">In pygame 2, the mouse wheel functionality can be used by listening for the </span>
+<span class="s0">``pygame.MOUSEWHEEL`` type of an event (Bear in mind they still emit </span>
+<span class="s0">``pygame.MOUSEBUTTONDOWN`` events like in pygame 1.x, as well).</span>
+<span class="s0">When this event is triggered, a developer can access the appropriate ``Event`` object </span>
+<span class="s0">with ``pygame.event.get()``. The object can be used to access data about the mouse </span>
+<span class="s0">scroll, such as ``which`` (it will tell you what exact mouse device trigger the event).</span>
+
+<span class="s0">.. code-block:: python</span>
+   <span class="s0">:caption: Code example of mouse scroll (tested on 2.0.0.dev7)</span>
+   <span class="s0">:name: test.py</span>
+
+   <span class="s0"># Taken from husano896's PR thread (slightly modified)</span>
+   <span class="s0">import pygame</span>
+   <span class="s0">from pygame.locals import *</span>
+   <span class="s0">pygame.init()</span>
+   <span class="s0">screen = pygame.display.set_mode((640, 480))</span>
+   <span class="s0">clock = pygame.time.Clock()</span>
+   
+   <span class="s0">def main():</span>
+      <span class="s0">while True:</span>
+         <span class="s0">for event in pygame.event.get():</span>
+               <span class="s0">if event.type == QUIT:</span>
+                  <span class="s0">pygame.quit()</span>
+                  <span class="s0">return</span>
+               <span class="s0">elif event.type == MOUSEWHEEL:</span>
+                  <span class="s0">print(event) </span>
+                  <span class="s0">print(event.x, event.y)</span>
+                  <span class="s0">print(event.flipped)</span>
+                  <span class="s0">print(event.which)</span>
+                  <span class="s0"># can access properties with </span>
+                  <span class="s0"># proper notation(ex: event.y)</span>
+         <span class="s0">clock.tick(60)</span>
+
+   <span class="s0"># Execute game:</span>
+   <span class="s0">main()</span>
+
+<span class="s0">.. function:: get_pressed</span>
+
+   <span class="s0">| :sl:`get the state of the mouse buttons`</span>
+   <span class="s0">| :sg:`get_pressed(num_buttons=3) -&gt; (button1, button2, button3)`</span>
+   <span class="s0">| :sg:`get_pressed(num_buttons=5) -&gt; (button1, button2, button3, button4, button5)`</span>
+
+   <span class="s0">Returns a sequence of booleans representing the state of all the mouse</span>
+   <span class="s0">buttons. A true value means the mouse is currently being pressed at the time</span>
+   <span class="s0">of the call.</span>
+
+   <span class="s0">Note, to get all of the mouse events it is better to use either </span>
+   <span class="s0">``pygame.event.wait()`` or ``pygame.event.get()`` and check all of those </span>
+   <span class="s0">events to see if they are ``MOUSEBUTTONDOWN``, ``MOUSEBUTTONUP``, or</span>
+   <span class="s0">``MOUSEMOTION``.</span>
+
+   <span class="s0">Note, that on ``X11`` some X servers use middle button emulation. When you</span>
+   <span class="s0">click both buttons ``1`` and ``3`` at the same time a ``2`` button event </span>
+   <span class="s0">can be emitted.</span>
+
+   <span class="s0">Note, remember to call ``pygame.event.get()`` before this function.</span>
+   <span class="s0">Otherwise it will not work as expected.</span>
+
+   <span class="s0">To support five button mice, an optional parameter ``num_buttons`` has been </span>
+   <span class="s0">added in pygame 2. When this is set to ``5``, ``button4`` and ``button5`` </span>
+   <span class="s0">are added to the returned tuple. Only ``3`` and ``5`` are valid values </span>
+   <span class="s0">for this parameter.</span>
+   
+   <span class="s0">.. versionchanged:: 2.0.0 ``num_buttons`` argument added</span>
+
+   <span class="s0">.. ## pygame.mouse.get_pressed ##</span>
+
+<span class="s0">.. function:: get_pos</span>
+
+   <span class="s0">| :sl:`get the mouse cursor position`</span>
+   <span class="s0">| :sg:`get_pos() -&gt; (x, y)`</span>
+
+   <span class="s0">Returns the ``x`` and ``y`` position of the mouse cursor. The position is</span>
+   <span class="s0">relative to the top-left corner of the display. The cursor position can be</span>
+   <span class="s0">located outside of the display window, but is always constrained to the</span>
+   <span class="s0">screen.</span>
+
+   <span class="s0">.. ## pygame.mouse.get_pos ##</span>
+
+<span class="s0">.. function:: get_rel</span>
+
+   <span class="s0">| :sl:`get the amount of mouse movement`</span>
+   <span class="s0">| :sg:`get_rel() -&gt; (x, y)`</span>
+
+   <span class="s0">Returns the amount of movement in ``x`` and ``y`` since the previous call to</span>
+   <span class="s0">this function. The relative movement of the mouse cursor is constrained to</span>
+   <span class="s0">the edges of the screen, but see the virtual input mouse mode for a way</span>
+   <span class="s0">around this. Virtual input mode is described at the top of the page.</span>
+
+   <span class="s0">.. ## pygame.mouse.get_rel ##</span>
+
+<span class="s0">.. function:: set_pos</span>
+
+   <span class="s0">| :sl:`set the mouse cursor position`</span>
+   <span class="s0">| :sg:`set_pos([x, y]) -&gt; None`</span>
+
+   <span class="s0">Set the current mouse position to arguments given. If the mouse cursor is</span>
+   <span class="s0">visible it will jump to the new coordinates. Moving the mouse will generate</span>
+   <span class="s0">a new ``pygame.MOUSEMOTION`` event.</span>
+
+   <span class="s0">.. ## pygame.mouse.set_pos ##</span>
+
+<span class="s0">.. function:: set_visible</span>
+
+   <span class="s0">| :sl:`hide or show the mouse cursor`</span>
+   <span class="s0">| :sg:`set_visible(bool) -&gt; bool`</span>
+
+   <span class="s0">If the bool argument is true, the mouse cursor will be visible. This will</span>
+   <span class="s0">return the previous visible state of the cursor.</span>
+
+   <span class="s0">.. ## pygame.mouse.set_visible ##</span>
+
+<span class="s0">.. function:: get_visible</span>
+
+   <span class="s0">| :sl:`get the current visibility state of the mouse cursor`</span>
+   <span class="s0">| :sg:`get_visible() -&gt; bool`</span>
+
+   <span class="s0">Get the current visibility state of the mouse cursor. ``True`` if the mouse is</span>
+   <span class="s0">visible, ``False`` otherwise.</span>
+
+   <span class="s0">.. versionadded:: 2.0.0</span>
+
+   <span class="s0">.. ## pygame.mouse.get_visible ##</span>
+
+<span class="s0">.. function:: get_focused</span>
+
+   <span class="s0">| :sl:`check if the display is receiving mouse input`</span>
+   <span class="s0">| :sg:`get_focused() -&gt; bool`</span>
+
+   <span class="s0">Returns true when pygame is receiving mouse input events (or, in windowing</span>
+   <span class="s0">terminology, is &quot;active&quot; or has the &quot;focus&quot;).</span>
+
+   <span class="s0">This method is most useful when working in a window. By contrast, in</span>
+   <span class="s0">full-screen mode, this method always returns true.</span>
+
+   <span class="s0">Note: under ``MS`` Windows, the window that has the mouse focus also has the</span>
+   <span class="s0">keyboard focus. But under X-Windows, one window can receive mouse events and</span>
+   <span class="s0">another receive keyboard events. ``pygame.mouse.get_focused()`` indicates</span>
+   <span class="s0">whether the pygame window receives mouse events.</span>
+
+   <span class="s0">.. ## pygame.mouse.get_focused ##</span>
+
+<span class="s0">.. function:: set_cursor</span>
+
+   <span class="s0">| :sl:`set the mouse cursor to a new cursor`</span>
+   <span class="s0">| :sg:`set_cursor(pygame.cursors.Cursor) -&gt; None`</span>
+   <span class="s0">| :sg:`set_cursor(size, hotspot, xormasks, andmasks) -&gt; None`</span>
+   <span class="s0">| :sg:`set_cursor(hotspot, surface) -&gt; None`</span>
+   <span class="s0">| :sg:`set_cursor(constant) -&gt; None`</span>
+
+   <span class="s0">Set the mouse cursor to something new. This function accepts either an explicit</span>
+   <span class="s0">``Cursor`` object or arguments to create a ``Cursor`` object.</span>
+
+   <span class="s0">See :class:`pygame.cursors.Cursor` for help creating cursors and for examples.</span>
+
+   <span class="s0">.. versionchanged:: 2.0.1</span>
+
+   <span class="s0">.. ## pygame.mouse.set_cursor ##</span>
+
+
+<span class="s0">.. function:: get_cursor</span>
+
+   <span class="s0">| :sl:`get the current mouse cursor`</span>
+   <span class="s0">| :sg:`get_cursor() -&gt; pygame.cursors.Cursor`</span>
+
+   <span class="s0">Get the information about the mouse system cursor. The return value contains</span>
+   <span class="s0">the same data as the arguments passed into :func:`pygame.mouse.set_cursor()`.</span>
+
+   <span class="s0">.. note:: Code that unpacked a get_cursor() call into </span>
+             <span class="s0">``size, hotspot, xormasks, andmasks`` will still work,</span>
+	     <span class="s0">assuming the call returns an old school type cursor.</span>
+
+   <span class="s0">.. versionchanged:: 2.0.1</span>
+
+   <span class="s0">.. ## pygame.mouse.get_cursor ##</span>
+
+<span class="s0">.. ## pygame.mouse ##</span>
+</pre>
+</body>
+</html>

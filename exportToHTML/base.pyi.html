@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>base.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+base.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Any</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">Callable</span>
+
+<span class="s0">class </span><span class="s1">error(RuntimeError): ...</span>
+<span class="s0">class </span><span class="s1">BufferError(Exception): ...</span>
+
+<span class="s2"># Always defined</span>
+<span class="s1">HAVE_NEWBUF: int = </span><span class="s3">1</span>
+
+<span class="s0">def </span><span class="s1">init() -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+<span class="s0">def </span><span class="s1">quit() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_init() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">get_error() -&gt; str: ...</span>
+<span class="s0">def </span><span class="s1">set_error(error_msg: str) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_sdl_version() -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+<span class="s0">def </span><span class="s1">get_sdl_byteorder() -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">register_quit(callable: Callable[[]</span><span class="s0">, </span><span class="s1">Any]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+
+<span class="s2"># undocumented part of pygame API, kept here to make stubtest happy</span>
+<span class="s0">def </span><span class="s1">get_array_interface(arg: Any) -&gt; dict: ...</span>
+</pre>
+</body>
+</html>

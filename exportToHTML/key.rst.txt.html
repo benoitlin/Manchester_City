@@ -1,0 +1,463 @@
+<html>
+<head>
+<title>key.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+key.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.key`</span>
+<span class="s0">=================</span>
+
+<span class="s0">.. module:: pygame.key</span>
+   <span class="s0">:synopsis: pygame module to work with the keyboard</span>
+
+<span class="s0">| :sl:`pygame module to work with the keyboard`</span>
+
+<span class="s0">This module contains functions for dealing with the keyboard.</span>
+
+<span class="s0">The :mod:`pygame.event` queue gets ``pygame.KEYDOWN`` and ``pygame.KEYUP``</span>
+<span class="s0">events when the keyboard buttons are pressed and released. Both events have</span>
+<span class="s0">``key`` and ``mod`` attributes.</span>
+
+   <span class="s0">* ``key``: an :ref:`integer ID &lt;key-constants-label&gt;` representing every key</span>
+     <span class="s0">on the keyboard</span>
+   <span class="s0">* ``mod``: a bitmask of all the :ref:`modifier keys &lt;key-modifiers-label&gt;`</span>
+     <span class="s0">that were in a pressed state when the event occurred</span>
+
+<span class="s0">The ``pygame.KEYDOWN`` event has the additional attributes ``unicode`` and</span>
+<span class="s0">``scancode``.</span>
+
+   <span class="s0">* ``unicode``: a single character string that is the fully translated</span>
+     <span class="s0">character entered, this takes into account the shift and composition keys</span>
+   <span class="s0">* ``scancode``: the platform-specific key code, which could be different from</span>
+     <span class="s0">keyboard to keyboard, but is useful for key selection of weird keys like</span>
+     <span class="s0">the multimedia keys</span>
+
+<span class="s0">.. versionadded:: 2.0.0</span>
+    <span class="s0">The ``pygame.TEXTINPUT`` event is preferred to the ``unicode`` attribute</span>
+    <span class="s0">of ``pygame.KEYDOWN``. The attribute ``text`` contains the input.</span>
+
+
+<span class="s0">.. _key-constants-label:</span>
+
+<span class="s0">The following is a list of all the constants (from :mod:`pygame.locals`) used to</span>
+<span class="s0">represent keyboard keys.</span>
+
+<span class="s0">Portability note: The integers for key constants differ between pygame 1 and 2.</span>
+<span class="s0">Always use key constants (``K_a``) rather than integers directly (``97``) so</span>
+<span class="s0">that your key handling code works well on both pygame 1 and pygame 2.</span>
+
+
+<span class="s0">::</span>
+
+      <span class="s0">pygame</span>
+      <span class="s0">Constant      ASCII   Description</span>
+      <span class="s0">---------------------------------</span>
+      <span class="s0">K_BACKSPACE   \b      backspace</span>
+      <span class="s0">K_TAB         \t      tab</span>
+      <span class="s0">K_CLEAR               clear</span>
+      <span class="s0">K_RETURN      \r      return</span>
+      <span class="s0">K_PAUSE               pause</span>
+      <span class="s0">K_ESCAPE      ^[      escape</span>
+      <span class="s0">K_SPACE               space</span>
+      <span class="s0">K_EXCLAIM     !       exclaim</span>
+      <span class="s0">K_QUOTEDBL    &quot;       quotedbl</span>
+      <span class="s0">K_HASH        #       hash</span>
+      <span class="s0">K_DOLLAR      $       dollar</span>
+      <span class="s0">K_AMPERSAND   &amp;       ampersand</span>
+      <span class="s0">K_QUOTE               quote</span>
+      <span class="s0">K_LEFTPAREN   (       left parenthesis</span>
+      <span class="s0">K_RIGHTPAREN  )       right parenthesis</span>
+      <span class="s0">K_ASTERISK    *       asterisk</span>
+      <span class="s0">K_PLUS        +       plus sign</span>
+      <span class="s0">K_COMMA       ,       comma</span>
+      <span class="s0">K_MINUS       -       minus sign</span>
+      <span class="s0">K_PERIOD      .       period</span>
+      <span class="s0">K_SLASH       /       forward slash</span>
+      <span class="s0">K_0           0       0</span>
+      <span class="s0">K_1           1       1</span>
+      <span class="s0">K_2           2       2</span>
+      <span class="s0">K_3           3       3</span>
+      <span class="s0">K_4           4       4</span>
+      <span class="s0">K_5           5       5</span>
+      <span class="s0">K_6           6       6</span>
+      <span class="s0">K_7           7       7</span>
+      <span class="s0">K_8           8       8</span>
+      <span class="s0">K_9           9       9</span>
+      <span class="s0">K_COLON       :       colon</span>
+      <span class="s0">K_SEMICOLON   ;       semicolon</span>
+      <span class="s0">K_LESS        &lt;       less-than sign</span>
+      <span class="s0">K_EQUALS      =       equals sign</span>
+      <span class="s0">K_GREATER     &gt;       greater-than sign</span>
+      <span class="s0">K_QUESTION    ?       question mark</span>
+      <span class="s0">K_AT          @       at</span>
+      <span class="s0">K_LEFTBRACKET [       left bracket</span>
+      <span class="s0">K_BACKSLASH   \       backslash</span>
+      <span class="s0">K_RIGHTBRACKET ]      right bracket</span>
+      <span class="s0">K_CARET       ^       caret</span>
+      <span class="s0">K_UNDERSCORE  _       underscore</span>
+      <span class="s0">K_BACKQUOTE   `       grave</span>
+      <span class="s0">K_a           a       a</span>
+      <span class="s0">K_b           b       b</span>
+      <span class="s0">K_c           c       c</span>
+      <span class="s0">K_d           d       d</span>
+      <span class="s0">K_e           e       e</span>
+      <span class="s0">K_f           f       f</span>
+      <span class="s0">K_g           g       g</span>
+      <span class="s0">K_h           h       h</span>
+      <span class="s0">K_i           i       i</span>
+      <span class="s0">K_j           j       j</span>
+      <span class="s0">K_k           k       k</span>
+      <span class="s0">K_l           l       l</span>
+      <span class="s0">K_m           m       m</span>
+      <span class="s0">K_n           n       n</span>
+      <span class="s0">K_o           o       o</span>
+      <span class="s0">K_p           p       p</span>
+      <span class="s0">K_q           q       q</span>
+      <span class="s0">K_r           r       r</span>
+      <span class="s0">K_s           s       s</span>
+      <span class="s0">K_t           t       t</span>
+      <span class="s0">K_u           u       u</span>
+      <span class="s0">K_v           v       v</span>
+      <span class="s0">K_w           w       w</span>
+      <span class="s0">K_x           x       x</span>
+      <span class="s0">K_y           y       y</span>
+      <span class="s0">K_z           z       z</span>
+      <span class="s0">K_DELETE              delete</span>
+      <span class="s0">K_KP0                 keypad 0</span>
+      <span class="s0">K_KP1                 keypad 1</span>
+      <span class="s0">K_KP2                 keypad 2</span>
+      <span class="s0">K_KP3                 keypad 3</span>
+      <span class="s0">K_KP4                 keypad 4</span>
+      <span class="s0">K_KP5                 keypad 5</span>
+      <span class="s0">K_KP6                 keypad 6</span>
+      <span class="s0">K_KP7                 keypad 7</span>
+      <span class="s0">K_KP8                 keypad 8</span>
+      <span class="s0">K_KP9                 keypad 9</span>
+      <span class="s0">K_KP_PERIOD   .       keypad period</span>
+      <span class="s0">K_KP_DIVIDE   /       keypad divide</span>
+      <span class="s0">K_KP_MULTIPLY *       keypad multiply</span>
+      <span class="s0">K_KP_MINUS    -       keypad minus</span>
+      <span class="s0">K_KP_PLUS     +       keypad plus</span>
+      <span class="s0">K_KP_ENTER    \r      keypad enter</span>
+      <span class="s0">K_KP_EQUALS   =       keypad equals</span>
+      <span class="s0">K_UP                  up arrow</span>
+      <span class="s0">K_DOWN                down arrow</span>
+      <span class="s0">K_RIGHT               right arrow</span>
+      <span class="s0">K_LEFT                left arrow</span>
+      <span class="s0">K_INSERT              insert</span>
+      <span class="s0">K_HOME                home</span>
+      <span class="s0">K_END                 end</span>
+      <span class="s0">K_PAGEUP              page up</span>
+      <span class="s0">K_PAGEDOWN            page down</span>
+      <span class="s0">K_F1                  F1</span>
+      <span class="s0">K_F2                  F2</span>
+      <span class="s0">K_F3                  F3</span>
+      <span class="s0">K_F4                  F4</span>
+      <span class="s0">K_F5                  F5</span>
+      <span class="s0">K_F6                  F6</span>
+      <span class="s0">K_F7                  F7</span>
+      <span class="s0">K_F8                  F8</span>
+      <span class="s0">K_F9                  F9</span>
+      <span class="s0">K_F10                 F10</span>
+      <span class="s0">K_F11                 F11</span>
+      <span class="s0">K_F12                 F12</span>
+      <span class="s0">K_F13                 F13</span>
+      <span class="s0">K_F14                 F14</span>
+      <span class="s0">K_F15                 F15</span>
+      <span class="s0">K_NUMLOCK             numlock</span>
+      <span class="s0">K_CAPSLOCK            capslock</span>
+      <span class="s0">K_SCROLLOCK           scrollock</span>
+      <span class="s0">K_RSHIFT              right shift</span>
+      <span class="s0">K_LSHIFT              left shift</span>
+      <span class="s0">K_RCTRL               right control</span>
+      <span class="s0">K_LCTRL               left control</span>
+      <span class="s0">K_RALT                right alt</span>
+      <span class="s0">K_LALT                left alt</span>
+      <span class="s0">K_RMETA               right meta</span>
+      <span class="s0">K_LMETA               left meta</span>
+      <span class="s0">K_LSUPER              left Windows key</span>
+      <span class="s0">K_RSUPER              right Windows key</span>
+      <span class="s0">K_MODE                mode shift</span>
+      <span class="s0">K_HELP                help</span>
+      <span class="s0">K_PRINT               print screen</span>
+      <span class="s0">K_SYSREQ              sysrq</span>
+      <span class="s0">K_BREAK               break</span>
+      <span class="s0">K_MENU                menu</span>
+      <span class="s0">K_POWER               power</span>
+      <span class="s0">K_EURO                Euro</span>
+      <span class="s0">K_AC_BACK             Android back button</span>
+
+
+<span class="s0">.. _key-modifiers-label:</span>
+
+<span class="s0">The keyboard also has a list of modifier states (from :mod:`pygame.locals`) that</span>
+<span class="s0">can be assembled by bitwise-ORing them together.</span>
+
+<span class="s0">::</span>
+
+      <span class="s0">pygame</span>
+      <span class="s0">Constant      Description</span>
+      <span class="s0">-------------------------</span>
+      <span class="s0">KMOD_NONE     no modifier keys pressed</span>
+      <span class="s0">KMOD_LSHIFT   left shift</span>
+      <span class="s0">KMOD_RSHIFT   right shift</span>
+      <span class="s0">KMOD_SHIFT    left shift or right shift or both</span>
+      <span class="s0">KMOD_LCTRL    left control</span>
+      <span class="s0">KMOD_RCTRL    right control</span>
+      <span class="s0">KMOD_CTRL     left control or right control or both</span>
+      <span class="s0">KMOD_LALT     left alt</span>
+      <span class="s0">KMOD_RALT     right alt</span>
+      <span class="s0">KMOD_ALT      left alt or right alt or both</span>
+      <span class="s0">KMOD_LMETA    left meta</span>
+      <span class="s0">KMOD_RMETA    right meta</span>
+      <span class="s0">KMOD_META     left meta or right meta or both</span>
+      <span class="s0">KMOD_CAPS     caps lock</span>
+      <span class="s0">KMOD_NUM      num lock</span>
+      <span class="s0">KMOD_MODE     AltGr</span>
+
+
+<span class="s0">The modifier information is contained in the ``mod`` attribute of the</span>
+<span class="s0">``pygame.KEYDOWN`` and ``pygame.KEYUP`` events. The ``mod`` attribute is a</span>
+<span class="s0">bitmask of all the modifier keys that were in a pressed state when the event</span>
+<span class="s0">occurred. The modifier information can be decoded using a bitwise AND (except</span>
+<span class="s0">for ``KMOD_NONE``, which should be compared using equals ``==``). For example:</span>
+
+<span class="s0">::</span>
+
+    <span class="s0">for event in pygame.event.get():</span>
+        <span class="s0">if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:</span>
+            <span class="s0">if event.mod == pygame.KMOD_NONE:</span>
+                <span class="s0">print('No modifier keys were in a pressed state when this '</span>
+                      <span class="s0">'event occurred.')</span>
+            <span class="s0">else:</span>
+                <span class="s0">if event.mod &amp; pygame.KMOD_LSHIFT:</span>
+                    <span class="s0">print('Left shift was in a pressed state when this event '</span>
+                          <span class="s0">'occurred.')</span>
+                <span class="s0">if event.mod &amp; pygame.KMOD_RSHIFT:</span>
+                    <span class="s0">print('Right shift was in a pressed state when this event '</span>
+                          <span class="s0">'occurred.')</span>
+                <span class="s0">if event.mod &amp; pygame.KMOD_SHIFT:</span>
+                    <span class="s0">print('Left shift or right shift or both were in a '</span>
+                          <span class="s0">'pressed state when this event occurred.')</span>
+
+
+
+<span class="s0">.. function:: get_focused</span>
+
+   <span class="s0">| :sl:`true if the display is receiving keyboard input from the system`</span>
+   <span class="s0">| :sg:`get_focused() -&gt; bool`</span>
+
+   <span class="s0">Returns ``True`` when the display window has keyboard focus from the</span>
+   <span class="s0">system. If the display needs to ensure it does not lose keyboard focus, it</span>
+   <span class="s0">can use :func:`pygame.event.set_grab()` to grab all input.</span>
+
+   <span class="s0">.. ## pygame.key.get_focused ##</span>
+
+<span class="s0">.. function:: get_pressed</span>
+
+   <span class="s0">| :sl:`get the state of all keyboard buttons`</span>
+   <span class="s0">| :sg:`get_pressed() -&gt; bools`</span>
+
+   <span class="s0">Returns a sequence of boolean values representing the state of every key on</span>
+   <span class="s0">the keyboard. Use the key constant values to index the array. A ``True``</span>
+   <span class="s0">value means that the button is pressed.</span>
+
+   <span class="s0">.. note::</span>
+      <span class="s0">Getting the list of pushed buttons with this function is not the proper</span>
+      <span class="s0">way to handle text entry from the user. There is no way to know the order</span>
+      <span class="s0">of keys pressed, and rapidly pushed keys can be completely unnoticed</span>
+      <span class="s0">between two calls to ``pygame.key.get_pressed()``. There is also no way to</span>
+      <span class="s0">translate these pushed keys into a fully translated character value. See</span>
+      <span class="s0">the ``pygame.KEYDOWN`` events on the :mod:`pygame.event` queue for this</span>
+      <span class="s0">functionality.</span>
+
+   <span class="s0">.. ## pygame.key.get_pressed ##</span>
+
+<span class="s0">.. function:: get_mods</span>
+
+   <span class="s0">| :sl:`determine which modifier keys are being held`</span>
+   <span class="s0">| :sg:`get_mods() -&gt; int`</span>
+
+   <span class="s0">Returns a single integer representing a bitmask of all the modifier keys</span>
+   <span class="s0">being held. Using bitwise operators you can test if specific</span>
+   <span class="s0">:ref:`modifier keys &lt;key-modifiers-label&gt;` are pressed.</span>
+
+   <span class="s0">.. ## pygame.key.get_mods ##</span>
+
+<span class="s0">.. function:: set_mods</span>
+
+   <span class="s0">| :sl:`temporarily set which modifier keys are pressed`</span>
+   <span class="s0">| :sg:`set_mods(int) -&gt; None`</span>
+
+   <span class="s0">Create a bitmask of the :ref:`modifier key constants &lt;key-modifiers-label&gt;`</span>
+   <span class="s0">you want to impose on your program.</span>
+
+   <span class="s0">.. ## pygame.key.set_mods ##</span>
+
+<span class="s0">.. function:: set_repeat</span>
+
+   <span class="s0">| :sl:`control how held keys are repeated`</span>
+   <span class="s0">| :sg:`set_repeat() -&gt; None`</span>
+   <span class="s0">| :sg:`set_repeat(delay) -&gt; None`</span>
+   <span class="s0">| :sg:`set_repeat(delay, interval) -&gt; None`</span>
+
+   <span class="s0">When the keyboard repeat is enabled, keys that are held down will generate</span>
+   <span class="s0">multiple ``pygame.KEYDOWN`` events. The ``delay`` parameter is the number of</span>
+   <span class="s0">milliseconds before the first repeated ``pygame.KEYDOWN`` event will be sent.</span>
+   <span class="s0">After that, another ``pygame.KEYDOWN`` event will be sent every ``interval``</span>
+   <span class="s0">milliseconds. If a ``delay`` value is provided and an ``interval`` value is</span>
+   <span class="s0">not provided or is 0, then the ``interval`` will be set to the same value as</span>
+   <span class="s0">``delay``.</span>
+
+   <span class="s0">To disable key repeat call this function with no arguments or with ``delay``</span>
+   <span class="s0">set to 0.</span>
+
+   <span class="s0">When pygame is initialized the key repeat is disabled.</span>
+
+   <span class="s0">:raises ValueError: if ``delay`` or ``interval`` is &lt; 0</span>
+
+   <span class="s0">.. versionchanged:: 2.0.0 A ``ValueError`` is now raised (instead of a</span>
+      <span class="s0">``pygame.error``) if ``delay`` or ``interval`` is &lt; 0.</span>
+
+   <span class="s0">.. ## pygame.key.set_repeat ##</span>
+
+<span class="s0">.. function:: get_repeat</span>
+
+   <span class="s0">| :sl:`see how held keys are repeated`</span>
+   <span class="s0">| :sg:`get_repeat() -&gt; (delay, interval)`</span>
+
+   <span class="s0">Get the ``delay`` and ``interval`` keyboard repeat values. Refer to</span>
+   <span class="s0">:func:`pygame.key.set_repeat()` for a description of these values.</span>
+
+   <span class="s0">.. versionadded:: 1.8</span>
+
+   <span class="s0">.. ## pygame.key.get_repeat ##</span>
+
+<span class="s0">.. function:: name</span>
+
+   <span class="s0">| :sl:`get the name of a key identifier`</span>
+   <span class="s0">| :sg:`name(key, use_compat=True) -&gt; str`</span>
+
+   <span class="s0">Get the descriptive name of the button from a keyboard button id constant.</span>
+   <span class="s0">Returns an empty string (``&quot;&quot;``) if the key is not found.</span>
+
+   <span class="s0">If ``use_compat`` argument is ``True`` (which is the default), this function</span>
+   <span class="s0">returns the legacy name of a key where applicable. The return value is</span>
+   <span class="s0">expected to be the same across different pygame versions (provided the</span>
+   <span class="s0">corresponding key constant exists and is unique). If the return value is</span>
+   <span class="s0">passed to the ``key_code`` function, the original constant will be returned.</span>
+
+   <span class="s0">**Experimental:** ``use_compat`` paramater still in development for testing and feedback. It may change.</span>
+   <span class="s0">`Please leave use_compat feedback with authors &lt;https://github.com/pygame/pygame/pull/3312&gt;`_</span>
+
+   <span class="s0">If this argument is ``False``, the returned name may be prettier to display</span>
+   <span class="s0">and may cover a wider range of keys than with ``use_compat``, but there are</span>
+   <span class="s0">no guarantees that this name will be the same across different pygame</span>
+   <span class="s0">versions. If the name returned is passed to the ``key_code`` function, the</span>
+   <span class="s0">original constant is returned back (this is an implementation detail which</span>
+   <span class="s0">may change later, do not rely on this)</span>
+
+   <span class="s0">.. versionchanged:: 2.1.3 Added ``use_compat`` argument and guaranteed API stability for it</span>
+
+   <span class="s0">.. ## pygame.key.name ##</span>
+
+<span class="s0">.. function:: key_code</span>
+
+   <span class="s0">| :sl:`get the key identifier from a key name`</span>
+   <span class="s0">| :sg:`key_code(name=string) -&gt; int`</span>
+
+   <span class="s0">Get the key identifier code from the descriptive name of the key. This</span>
+   <span class="s0">returns an integer matching one of the K_* keycodes. For example:</span>
+
+   <span class="s0">::</span>
+
+        <span class="s0">&gt;&gt;&gt; pygame.key.key_code(&quot;return&quot;) == pygame.K_RETURN</span>
+        <span class="s0">True</span>
+        <span class="s0">&gt;&gt;&gt; pygame.key.key_code(&quot;0&quot;) == pygame.K_0</span>
+        <span class="s0">True</span>
+        <span class="s0">&gt;&gt;&gt; pygame.key.key_code(&quot;space&quot;) == pygame.K_SPACE</span>
+        <span class="s0">True</span>
+
+   <span class="s0">:raises ValueError: if the key name is not known.</span>
+
+   <span class="s0">.. versionadded:: 2.0.0</span>
+
+   <span class="s0">.. ## pygame.key.key_code ##</span>
+
+<span class="s0">.. function:: start_text_input</span>
+
+   <span class="s0">| :sl:`start handling Unicode text input events`</span>
+   <span class="s0">| :sg:`start_text_input() -&gt; None`</span>
+
+   <span class="s0">Start receiving ``pygame.TEXTEDITING`` and ``pygame.TEXTINPUT``</span>
+   <span class="s0">events. If applicable, show the on-screen keyboard or IME editor.</span>
+
+   <span class="s0">For many languages, key presses will automatically generate a</span>
+   <span class="s0">corresponding ``pygame.TEXTINPUT`` event. Special keys like</span>
+   <span class="s0">escape or function keys, and certain key combinations will not</span>
+   <span class="s0">generate ``pygame.TEXTINPUT`` events.</span>
+
+   <span class="s0">In other languages, entering a single symbol may require multiple</span>
+   <span class="s0">key presses, or a language-specific user interface. In this case,</span>
+   <span class="s0">``pygame.TEXTINPUT`` events are preferable to ``pygame.KEYDOWN``</span>
+   <span class="s0">events for text input.</span>
+
+   <span class="s0">A ``pygame.TEXTEDITING`` event is received when an IME composition</span>
+   <span class="s0">is started or changed. It contains the composition ``text``, ``length``,</span>
+   <span class="s0">and editing ``start`` position within the composition (attributes</span>
+   <span class="s0">``text``, ``length``, and ``start``, respectively).</span>
+   <span class="s0">When the composition is committed (or non-IME input is received),</span>
+   <span class="s0">a ``pygame.TEXTINPUT`` event is generated.</span>
+
+   <span class="s0">Text input events handling is on by default.</span>
+
+   <span class="s0">.. versionadded:: 2.0.0</span>
+
+   <span class="s0">.. ## pygame.key.start_text_input ##</span>
+
+<span class="s0">.. function:: stop_text_input</span>
+
+   <span class="s0">| :sl:`stop handling Unicode text input events`</span>
+   <span class="s0">| :sg:`stop_text_input() -&gt; None`</span>
+
+   <span class="s0">Stop receiving ``pygame.TEXTEDITING`` and ``pygame.TEXTINPUT``</span>
+   <span class="s0">events. If an on-screen keyboard or IME editor was shown with</span>
+   <span class="s0">``pygame.key.start_text_input()``, hide it again.</span>
+
+   <span class="s0">Text input events handling is on by default.</span>
+
+   <span class="s0">To avoid triggering the IME editor or the on-screen keyboard</span>
+   <span class="s0">when the user is holding down a key during gameplay, text input</span>
+   <span class="s0">should be disabled once text entry is finished, or when the user</span>
+   <span class="s0">clicks outside of a text box.</span>
+
+   <span class="s0">.. versionadded:: 2.0.0</span>
+
+   <span class="s0">.. ## pygame.key.stop_text_input ##</span>
+
+<span class="s0">.. function:: set_text_input_rect</span>
+
+   <span class="s0">| :sl:`controls the position of the candidate list`</span>
+   <span class="s0">| :sg:`set_text_input_rect(Rect) -&gt; None`</span>
+
+   <span class="s0">This sets the rectangle used for typing with an IME.</span>
+   <span class="s0">It controls where the candidate list will open, if supported.</span>
+
+   <span class="s0">.. versionadded:: 2.0.0</span>
+
+   <span class="s0">.. ## pygame.key.set_text_input_rect ##</span>
+
+<span class="s0">.. ## pygame.key ##</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<html>
+<head>
+<title>surface.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #a5c261;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+surface.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Any</span><span class="s0">, </span><span class="s1">List</span><span class="s0">, </span><span class="s1">Optional</span><span class="s0">, </span><span class="s1">Sequence</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">Union</span><span class="s0">, </span><span class="s1">overload</span>
+
+<span class="s0">from </span><span class="s1">pygame.bufferproxy </span><span class="s0">import </span><span class="s1">BufferProxy</span>
+<span class="s0">from </span><span class="s1">pygame.color </span><span class="s0">import </span><span class="s1">Color</span>
+<span class="s0">from </span><span class="s1">pygame.rect </span><span class="s0">import </span><span class="s1">Rect</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">ColorValue</span><span class="s0">, </span><span class="s1">Coordinate</span><span class="s0">, </span><span class="s1">Literal</span><span class="s0">, </span><span class="s1">RectValue</span><span class="s0">, </span><span class="s1">RGBAOutput</span>
+
+<span class="s1">_ViewKind = Literal[</span>
+    <span class="s2">&quot;0&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;1&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;2&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;3&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;0&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;1&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;2&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;3&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;r&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;g&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;b&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;a&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;R&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;G&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;B&quot;</span><span class="s0">,</span>
+    <span class="s2">&quot;A&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;r&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;g&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;b&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;a&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;R&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;G&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;B&quot;</span><span class="s0">,</span>
+    <span class="s3">b&quot;A&quot;</span><span class="s0">,</span>
+<span class="s1">]</span>
+
+<span class="s0">class </span><span class="s1">Surface:</span>
+    <span class="s1">_pixels_address: int</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">size: Coordinate</span><span class="s0">,</span>
+        <span class="s1">flags: int = </span><span class="s4">0</span><span class="s0">,</span>
+        <span class="s1">depth: int = </span><span class="s4">0</span><span class="s0">,</span>
+        <span class="s1">masks: Optional[ColorValue] = </span><span class="s0">None,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">size: Coordinate</span><span class="s0">,</span>
+        <span class="s1">flags: int = </span><span class="s4">0</span><span class="s0">,</span>
+        <span class="s1">surface: Surface = ...</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__copy__(self) -&gt; Surface: ...</span>
+    <span class="s1">copy = __copy__</span>
+    <span class="s0">def </span><span class="s1">blit(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">source: Surface</span><span class="s0">,</span>
+        <span class="s1">dest: Union[Coordinate</span><span class="s0">, </span><span class="s1">RectValue]</span><span class="s0">,</span>
+        <span class="s1">area: Optional[RectValue] = </span><span class="s0">None,</span>
+        <span class="s1">special_flags: int = </span><span class="s4">0</span><span class="s0">,</span>
+    <span class="s1">) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">blits(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">blit_sequence: Sequence[</span>
+            <span class="s1">Union[</span>
+                <span class="s1">Tuple[Surface</span><span class="s0">, </span><span class="s1">Union[Coordinate</span><span class="s0">, </span><span class="s1">RectValue]]</span><span class="s0">,</span>
+                <span class="s1">Tuple[Surface</span><span class="s0">, </span><span class="s1">Union[Coordinate</span><span class="s0">, </span><span class="s1">RectValue]</span><span class="s0">, </span><span class="s1">Union[RectValue</span><span class="s0">, </span><span class="s1">int]]</span><span class="s0">,</span>
+                <span class="s1">Tuple[Surface</span><span class="s0">, </span><span class="s1">Union[Coordinate</span><span class="s0">, </span><span class="s1">RectValue]</span><span class="s0">, </span><span class="s1">RectValue</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">,</span>
+            <span class="s1">]</span>
+        <span class="s1">]</span><span class="s0">,</span>
+        <span class="s1">doreturn: Union[int</span><span class="s0">, </span><span class="s1">bool] = </span><span class="s4">1</span><span class="s0">,</span>
+    <span class="s1">) -&gt; Union[List[Rect]</span><span class="s0">, None</span><span class="s1">]: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">convert(self</span><span class="s0">, </span><span class="s1">surface: Surface) -&gt; Surface: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">convert(self</span><span class="s0">, </span><span class="s1">depth: int</span><span class="s0">, </span><span class="s1">flags: int = </span><span class="s4">0</span><span class="s1">) -&gt; Surface: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">convert(self</span><span class="s0">, </span><span class="s1">masks: ColorValue</span><span class="s0">, </span><span class="s1">flags: int = </span><span class="s4">0</span><span class="s1">) -&gt; Surface: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">convert(self) -&gt; Surface: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">convert_alpha(self</span><span class="s0">, </span><span class="s1">surface: Surface) -&gt; Surface: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">convert_alpha(self) -&gt; Surface: ...</span>
+    <span class="s0">def </span><span class="s1">fill(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">color: ColorValue</span><span class="s0">,</span>
+        <span class="s1">rect: Optional[RectValue] = </span><span class="s0">None,</span>
+        <span class="s1">special_flags: int = </span><span class="s4">0</span><span class="s0">,</span>
+    <span class="s1">) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">scroll(self</span><span class="s0">, </span><span class="s1">dx: int = </span><span class="s4">0</span><span class="s0">, </span><span class="s1">dy: int = </span><span class="s4">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">set_colorkey(self</span><span class="s0">, </span><span class="s1">color: ColorValue</span><span class="s0">, </span><span class="s1">flags: int = </span><span class="s4">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">set_colorkey(self</span><span class="s0">, </span><span class="s1">color: </span><span class="s0">None</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_colorkey(self) -&gt; Optional[RGBAOutput]: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">set_alpha(self</span><span class="s0">, </span><span class="s1">value: int</span><span class="s0">, </span><span class="s1">flags: int = </span><span class="s4">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">set_alpha(self</span><span class="s0">, </span><span class="s1">value: </span><span class="s0">None</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_alpha(self) -&gt; Optional[int]: ...</span>
+    <span class="s0">def </span><span class="s1">lock(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">unlock(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">mustlock(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">get_locked(self) -&gt; bool: ...</span>
+    <span class="s0">def </span><span class="s1">get_locks(self) -&gt; Tuple[Any</span><span class="s0">, </span><span class="s1">...]: ...</span>
+    <span class="s0">def </span><span class="s1">get_at(self</span><span class="s0">, </span><span class="s1">x_y: Sequence[int]) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">set_at(self</span><span class="s0">, </span><span class="s1">x_y: Sequence[int]</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_at_mapped(self</span><span class="s0">, </span><span class="s1">x_y: Sequence[int]) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_palette(self) -&gt; List[Color]: ...</span>
+    <span class="s0">def </span><span class="s1">get_palette_at(self</span><span class="s0">, </span><span class="s1">index: int) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">set_palette(self</span><span class="s0">, </span><span class="s1">palette: Sequence[ColorValue]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">set_palette_at(self</span><span class="s0">, </span><span class="s1">index: int</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">map_rgb(self</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">unmap_rgb(self</span><span class="s0">, </span><span class="s1">mapped_int: int) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">set_clip(self</span><span class="s0">, </span><span class="s1">rect: Optional[RectValue]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_clip(self) -&gt; Rect: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">subsurface(self</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; Surface: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">subsurface(self</span><span class="s0">, </span><span class="s1">left_top: Coordinate</span><span class="s0">, </span><span class="s1">width_height: Coordinate) -&gt; Surface: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">subsurface(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">left: float</span><span class="s0">, </span><span class="s1">top: float</span><span class="s0">, </span><span class="s1">width: float</span><span class="s0">, </span><span class="s1">height: float</span>
+    <span class="s1">) -&gt; Surface: ...</span>
+    <span class="s0">def </span><span class="s1">get_parent(self) -&gt; Surface: ...</span>
+    <span class="s0">def </span><span class="s1">get_abs_parent(self) -&gt; Surface: ...</span>
+    <span class="s0">def </span><span class="s1">get_offset(self) -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+    <span class="s0">def </span><span class="s1">get_abs_offset(self) -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+    <span class="s0">def </span><span class="s1">get_size(self) -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+    <span class="s0">def </span><span class="s1">get_width(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_height(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_rect(self</span><span class="s0">, </span><span class="s1">**kwargs: Any) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">get_bitsize(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_bytesize(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_flags(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_pitch(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">get_masks(self) -&gt; RGBAOutput: ...</span>
+    <span class="s0">def </span><span class="s1">set_masks(self</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_shifts(self) -&gt; RGBAOutput: ...</span>
+    <span class="s0">def </span><span class="s1">set_shifts(self</span><span class="s0">, </span><span class="s1">color: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">get_losses(self) -&gt; RGBAOutput: ...</span>
+    <span class="s0">def </span><span class="s1">get_bounding_rect(self</span><span class="s0">, </span><span class="s1">min_alpha: int = </span><span class="s4">1</span><span class="s1">) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">get_view(self</span><span class="s0">, </span><span class="s1">kind: _ViewKind = </span><span class="s2">&quot;2&quot;</span><span class="s1">) -&gt; BufferProxy: ...</span>
+    <span class="s0">def </span><span class="s1">get_buffer(self) -&gt; BufferProxy: ...</span>
+    <span class="s0">def </span><span class="s1">get_blendmode(self) -&gt; int: ...</span>
+
+<span class="s1">SurfaceType = Surface</span>
+</pre>
+</body>
+</html>

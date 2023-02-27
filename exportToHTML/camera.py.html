@@ -1,0 +1,145 @@
+<html>
+<head>
+<title>camera.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+camera.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.camera 
+ 
+Basic image capturing and display using pygame.camera 
+ 
+Keyboard controls 
+----------------- 
+ 
+- 0, start camera 0. 
+- 1, start camera 1. 
+- 9, start camera 9. 
+- 10, start camera... wait a minute! There's not 10 key! 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+<span class="s3">import </span><span class="s1">pygame.camera</span>
+
+
+<span class="s3">class </span><span class="s1">VideoCapturePlayer:</span>
+
+    <span class="s1">size = (</span><span class="s4">640</span><span class="s3">, </span><span class="s4">480</span><span class="s1">)</span>
+
+    <span class="s3">def </span><span class="s1">__init__(self</span><span class="s3">, </span><span class="s1">**argd):</span>
+        <span class="s1">self.__dict__.update(**argd)</span>
+        <span class="s1">super().__init__(**argd)</span>
+
+        <span class="s0"># create a display surface. standard pygame stuff</span>
+        <span class="s1">self.display = pg.display.set_mode(self.size)</span>
+        <span class="s1">self.init_cams(</span><span class="s4">0</span><span class="s1">)</span>
+
+    <span class="s3">def </span><span class="s1">init_cams(self</span><span class="s3">, </span><span class="s1">which_cam_idx):</span>
+
+        <span class="s0"># gets a list of available cameras.</span>
+        <span class="s1">self.clist = pygame.camera.list_cameras()</span>
+
+        <span class="s0"># ensure a camera exists</span>
+        <span class="s3">if not </span><span class="s1">self.clist:</span>
+            <span class="s3">raise </span><span class="s1">ValueError(</span><span class="s5">&quot;Sorry, no cameras detected.&quot;</span><span class="s1">)</span>
+
+        <span class="s0"># check to see if the camera id exists. If not, default to the first one in the list.</span>
+        <span class="s3">try</span><span class="s1">:</span>
+            <span class="s1">cam_id = self.clist[which_cam_idx]</span>
+        <span class="s3">except </span><span class="s1">IndexError:</span>
+            <span class="s1">cam_id = self.clist[</span><span class="s4">0</span><span class="s1">]</span>
+
+        <span class="s0"># creates the camera of the specified size and in RGB colorspace</span>
+        <span class="s1">self.camera = pygame.camera.Camera(cam_id</span><span class="s3">, </span><span class="s1">self.size</span><span class="s3">, </span><span class="s5">&quot;RGB&quot;</span><span class="s1">)</span>
+
+        <span class="s0"># starts the camera</span>
+        <span class="s1">self.camera.start()</span>
+
+        <span class="s1">self.clock = pg.time.Clock()</span>
+
+        <span class="s0"># create a surface to capture to.  for performance purposes, you want the</span>
+        <span class="s0"># bit depth to be the same as that of the display surface.</span>
+        <span class="s1">self.snapshot = pg.surface.Surface(self.size</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s1">self.display)</span>
+        <span class="s0"># return the name of the camera being used, to be included in the window name</span>
+        <span class="s3">return </span><span class="s1">cam_id</span>
+
+    <span class="s3">def </span><span class="s1">get_and_flip(self):</span>
+        <span class="s0"># if you don't want to tie the framerate to the camera, you can check and</span>
+        <span class="s0"># see if the camera has an image ready.  note that while this works</span>
+        <span class="s0"># on most cameras, some will never return true.</span>
+
+        <span class="s1">self.snapshot = self.camera.get_image(self.display)</span>
+
+        <span class="s0"># if 0 and self.camera.query_image():</span>
+        <span class="s0">#     # capture an image</span>
+
+        <span class="s0">#     self.snapshot = self.camera.get_image(self.snapshot)</span>
+
+        <span class="s0"># if 0:</span>
+        <span class="s0">#     self.snapshot = self.camera.get_image(self.snapshot)</span>
+        <span class="s0">#     # self.snapshot = self.camera.get_image()</span>
+
+        <span class="s0">#     # blit it to the display surface.  simple!</span>
+        <span class="s0">#     self.display.blit(self.snapshot, (0, 0))</span>
+        <span class="s0"># else:</span>
+
+        <span class="s0">#     self.snapshot = self.camera.get_image(self.display)</span>
+        <span class="s0">#     # self.display.blit(self.snapshot, (0,0))</span>
+
+        <span class="s1">pg.display.flip()</span>
+
+    <span class="s3">def </span><span class="s1">main(self):</span>
+        <span class="s0"># get the camera list. If there are no cameras, raise a value error.</span>
+        <span class="s1">clist = pygame.camera.list_cameras()</span>
+        <span class="s3">if not </span><span class="s1">clist:</span>
+            <span class="s3">raise </span><span class="s1">ValueError(</span><span class="s5">&quot;Sorry, no cameras detected.&quot;</span><span class="s1">)</span>
+        <span class="s0"># get the first camera, as this is the default. We want the display to contain the name of the camera.</span>
+        <span class="s1">camera = clist[</span><span class="s4">0</span><span class="s1">]</span>
+
+        <span class="s0"># create a list of options for the user to easily understand.</span>
+        <span class="s1">print(</span>
+            <span class="s5">&quot;</span><span class="s3">\n</span><span class="s5">Press the associated number for the desired camera to see that display!&quot;</span>
+        <span class="s1">)</span>
+        <span class="s1">print(</span><span class="s5">&quot;(Selecting a camera that does not exist will default to camera 0)&quot;</span><span class="s1">)</span>
+        <span class="s3">for </span><span class="s1">index</span><span class="s3">, </span><span class="s1">cam </span><span class="s3">in </span><span class="s1">enumerate(clist):</span>
+            <span class="s1">print(</span><span class="s5">f&quot;[</span><span class="s3">{</span><span class="s1">index</span><span class="s3">}</span><span class="s5">]: </span><span class="s3">{</span><span class="s1">cam</span><span class="s3">}</span><span class="s5">&quot;</span><span class="s1">)</span>
+
+        <span class="s1">going = </span><span class="s3">True</span>
+        <span class="s3">while </span><span class="s1">going:</span>
+            <span class="s1">events = pg.event.get()</span>
+            <span class="s3">for </span><span class="s1">e </span><span class="s3">in </span><span class="s1">events:</span>
+                <span class="s3">if </span><span class="s1">e.type == pg.QUIT </span><span class="s3">or </span><span class="s1">(e.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">e.key == pg.K_ESCAPE):</span>
+                    <span class="s1">going = </span><span class="s3">False</span>
+                <span class="s3">if </span><span class="s1">e.type == pg.KEYDOWN:</span>
+                    <span class="s3">if </span><span class="s1">e.key </span><span class="s3">in </span><span class="s1">range(pg.K_0</span><span class="s3">, </span><span class="s1">pg.K_0 + </span><span class="s4">10</span><span class="s1">):</span>
+                        <span class="s1">camera = self.init_cams(e.key - pg.K_0)</span>
+
+            <span class="s1">self.get_and_flip()</span>
+            <span class="s1">self.clock.tick()</span>
+            <span class="s1">pygame.display.set_caption(</span><span class="s5">f&quot;</span><span class="s3">{</span><span class="s1">camera</span><span class="s3">} </span><span class="s5">(</span><span class="s3">{</span><span class="s1">self.clock.get_fps()</span><span class="s3">:</span><span class="s5">.2f</span><span class="s3">} </span><span class="s5">FPS)&quot;</span><span class="s1">)</span>
+
+
+<span class="s3">def </span><span class="s1">main():</span>
+    <span class="s1">pg.init()</span>
+    <span class="s1">pygame.camera.init()</span>
+    <span class="s1">VideoCapturePlayer().main()</span>
+    <span class="s1">pg.quit()</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s5">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">main()</span>
+</pre>
+</body>
+</html>

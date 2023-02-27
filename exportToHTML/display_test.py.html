@@ -1,0 +1,944 @@
+<html>
+<head>
+<title>display_test.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+.s4 { color: #808080;}
+.s5 { color: #629755; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+display_test.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">unittest</span>
+<span class="s0">import </span><span class="s1">os</span>
+<span class="s0">import </span><span class="s1">sys</span>
+<span class="s0">import </span><span class="s1">time</span>
+
+<span class="s0">import </span><span class="s1">pygame</span><span class="s0">, </span><span class="s1">pygame.transform</span>
+
+<span class="s0">from </span><span class="s1">pygame.tests.test_utils </span><span class="s0">import </span><span class="s1">question</span>
+
+<span class="s0">from </span><span class="s1">pygame </span><span class="s0">import </span><span class="s1">display</span>
+
+
+<span class="s0">class </span><span class="s1">DisplayModuleTest(unittest.TestCase):</span>
+    <span class="s1">default_caption = </span><span class="s2">&quot;pygame window&quot;</span>
+
+    <span class="s0">def </span><span class="s1">setUp(self):</span>
+        <span class="s1">display.init()</span>
+
+    <span class="s0">def </span><span class="s1">tearDown(self):</span>
+        <span class="s1">display.quit()</span>
+
+    <span class="s0">def </span><span class="s1">test_Info(self):</span>
+        <span class="s1">inf = pygame.display.Info()</span>
+        <span class="s1">self.assertNotEqual(inf.current_h</span><span class="s0">, </span><span class="s1">-</span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">self.assertNotEqual(inf.current_w</span><span class="s0">, </span><span class="s1">-</span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s4"># probably have an older SDL than 1.2.10 if -1.</span>
+
+        <span class="s1">screen = pygame.display.set_mode((</span><span class="s3">128</span><span class="s0">, </span><span class="s3">128</span><span class="s1">))</span>
+        <span class="s1">inf = pygame.display.Info()</span>
+        <span class="s1">self.assertEqual(inf.current_h</span><span class="s0">, </span><span class="s3">128</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(inf.current_w</span><span class="s0">, </span><span class="s3">128</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_flip(self):</span>
+        <span class="s1">screen = pygame.display.set_mode((</span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">))</span>
+
+        <span class="s4"># test without a change</span>
+        <span class="s1">self.assertIsNone(pygame.display.flip())</span>
+
+        <span class="s4"># test with a change</span>
+        <span class="s1">pygame.Surface.fill(screen</span><span class="s0">, </span><span class="s1">(</span><span class="s3">66</span><span class="s0">, </span><span class="s3">66</span><span class="s0">, </span><span class="s3">53</span><span class="s1">))</span>
+        <span class="s1">self.assertIsNone(pygame.display.flip())</span>
+
+        <span class="s4"># test without display init</span>
+        <span class="s1">pygame.display.quit()</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(pygame.error):</span>
+            <span class="s1">(pygame.display.flip())</span>
+
+        <span class="s4"># test without window</span>
+        <span class="s0">del </span><span class="s1">screen</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(pygame.error):</span>
+            <span class="s1">(pygame.display.flip())</span>
+
+    <span class="s0">def </span><span class="s1">test_get_active(self):</span>
+        <span class="s5">&quot;&quot;&quot;Test the get_active function&quot;&quot;&quot;</span>
+
+        <span class="s4"># Initially, the display is not active</span>
+        <span class="s1">pygame.display.quit()</span>
+        <span class="s1">self.assertEqual(pygame.display.get_active()</span><span class="s0">, False</span><span class="s1">)</span>
+
+        <span class="s4"># get_active defaults to true after a set_mode</span>
+        <span class="s1">pygame.display.init()</span>
+        <span class="s1">pygame.display.set_mode((</span><span class="s3">640</span><span class="s0">, </span><span class="s3">480</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(pygame.display.get_active()</span><span class="s0">, True</span><span class="s1">)</span>
+
+        <span class="s4"># get_active after init/quit should be False</span>
+        <span class="s4"># since no display is visible</span>
+        <span class="s1">pygame.display.quit()</span>
+        <span class="s1">pygame.display.init()</span>
+        <span class="s1">self.assertEqual(pygame.display.get_active()</span><span class="s0">, False</span><span class="s1">)</span>
+
+    <span class="s1">@unittest.skipIf(</span>
+        <span class="s1">os.environ.get(</span><span class="s2">&quot;SDL_VIDEODRIVER&quot;</span><span class="s1">) == </span><span class="s2">&quot;dummy&quot;</span><span class="s0">,</span>
+        <span class="s2">&quot;requires the SDL_VIDEODRIVER to be a non dummy value&quot;</span><span class="s0">,</span>
+    <span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_get_active_iconify(self):</span>
+        <span class="s5">&quot;&quot;&quot;Test the get_active function after an iconify&quot;&quot;&quot;</span>
+
+        <span class="s4"># According to the docs, get_active should return</span>
+        <span class="s4"># false if the display is iconified</span>
+        <span class="s1">pygame.display.set_mode((</span><span class="s3">640</span><span class="s0">, </span><span class="s3">480</span><span class="s1">))</span>
+
+        <span class="s1">pygame.event.clear()</span>
+        <span class="s1">pygame.display.iconify()</span>
+
+        <span class="s0">for </span><span class="s1">_ </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">100</span><span class="s1">):</span>
+            <span class="s1">time.sleep(</span><span class="s3">0.01</span><span class="s1">)</span>
+            <span class="s1">pygame.event.pump()</span>
+
+        <span class="s1">self.assertEqual(pygame.display.get_active()</span><span class="s0">, False</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_caption(self):</span>
+        <span class="s1">screen = display.set_mode((</span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">))</span>
+
+        <span class="s1">self.assertEqual(display.get_caption()[</span><span class="s3">0</span><span class="s1">]</span><span class="s0">, </span><span class="s1">self.default_caption)</span>
+
+    <span class="s0">def </span><span class="s1">test_set_caption(self):</span>
+        <span class="s1">TEST_CAPTION = </span><span class="s2">&quot;test&quot;</span>
+        <span class="s1">screen = display.set_mode((</span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">))</span>
+
+        <span class="s1">self.assertIsNone(display.set_caption(TEST_CAPTION))</span>
+        <span class="s1">self.assertEqual(display.get_caption()[</span><span class="s3">0</span><span class="s1">]</span><span class="s0">, </span><span class="s1">TEST_CAPTION)</span>
+        <span class="s1">self.assertEqual(display.get_caption()[</span><span class="s3">1</span><span class="s1">]</span><span class="s0">, </span><span class="s1">TEST_CAPTION)</span>
+
+    <span class="s0">def </span><span class="s1">test_caption_unicode(self):</span>
+        <span class="s1">TEST_CAPTION = </span><span class="s2">&quot;台&quot;</span>
+        <span class="s1">display.set_caption(TEST_CAPTION)</span>
+        <span class="s1">self.assertEqual(display.get_caption()[</span><span class="s3">0</span><span class="s1">]</span><span class="s0">, </span><span class="s1">TEST_CAPTION)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_driver(self):</span>
+        <span class="s1">drivers = [</span>
+            <span class="s2">&quot;aalib&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;android&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;arm&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;cocoa&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;dga&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;directx&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;directfb&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;dummy&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;emscripten&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;fbcon&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;ggi&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;haiku&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;khronos&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;kmsdrm&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;nacl&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;offscreen&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;pandora&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;psp&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;qnx&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;raspberry&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;svgalib&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;uikit&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;vgl&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;vivante&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;wayland&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;windows&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;windib&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;winrt&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;x11&quot;</span><span class="s0">,</span>
+        <span class="s1">]</span>
+        <span class="s1">driver = display.get_driver()</span>
+        <span class="s1">self.assertIn(driver</span><span class="s0">, </span><span class="s1">drivers)</span>
+
+        <span class="s1">display.quit()</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(pygame.error):</span>
+            <span class="s1">driver = display.get_driver()</span>
+
+    <span class="s0">def </span><span class="s1">test_get_init(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures the module's initialization state can be retrieved.&quot;&quot;&quot;</span>
+        <span class="s4"># display.init() already called in setUp()</span>
+        <span class="s1">self.assertTrue(display.get_init())</span>
+
+    <span class="s4"># This test can be uncommented when issues #991 and #993 are resolved.</span>
+    <span class="s1">@unittest.skipIf(</span><span class="s0">True, </span><span class="s2">&quot;SDL2 issues&quot;</span><span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_get_surface(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures get_surface gets the current display surface.&quot;&quot;&quot;</span>
+        <span class="s1">lengths = (</span><span class="s3">1</span><span class="s0">, </span><span class="s3">5</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span>
+
+        <span class="s0">for </span><span class="s1">expected_size </span><span class="s0">in </span><span class="s1">((w</span><span class="s0">, </span><span class="s1">h) </span><span class="s0">for </span><span class="s1">w </span><span class="s0">in </span><span class="s1">lengths </span><span class="s0">for </span><span class="s1">h </span><span class="s0">in </span><span class="s1">lengths):</span>
+            <span class="s0">for </span><span class="s1">expected_depth </span><span class="s0">in </span><span class="s1">(</span><span class="s3">8</span><span class="s0">, </span><span class="s3">16</span><span class="s0">, </span><span class="s3">24</span><span class="s0">, </span><span class="s3">32</span><span class="s1">):</span>
+                <span class="s1">expected_surface = display.set_mode(expected_size</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s1">expected_depth)</span>
+
+                <span class="s1">surface = pygame.display.get_surface()</span>
+
+                <span class="s1">self.assertEqual(surface</span><span class="s0">, </span><span class="s1">expected_surface)</span>
+                <span class="s1">self.assertIsInstance(surface</span><span class="s0">, </span><span class="s1">pygame.Surface)</span>
+                <span class="s1">self.assertEqual(surface.get_size()</span><span class="s0">, </span><span class="s1">expected_size)</span>
+                <span class="s1">self.assertEqual(surface.get_bitsize()</span><span class="s0">, </span><span class="s1">expected_depth)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_surface__mode_not_set(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures get_surface handles the display mode not being set.&quot;&quot;&quot;</span>
+        <span class="s1">surface = pygame.display.get_surface()</span>
+
+        <span class="s1">self.assertIsNone(surface)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_wm_info(self):</span>
+        <span class="s1">wm_info = display.get_wm_info()</span>
+        <span class="s4"># Assert function returns a dictionary type</span>
+        <span class="s1">self.assertIsInstance(wm_info</span><span class="s0">, </span><span class="s1">dict)</span>
+
+        <span class="s1">wm_info_potential_keys = {</span>
+            <span class="s2">&quot;colorbuffer&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;connection&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;data&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;dfb&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;display&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;framebuffer&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;fswindow&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;hdc&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;hglrc&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;hinstance&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;lock_func&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;resolveFramebuffer&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;shell_surface&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;surface&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;taskHandle&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;unlock_func&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;wimpVersion&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;window&quot;</span><span class="s0">,</span>
+            <span class="s2">&quot;wmwindow&quot;</span><span class="s0">,</span>
+        <span class="s1">}</span>
+
+        <span class="s4"># If any unexpected dict keys are present, they</span>
+        <span class="s4"># will be stored in set wm_info_remaining_keys</span>
+        <span class="s1">wm_info_remaining_keys = set(wm_info.keys()).difference(wm_info_potential_keys)</span>
+
+        <span class="s4"># Assert set is empty (&amp; therefore does not</span>
+        <span class="s4"># contain unexpected dict keys)</span>
+        <span class="s1">self.assertFalse(wm_info_remaining_keys)</span>
+
+    <span class="s1">@unittest.skipIf(</span>
+        <span class="s1">(</span>
+            <span class="s2">&quot;skipping for all because some failures on rasppi and maybe other platforms&quot;</span>
+            <span class="s0">or </span><span class="s1">os.environ.get(</span><span class="s2">&quot;SDL_VIDEODRIVER&quot;</span><span class="s1">) == </span><span class="s2">&quot;dummy&quot;</span>
+        <span class="s1">)</span><span class="s0">,</span>
+        <span class="s2">'OpenGL requires a non-&quot;dummy&quot; SDL_VIDEODRIVER'</span><span class="s0">,</span>
+    <span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_gl_get_attribute(self):</span>
+
+        <span class="s1">screen = display.set_mode((</span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span><span class="s0">, </span><span class="s1">pygame.OPENGL)</span>
+
+        <span class="s4"># We create a list where we store the original values of the</span>
+        <span class="s4"># flags before setting them with a different value.</span>
+        <span class="s1">original_values = []</span>
+
+        <span class="s1">original_values.append(pygame.display.gl_get_attribute(pygame.GL_ALPHA_SIZE))</span>
+        <span class="s1">original_values.append(pygame.display.gl_get_attribute(pygame.GL_DEPTH_SIZE))</span>
+        <span class="s1">original_values.append(pygame.display.gl_get_attribute(pygame.GL_STENCIL_SIZE))</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_ACCUM_RED_SIZE)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_ACCUM_GREEN_SIZE)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_ACCUM_BLUE_SIZE)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_ACCUM_ALPHA_SIZE)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_MULTISAMPLEBUFFERS)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_MULTISAMPLESAMPLES)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(pygame.display.gl_get_attribute(pygame.GL_STEREO))</span>
+
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_ACCELERATED_VISUAL)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_CONTEXT_MAJOR_VERSION)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_CONTEXT_MINOR_VERSION)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(pygame.display.gl_get_attribute(pygame.GL_CONTEXT_FLAGS))</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_CONTEXT_PROFILE_MASK)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_SHARE_WITH_CURRENT_CONTEXT)</span>
+        <span class="s1">)</span>
+        <span class="s1">original_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_FRAMEBUFFER_SRGB_CAPABLE)</span>
+        <span class="s1">)</span>
+
+        <span class="s4"># Setting the flags with values supposedly different from the original values</span>
+
+        <span class="s4"># assign SDL1-supported values with gl_set_attribute</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE</span><span class="s0">, </span><span class="s3">8</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_DEPTH_SIZE</span><span class="s0">, </span><span class="s3">24</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_STENCIL_SIZE</span><span class="s0">, </span><span class="s3">8</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ACCUM_RED_SIZE</span><span class="s0">, </span><span class="s3">16</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ACCUM_GREEN_SIZE</span><span class="s0">, </span><span class="s3">16</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ACCUM_BLUE_SIZE</span><span class="s0">, </span><span class="s3">16</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ACCUM_ALPHA_SIZE</span><span class="s0">, </span><span class="s3">16</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLEBUFFERS</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLESAMPLES</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_STEREO</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ACCELERATED_VISUAL</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FLAGS</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_SHARE_WITH_CURRENT_CONTEXT</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_FRAMEBUFFER_SRGB_CAPABLE</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+
+        <span class="s4"># We create a list where we store the values that we set each flag to</span>
+        <span class="s1">set_values = [</span><span class="s3">8</span><span class="s0">, </span><span class="s3">24</span><span class="s0">, </span><span class="s3">8</span><span class="s0">, </span><span class="s3">16</span><span class="s0">, </span><span class="s3">16</span><span class="s0">, </span><span class="s3">16</span><span class="s0">, </span><span class="s3">16</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">0</span><span class="s1">]</span>
+
+        <span class="s4"># We create a list where we store the values after getting them</span>
+        <span class="s1">get_values = []</span>
+
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ALPHA_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_DEPTH_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_STENCIL_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ACCUM_RED_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ACCUM_GREEN_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ACCUM_BLUE_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ACCUM_ALPHA_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_MULTISAMPLEBUFFERS))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_MULTISAMPLESAMPLES))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_STEREO))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ACCELERATED_VISUAL))</span>
+        <span class="s1">get_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_CONTEXT_MAJOR_VERSION)</span>
+        <span class="s1">)</span>
+        <span class="s1">get_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_CONTEXT_MINOR_VERSION)</span>
+        <span class="s1">)</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_CONTEXT_FLAGS))</span>
+        <span class="s1">get_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_CONTEXT_PROFILE_MASK)</span>
+        <span class="s1">)</span>
+        <span class="s1">get_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_SHARE_WITH_CURRENT_CONTEXT)</span>
+        <span class="s1">)</span>
+        <span class="s1">get_values.append(</span>
+            <span class="s1">pygame.display.gl_get_attribute(pygame.GL_FRAMEBUFFER_SRGB_CAPABLE)</span>
+        <span class="s1">)</span>
+
+        <span class="s4"># We check to see if the values that we get correspond to the values that we set</span>
+        <span class="s4"># them to or to the original values.</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(original_values)):</span>
+            <span class="s1">self.assertTrue(</span>
+                <span class="s1">(get_values[i] == original_values[i])</span>
+                <span class="s0">or </span><span class="s1">(get_values[i] == set_values[i])</span>
+            <span class="s1">)</span>
+
+        <span class="s4"># test using non-flag argument</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(TypeError):</span>
+            <span class="s1">pygame.display.gl_get_attribute(</span><span class="s2">&quot;DUMMY&quot;</span><span class="s1">)</span>
+
+    <span class="s1">@unittest.skipIf(</span>
+        <span class="s1">(</span>
+            <span class="s2">&quot;skipping for all because some failures on rasppi and maybe other platforms&quot;</span>
+            <span class="s0">or </span><span class="s1">os.environ.get(</span><span class="s2">&quot;SDL_VIDEODRIVER&quot;</span><span class="s1">) == </span><span class="s2">&quot;dummy&quot;</span>
+        <span class="s1">)</span><span class="s0">,</span>
+        <span class="s2">'OpenGL requires a non-&quot;dummy&quot; SDL_VIDEODRIVER'</span><span class="s0">,</span>
+    <span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_gl_set_attribute(self):</span>
+
+        <span class="s4"># __doc__ (as of 2008-08-02) for pygame.display.gl_set_attribute:</span>
+
+        <span class="s4"># pygame.display.gl_set_attribute(flag, value): return None</span>
+        <span class="s4"># request an opengl display attribute for the display mode</span>
+        <span class="s4">#</span>
+        <span class="s4"># When calling pygame.display.set_mode() with the pygame.OPENGL flag,</span>
+        <span class="s4"># Pygame automatically handles setting the OpenGL attributes like</span>
+        <span class="s4"># color and doublebuffering. OpenGL offers several other attributes</span>
+        <span class="s4"># you may want control over. Pass one of these attributes as the flag,</span>
+        <span class="s4"># and its appropriate value. This must be called before</span>
+        <span class="s4"># pygame.display.set_mode()</span>
+        <span class="s4">#</span>
+        <span class="s4"># The OPENGL flags are;</span>
+        <span class="s4">#   GL_ALPHA_SIZE, GL_DEPTH_SIZE, GL_STENCIL_SIZE, GL_ACCUM_RED_SIZE,</span>
+        <span class="s4">#   GL_ACCUM_GREEN_SIZE,  GL_ACCUM_BLUE_SIZE, GL_ACCUM_ALPHA_SIZE,</span>
+        <span class="s4">#   GL_MULTISAMPLEBUFFERS, GL_MULTISAMPLESAMPLES, GL_STEREO</span>
+
+        <span class="s1">screen = display.set_mode((</span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span><span class="s0">, </span><span class="s1">pygame.OPENGL)</span>
+
+        <span class="s4"># We create a list where we store the values that we set each flag to</span>
+        <span class="s1">set_values = [</span><span class="s3">8</span><span class="s0">, </span><span class="s3">24</span><span class="s0">, </span><span class="s3">8</span><span class="s0">, </span><span class="s3">16</span><span class="s0">, </span><span class="s3">16</span><span class="s0">, </span><span class="s3">16</span><span class="s0">, </span><span class="s3">16</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">0</span><span class="s1">]</span>
+
+        <span class="s4"># Setting the flags with values supposedly different from the original values</span>
+
+        <span class="s4"># assign SDL1-supported values with gl_set_attribute</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE</span><span class="s0">, </span><span class="s1">set_values[</span><span class="s3">0</span><span class="s1">])</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_DEPTH_SIZE</span><span class="s0">, </span><span class="s1">set_values[</span><span class="s3">1</span><span class="s1">])</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_STENCIL_SIZE</span><span class="s0">, </span><span class="s1">set_values[</span><span class="s3">2</span><span class="s1">])</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ACCUM_RED_SIZE</span><span class="s0">, </span><span class="s1">set_values[</span><span class="s3">3</span><span class="s1">])</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ACCUM_GREEN_SIZE</span><span class="s0">, </span><span class="s1">set_values[</span><span class="s3">4</span><span class="s1">])</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ACCUM_BLUE_SIZE</span><span class="s0">, </span><span class="s1">set_values[</span><span class="s3">5</span><span class="s1">])</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_ACCUM_ALPHA_SIZE</span><span class="s0">, </span><span class="s1">set_values[</span><span class="s3">6</span><span class="s1">])</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLEBUFFERS</span><span class="s0">, </span><span class="s1">set_values[</span><span class="s3">7</span><span class="s1">])</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_MULTISAMPLESAMPLES</span><span class="s0">, </span><span class="s1">set_values[</span><span class="s3">8</span><span class="s1">])</span>
+        <span class="s1">pygame.display.gl_set_attribute(pygame.GL_STEREO</span><span class="s0">, </span><span class="s1">set_values[</span><span class="s3">9</span><span class="s1">])</span>
+
+        <span class="s4"># We create a list where we store the values after getting them</span>
+        <span class="s1">get_values = []</span>
+
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ALPHA_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_DEPTH_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_STENCIL_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ACCUM_RED_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ACCUM_GREEN_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ACCUM_BLUE_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_ACCUM_ALPHA_SIZE))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_MULTISAMPLEBUFFERS))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_MULTISAMPLESAMPLES))</span>
+        <span class="s1">get_values.append(pygame.display.gl_get_attribute(pygame.GL_STEREO))</span>
+
+        <span class="s4"># We check to see if the values that we get correspond to the values that we set</span>
+        <span class="s4"># them to or to the original values.</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(set_values)):</span>
+            <span class="s1">self.assertTrue(get_values[i] == set_values[i])</span>
+
+        <span class="s4"># test using non-flag argument</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(TypeError):</span>
+            <span class="s1">pygame.display.gl_get_attribute(</span><span class="s2">&quot;DUMMY&quot;</span><span class="s1">)</span>
+
+    <span class="s1">@unittest.skipIf(</span>
+        <span class="s1">os.environ.get(</span><span class="s2">&quot;SDL_VIDEODRIVER&quot;</span><span class="s1">) </span><span class="s0">in </span><span class="s1">[</span><span class="s2">&quot;dummy&quot;</span><span class="s0">, </span><span class="s2">&quot;android&quot;</span><span class="s1">]</span><span class="s0">,</span>
+        <span class="s2">&quot;iconify is only supported on some video drivers/platforms&quot;</span><span class="s0">,</span>
+    <span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_iconify(self):</span>
+        <span class="s1">pygame.display.set_mode((</span><span class="s3">640</span><span class="s0">, </span><span class="s3">480</span><span class="s1">))</span>
+
+        <span class="s1">self.assertEqual(pygame.display.get_active()</span><span class="s0">, True</span><span class="s1">)</span>
+
+        <span class="s1">success = pygame.display.iconify()</span>
+
+        <span class="s0">if </span><span class="s1">success:</span>
+            <span class="s1">active_event = window_minimized_event = </span><span class="s0">False</span>
+            <span class="s4"># make sure we cycle the event loop enough to get the display</span>
+            <span class="s4"># hidden. Test that both ACTIVEEVENT and WINDOWMINIMISED event appears</span>
+            <span class="s0">for </span><span class="s1">_ </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">50</span><span class="s1">):</span>
+                <span class="s1">time.sleep(</span><span class="s3">0.01</span><span class="s1">)</span>
+                <span class="s0">for </span><span class="s1">event </span><span class="s0">in </span><span class="s1">pygame.event.get():</span>
+                    <span class="s0">if </span><span class="s1">event.type == pygame.ACTIVEEVENT:</span>
+                        <span class="s0">if not </span><span class="s1">event.gain </span><span class="s0">and </span><span class="s1">event.state == pygame.APPACTIVE:</span>
+                            <span class="s1">active_event = </span><span class="s0">True</span>
+                    <span class="s0">if </span><span class="s1">event.type == pygame.WINDOWMINIMIZED:</span>
+                        <span class="s1">window_minimized_event = </span><span class="s0">True</span>
+
+            <span class="s1">self.assertTrue(window_minimized_event)</span>
+            <span class="s1">self.assertTrue(active_event)</span>
+            <span class="s1">self.assertFalse(pygame.display.get_active())</span>
+
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s1">self.fail(</span><span class="s2">&quot;Iconify not supported on this platform, please skip&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_init(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures the module is initialized after init called.&quot;&quot;&quot;</span>
+        <span class="s4"># display.init() already called in setUp(), so quit and re-init</span>
+        <span class="s1">display.quit()</span>
+        <span class="s1">display.init()</span>
+
+        <span class="s1">self.assertTrue(display.get_init())</span>
+
+    <span class="s0">def </span><span class="s1">test_init__multiple(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures the module is initialized after multiple init calls.&quot;&quot;&quot;</span>
+        <span class="s1">display.init()</span>
+        <span class="s1">display.init()</span>
+
+        <span class="s1">self.assertTrue(display.get_init())</span>
+
+    <span class="s0">def </span><span class="s1">test_list_modes(self):</span>
+        <span class="s1">modes = pygame.display.list_modes(depth=</span><span class="s3">0</span><span class="s0">, </span><span class="s1">flags=pygame.FULLSCREEN</span><span class="s0">, </span><span class="s1">display=</span><span class="s3">0</span><span class="s1">)</span>
+        <span class="s4"># modes == -1 means any mode is supported.</span>
+        <span class="s0">if </span><span class="s1">modes != -</span><span class="s3">1</span><span class="s1">:</span>
+            <span class="s1">self.assertEqual(len(modes[</span><span class="s3">0</span><span class="s1">])</span><span class="s0">, </span><span class="s3">2</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(type(modes[</span><span class="s3">0</span><span class="s1">][</span><span class="s3">0</span><span class="s1">])</span><span class="s0">, </span><span class="s1">int)</span>
+
+        <span class="s1">modes = pygame.display.list_modes()</span>
+        <span class="s0">if </span><span class="s1">modes != -</span><span class="s3">1</span><span class="s1">:</span>
+            <span class="s1">self.assertEqual(len(modes[</span><span class="s3">0</span><span class="s1">])</span><span class="s0">, </span><span class="s3">2</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(type(modes[</span><span class="s3">0</span><span class="s1">][</span><span class="s3">0</span><span class="s1">])</span><span class="s0">, </span><span class="s1">int)</span>
+            <span class="s1">self.assertEqual(len(modes)</span><span class="s0">, </span><span class="s1">len(set(modes)))</span>
+
+        <span class="s1">modes = pygame.display.list_modes(depth=</span><span class="s3">0</span><span class="s0">, </span><span class="s1">flags=</span><span class="s3">0</span><span class="s0">, </span><span class="s1">display=</span><span class="s3">0</span><span class="s1">)</span>
+        <span class="s0">if </span><span class="s1">modes != -</span><span class="s3">1</span><span class="s1">:</span>
+            <span class="s1">self.assertEqual(len(modes[</span><span class="s3">0</span><span class="s1">])</span><span class="s0">, </span><span class="s3">2</span><span class="s1">)</span>
+            <span class="s1">self.assertEqual(type(modes[</span><span class="s3">0</span><span class="s1">][</span><span class="s3">0</span><span class="s1">])</span><span class="s0">, </span><span class="s1">int)</span>
+
+    <span class="s0">def </span><span class="s1">test_mode_ok(self):</span>
+        <span class="s1">pygame.display.mode_ok((</span><span class="s3">128</span><span class="s0">, </span><span class="s3">128</span><span class="s1">))</span>
+        <span class="s1">modes = pygame.display.list_modes()</span>
+        <span class="s0">if </span><span class="s1">modes != -</span><span class="s3">1</span><span class="s1">:</span>
+            <span class="s1">size = modes[</span><span class="s3">0</span><span class="s1">]</span>
+            <span class="s1">self.assertNotEqual(pygame.display.mode_ok(size)</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+
+        <span class="s1">pygame.display.mode_ok((</span><span class="s3">128</span><span class="s0">, </span><span class="s3">128</span><span class="s1">)</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">32</span><span class="s1">)</span>
+        <span class="s1">pygame.display.mode_ok((</span><span class="s3">128</span><span class="s0">, </span><span class="s3">128</span><span class="s1">)</span><span class="s0">, </span><span class="s1">flags=</span><span class="s3">0</span><span class="s0">, </span><span class="s1">depth=</span><span class="s3">32</span><span class="s0">, </span><span class="s1">display=</span><span class="s3">0</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_mode_ok_fullscreen(self):</span>
+        <span class="s1">modes = pygame.display.list_modes()</span>
+        <span class="s0">if </span><span class="s1">modes != -</span><span class="s3">1</span><span class="s1">:</span>
+            <span class="s1">size = modes[</span><span class="s3">0</span><span class="s1">]</span>
+            <span class="s1">self.assertNotEqual(</span>
+                <span class="s1">pygame.display.mode_ok(size</span><span class="s0">, </span><span class="s1">flags=pygame.FULLSCREEN)</span><span class="s0">, </span><span class="s3">0</span>
+            <span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_mode_ok_scaled(self):</span>
+        <span class="s1">modes = pygame.display.list_modes()</span>
+        <span class="s0">if </span><span class="s1">modes != -</span><span class="s3">1</span><span class="s1">:</span>
+            <span class="s1">size = modes[</span><span class="s3">0</span><span class="s1">]</span>
+            <span class="s1">self.assertNotEqual(pygame.display.mode_ok(size</span><span class="s0">, </span><span class="s1">flags=pygame.SCALED)</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_num_displays(self):</span>
+        <span class="s1">self.assertGreater(pygame.display.get_num_displays()</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_quit(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures the module is not initialized after quit called.&quot;&quot;&quot;</span>
+        <span class="s1">display.quit()</span>
+
+        <span class="s1">self.assertFalse(display.get_init())</span>
+
+    <span class="s0">def </span><span class="s1">test_quit__multiple(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures the module is not initialized after multiple quit calls.&quot;&quot;&quot;</span>
+        <span class="s1">display.quit()</span>
+        <span class="s1">display.quit()</span>
+
+        <span class="s1">self.assertFalse(display.get_init())</span>
+
+    <span class="s1">@unittest.skipIf(</span>
+        <span class="s1">os.environ.get(</span><span class="s2">&quot;SDL_VIDEODRIVER&quot;</span><span class="s1">) == </span><span class="s2">&quot;dummy&quot;</span><span class="s0">, </span><span class="s2">&quot;Needs a not dummy videodriver&quot;</span>
+    <span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_set_gamma(self):</span>
+        <span class="s1">pygame.display.set_mode((</span><span class="s3">1</span><span class="s0">, </span><span class="s3">1</span><span class="s1">))</span>
+
+        <span class="s1">gammas = [</span><span class="s3">0.25</span><span class="s0">, </span><span class="s3">0.5</span><span class="s0">, </span><span class="s3">0.88</span><span class="s0">, </span><span class="s3">1.0</span><span class="s1">]</span>
+        <span class="s0">for </span><span class="s1">gamma </span><span class="s0">in </span><span class="s1">gammas:</span>
+            <span class="s0">with </span><span class="s1">self.subTest(gamma=gamma):</span>
+                <span class="s1">self.assertEqual(pygame.display.set_gamma(gamma)</span><span class="s0">, True</span><span class="s1">)</span>
+
+    <span class="s1">@unittest.skipIf(</span>
+        <span class="s1">os.environ.get(</span><span class="s2">&quot;SDL_VIDEODRIVER&quot;</span><span class="s1">) == </span><span class="s2">&quot;dummy&quot;</span><span class="s0">, </span><span class="s2">&quot;Needs a not dummy videodriver&quot;</span>
+    <span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_set_gamma__tuple(self):</span>
+        <span class="s1">pygame.display.set_mode((</span><span class="s3">1</span><span class="s0">, </span><span class="s3">1</span><span class="s1">))</span>
+
+        <span class="s1">gammas = [(</span><span class="s3">0.5</span><span class="s0">, </span><span class="s3">0.5</span><span class="s0">, </span><span class="s3">0.5</span><span class="s1">)</span><span class="s0">, </span><span class="s1">(</span><span class="s3">1.0</span><span class="s0">, </span><span class="s3">1.0</span><span class="s0">, </span><span class="s3">1.0</span><span class="s1">)</span><span class="s0">, </span><span class="s1">(</span><span class="s3">0.25</span><span class="s0">, </span><span class="s3">0.33</span><span class="s0">, </span><span class="s3">0.44</span><span class="s1">)]</span>
+        <span class="s0">for </span><span class="s1">r</span><span class="s0">, </span><span class="s1">g</span><span class="s0">, </span><span class="s1">b </span><span class="s0">in </span><span class="s1">gammas:</span>
+            <span class="s0">with </span><span class="s1">self.subTest(r=r</span><span class="s0">, </span><span class="s1">g=g</span><span class="s0">, </span><span class="s1">b=b):</span>
+                <span class="s1">self.assertEqual(pygame.display.set_gamma(r</span><span class="s0">, </span><span class="s1">g</span><span class="s0">, </span><span class="s1">b)</span><span class="s0">, True</span><span class="s1">)</span>
+
+    <span class="s1">@unittest.skipIf(</span>
+        <span class="s0">not </span><span class="s1">hasattr(pygame.display</span><span class="s0">, </span><span class="s2">&quot;set_gamma_ramp&quot;</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s2">&quot;Not all systems and hardware support gamma ramps&quot;</span><span class="s0">,</span>
+    <span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_set_gamma_ramp(self):</span>
+
+        <span class="s4"># __doc__ (as of 2008-08-02) for pygame.display.set_gamma_ramp:</span>
+
+        <span class="s4"># change the hardware gamma ramps with a custom lookup</span>
+        <span class="s4"># pygame.display.set_gamma_ramp(red, green, blue): return bool</span>
+        <span class="s4"># set_gamma_ramp(red, green, blue): return bool</span>
+        <span class="s4">#</span>
+        <span class="s4"># Set the red, green, and blue gamma ramps with an explicit lookup</span>
+        <span class="s4"># table. Each argument should be sequence of 256 integers. The</span>
+        <span class="s4"># integers should range between 0 and 0xffff. Not all systems and</span>
+        <span class="s4"># hardware support gamma ramps, if the function succeeds it will</span>
+        <span class="s4"># return True.</span>
+        <span class="s4">#</span>
+        <span class="s1">pygame.display.set_mode((</span><span class="s3">5</span><span class="s0">, </span><span class="s3">5</span><span class="s1">))</span>
+        <span class="s1">r = list(range(</span><span class="s3">256</span><span class="s1">))</span>
+        <span class="s1">g = [number + </span><span class="s3">256 </span><span class="s0">for </span><span class="s1">number </span><span class="s0">in </span><span class="s1">r]</span>
+        <span class="s1">b = [number + </span><span class="s3">256 </span><span class="s0">for </span><span class="s1">number </span><span class="s0">in </span><span class="s1">g]</span>
+        <span class="s1">isSupported = pygame.display.set_gamma_ramp(r</span><span class="s0">, </span><span class="s1">g</span><span class="s0">, </span><span class="s1">b)</span>
+        <span class="s0">if </span><span class="s1">isSupported:</span>
+            <span class="s1">self.assertTrue(pygame.display.set_gamma_ramp(r</span><span class="s0">, </span><span class="s1">g</span><span class="s0">, </span><span class="s1">b))</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s1">self.assertFalse(pygame.display.set_gamma_ramp(r</span><span class="s0">, </span><span class="s1">g</span><span class="s0">, </span><span class="s1">b))</span>
+
+    <span class="s0">def </span><span class="s1">test_set_mode_kwargs(self):</span>
+
+        <span class="s1">pygame.display.set_mode(size=(</span><span class="s3">1</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span><span class="s0">, </span><span class="s1">flags=</span><span class="s3">0</span><span class="s0">, </span><span class="s1">depth=</span><span class="s3">0</span><span class="s0">, </span><span class="s1">display=</span><span class="s3">0</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_set_mode_scaled(self):</span>
+        <span class="s1">surf = pygame.display.set_mode(</span>
+            <span class="s1">size=(</span><span class="s3">1</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span><span class="s0">, </span><span class="s1">flags=pygame.SCALED</span><span class="s0">, </span><span class="s1">depth=</span><span class="s3">0</span><span class="s0">, </span><span class="s1">display=</span><span class="s3">0</span>
+        <span class="s1">)</span>
+        <span class="s1">winsize = pygame.display.get_window_size()</span>
+        <span class="s1">self.assertEqual(</span>
+            <span class="s1">winsize[</span><span class="s3">0</span><span class="s1">] % surf.get_size()[</span><span class="s3">0</span><span class="s1">]</span><span class="s0">,</span>
+            <span class="s3">0</span><span class="s0">,</span>
+            <span class="s2">&quot;window width should be a multiple of the surface width&quot;</span><span class="s0">,</span>
+        <span class="s1">)</span>
+        <span class="s1">self.assertEqual(</span>
+            <span class="s1">winsize[</span><span class="s3">1</span><span class="s1">] % surf.get_size()[</span><span class="s3">1</span><span class="s1">]</span><span class="s0">,</span>
+            <span class="s3">0</span><span class="s0">,</span>
+            <span class="s2">&quot;window height should be a multiple of the surface height&quot;</span><span class="s0">,</span>
+        <span class="s1">)</span>
+        <span class="s1">self.assertEqual(</span>
+            <span class="s1">winsize[</span><span class="s3">0</span><span class="s1">] / surf.get_size()[</span><span class="s3">0</span><span class="s1">]</span><span class="s0">, </span><span class="s1">winsize[</span><span class="s3">1</span><span class="s1">] / surf.get_size()[</span><span class="s3">1</span><span class="s1">]</span>
+        <span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_set_mode_vector2(self):</span>
+        <span class="s1">pygame.display.set_mode(pygame.Vector2(</span><span class="s3">1</span><span class="s0">, </span><span class="s3">1</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_set_mode_unscaled(self):</span>
+        <span class="s5">&quot;&quot;&quot;Ensures a window created with SCALED can become smaller.&quot;&quot;&quot;</span>
+        <span class="s4"># see https://github.com/pygame/pygame/issues/2327</span>
+
+        <span class="s1">screen = pygame.display.set_mode((</span><span class="s3">300</span><span class="s0">, </span><span class="s3">300</span><span class="s1">)</span><span class="s0">, </span><span class="s1">pygame.SCALED)</span>
+        <span class="s1">self.assertEqual(screen.get_size()</span><span class="s0">, </span><span class="s1">(</span><span class="s3">300</span><span class="s0">, </span><span class="s3">300</span><span class="s1">))</span>
+
+        <span class="s1">screen = pygame.display.set_mode((</span><span class="s3">200</span><span class="s0">, </span><span class="s3">200</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(screen.get_size()</span><span class="s0">, </span><span class="s1">(</span><span class="s3">200</span><span class="s0">, </span><span class="s3">200</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_screensaver_support(self):</span>
+        <span class="s1">pygame.display.set_allow_screensaver(</span><span class="s0">True</span><span class="s1">)</span>
+        <span class="s1">self.assertTrue(pygame.display.get_allow_screensaver())</span>
+        <span class="s1">pygame.display.set_allow_screensaver(</span><span class="s0">False</span><span class="s1">)</span>
+        <span class="s1">self.assertFalse(pygame.display.get_allow_screensaver())</span>
+        <span class="s1">pygame.display.set_allow_screensaver()</span>
+        <span class="s1">self.assertTrue(pygame.display.get_allow_screensaver())</span>
+
+    <span class="s4"># the following test fails always with SDL2</span>
+    <span class="s1">@unittest.skipIf(</span><span class="s0">True, </span><span class="s2">&quot;set_palette() not supported in SDL2&quot;</span><span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_set_palette(self):</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(pygame.error):</span>
+            <span class="s1">palette = [</span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s0">, </span><span class="s3">3</span><span class="s1">]</span>
+            <span class="s1">pygame.display.set_palette(palette)</span>
+        <span class="s1">pygame.display.set_mode((</span><span class="s3">1024</span><span class="s0">, </span><span class="s3">768</span><span class="s1">)</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">8</span><span class="s1">)</span>
+        <span class="s1">palette = []</span>
+        <span class="s1">self.assertIsNone(pygame.display.set_palette(palette))</span>
+
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError):</span>
+            <span class="s1">palette = </span><span class="s3">12</span>
+            <span class="s1">pygame.display.set_palette(palette)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(TypeError):</span>
+            <span class="s1">palette = [[</span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s1">]</span><span class="s0">, </span><span class="s1">[</span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s1">]]</span>
+            <span class="s1">pygame.display.set_palette(palette)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(TypeError):</span>
+            <span class="s1">palette = [[</span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s1">]] + [[x</span><span class="s0">, </span><span class="s1">x</span><span class="s0">, </span><span class="s1">x</span><span class="s0">, </span><span class="s1">x</span><span class="s0">, </span><span class="s1">x] </span><span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">1</span><span class="s0">, </span><span class="s3">255</span><span class="s1">)]</span>
+            <span class="s1">pygame.display.set_palette(palette)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(TypeError):</span>
+            <span class="s1">palette = </span><span class="s2">&quot;qwerty&quot;</span>
+            <span class="s1">pygame.display.set_palette(palette)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(TypeError):</span>
+            <span class="s1">palette = [[</span><span class="s3">123</span><span class="s0">, </span><span class="s3">123</span><span class="s0">, </span><span class="s3">123</span><span class="s1">] * </span><span class="s3">10000</span><span class="s1">]</span>
+            <span class="s1">pygame.display.set_palette(palette)</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(TypeError):</span>
+            <span class="s1">palette = [</span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s0">, </span><span class="s3">3</span><span class="s1">]</span>
+            <span class="s1">pygame.display.set_palette(palette)</span>
+
+    <span class="s1">skip_list = [</span><span class="s2">&quot;dummy&quot;</span><span class="s0">, </span><span class="s2">&quot;android&quot;</span><span class="s1">]</span>
+
+    <span class="s1">@unittest.skipIf(</span>
+        <span class="s1">os.environ.get(</span><span class="s2">&quot;SDL_VIDEODRIVER&quot;</span><span class="s1">) </span><span class="s0">in </span><span class="s1">skip_list</span><span class="s0">,</span>
+        <span class="s2">&quot;requires the SDL_VIDEODRIVER to be non dummy&quot;</span><span class="s0">,</span>
+    <span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">test_toggle_fullscreen(self):</span>
+        <span class="s5">&quot;&quot;&quot;Test for toggle fullscreen&quot;&quot;&quot;</span>
+
+        <span class="s4"># try to toggle fullscreen with no active display</span>
+        <span class="s4"># this should result in an error</span>
+        <span class="s1">pygame.display.quit()</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(pygame.error):</span>
+            <span class="s1">pygame.display.toggle_fullscreen()</span>
+
+        <span class="s1">pygame.display.init()</span>
+        <span class="s1">width_height = (</span><span class="s3">640</span><span class="s0">, </span><span class="s3">480</span><span class="s1">)</span>
+        <span class="s1">test_surf = pygame.display.set_mode(width_height)</span>
+
+        <span class="s4"># try to toggle fullscreen</span>
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s1">pygame.display.toggle_fullscreen()</span>
+
+        <span class="s0">except </span><span class="s1">pygame.error:</span>
+            <span class="s1">self.fail()</span>
+
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s4"># if toggle success, the width/height should be a</span>
+            <span class="s4"># value found in list_modes</span>
+            <span class="s0">if </span><span class="s1">pygame.display.toggle_fullscreen() == </span><span class="s3">1</span><span class="s1">:</span>
+                <span class="s1">boolean = (</span>
+                    <span class="s1">test_surf.get_width()</span><span class="s0">,</span>
+                    <span class="s1">test_surf.get_height()</span><span class="s0">,</span>
+                <span class="s1">) </span><span class="s0">in </span><span class="s1">pygame.display.list_modes(</span>
+                    <span class="s1">depth=</span><span class="s3">0</span><span class="s0">, </span><span class="s1">flags=pygame.FULLSCREEN</span><span class="s0">, </span><span class="s1">display=</span><span class="s3">0</span>
+                <span class="s1">)</span>
+
+                <span class="s1">self.assertEqual(boolean</span><span class="s0">, True</span><span class="s1">)</span>
+
+            <span class="s4"># if not original width/height should be preserved</span>
+            <span class="s0">else</span><span class="s1">:</span>
+                <span class="s1">self.assertEqual(</span>
+                    <span class="s1">(test_surf.get_width()</span><span class="s0">, </span><span class="s1">test_surf.get_height())</span><span class="s0">, </span><span class="s1">width_height</span>
+                <span class="s1">)</span>
+
+
+<span class="s0">class </span><span class="s1">DisplayUpdateTest(unittest.TestCase):</span>
+    <span class="s0">def </span><span class="s1">question(self</span><span class="s0">, </span><span class="s1">qstr):</span>
+        <span class="s5">&quot;&quot;&quot;this is used in the interactive subclass.&quot;&quot;&quot;</span>
+
+    <span class="s0">def </span><span class="s1">setUp(self):</span>
+        <span class="s1">display.init()</span>
+        <span class="s1">self.screen = pygame.display.set_mode((</span><span class="s3">500</span><span class="s0">, </span><span class="s3">500</span><span class="s1">))</span>
+        <span class="s1">self.screen.fill(</span><span class="s2">&quot;black&quot;</span><span class="s1">)</span>
+        <span class="s1">pygame.display.flip()</span>
+        <span class="s1">pygame.event.pump()  </span><span class="s4"># so mac updates</span>
+
+    <span class="s0">def </span><span class="s1">tearDown(self):</span>
+        <span class="s1">display.quit()</span>
+
+    <span class="s0">def </span><span class="s1">test_update_negative(self):</span>
+        <span class="s5">&quot;&quot;&quot;takes rects with negative values.&quot;&quot;&quot;</span>
+        <span class="s1">self.screen.fill(</span><span class="s2">&quot;green&quot;</span><span class="s1">)</span>
+
+        <span class="s1">r1 = pygame.Rect(</span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span>
+        <span class="s1">pygame.display.update(r1)</span>
+
+        <span class="s1">r2 = pygame.Rect(-</span><span class="s3">10</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span>
+        <span class="s1">pygame.display.update(r2)</span>
+
+        <span class="s1">r3 = pygame.Rect(-</span><span class="s3">10</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s1">-</span><span class="s3">100</span><span class="s0">, </span><span class="s1">-</span><span class="s3">100</span><span class="s1">)</span>
+        <span class="s1">pygame.display.update(r3)</span>
+
+        <span class="s1">self.question(</span><span class="s2">&quot;Is the screen green in (0, 0, 100, 100)?&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_update_sequence(self):</span>
+        <span class="s5">&quot;&quot;&quot;only updates the part of the display given by the rects.&quot;&quot;&quot;</span>
+        <span class="s1">self.screen.fill(</span><span class="s2">&quot;green&quot;</span><span class="s1">)</span>
+        <span class="s1">rects = [</span>
+            <span class="s1">pygame.Rect(</span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">pygame.Rect(</span><span class="s3">100</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">pygame.Rect(</span><span class="s3">200</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">pygame.Rect(</span><span class="s3">300</span><span class="s0">, </span><span class="s3">300</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s1">]</span>
+        <span class="s1">pygame.display.update(rects)</span>
+        <span class="s1">pygame.event.pump()  </span><span class="s4"># so mac updates</span>
+
+        <span class="s1">self.question(</span><span class="s2">f&quot;Is the screen green in </span><span class="s0">{</span><span class="s1">rects</span><span class="s0">}</span><span class="s2">?&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_update_none_skipped(self):</span>
+        <span class="s5">&quot;&quot;&quot;None is skipped inside sequences.&quot;&quot;&quot;</span>
+        <span class="s1">self.screen.fill(</span><span class="s2">&quot;green&quot;</span><span class="s1">)</span>
+        <span class="s1">rects = (</span>
+            <span class="s0">None,</span>
+            <span class="s1">pygame.Rect(</span><span class="s3">100</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s0">None,</span>
+            <span class="s1">pygame.Rect(</span><span class="s3">200</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">pygame.Rect(</span><span class="s3">300</span><span class="s0">, </span><span class="s3">300</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s1">)</span>
+        <span class="s1">pygame.display.update(rects)</span>
+        <span class="s1">pygame.event.pump()  </span><span class="s4"># so mac updates</span>
+
+        <span class="s1">self.question(</span><span class="s2">f&quot;Is the screen green in </span><span class="s0">{</span><span class="s1">rects</span><span class="s0">}</span><span class="s2">?&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_update_none(self):</span>
+        <span class="s5">&quot;&quot;&quot;does NOT update the display.&quot;&quot;&quot;</span>
+        <span class="s1">self.screen.fill(</span><span class="s2">&quot;green&quot;</span><span class="s1">)</span>
+        <span class="s1">pygame.display.update(</span><span class="s0">None</span><span class="s1">)</span>
+        <span class="s1">pygame.event.pump()  </span><span class="s4"># so mac updates</span>
+        <span class="s1">self.question(</span><span class="s2">f&quot;Is the screen black and NOT green?&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_update_no_args(self):</span>
+        <span class="s5">&quot;&quot;&quot;does NOT update the display.&quot;&quot;&quot;</span>
+        <span class="s1">self.screen.fill(</span><span class="s2">&quot;green&quot;</span><span class="s1">)</span>
+        <span class="s1">pygame.display.update()</span>
+        <span class="s1">pygame.event.pump()  </span><span class="s4"># so mac updates</span>
+        <span class="s1">self.question(</span><span class="s2">f&quot;Is the WHOLE screen green?&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_update_args(self):</span>
+        <span class="s5">&quot;&quot;&quot;updates the display using the args as a rect.&quot;&quot;&quot;</span>
+        <span class="s1">self.screen.fill(</span><span class="s2">&quot;green&quot;</span><span class="s1">)</span>
+        <span class="s1">pygame.display.update(</span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span>
+        <span class="s1">pygame.event.pump()  </span><span class="s4"># so mac updates</span>
+        <span class="s1">self.question(</span><span class="s2">&quot;Is the screen green in (100, 100, 100, 100)?&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_update_incorrect_args(self):</span>
+        <span class="s5">&quot;&quot;&quot;raises a ValueError when inputs are wrong.&quot;&quot;&quot;</span>
+
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError):</span>
+            <span class="s1">pygame.display.update(</span><span class="s3">100</span><span class="s0">, </span><span class="s2">&quot;asdf&quot;</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">)</span>
+
+        <span class="s0">with </span><span class="s1">self.assertRaises(ValueError):</span>
+            <span class="s1">pygame.display.update([</span><span class="s3">100</span><span class="s0">, </span><span class="s2">&quot;asdf&quot;</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">])</span>
+
+    <span class="s0">def </span><span class="s1">test_update_no_init(self):</span>
+        <span class="s5">&quot;&quot;&quot;raises a pygame.error.&quot;&quot;&quot;</span>
+
+        <span class="s1">pygame.display.quit()</span>
+        <span class="s0">with </span><span class="s1">self.assertRaises(pygame.error):</span>
+            <span class="s1">pygame.display.update()</span>
+
+
+<span class="s0">class </span><span class="s1">DisplayUpdateInteractiveTest(DisplayUpdateTest):</span>
+    <span class="s5">&quot;&quot;&quot;Because we want these tests to run as interactive and not interactive.&quot;&quot;&quot;</span>
+
+    <span class="s1">__tags__ = [</span><span class="s2">&quot;interactive&quot;</span><span class="s1">]</span>
+
+    <span class="s0">def </span><span class="s1">question(self</span><span class="s0">, </span><span class="s1">qstr):</span>
+        <span class="s5">&quot;&quot;&quot;since this is the interactive sublcass we ask a question.&quot;&quot;&quot;</span>
+        <span class="s1">question(qstr)</span>
+
+
+<span class="s0">class </span><span class="s1">DisplayInteractiveTest(unittest.TestCase):</span>
+
+    <span class="s1">__tags__ = [</span><span class="s2">&quot;interactive&quot;</span><span class="s1">]</span>
+
+    <span class="s0">def </span><span class="s1">test_set_icon_interactive(self):</span>
+
+        <span class="s1">os.environ[</span><span class="s2">&quot;SDL_VIDEO_WINDOW_POS&quot;</span><span class="s1">] = </span><span class="s2">&quot;100,250&quot;</span>
+        <span class="s1">pygame.display.quit()</span>
+        <span class="s1">pygame.display.init()</span>
+
+        <span class="s1">test_icon = pygame.Surface((</span><span class="s3">32</span><span class="s0">, </span><span class="s3">32</span><span class="s1">))</span>
+        <span class="s1">test_icon.fill((</span><span class="s3">255</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s1">))</span>
+
+        <span class="s1">pygame.display.set_icon(test_icon)</span>
+        <span class="s1">screen = pygame.display.set_mode((</span><span class="s3">400</span><span class="s0">, </span><span class="s3">100</span><span class="s1">))</span>
+        <span class="s1">pygame.display.set_caption(</span><span class="s2">&quot;Is the window icon a red square?&quot;</span><span class="s1">)</span>
+
+        <span class="s1">response = question(</span><span class="s2">&quot;Is the display icon red square?&quot;</span><span class="s1">)</span>
+
+        <span class="s1">self.assertTrue(response)</span>
+        <span class="s1">pygame.display.quit()</span>
+
+    <span class="s0">def </span><span class="s1">test_set_gamma_ramp(self):</span>
+
+        <span class="s1">os.environ[</span><span class="s2">&quot;SDL_VIDEO_WINDOW_POS&quot;</span><span class="s1">] = </span><span class="s2">&quot;100,250&quot;</span>
+        <span class="s1">pygame.display.quit()</span>
+        <span class="s1">pygame.display.init()</span>
+
+        <span class="s1">screen = pygame.display.set_mode((</span><span class="s3">400</span><span class="s0">, </span><span class="s3">100</span><span class="s1">))</span>
+        <span class="s1">screen.fill((</span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s0">, </span><span class="s3">100</span><span class="s1">))</span>
+
+        <span class="s1">blue_ramp = [x * </span><span class="s3">256 </span><span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">0</span><span class="s0">, </span><span class="s3">256</span><span class="s1">)]</span>
+        <span class="s1">blue_ramp[</span><span class="s3">100</span><span class="s1">] = </span><span class="s3">150 </span><span class="s1">* </span><span class="s3">256  </span><span class="s4"># Can't tint too far or gamma ramps fail</span>
+        <span class="s1">normal_ramp = [x * </span><span class="s3">256 </span><span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">0</span><span class="s0">, </span><span class="s3">256</span><span class="s1">)]</span>
+        <span class="s4"># test to see if this platform supports gamma ramps</span>
+        <span class="s1">gamma_success = </span><span class="s0">False</span>
+        <span class="s0">if </span><span class="s1">pygame.display.set_gamma_ramp(normal_ramp</span><span class="s0">, </span><span class="s1">normal_ramp</span><span class="s0">, </span><span class="s1">blue_ramp):</span>
+            <span class="s1">pygame.display.update()</span>
+            <span class="s1">gamma_success = </span><span class="s0">True</span>
+
+        <span class="s0">if </span><span class="s1">gamma_success:</span>
+            <span class="s1">response = question(</span><span class="s2">&quot;Is the window background tinted blue?&quot;</span><span class="s1">)</span>
+            <span class="s1">self.assertTrue(response)</span>
+            <span class="s4"># restore normal ramp</span>
+            <span class="s1">pygame.display.set_gamma_ramp(normal_ramp</span><span class="s0">, </span><span class="s1">normal_ramp</span><span class="s0">, </span><span class="s1">normal_ramp)</span>
+
+        <span class="s1">pygame.display.quit()</span>
+
+
+<span class="s0">class </span><span class="s1">FullscreenToggleTests(unittest.TestCase):</span>
+    <span class="s1">__tags__ = [</span><span class="s2">&quot;interactive&quot;</span><span class="s1">]</span>
+
+    <span class="s1">screen = </span><span class="s0">None</span>
+    <span class="s1">font = </span><span class="s0">None</span>
+    <span class="s1">isfullscreen = </span><span class="s0">False</span>
+
+    <span class="s1">WIDTH = </span><span class="s3">800</span>
+    <span class="s1">HEIGHT = </span><span class="s3">600</span>
+
+    <span class="s0">def </span><span class="s1">setUp(self):</span>
+        <span class="s1">pygame.init()</span>
+        <span class="s0">if </span><span class="s1">sys.platform == </span><span class="s2">&quot;win32&quot;</span><span class="s1">:</span>
+            <span class="s4"># known issue with windows, must have mode from pygame.display.list_modes()</span>
+            <span class="s4"># or window created with flag pygame.SCALED</span>
+            <span class="s1">self.screen = pygame.display.set_mode(</span>
+                <span class="s1">(self.WIDTH</span><span class="s0">, </span><span class="s1">self.HEIGHT)</span><span class="s0">, </span><span class="s1">flags=pygame.SCALED</span>
+            <span class="s1">)</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s1">self.screen = pygame.display.set_mode((self.WIDTH</span><span class="s0">, </span><span class="s1">self.HEIGHT))</span>
+        <span class="s1">pygame.display.set_caption(</span><span class="s2">&quot;Fullscreen Tests&quot;</span><span class="s1">)</span>
+        <span class="s1">self.screen.fill((</span><span class="s3">255</span><span class="s0">, </span><span class="s3">255</span><span class="s0">, </span><span class="s3">255</span><span class="s1">))</span>
+        <span class="s1">pygame.display.flip()</span>
+        <span class="s1">self.font = pygame.font.Font(</span><span class="s0">None, </span><span class="s3">32</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">tearDown(self):</span>
+        <span class="s0">if </span><span class="s1">self.isfullscreen:</span>
+            <span class="s1">pygame.display.toggle_fullscreen()</span>
+        <span class="s1">pygame.quit()</span>
+
+    <span class="s0">def </span><span class="s1">visual_test(self</span><span class="s0">, </span><span class="s1">fullscreen=</span><span class="s0">False</span><span class="s1">):</span>
+        <span class="s1">text = </span><span class="s2">&quot;&quot;</span>
+        <span class="s0">if </span><span class="s1">fullscreen:</span>
+            <span class="s0">if not </span><span class="s1">self.isfullscreen:</span>
+                <span class="s1">pygame.display.toggle_fullscreen()</span>
+                <span class="s1">self.isfullscreen = </span><span class="s0">True</span>
+            <span class="s1">text = </span><span class="s2">&quot;Is this in fullscreen? [y/n]&quot;</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s0">if </span><span class="s1">self.isfullscreen:</span>
+                <span class="s1">pygame.display.toggle_fullscreen()</span>
+                <span class="s1">self.isfullscreen = </span><span class="s0">False</span>
+            <span class="s1">text = </span><span class="s2">&quot;Is this not in fullscreen [y/n]&quot;</span>
+        <span class="s1">s = self.font.render(text</span><span class="s0">, False, </span><span class="s1">(</span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s0">, </span><span class="s3">0</span><span class="s1">))</span>
+        <span class="s1">self.screen.blit(s</span><span class="s0">, </span><span class="s1">(self.WIDTH / </span><span class="s3">2 </span><span class="s1">- self.font.size(text)[</span><span class="s3">0</span><span class="s1">] / </span><span class="s3">2</span><span class="s0">, </span><span class="s3">100</span><span class="s1">))</span>
+        <span class="s1">pygame.display.flip()</span>
+
+        <span class="s0">while True</span><span class="s1">:</span>
+            <span class="s0">for </span><span class="s1">event </span><span class="s0">in </span><span class="s1">pygame.event.get():</span>
+                <span class="s0">if </span><span class="s1">event.type == pygame.KEYDOWN:</span>
+                    <span class="s0">if </span><span class="s1">event.key == pygame.K_ESCAPE:</span>
+                        <span class="s0">return False</span>
+                    <span class="s0">if </span><span class="s1">event.key == pygame.K_y:</span>
+                        <span class="s0">return True</span>
+                    <span class="s0">if </span><span class="s1">event.key == pygame.K_n:</span>
+                        <span class="s0">return False</span>
+                <span class="s0">if </span><span class="s1">event.type == pygame.QUIT:</span>
+                    <span class="s0">return False</span>
+
+    <span class="s0">def </span><span class="s1">test_fullscreen_true(self):</span>
+        <span class="s1">self.assertTrue(self.visual_test(fullscreen=</span><span class="s0">True</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_fullscreen_false(self):</span>
+        <span class="s1">self.assertTrue(self.visual_test(fullscreen=</span><span class="s0">False</span><span class="s1">))</span>
+
+
+<span class="s1">@unittest.skipIf(</span>
+    <span class="s1">os.environ.get(</span><span class="s2">&quot;SDL_VIDEODRIVER&quot;</span><span class="s1">) == </span><span class="s2">&quot;dummy&quot;</span><span class="s0">,</span>
+    <span class="s2">'OpenGL requires a non-&quot;dummy&quot; SDL_VIDEODRIVER'</span><span class="s0">,</span>
+<span class="s1">)</span>
+<span class="s0">class </span><span class="s1">DisplayOpenGLTest(unittest.TestCase):</span>
+    <span class="s0">def </span><span class="s1">test_screen_size_opengl(self):</span>
+        <span class="s5">&quot;&quot;&quot;returns a surface with the same size requested. 
+        |tags:display,slow,opengl| 
+        &quot;&quot;&quot;</span>
+        <span class="s1">pygame.display.init()</span>
+        <span class="s1">screen = pygame.display.set_mode((</span><span class="s3">640</span><span class="s0">, </span><span class="s3">480</span><span class="s1">)</span><span class="s0">, </span><span class="s1">pygame.OPENGL)</span>
+        <span class="s1">self.assertEqual((</span><span class="s3">640</span><span class="s0">, </span><span class="s3">480</span><span class="s1">)</span><span class="s0">, </span><span class="s1">screen.get_size())</span>
+
+
+<span class="s0">class </span><span class="s1">X11CrashTest(unittest.TestCase):</span>
+    <span class="s0">def </span><span class="s1">test_x11_set_mode_crash_gh1654(self):</span>
+        <span class="s4"># Test for https://github.com/pygame/pygame/issues/1654</span>
+        <span class="s4"># If unfixed, this will trip a segmentation fault</span>
+        <span class="s1">pygame.display.init()</span>
+        <span class="s1">pygame.display.quit()</span>
+        <span class="s1">screen = pygame.display.set_mode((</span><span class="s3">640</span><span class="s0">, </span><span class="s3">480</span><span class="s1">)</span><span class="s0">, </span><span class="s3">0</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual((</span><span class="s3">640</span><span class="s0">, </span><span class="s3">480</span><span class="s1">)</span><span class="s0">, </span><span class="s1">screen.get_size())</span>
+
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s2">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">unittest.main()</span>
+</pre>
+</body>
+</html>

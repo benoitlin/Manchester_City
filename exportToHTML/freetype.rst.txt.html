@@ -1,0 +1,783 @@
+<html>
+<head>
+<title>freetype.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+freetype.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.freetype`</span>
+<span class="s0">======================</span>
+
+<span class="s0">.. module:: pygame.freetype</span>
+   <span class="s0">:synopsis: Enhanced pygame module for loading and rendering computer fonts</span>
+
+<span class="s0">| :sl:`Enhanced pygame module for loading and rendering computer fonts`</span>
+
+<span class="s0">The ``pygame.freetype`` module is a replacement for :mod:`pygame.font`.</span>
+<span class="s0">It has all of the functionality of the original, plus many new features.</span>
+<span class="s0">Yet is has absolutely no dependencies on the SDL_ttf library.</span>
+<span class="s0">It is implemented directly on the FreeType 2 library.</span>
+<span class="s0">The ``pygame.freetype`` module is not itself backward compatible with</span>
+<span class="s0">:mod:`pygame.font`.</span>
+<span class="s0">Instead, use the ``pygame.ftfont`` module as a drop-in replacement</span>
+<span class="s0">for :mod:`pygame.font`.</span>
+
+<span class="s0">All font file formats supported by FreeType can be rendered by</span>
+<span class="s0">``pygame.freetype``, namely ``TTF``, Type1, ``CFF``, OpenType,</span>
+<span class="s0">``SFNT``, ``PCF``, ``FNT``, ``BDF``, ``PFR`` and Type42 fonts.</span>
+<span class="s0">All glyphs having UTF-32 code points are accessible</span>
+<span class="s0">(see :attr:`Font.ucs4`).</span>
+
+<span class="s0">Most work on fonts is done using :class:`Font` instances.</span>
+<span class="s0">The module itself only has routines for initialization and creation</span>
+<span class="s0">of :class:`Font` objects.</span>
+<span class="s0">You can load fonts from the system using the :func:`SysFont` function.</span>
+
+<span class="s0">Extra support of bitmap fonts is available. Available bitmap sizes can</span>
+<span class="s0">be listed (see :meth:`Font.get_sizes`). For bitmap only fonts :class:`Font`</span>
+<span class="s0">can set the size for you (see the :attr:`Font.size` property).</span>
+
+<span class="s0">For now undefined character codes are replaced with the ``.notdef``</span>
+<span class="s0">(not defined) character.</span>
+<span class="s0">How undefined codes are handled may become configurable in a future release.</span>
+
+<span class="s0">Pygame comes with a built-in default font. This can always be accessed by</span>
+<span class="s0">passing None as the font name to the :class:`Font` constructor.</span>
+
+<span class="s0">Extra rendering features available to :class:`pygame.freetype.Font`</span>
+<span class="s0">are direct to surface rendering (see :meth:`Font.render_to`), character kerning</span>
+<span class="s0">(see :attr:`Font.kerning`), vertical layout (see :attr:`Font.vertical`),</span>
+<span class="s0">rotation of rendered text (see :attr:`Font.rotation`),</span>
+<span class="s0">and the strong style (see :attr:`Font.strong`).</span>
+<span class="s0">Some properties are configurable, such as</span>
+<span class="s0">strong style strength (see :attr:`Font.strength`) and underline positioning</span>
+<span class="s0">(see :attr:`Font.underline_adjustment`). Text can be positioned by the upper</span>
+<span class="s0">right corner of the text box or by the text baseline (see :attr:`Font.origin`).</span>
+<span class="s0">Finally, a font's vertical and horizontal size can be adjusted separately</span>
+<span class="s0">(see :attr:`Font.size`).</span>
+<span class="s0">The :any:`pygame.examples.freetype_misc &lt;pygame.examples.freetype_misc.main&gt;`</span>
+<span class="s0">example shows these features in use.</span>
+
+<span class="s0">The pygame package does not import ``freetype`` automatically when</span>
+<span class="s0">loaded. This module must be imported explicitly to be used. ::</span>
+
+   <span class="s0">import pygame</span>
+   <span class="s0">import pygame.freetype</span>
+
+<span class="s0">.. versionadded:: 1.9.2 :mod:`freetype`</span>
+
+
+<span class="s0">.. function:: get_error</span>
+
+   <span class="s0">| :sl:`Return the latest FreeType error`</span>
+   <span class="s0">| :sg:`get_error() -&gt; str`</span>
+   <span class="s0">| :sg:`get_error() -&gt; None`</span>
+
+   <span class="s0">Return a description of the last error which occurred in the FreeType2</span>
+   <span class="s0">library, or ``None`` if no errors have occurred.</span>
+
+<span class="s0">.. function:: get_version</span>
+
+   <span class="s0">| :sl:`Return the FreeType version`</span>
+   <span class="s0">| :sg:`get_version() -&gt; (int, int, int)`</span>
+
+   <span class="s0">Returns the version of the FreeType library in use by this module.</span>
+
+   <span class="s0">Note that the ``freetype`` module depends on the FreeType 2 library.</span>
+   <span class="s0">It will not compile with the original FreeType 1.0. Hence, the first element</span>
+   <span class="s0">of the tuple will always be &quot;2&quot;.</span>
+
+<span class="s0">.. function:: init</span>
+
+   <span class="s0">| :sl:`Initialize the underlying FreeType library.`</span>
+   <span class="s0">| :sg:`init(cache_size=64, resolution=72) -&gt; None`</span>
+
+   <span class="s0">This function initializes the underlying FreeType library and must be</span>
+   <span class="s0">called before trying to use any of the functionality of the ``freetype``</span>
+   <span class="s0">module.</span>
+
+   <span class="s0">However, :func:`pygame.init()` will automatically call this function</span>
+   <span class="s0">if the ``freetype`` module is already imported. It is safe to call this</span>
+   <span class="s0">function more than once.</span>
+
+   <span class="s0">Optionally, you may specify a default *cache_size* for the Glyph cache: the</span>
+   <span class="s0">maximum number of glyphs that will be cached at any given time by the</span>
+   <span class="s0">module. Exceedingly small values will be automatically tuned for</span>
+   <span class="s0">performance. Also a default pixel *resolution*, in dots per inch, can</span>
+   <span class="s0">be given to adjust font scaling.</span>
+
+<span class="s0">.. function:: quit</span>
+
+   <span class="s0">| :sl:`Shut down the underlying FreeType library.`</span>
+   <span class="s0">| :sg:`quit() -&gt; None`</span>
+
+   <span class="s0">This function closes the ``freetype`` module. After calling this</span>
+   <span class="s0">function, you should not invoke any class, method or function related to the</span>
+   <span class="s0">``freetype`` module as they are likely to fail or might give unpredictable</span>
+   <span class="s0">results. It is safe to call this function even if the module hasn't been</span>
+   <span class="s0">initialized yet.</span>
+
+<span class="s0">.. function:: get_init</span>
+
+   <span class="s0">| :sl:`Returns True if the FreeType module is currently initialized.`</span>
+   <span class="s0">| :sg:`get_init() -&gt; bool`</span>
+
+   <span class="s0">Returns ``True`` if the ``pygame.freetype`` module is currently initialized.</span>
+
+   <span class="s0">.. versionadded:: 1.9.5</span>
+
+<span class="s0">.. function:: was_init</span>
+
+   <span class="s0">| :sl:`DEPRECATED: Use get_init() instead.`</span>
+   <span class="s0">| :sg:`was_init() -&gt; bool`</span>
+
+   <span class="s0">DEPRECATED: Returns ``True`` if the ``pygame.freetype`` module is currently</span>
+   <span class="s0">initialized. Use ``get_init()`` instead.</span>
+
+<span class="s0">.. function:: get_cache_size</span>
+
+   <span class="s0">| :sl:`Return the glyph case size`</span>
+   <span class="s0">| :sg:`get_cache_size() -&gt; long`</span>
+
+   <span class="s0">See :func:`pygame.freetype.init()`.</span>
+
+<span class="s0">.. function:: get_default_resolution</span>
+
+   <span class="s0">| :sl:`Return the default pixel size in dots per inch`</span>
+   <span class="s0">| :sg:`get_default_resolution() -&gt; long`</span>
+
+   <span class="s0">Returns the default pixel size, in dots per inch, for the module.</span>
+   <span class="s0">The default is 72 DPI.</span>
+
+<span class="s0">.. function:: set_default_resolution</span>
+
+   <span class="s0">| :sl:`Set the default pixel size in dots per inch for the module`</span>
+   <span class="s0">| :sg:`set_default_resolution([resolution])`</span>
+
+   <span class="s0">Set the default pixel size, in dots per inch, for the module. If the</span>
+   <span class="s0">optional argument is omitted or zero the resolution is reset to 72 DPI.</span>
+
+<span class="s0">.. function:: SysFont</span>
+
+   <span class="s0">| :sl:`create a Font object from the system fonts`</span>
+   <span class="s0">| :sg:`SysFont(name, size, bold=False, italic=False) -&gt; Font`</span>
+
+   <span class="s0">Return a new Font object that is loaded from the system fonts. The font will</span>
+   <span class="s0">match the requested *bold* and *italic* flags. Pygame uses a small set of</span>
+   <span class="s0">common font aliases. If the specific font you ask for is not available, a</span>
+   <span class="s0">reasonable alternative may be used. If a suitable system font is not found</span>
+   <span class="s0">this will fall back on loading the default pygame font.</span>
+
+   <span class="s0">The font *name* can also be an iterable of font names, a string of</span>
+   <span class="s0">comma-separated font names, or a bytes of comma-separated font names, in</span>
+   <span class="s0">which case the set of names will be searched in order.</span>
+
+   <span class="s0">.. versionadded:: 2.0.1 Accept an iterable of font names.</span>
+
+<span class="s0">.. function:: get_default_font</span>
+
+   <span class="s0">| :sl:`Get the filename of the default font`</span>
+   <span class="s0">| :sg:`get_default_font() -&gt; string`</span>
+
+   <span class="s0">Return the filename of the default pygame font. This is not the full path</span>
+   <span class="s0">to the file. The file is usually in the same directory as the font module,</span>
+   <span class="s0">but can also be bundled in a separate archive.</span>
+
+<span class="s0">.. class:: Font</span>
+
+   <span class="s0">| :sl:`Create a new Font instance from a supported font file.`</span>
+   <span class="s0">| :sg:`Font(file, size=0, font_index=0, resolution=0, ucs4=False) -&gt; Font`</span>
+   <span class="s0">| :sg:`Font(pathlib.Path) -&gt; Font`</span>
+
+   <span class="s0">Argument *file* can be either a string representing the font's filename, a</span>
+   <span class="s0">file-like object containing the font, or None; if None, a default,</span>
+   <span class="s0">Pygame, font is used.</span>
+
+   <span class="s0">.. _freetype-font-size-argument:</span>
+
+   <span class="s0">Optionally, a *size* argument may be specified to set the default size in</span>
+   <span class="s0">points, which determines the size of the rendered characters.</span>
+   <span class="s0">The size can also be passed explicitly to each method call.</span>
+   <span class="s0">Because of the way the caching   system works, specifying a default size on</span>
+   <span class="s0">the constructor doesn't imply a performance gain over manually passing</span>
+   <span class="s0">the size on each function call. If the font is bitmap and no *size*</span>
+   <span class="s0">is given, the default size is set to the first available size for the font.</span>
+
+   <span class="s0">If the font file has more than one font, the font to load can be chosen with</span>
+   <span class="s0">the *index* argument. An exception is raised for an out-of-range font index</span>
+   <span class="s0">value.</span>
+
+   <span class="s0">The optional *resolution* argument sets the pixel size, in dots per inch,</span>
+   <span class="s0">for use in scaling glyphs for this Font instance. If 0 then the default</span>
+   <span class="s0">module value, set by :func:`init`, is used. The Font object's</span>
+   <span class="s0">resolution can only be changed by re-initializing the Font instance.</span>
+
+   <span class="s0">The optional *ucs4* argument, an integer, sets the default text translation</span>
+   <span class="s0">mode: 0 (False) recognize UTF-16 surrogate pairs, any other value (True),</span>
+   <span class="s0">to treat Unicode text as UCS-4, with no surrogate pairs. See</span>
+   <span class="s0">:attr:`Font.ucs4`.</span>
+
+   <span class="s0">.. attribute:: name</span>
+
+      <span class="s0">| :sl:`Proper font name.`</span>
+      <span class="s0">| :sg:`name -&gt; string`</span>
+
+      <span class="s0">Read only. Returns the real (long) name of the font, as</span>
+      <span class="s0">recorded in the font file.</span>
+
+   <span class="s0">.. attribute:: path</span>
+
+      <span class="s0">| :sl:`Font file path`</span>
+      <span class="s0">| :sg:`path -&gt; unicode`</span>
+
+      <span class="s0">Read only. Returns the path of the loaded font file</span>
+
+   <span class="s0">.. attribute:: size</span>
+
+      <span class="s0">| :sl:`The default point size used in rendering`</span>
+      <span class="s0">| :sg:`size -&gt; float`</span>
+      <span class="s0">| :sg:`size -&gt; (float, float)`</span>
+
+      <span class="s0">Get or set the default size for text metrics and rendering. It can be</span>
+      <span class="s0">a single point size, given as a Python ``int`` or ``float``, or a</span>
+      <span class="s0">font ppem (width, height) ``tuple``. Size values are non-negative.</span>
+      <span class="s0">A zero size or width represents an undefined size. In this case</span>
+      <span class="s0">the size must be given as a method argument, or an exception is</span>
+      <span class="s0">raised. A zero width but non-zero height is a ValueError.</span>
+
+      <span class="s0">For a scalable font, a single number value is equivalent to a tuple</span>
+      <span class="s0">with width equal height. A font can be stretched vertically with</span>
+      <span class="s0">height set greater than width, or horizontally with width set</span>
+      <span class="s0">greater than height. For embedded bitmaps, as listed by :meth:`get_sizes`,</span>
+      <span class="s0">use the nominal width and height to select an available size.</span>
+
+      <span class="s0">Font size differs for a non-scalable, bitmap, font. During a</span>
+      <span class="s0">method call it must match one of the available sizes returned by</span>
+      <span class="s0">method :meth:`get_sizes`. If not, an exception is raised.</span>
+      <span class="s0">If the size is a single number, the size is first matched against the</span>
+      <span class="s0">point size value. If no match, then the available size with the</span>
+      <span class="s0">same nominal width and height is chosen.</span>
+
+   <span class="s0">.. method:: get_rect</span>
+
+      <span class="s0">| :sl:`Return the size and offset of rendered text`</span>
+      <span class="s0">| :sg:`get_rect(text, style=STYLE_DEFAULT, rotation=0, size=0) -&gt; rect`</span>
+
+      <span class="s0">Gets the final dimensions and origin, in pixels, of *text* using the</span>
+      <span class="s0">optional *size* in points, *style*, and *rotation*. For other</span>
+      <span class="s0">relevant render properties, and for any optional argument not given,</span>
+      <span class="s0">the default values set for the :class:`Font` instance are used.</span>
+
+      <span class="s0">Returns a :class:`Rect &lt;pygame.Rect&gt;` instance containing the</span>
+      <span class="s0">width and height of the text's bounding box and the position of the</span>
+      <span class="s0">text's origin.</span>
+      <span class="s0">The origin is useful in aligning separately rendered pieces of text.</span>
+      <span class="s0">It gives the baseline position and bearing at the start of the text.</span>
+      <span class="s0">See the :meth:`render_to` method for an example.</span>
+
+      <span class="s0">If *text* is a char (byte) string, its encoding is assumed to be</span>
+      <span class="s0">``LATIN1``.</span>
+
+      <span class="s0">Optionally, *text* can be ``None``, which will return the bounding</span>
+      <span class="s0">rectangle for the text passed to a previous :meth:`get_rect`,</span>
+      <span class="s0">:meth:`render`, :meth:`render_to`, :meth:`render_raw`, or</span>
+      <span class="s0">:meth:`render_raw_to` call. See :meth:`render_to` for more</span>
+      <span class="s0">details.</span>
+
+   <span class="s0">.. method:: get_metrics</span>
+
+      <span class="s0">| :sl:`Return the glyph metrics for the given text`</span>
+      <span class="s0">| :sg:`get_metrics(text, size=0) -&gt; [(...), ...]`</span>
+
+      <span class="s0">Returns the glyph metrics for each character in *text*.</span>
+
+      <span class="s0">The glyph metrics are returned as a list of tuples. Each tuple gives</span>
+      <span class="s0">metrics of a single character glyph. The glyph metrics are:</span>
+
+      <span class="s0">::</span>
+
+          <span class="s0">(min_x, max_x, min_y, max_y, horizontal_advance_x, horizontal_advance_y)</span>
+
+      <span class="s0">The bounding box min_x, max_x, min_y, and max_y values are returned as</span>
+      <span class="s0">grid-fitted pixel coordinates of type int. The advance values are</span>
+      <span class="s0">float values.</span>
+
+      <span class="s0">The calculations are done using the font's default size in points.</span>
+      <span class="s0">Optionally you may specify another point size with the *size* argument.</span>
+
+      <span class="s0">The metrics are adjusted for the current rotation, strong, and oblique</span>
+      <span class="s0">settings.</span>
+
+      <span class="s0">If text is a char (byte) string, then its encoding is assumed to be</span>
+      <span class="s0">``LATIN1``.</span>
+
+   <span class="s0">.. attribute:: height</span>
+
+      <span class="s0">| :sl:`The unscaled height of the font in font units`</span>
+      <span class="s0">| :sg:`height -&gt; int`</span>
+
+      <span class="s0">Read only. Gets the height of the font. This is the average value of all</span>
+      <span class="s0">glyphs in the font.</span>
+
+   <span class="s0">.. attribute:: ascender</span>
+
+      <span class="s0">| :sl:`The unscaled ascent of the font in font units`</span>
+      <span class="s0">| :sg:`ascender -&gt; int`</span>
+
+      <span class="s0">Read only. Return the number of units from the font's baseline to</span>
+      <span class="s0">the top of the bounding box.</span>
+
+   <span class="s0">.. attribute:: descender</span>
+
+      <span class="s0">| :sl:`The unscaled descent of the font in font units`</span>
+      <span class="s0">| :sg:`descender -&gt; int`</span>
+
+      <span class="s0">Read only. Return the height in font units for the font descent.</span>
+      <span class="s0">The descent is the number of units from the font's baseline to the</span>
+      <span class="s0">bottom of the bounding box.</span>
+
+   <span class="s0">.. method:: get_sized_ascender</span>
+
+      <span class="s0">| :sl:`The scaled ascent of the font in pixels`</span>
+      <span class="s0">| :sg:`get_sized_ascender(&lt;size&gt;=0) -&gt; int`</span>
+
+      <span class="s0">Return the number of units from the font's baseline to the top of the</span>
+      <span class="s0">bounding box. It is not adjusted for strong or rotation.</span>
+
+   <span class="s0">.. method:: get_sized_descender</span>
+
+      <span class="s0">| :sl:`The scaled descent of the font in pixels`</span>
+      <span class="s0">| :sg:`get_sized_descender(&lt;size&gt;=0) -&gt; int`</span>
+
+      <span class="s0">Return the number of pixels from the font's baseline to the top of the</span>
+      <span class="s0">bounding box. It is not adjusted for strong or rotation.</span>
+
+   <span class="s0">.. method:: get_sized_height</span>
+
+      <span class="s0">| :sl:`The scaled height of the font in pixels`</span>
+      <span class="s0">| :sg:`get_sized_height(&lt;size&gt;=0) -&gt; int`</span>
+
+      <span class="s0">Returns the height of the font. This is the average value of all</span>
+      <span class="s0">glyphs in the font. It is not adjusted for strong or rotation.</span>
+
+   <span class="s0">.. method:: get_sized_glyph_height</span>
+
+      <span class="s0">| :sl:`The scaled bounding box height of the font in pixels`</span>
+      <span class="s0">| :sg:`get_sized_glyph_height(&lt;size&gt;=0) -&gt; int`</span>
+
+      <span class="s0">Return the glyph bounding box height of the font in pixels.</span>
+      <span class="s0">This is the average value of all glyphs in the font.</span>
+      <span class="s0">It is not adjusted for strong or rotation.</span>
+
+   <span class="s0">.. method:: get_sizes</span>
+
+      <span class="s0">| :sl:`return the available sizes of embedded bitmaps`</span>
+      <span class="s0">| :sg:`get_sizes() -&gt; [(int, int, int, float, float), ...]`</span>
+      <span class="s0">| :sg:`get_sizes() -&gt; []`</span>
+
+      <span class="s0">Returns a list of tuple records, one for each point size</span>
+      <span class="s0">supported. Each tuple containing the point size, the height in pixels,</span>
+      <span class="s0">width in pixels, horizontal ppem (nominal width) in fractional pixels,</span>
+      <span class="s0">and vertical ppem (nominal height) in fractional pixels.</span>
+
+   <span class="s0">.. method:: render</span>
+
+      <span class="s0">| :sl:`Return rendered text as a surface`</span>
+      <span class="s0">| :sg:`render(text, fgcolor=None, bgcolor=None, style=STYLE_DEFAULT, rotation=0, size=0) -&gt; (Surface, Rect)`</span>
+
+      <span class="s0">Returns a new :class:`Surface &lt;pygame.Surface&gt;`,</span>
+      <span class="s0">with the text rendered to it</span>
+      <span class="s0">in the color given by 'fgcolor'. If no foreground color is given,</span>
+      <span class="s0">the default foreground color, :attr:`fgcolor &lt;Font.fgcolor&gt;` is used.</span>
+      <span class="s0">If ``bgcolor`` is given, the surface</span>
+      <span class="s0">will be filled with this color. When no background color is given,</span>
+      <span class="s0">the surface background is transparent, zero alpha. Normally the returned</span>
+      <span class="s0">surface has a 32 bit pixel size. However, if ``bgcolor`` is ``None``</span>
+      <span class="s0">and anti-aliasing is disabled a monochrome 8 bit colorkey surface,</span>
+      <span class="s0">with colorkey set for the background color, is returned.</span>
+
+      <span class="s0">The return value is a tuple: the new surface and the bounding</span>
+      <span class="s0">rectangle giving the size and origin of the rendered text.</span>
+
+      <span class="s0">If an empty string is passed for text then the returned Rect is zero</span>
+      <span class="s0">width and the height of the font.</span>
+
+      <span class="s0">Optional *fgcolor*, *style*, *rotation*, and *size* arguments override</span>
+      <span class="s0">the default values set for the :class:`Font` instance.</span>
+
+      <span class="s0">If *text* is a char (byte) string, then its encoding is assumed to be</span>
+      <span class="s0">``LATIN1``.</span>
+
+      <span class="s0">Optionally, *text* can be ``None``, which will render the text</span>
+      <span class="s0">passed to a previous :meth:`get_rect`, :meth:`render`, :meth:`render_to`,</span>
+      <span class="s0">:meth:`render_raw`, or :meth:`render_raw_to` call.</span>
+      <span class="s0">See :meth:`render_to` for details.</span>
+
+   <span class="s0">.. method:: render_to</span>
+
+      <span class="s0">| :sl:`Render text onto an existing surface`</span>
+      <span class="s0">| :sg:`render_to(surf, dest, text, fgcolor=None, bgcolor=None, style=STYLE_DEFAULT, rotation=0, size=0) -&gt; Rect`</span>
+
+      <span class="s0">Renders the string *text* to the :mod:`pygame.Surface` *surf*,</span>
+      <span class="s0">at position *dest*, a (x, y) surface coordinate pair.</span>
+      <span class="s0">If either x or y is not an integer it is converted to one if possible.</span>
+      <span class="s0">Any sequence where the first two items are x and y positional elements</span>
+      <span class="s0">is accepted, including a :class:`Rect &lt;pygame.Rect&gt;` instance.</span>
+      <span class="s0">As with :meth:`render`,</span>
+      <span class="s0">optional *fgcolor*, *style*, *rotation*, and *size* argument are</span>
+      <span class="s0">available.</span>
+
+      <span class="s0">If a background color *bgcolor* is given, the text bounding box is</span>
+      <span class="s0">first filled with that color. The text is blitted next.</span>
+      <span class="s0">Both the background fill and text rendering involve full alpha blits.</span>
+      <span class="s0">That is, the alpha values of the foreground, background, and destination</span>
+      <span class="s0">target surface all affect the blit.</span>
+
+      <span class="s0">The return value is a rectangle giving the size and position of the</span>
+      <span class="s0">rendered text within the surface.</span>
+
+      <span class="s0">If an empty string is passed for text then the returned</span>
+      <span class="s0">:class:`Rect &lt;pygame.Rect&gt;` is zero width and the height of the font.</span>
+      <span class="s0">The rect will test False.</span>
+
+      <span class="s0">Optionally, *text* can be set ``None``, which will re-render text</span>
+      <span class="s0">passed to a previous :meth:`render_to`, :meth:`get_rect`, :meth:`render`,</span>
+      <span class="s0">:meth:`render_raw`, or :meth:`render_raw_to` call. Primarily, this</span>
+      <span class="s0">feature is an aid to using :meth:`render_to` in combination with</span>
+      <span class="s0">:meth:`get_rect`. An example: ::</span>
+
+          <span class="s0">def word_wrap(surf, text, font, color=(0, 0, 0)):</span>
+              <span class="s0">font.origin = True</span>
+              <span class="s0">words = text.split(' ')</span>
+              <span class="s0">width, height = surf.get_size()</span>
+              <span class="s0">line_spacing = font.get_sized_height() + 2</span>
+              <span class="s0">x, y = 0, line_spacing</span>
+              <span class="s0">space = font.get_rect(' ')</span>
+              <span class="s0">for word in words:</span>
+                  <span class="s0">bounds = font.get_rect(word)</span>
+                  <span class="s0">if x + bounds.width + bounds.x &gt;= width:</span>
+                      <span class="s0">x, y = 0, y + line_spacing</span>
+                  <span class="s0">if x + bounds.width + bounds.x &gt;= width:</span>
+                      <span class="s0">raise ValueError(&quot;word too wide for the surface&quot;)</span>
+                  <span class="s0">if y + bounds.height - bounds.y &gt;= height:</span>
+                      <span class="s0">raise ValueError(&quot;text to long for the surface&quot;)</span>
+                  <span class="s0">font.render_to(surf, (x, y), None, color)</span>
+                  <span class="s0">x += bounds.width + space.width</span>
+              <span class="s0">return x, y</span>
+
+      <span class="s0">When :meth:`render_to` is called with the same</span>
+      <span class="s0">font properties ― :attr:`size`, :attr:`style`, :attr:`strength`,</span>
+      <span class="s0">:attr:`wide`, :attr:`antialiased`, :attr:`vertical`, :attr:`rotation`,</span>
+      <span class="s0">:attr:`kerning`, and :attr:`use_bitmap_strikes` ― as :meth:`get_rect`,</span>
+      <span class="s0">:meth:`render_to` will use the layout calculated by :meth:`get_rect`.</span>
+      <span class="s0">Otherwise, :meth:`render_to` will recalculate the layout if called</span>
+      <span class="s0">with a text string or one of the above properties has changed</span>
+      <span class="s0">after the :meth:`get_rect` call.</span>
+
+      <span class="s0">If *text* is a char (byte) string, then its encoding is assumed to be</span>
+      <span class="s0">``LATIN1``.</span>
+
+   <span class="s0">.. method:: render_raw</span>
+
+      <span class="s0">| :sl:`Return rendered text as a string of bytes`</span>
+      <span class="s0">| :sg:`render_raw(text, style=STYLE_DEFAULT, rotation=0, size=0, invert=False) -&gt; (bytes, (int, int))`</span>
+
+      <span class="s0">Like :meth:`render` but with the pixels returned as a byte string</span>
+      <span class="s0">of 8-bit gray-scale values. The foreground color is 255, the</span>
+      <span class="s0">background 0, useful as an alpha mask for a foreground pattern.</span>
+
+   <span class="s0">.. method:: render_raw_to</span>
+
+      <span class="s0">| :sl:`Render text into an array of ints`</span>
+      <span class="s0">| :sg:`render_raw_to(array, text, dest=None, style=STYLE_DEFAULT, rotation=0, size=0, invert=False) -&gt; Rect`</span>
+
+      <span class="s0">Render to an array object exposing an array struct interface. The array</span>
+      <span class="s0">must be two dimensional with integer items. The default *dest* value,</span>
+      <span class="s0">``None``, is equivalent to position (0, 0). See :meth:`render_to`.</span>
+      <span class="s0">As with the other render methods, *text* can be ``None`` to</span>
+      <span class="s0">render a text string passed previously to another method.</span>
+
+      <span class="s0">The return value is a :func:`pygame.Rect` giving the size and position of</span>
+      <span class="s0">the rendered text.</span>
+
+   <span class="s0">.. attribute:: style</span>
+
+      <span class="s0">| :sl:`The font's style flags`</span>
+      <span class="s0">| :sg:`style -&gt; int`</span>
+
+      <span class="s0">Gets or sets the default style of the Font. This default style will be</span>
+      <span class="s0">used for all text rendering and size calculations unless overridden</span>
+      <span class="s0">specifically a render or :meth:`get_rect` call.</span>
+      <span class="s0">The style value may be a bit-wise OR of one or more of the following</span>
+      <span class="s0">constants:</span>
+
+      <span class="s0">::</span>
+
+          <span class="s0">STYLE_NORMAL</span>
+          <span class="s0">STYLE_UNDERLINE</span>
+          <span class="s0">STYLE_OBLIQUE</span>
+          <span class="s0">STYLE_STRONG</span>
+          <span class="s0">STYLE_WIDE</span>
+          <span class="s0">STYLE_DEFAULT</span>
+
+      <span class="s0">These constants may be found on the FreeType constants module.</span>
+      <span class="s0">Optionally, the default style can be modified or obtained accessing the</span>
+      <span class="s0">individual style attributes (underline, oblique, strong).</span>
+
+      <span class="s0">The ``STYLE_OBLIQUE`` and ``STYLE_STRONG`` styles are for</span>
+      <span class="s0">scalable fonts only. An attempt to set either for a bitmap font raises</span>
+      <span class="s0">an AttributeError. An attempt to set either for an inactive font,</span>
+      <span class="s0">as returned by ``Font.__new__()``, raises a RuntimeError.</span>
+
+      <span class="s0">Assigning ``STYLE_DEFAULT`` to the :attr:`style` property leaves</span>
+      <span class="s0">the property unchanged, as this property defines the default.</span>
+      <span class="s0">The :attr:`style` property will never return ``STYLE_DEFAULT``.</span>
+
+   <span class="s0">.. attribute:: underline</span>
+
+      <span class="s0">| :sl:`The state of the font's underline style flag`</span>
+      <span class="s0">| :sg:`underline -&gt; bool`</span>
+
+      <span class="s0">Gets or sets whether the font will be underlined when drawing text. This</span>
+      <span class="s0">default style value will be used for all text rendering and size</span>
+      <span class="s0">calculations unless overridden specifically in a render or</span>
+      <span class="s0">:meth:`get_rect` call, via the 'style' parameter.</span>
+
+   <span class="s0">.. attribute:: strong</span>
+
+      <span class="s0">| :sl:`The state of the font's strong style flag`</span>
+      <span class="s0">| :sg:`strong -&gt; bool`</span>
+
+      <span class="s0">Gets or sets whether the font will be bold when drawing text. This</span>
+      <span class="s0">default style value will be used for all text rendering and size</span>
+      <span class="s0">calculations unless overridden specifically in a render or</span>
+      <span class="s0">:meth:`get_rect` call, via the 'style' parameter.</span>
+
+   <span class="s0">.. attribute:: oblique</span>
+
+      <span class="s0">| :sl:`The state of the font's oblique style flag`</span>
+      <span class="s0">| :sg:`oblique -&gt; bool`</span>
+
+      <span class="s0">Gets or sets whether the font will be rendered as oblique. This</span>
+      <span class="s0">default style value will be used for all text rendering and size</span>
+      <span class="s0">calculations unless overridden specifically in a render or</span>
+      <span class="s0">:meth:`get_rect` call, via the *style* parameter.</span>
+
+      <span class="s0">The oblique style is only supported for scalable (outline) fonts.</span>
+      <span class="s0">An attempt to set this style on a bitmap font will raise an</span>
+      <span class="s0">AttributeError. If the font object is inactive, as returned by</span>
+      <span class="s0">``Font.__new__()``, setting this property raises a RuntimeError.</span>
+
+   <span class="s0">.. attribute:: wide</span>
+
+      <span class="s0">| :sl:`The state of the font's wide style flag`</span>
+      <span class="s0">| :sg:`wide -&gt; bool`</span>
+
+      <span class="s0">Gets or sets whether the font will be stretched horizontally</span>
+      <span class="s0">when drawing text. It produces a result similar to</span>
+      <span class="s0">:class:`pygame.font.Font`'s bold. This style not available for</span>
+      <span class="s0">rotated text.</span>
+
+   <span class="s0">.. attribute:: strength</span>
+
+      <span class="s0">| :sl:`The strength associated with the strong or wide font styles`</span>
+      <span class="s0">| :sg:`strength -&gt; float`</span>
+
+      <span class="s0">The amount by which a font glyph's size is enlarged for the</span>
+      <span class="s0">strong or wide transformations, as a fraction of the untransformed</span>
+      <span class="s0">size. For the wide style only the horizontal dimension is</span>
+      <span class="s0">increased. For strong text both the horizontal and vertical</span>
+      <span class="s0">dimensions are enlarged. A wide style of strength 0.08333 ( 1/12 ) is</span>
+      <span class="s0">equivalent to the :class:`pygame.font.Font` bold style.</span>
+      <span class="s0">The default is 0.02778 ( 1/36 ).</span>
+
+      <span class="s0">The strength style is only supported for scalable (outline) fonts.</span>
+      <span class="s0">An attempt to set this property on a bitmap font will raise an</span>
+      <span class="s0">AttributeError. If the font object is inactive, as returned by</span>
+      <span class="s0">``Font.__new__()``, assignment to this property raises a RuntimeError.</span>
+
+   <span class="s0">.. attribute:: underline_adjustment</span>
+
+      <span class="s0">| :sl:`Adjustment factor for the underline position`</span>
+      <span class="s0">| :sg:`underline_adjustment -&gt; float`</span>
+
+      <span class="s0">Gets or sets a factor which, when positive, is multiplied with the</span>
+      <span class="s0">font's underline offset to adjust the underline position. A negative</span>
+      <span class="s0">value turns an underline into a strike-through or overline. It is</span>
+      <span class="s0">multiplied with the ascender. Accepted values range between -2.0 and 2.0</span>
+      <span class="s0">inclusive. A value of 0.5 closely matches Tango underlining. A value of</span>
+      <span class="s0">1.0 mimics :class:`pygame.font.Font` underlining.</span>
+
+   <span class="s0">.. attribute:: fixed_width</span>
+
+      <span class="s0">| :sl:`Gets whether the font is fixed-width`</span>
+      <span class="s0">| :sg:`fixed_width -&gt; bool`</span>
+
+      <span class="s0">Read only. Returns ``True`` if the font contains fixed-width</span>
+      <span class="s0">characters (for example Courier, Bitstream Vera Sans Mono, Andale Mono).</span>
+
+   <span class="s0">.. attribute:: fixed_sizes</span>
+
+      <span class="s0">| :sl:`the number of available bitmap sizes for the font`</span>
+      <span class="s0">| :sg:`fixed_sizes -&gt; int`</span>
+
+      <span class="s0">Read only. Returns the number of point sizes for which the font contains</span>
+      <span class="s0">bitmap character images. If zero then the font is not a bitmap font.</span>
+      <span class="s0">A scalable font may contain pre-rendered point sizes as strikes.</span>
+
+   <span class="s0">.. attribute:: scalable</span>
+
+      <span class="s0">| :sl:`Gets whether the font is scalable`</span>
+      <span class="s0">| :sg:`scalable -&gt; bool`</span>
+
+      <span class="s0">Read only. Returns ``True`` if the font contains outline glyphs.</span>
+      <span class="s0">If so, the point size is not limited to available bitmap sizes.</span>
+
+   <span class="s0">.. attribute:: use_bitmap_strikes</span>
+
+      <span class="s0">| :sl:`allow the use of embedded bitmaps in an outline font file`</span>
+      <span class="s0">| :sg:`use_bitmap_strikes -&gt; bool`</span>
+
+      <span class="s0">Some scalable fonts include embedded bitmaps for particular point</span>
+      <span class="s0">sizes. This property controls whether or not those bitmap strikes</span>
+      <span class="s0">are used. Set it ``False`` to disable the loading of any bitmap</span>
+      <span class="s0">strike. Set it ``True``, the default, to permit bitmap strikes</span>
+      <span class="s0">for a non-rotated render with no style other than :attr:`wide` or</span>
+      <span class="s0">:attr:`underline`. This property is ignored for bitmap fonts.</span>
+
+      <span class="s0">See also :attr:`fixed_sizes` and :meth:`get_sizes`.</span>
+
+   <span class="s0">.. attribute:: antialiased</span>
+
+      <span class="s0">| :sl:`Font anti-aliasing mode`</span>
+      <span class="s0">| :sg:`antialiased -&gt; bool`</span>
+
+      <span class="s0">Gets or sets the font's anti-aliasing mode. This defaults to</span>
+      <span class="s0">``True`` on all fonts, which are rendered with full 8 bit blending.</span>
+
+      <span class="s0">Set to ``False`` to do monochrome rendering. This should</span>
+      <span class="s0">provide a small speed gain and reduce cache memory size.</span>
+
+   <span class="s0">.. attribute:: kerning</span>
+
+      <span class="s0">| :sl:`Character kerning mode`</span>
+      <span class="s0">| :sg:`kerning -&gt; bool`</span>
+
+      <span class="s0">Gets or sets the font's kerning mode. This defaults to ``False``</span>
+      <span class="s0">on all fonts, which will be rendered without kerning.</span>
+
+      <span class="s0">Set to ``True`` to add kerning between character pairs, if supported</span>
+      <span class="s0">by the font, when positioning glyphs.</span>
+
+   <span class="s0">.. attribute:: vertical</span>
+
+      <span class="s0">| :sl:`Font vertical mode`</span>
+      <span class="s0">| :sg:`vertical -&gt; bool`</span>
+
+      <span class="s0">Gets or sets whether the characters are laid out vertically rather</span>
+      <span class="s0">than horizontally. May be useful when rendering Kanji or some other</span>
+      <span class="s0">vertical script.</span>
+
+      <span class="s0">Set to ``True`` to switch to a vertical text layout. The default</span>
+      <span class="s0">is ``False``, place horizontally.</span>
+
+      <span class="s0">Note that the :class:`Font` class does not automatically determine</span>
+      <span class="s0">script orientation. Vertical layout must be selected explicitly.</span>
+
+      <span class="s0">Also note that several font formats (especially bitmap based ones) don't</span>
+      <span class="s0">contain the necessary metrics to draw glyphs vertically, so drawing in</span>
+      <span class="s0">those cases will give unspecified results.</span>
+
+   <span class="s0">.. attribute:: rotation</span>
+
+      <span class="s0">| :sl:`text rotation in degrees counterclockwise`</span>
+      <span class="s0">| :sg:`rotation -&gt; int`</span>
+
+      <span class="s0">Gets or sets the baseline angle of the rendered text. The angle is</span>
+      <span class="s0">represented as integer degrees. The default angle is 0, with horizontal</span>
+      <span class="s0">text rendered along the X-axis, and vertical text along the Y-axis.</span>
+      <span class="s0">A positive value rotates these axes counterclockwise that many degrees.</span>
+      <span class="s0">A negative angle corresponds to a clockwise rotation. The rotation</span>
+      <span class="s0">value is normalized to a value within the range 0 to 359 inclusive</span>
+      <span class="s0">(eg. 390 -&gt; 390 - 360 -&gt; 30, -45 -&gt; 360 + -45 -&gt; 315,</span>
+      <span class="s0">720 -&gt; 720 - (2 * 360) -&gt; 0).</span>
+
+      <span class="s0">Only scalable (outline) fonts can be rotated. An attempt to change</span>
+      <span class="s0">the rotation of a bitmap font raises an AttributeError.</span>
+      <span class="s0">An attempt to change the rotation of an inactive font instance, as</span>
+      <span class="s0">returned by ``Font.__new__()``, raises a RuntimeError.</span>
+
+   <span class="s0">.. attribute:: fgcolor</span>
+
+      <span class="s0">| :sl:`default foreground color`</span>
+      <span class="s0">| :sg:`fgcolor -&gt; Color`</span>
+
+      <span class="s0">Gets or sets the default glyph rendering color. It is initially opaque</span>
+      <span class="s0">black ― (0, 0, 0, 255). Applies to :meth:`render` and :meth:`render_to`.</span>
+
+   <span class="s0">.. attribute:: bgcolor</span>
+
+      <span class="s0">| :sl:`default background color`</span>
+      <span class="s0">| :sg:`bgcolor -&gt; Color`</span>
+
+      <span class="s0">Gets or sets the default background rendering color. Initially it is</span>
+      <span class="s0">unset and text will render with a transparent background by default.</span>
+      <span class="s0">Applies to :meth:`render` and :meth:`render_to`.</span>
+
+   <span class="s0">.. versionadded:: 2.0.0</span>
+
+   <span class="s0">.. attribute:: origin</span>
+
+      <span class="s0">| :sl:`Font render to text origin mode`</span>
+      <span class="s0">| :sg:`origin -&gt; bool`</span>
+
+      <span class="s0">If set ``True``, :meth:`render_to` and :meth:`render_raw_to` will</span>
+      <span class="s0">take the *dest* position to be that of the text origin, as opposed to</span>
+      <span class="s0">the top-left corner of the bounding box. See :meth:`get_rect` for</span>
+      <span class="s0">details.</span>
+
+   <span class="s0">.. attribute:: pad</span>
+
+      <span class="s0">| :sl:`padded boundary mode`</span>
+      <span class="s0">| :sg:`pad -&gt; bool`</span>
+
+      <span class="s0">If set ``True``, then the text boundary rectangle will be inflated</span>
+      <span class="s0">to match that of :class:`font.Font &lt;pygame.font.Font&gt;`.</span>
+      <span class="s0">Otherwise, the boundary rectangle is just large enough for the text.</span>
+
+   <span class="s0">.. attribute:: ucs4</span>
+
+      <span class="s0">| :sl:`Enable UCS-4 mode`</span>
+      <span class="s0">| :sg:`ucs4 -&gt; bool`</span>
+
+      <span class="s0">Gets or sets the decoding of Unicode text. By default, the</span>
+      <span class="s0">freetype module performs UTF-16 surrogate pair decoding on Unicode text.</span>
+      <span class="s0">This allows 32-bit escape sequences ('\Uxxxxxxxx') between 0x10000 and</span>
+      <span class="s0">0x10FFFF to represent their corresponding UTF-32 code points on Python</span>
+      <span class="s0">interpreters built with a UCS-2 Unicode type (on Windows, for instance).</span>
+      <span class="s0">It also means character values within the UTF-16 surrogate area (0xD800</span>
+      <span class="s0">to 0xDFFF) are considered part of a surrogate pair. A malformed surrogate</span>
+      <span class="s0">pair will raise a UnicodeEncodeError. Setting ucs4 ``True`` turns</span>
+      <span class="s0">surrogate pair decoding off, allowing access the full UCS-4 character</span>
+      <span class="s0">range to a Python interpreter built with four-byte Unicode character</span>
+      <span class="s0">support.</span>
+
+   <span class="s0">.. attribute:: resolution</span>
+
+      <span class="s0">| :sl:`Pixel resolution in dots per inch`</span>
+      <span class="s0">| :sg:`resolution -&gt; int`</span>
+
+      <span class="s0">Read only. Gets pixel size used in scaling font glyphs for this</span>
+      <span class="s0">:class:`Font` instance.</span>
+</pre>
+</body>
+</html>

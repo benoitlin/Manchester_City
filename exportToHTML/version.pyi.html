@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>version.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+version.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Tuple</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">Literal</span>
+
+<span class="s0">class </span><span class="s1">SoftwareVersion(Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]):</span>
+    <span class="s0">def </span><span class="s1">__new__(cls</span><span class="s0">, </span><span class="s1">major: int</span><span class="s0">, </span><span class="s1">minor: int</span><span class="s0">, </span><span class="s1">patch: int) -&gt; SoftwareVersion: ...</span>
+    <span class="s0">def </span><span class="s1">__repr__(self) -&gt; str: ...</span>
+    <span class="s0">def </span><span class="s1">__str__(self) -&gt; str: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">major(self) -&gt; int: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">minor(self) -&gt; int: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">patch(self) -&gt; int: ...</span>
+    <span class="s1">fields: Tuple[Literal[</span><span class="s2">&quot;major&quot;</span><span class="s1">]</span><span class="s0">, </span><span class="s1">Literal[</span><span class="s2">&quot;minor&quot;</span><span class="s1">]</span><span class="s0">, </span><span class="s1">Literal[</span><span class="s2">&quot;patch&quot;</span><span class="s1">]]</span>
+
+<span class="s0">class </span><span class="s1">PygameVersion(SoftwareVersion): ...</span>
+<span class="s0">class </span><span class="s1">SDLVersion(SoftwareVersion): ...</span>
+
+<span class="s1">SDL: SDLVersion</span>
+<span class="s1">ver: str</span>
+<span class="s1">vernum: PygameVersion</span>
+<span class="s1">rev: str</span>
+</pre>
+</body>
+</html>

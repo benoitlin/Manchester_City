@@ -1,0 +1,731 @@
+<html>
+<head>
+<title>pygame.css</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #e8bf6a;}
+.s4 { color: #6a8759;}
+.s5 { color: #bababa;}
+.s6 { color: #a9b7c6;}
+.s7 { color: #6897bb;}
+.s8 { color: #a5c261;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+pygame.css</font>
+</center></td></tr></table>
+<pre><span class="s0">/** 
+ * Pygame stylesheet -- original theme 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+ */</span>
+
+<span class="s2">@import </span><span class="s3">url</span><span class="s1">(</span><span class="s4">&quot;reset.css&quot;</span><span class="s1">)</span><span class="s2">;</span>
+<span class="s2">@import </span><span class="s3">url</span><span class="s1">(</span><span class="s4">&quot;tooltip.css&quot;</span><span class="s1">)</span><span class="s2">;</span>
+<span class="s2">@import </span><span class="s3">url</span><span class="s1">(</span><span class="s4">&quot;basic.css&quot;</span><span class="s1">)</span><span class="s2">;</span>
+
+<span class="s0">/* -- index page ------------------------------------------------------------ */</span>
+
+<span class="s3">#pygame-front-page h2 </span><span class="s1">{</span>
+    <span class="s5">margin-top</span><span class="s6">: </span><span class="s7">2</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">#pygame-front-page dt </span><span class="s1">{</span>
+    <span class="s5">padding-top</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">#pygame-front-page dl </span><span class="s1">{</span>
+    <span class="s5">padding-left</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- tutorial page --------------------------------------------------------- */</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">docinfo </span><span class="s1">{</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s7">0.9</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">margin-left</span><span class="s6">: </span><span class="s7">3</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">docinfo th </span><span class="s1">{</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">left</span><span class="s2">;</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">bolder</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">docinfo td </span><span class="s1">{</span>
+    <span class="s5">padding-left</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">matrix th</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">matrix td </span><span class="s1">{</span>
+    <span class="s5">border-right</span><span class="s6">: </span><span class="s7">0.1</span><span class="s8">em solid black</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">matrix th</span><span class="s6">:</span><span class="s3">last-child</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">matrix td</span><span class="s6">:</span><span class="s3">last-child </span><span class="s1">{</span>
+    <span class="s5">border-right-style</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">matrix th </span><span class="s1">{</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">bolder</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">matrix th</span><span class="s1">.</span><span class="s3">head </span><span class="s1">{</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">center</span><span class="s2">;</span>
+    <span class="s5">border-bottom</span><span class="s6">: </span><span class="s7">0.2</span><span class="s8">em double black</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">matrix td </span><span class="s1">{</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">center</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body table</span><span class="s1">.</span><span class="s3">matrix th</span><span class="s1">.</span><span class="s3">stub </span><span class="s1">{</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">left</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* Let a float element be beside a code block */</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">highlight-python</span><span class="s1">.</span><span class="s3">notranslate </span><span class="s1">{</span>
+    <span class="s5">display</span><span class="s6">: </span><span class="s8">inline-block</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- page layout ----------------------------------------------------------- */</span>
+
+<span class="s3">body </span><span class="s1">{</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s8">sans-serif</span><span class="s2">;</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#000000</span><span class="s2">;</span>
+    <span class="s5">font-style</span><span class="s6">: </span><span class="s8">normal</span><span class="s2">;</span>
+    <span class="s5">text-decoration</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">left</span><span class="s2">;</span>
+    <span class="s5">border-style</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">header </span><span class="s1">{</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0.5</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">line-height</span><span class="s6">: </span><span class="s7">1.2</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">header </span><span class="s1">&gt; </span><span class="s3">div </span><span class="s1">{</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">3</span><span class="s8">px solid black</span><span class="s2">;</span>
+    <span class="s5">border-collapse</span><span class="s6">: </span><span class="s8">collapse</span><span class="s2">;</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#6aee28</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">header </span><span class="s1">.</span><span class="s3">logo </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#c2fc20</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0.3</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">border-right</span><span class="s6">: </span><span class="s7">3</span><span class="s8">px solid black</span><span class="s2">;</span>
+    <span class="s5">display</span><span class="s6">: </span><span class="s8">flex</span><span class="s2">;</span>
+    <span class="s5">align-items</span><span class="s6">: </span><span class="s8">center</span><span class="s2">;</span>
+    <span class="s5">justify-content</span><span class="s6">: </span><span class="s8">center</span><span class="s2">;</span>
+    <span class="s5">flex-direction</span><span class="s6">: </span><span class="s8">column</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">header </span><span class="s1">.</span><span class="s3">logo img </span><span class="s1">{</span>
+    <span class="s5">min-width</span><span class="s6">: </span><span class="s7">200</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">min-height</span><span class="s6">: </span><span class="s7">60</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">border-style</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">header </span><span class="s1">.</span><span class="s3">pagelinks </span><span class="s1">{</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0.3</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">center</span><span class="s2">;</span>
+    <span class="s5">vertical-align</span><span class="s6">: </span><span class="s8">middle</span><span class="s2">;</span>
+    <span class="s5">flex-grow</span><span class="s6">: </span><span class="s7">1</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">header p</span><span class="s1">.</span><span class="s3">top </span><span class="s1">{</span>
+    <span class="s5">margin-top</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">header p</span><span class="s1">.</span><span class="s3">bottom </span><span class="s1">{</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">left</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">header </span><span class="s1">.</span><span class="s3">pagelinks a </span><span class="s1">{</span>
+    <span class="s5">text-decoration</span><span class="s6">: </span><span class="s8">underline</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">header </span><span class="s1">.</span><span class="s3">pagelinks a</span><span class="s6">:</span><span class="s3">hover </span><span class="s1">{</span>
+    <span class="s5">text-decoration</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">document </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#aaeebb</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s3">flex-container </span><span class="s1">{</span>
+    <span class="s5">display</span><span class="s6">: </span><span class="s8">flex</span><span class="s2">;</span>
+    <span class="s5">flex-direction</span><span class="s6">: </span><span class="s8">row</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s2">@media </span><span class="s3">only </span><span class="s8">screen </span><span class="s3">and </span><span class="s1">(</span><span class="s5">max-width</span><span class="s6">: </span><span class="s7">680</span><span class="s8">px</span><span class="s1">) {</span>
+  <span class="s1">.</span><span class="s3">flex-container </span><span class="s1">{</span>
+    <span class="s5">flex-direction</span><span class="s6">: </span><span class="s8">column</span><span class="s2">;</span>
+  <span class="s1">}</span>
+
+  <span class="s3">div</span><span class="s1">.</span><span class="s3">header </span><span class="s1">.</span><span class="s3">logo </span><span class="s1">{</span>
+      <span class="s5">border-right</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+      <span class="s5">border-bottom</span><span class="s6">: </span><span class="s7">3</span><span class="s8">px solid black</span><span class="s2">;</span>
+  <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s0">/* on wide screens center text, and max width for readable area.  */</span>
+<span class="s2">@media </span><span class="s3">only </span><span class="s8">screen </span><span class="s3">and </span><span class="s1">(</span><span class="s5">min-width</span><span class="s6">: </span><span class="s7">680</span><span class="s8">px</span><span class="s1">) {</span>
+    <span class="s3">div</span><span class="s1">.</span><span class="s3">documentwrapper </span><span class="s1">{</span>
+        <span class="s5">float</span><span class="s6">: </span><span class="s8">initial</span><span class="s2">;</span>
+        <span class="s5">width</span><span class="s6">: </span><span class="s7">100</span><span class="s1">%</span><span class="s2">;</span>
+        <span class="s5">max-width</span><span class="s6">: </span><span class="s7">700</span><span class="s8">px</span><span class="s2">;</span>
+        <span class="s5">margin</span><span class="s6">: </span><span class="s7">0 </span><span class="s8">auto</span><span class="s2">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s3">toc td </span><span class="s1">{</span>
+    <span class="s5">display</span><span class="s6">:</span><span class="s8">block</span><span class="s2">;</span>
+    <span class="s5">width</span><span class="s6">: </span><span class="s7">200</span><span class="s1">%</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s3">toc td</span><span class="s6">:</span><span class="s3">last-child </span><span class="s1">{</span>
+    <span class="s5">padding-bottom</span><span class="s6">: </span><span class="s7">20</span><span class="s8">px</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">table</span><span class="s1">.</span><span class="s3">toc td</span><span class="s6">:</span><span class="s3">nth-child</span><span class="s1">(</span><span class="s7">2</span><span class="s1">) {</span>
+    <span class="s5">display</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">bodywrapper </span><span class="s1">{</span>
+    <span class="s5">margin</span><span class="s6">: </span><span class="s7">0 0 0 230</span><span class="s8">px</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body </span><span class="s1">{</span>
+    <span class="s5">min-width</span><span class="s6">: </span><span class="s8">auto</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0.5</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">heading </span><span class="s1">{</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0 0 0 0.5</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">footer </span><span class="s1">{</span>
+    <span class="s5">display</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#000000</span><span class="s2">;</span>
+    <span class="s5">width</span><span class="s6">: </span><span class="s7">100</span><span class="s1">%</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">9</span><span class="s8">px </span><span class="s7">0</span><span class="s2">;</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">center</span><span class="s2">;</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s7">75</span><span class="s1">%</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">footer a </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#11303d</span><span class="s2">;</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#000000</span><span class="s2">;</span>
+    <span class="s5">text-decoration</span><span class="s6">: </span><span class="s8">underline</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">related </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#6aee28</span><span class="s2">;</span>
+    <span class="s5">line-height</span><span class="s6">: </span><span class="s7">30</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#000000</span><span class="s2">;</span>
+    <span class="s5">border-top</span><span class="s6">: </span><span class="s7">3</span><span class="s8">px solid black</span><span class="s2">;</span>
+    <span class="s5">border-bottom</span><span class="s6">: </span><span class="s7">3</span><span class="s8">px solid black</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">related a </span><span class="s1">{</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#000000</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">sphinxsidebar </span><span class="s1">{</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">sphinxsidebar h3 </span><span class="s1">{</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s8">sans-serif</span><span class="s2">;</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#ffffff</span><span class="s2">;</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s7">1.4</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">normal</span><span class="s2">;</span>
+    <span class="s5">margin</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">sphinxsidebar h3 a </span><span class="s1">{</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#ffffff</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">sphinxsidebar h4 </span><span class="s1">{</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s8">sans-serif</span><span class="s2">;</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#ffffff</span><span class="s2">;</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s7">1.3</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">normal</span><span class="s2">;</span>
+    <span class="s5">margin</span><span class="s6">: </span><span class="s7">5</span><span class="s8">px </span><span class="s7">0 0 0</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">sphinxsidebar p </span><span class="s1">{</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#ffffff</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">sphinxsidebar p</span><span class="s1">.</span><span class="s3">topless </span><span class="s1">{</span>
+    <span class="s5">margin</span><span class="s6">: </span><span class="s7">5</span><span class="s8">px </span><span class="s7">10</span><span class="s8">px </span><span class="s7">10</span><span class="s8">px </span><span class="s7">10</span><span class="s8">px</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">sphinxsidebar ul </span><span class="s1">{</span>
+    <span class="s5">margin</span><span class="s6">: </span><span class="s7">10</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#ffffff</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">sphinxsidebar a </span><span class="s1">{</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#98dbcc</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">sphinxsidebar input </span><span class="s1">{</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">1</span><span class="s8">px solid </span><span class="s7">#98dbcc</span><span class="s2">;</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s8">sans-serif</span><span class="s2">;</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- body styles ----------------------------------------------------------- */</span>
+
+<span class="s3">a </span><span class="s1">{</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#000000</span><span class="s2">;</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s8">transparent</span><span class="s2">;</span>
+    <span class="s5">text-decoration</span><span class="s6">: </span><span class="s8">underline</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">a</span><span class="s6">:</span><span class="s3">hover </span><span class="s1">{</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#000000</span><span class="s2">;</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s8">transparent</span><span class="s2">;</span>
+    <span class="s5">text-decoration</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">p </span><span class="s1">{</span>
+    <span class="s5">margin</span><span class="s6">: </span><span class="s7">0.5</span><span class="s8">em </span><span class="s7">0</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">strong </span><span class="s1">{</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">bold</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">em </span><span class="s1">{</span>
+    <span class="s5">font-style</span><span class="s6">: </span><span class="s8">italic</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">dl</span><span class="s1">.</span><span class="s3">definition </span><span class="s1">{</span>
+    <span class="s5">padding-top</span><span class="s6">: </span><span class="s7">0.7</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">padding-bottom</span><span class="s6">: </span><span class="s7">0.7</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">dt</span><span class="s1">.</span><span class="s3">title </span><span class="s1">{</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s8">monospace</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">dt tt </span><span class="s1">{</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">bold</span><span class="s2">;</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s7">1.1</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">dt</span><span class="s1">.</span><span class="s3">module </span><span class="s1">{</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">table</span><span class="s1">.</span><span class="s3">toc </span><span class="s1">{</span>
+    <span class="s5">margin-left</span><span class="s6">: </span><span class="s7">2</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">0.5</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">table</span><span class="s1">.</span><span class="s3">toc td </span><span class="s1">{</span>
+    <span class="s5">border-style</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+    <span class="s5">padding-right</span><span class="s6">: </span><span class="s7">10</span><span class="s8">px</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">span</span><span class="s1">.</span><span class="s3">summaryline </span><span class="s1">{</span>
+    <span class="s5">font-style</span><span class="s6">: </span><span class="s8">italic</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">span</span><span class="s1">.</span><span class="s3">signature </span><span class="s1">{</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s8">monospace</span><span class="s2">;</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">0.5</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">span</span><span class="s1">.</span><span class="s3">pre </span><span class="s1">{</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s8">monospace</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">code</span><span class="s1">.</span><span class="s3">download span</span><span class="s1">.</span><span class="s3">pre </span><span class="s1">{</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s8">inherit</span><span class="s2">;</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">normal</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">table</span><span class="s1">.</span><span class="s3">docutils td</span><span class="s1">.</span><span class="s3">toc </span><span class="s1">{</span>
+    <span class="s5">border-style</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body p</span><span class="s2">, </span><span class="s3">div</span><span class="s1">.</span><span class="s3">body dd</span><span class="s2">, </span><span class="s3">div</span><span class="s1">.</span><span class="s3">body li </span><span class="s1">{</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">left</span><span class="s2">;</span>
+    <span class="s5">line-height</span><span class="s6">: </span><span class="s7">130</span><span class="s1">%</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h1</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h2</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h3</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h4</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h5</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h6 </span><span class="s1">{</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s8">sans-serif</span><span class="s2">;</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">bold</span><span class="s2">;</span>
+    <span class="s5">margin</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em </span><span class="s7">0 0.5</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">left</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h6 </span><span class="s1">{</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">normal</span><span class="s2">;</span>
+    <span class="s5">font-style</span><span class="s6">: </span><span class="s8">italic</span><span class="s2">;</span>
+    <span class="s5">margin</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+    <span class="s5">line-height</span><span class="s6">: </span><span class="s7">130</span><span class="s1">%</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h1 </span><span class="s1">{ </span><span class="s5">font-size</span><span class="s6">: </span><span class="s7">1.5</span><span class="s8">em</span><span class="s2">; </span><span class="s1">}</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h2 </span><span class="s1">{ </span><span class="s5">font-size</span><span class="s6">: </span><span class="s7">1.4</span><span class="s8">em</span><span class="s2">; </span><span class="s1">}</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h3 </span><span class="s1">{ </span><span class="s5">font-size</span><span class="s6">: </span><span class="s7">1.3</span><span class="s8">em</span><span class="s2">; </span><span class="s1">}</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h4 </span><span class="s1">{ </span><span class="s5">font-size</span><span class="s6">: </span><span class="s7">1.2</span><span class="s8">em</span><span class="s2">; </span><span class="s1">}</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h5 </span><span class="s1">{ </span><span class="s5">font-size</span><span class="s6">: </span><span class="s7">1.1</span><span class="s8">em</span><span class="s2">; </span><span class="s1">}</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body h6 </span><span class="s1">{ </span><span class="s5">font-size</span><span class="s6">: </span><span class="s7">1.0</span><span class="s8">em</span><span class="s2">; </span><span class="s1">}</span>
+
+<span class="s3">a</span><span class="s1">.</span><span class="s3">headerlink </span><span class="s1">{</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#68698b</span><span class="s2">;</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s7">0.8</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0 4</span><span class="s8">px </span><span class="s7">0 4</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">text-decoration</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">a</span><span class="s1">.</span><span class="s3">headerlink</span><span class="s6">:</span><span class="s3">hover </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#68698b</span><span class="s2">;</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s8">white</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">blockquote </span><span class="s1">{</span>
+    <span class="s5">margin-left</span><span class="s6">: </span><span class="s7">2</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">admonition p</span><span class="s1">.</span><span class="s3">admonition-title </span><span class="s1">+ </span><span class="s3">p </span><span class="s1">{</span>
+    <span class="s5">display</span><span class="s6">: </span><span class="s8">inline</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">admonition p</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">admonition pre</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">admonition ul</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">admonition ol </span><span class="s1">{</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">5</span><span class="s8">px</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">p</span><span class="s1">.</span><span class="s3">admonition-title </span><span class="s1">{</span>
+    <span class="s5">display</span><span class="s6">: </span><span class="s8">inline</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">p</span><span class="s1">.</span><span class="s3">admonition-title</span><span class="s6">:</span><span class="s3">after </span><span class="s1">{</span>
+    <span class="s5">content</span><span class="s6">: </span><span class="s4">&quot;:&quot;</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">dl</span><span class="s1">.</span><span class="s3">definition div</span><span class="s1">.</span><span class="s3">note</span><span class="s2">, </span><span class="s3">dl</span><span class="s1">.</span><span class="s3">definition div</span><span class="s1">.</span><span class="s3">seealso </span><span class="s1">{</span>
+    <span class="s5">background</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">dl</span><span class="s1">.</span><span class="s3">definition div</span><span class="s1">.</span><span class="s3">admonition </span><span class="s1">{</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">0.5</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">dl</span><span class="s1">.</span><span class="s3">definition </span><span class="s1">.</span><span class="s3">admonition-title </span><span class="s1">{</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">bold</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">note </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#eeeeee</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">1</span><span class="s8">px solid </span><span class="s7">#ccc</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s3">note tt </span><span class="s1">{</span>
+    <span class="s5">background</span><span class="s6">: </span><span class="s7">#d6d6d6</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">seealso </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#ffc</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">1</span><span class="s8">px solid </span><span class="s7">#ff6</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">topic </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#eee</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">caution </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#eeffcc</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">1</span><span class="s8">px solid </span><span class="s7">#aabb88</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">warning </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#ffe4e4</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">1</span><span class="s8">px solid </span><span class="s7">#f66</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s3">warning tt </span><span class="s1">{</span>
+    <span class="s5">background</span><span class="s6">: </span><span class="s7">#efc2c2</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">p</span><span class="s1">.</span><span class="s3">linklist </span><span class="s1">{</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">center</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s3">section</span><span class="s6">:</span><span class="s3">target </span><span class="s1">&gt; </span><span class="s3">h2</span><span class="s2">,</span>
+<span class="s1">.</span><span class="s3">section</span><span class="s6">:</span><span class="s3">target </span><span class="s1">&gt; </span><span class="s3">h3</span><span class="s2">,</span>
+<span class="s1">.</span><span class="s3">section</span><span class="s6">:</span><span class="s3">target </span><span class="s1">&gt; </span><span class="s3">h4</span><span class="s2">,</span>
+<span class="s3">dt</span><span class="s6">:</span><span class="s3">target</span><span class="s2">,</span>
+<span class="s3">span</span><span class="s1">.</span><span class="s3">highlighted </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#c7c695</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">pre </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#eeffcc</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">1</span><span class="s8">px solid </span><span class="s7">#ac9</span><span class="s2">;</span>
+    <span class="s5">border-left</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+    <span class="s5">border-right</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+    <span class="s5">color</span><span class="s6">: </span><span class="s7">#333333</span><span class="s2">;</span>
+    <span class="s5">display</span><span class="s6">: </span><span class="s8">block</span><span class="s2">;</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s8">monospace</span><span class="s2">;</span>
+    <span class="s5">line-height</span><span class="s6">: </span><span class="s7">120</span><span class="s1">%</span><span class="s2">;</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">5</span><span class="s8">px </span><span class="s7">5</span><span class="s8">px </span><span class="s7">5</span><span class="s8">px </span><span class="s7">15</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">justify</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">highlight pre </span><span class="s1">{</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">ul</span><span class="s1">.</span><span class="s3">simple </span><span class="s1">{</span>
+    <span class="s5">list-style-type</span><span class="s6">: </span><span class="s8">circle</span><span class="s2">;</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">code</span><span class="s1">.</span><span class="s3">descclassname</span><span class="s2">, </span><span class="s3">code</span><span class="s1">.</span><span class="s3">descname </span><span class="s1">{</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s7">1.3</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">bold</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* 
+    Top level section title format 
+    section tag has been introduced in docutils 0.17 as a replacement for div.section 
+    Both rule variations are kept to support old versions of docutils 
+ */</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body </span><span class="s1">&gt; </span><span class="s3">section </span><span class="s1">&gt; </span><span class="s3">dl </span><span class="s1">&gt; </span><span class="s3">dt</span><span class="s1">.</span><span class="s3">title</span><span class="s2">, </span><span class="s3">div</span><span class="s1">.</span><span class="s3">body </span><span class="s1">&gt; </span><span class="s3">div</span><span class="s1">.</span><span class="s3">section </span><span class="s1">&gt; </span><span class="s3">dl </span><span class="s1">&gt; </span><span class="s3">dt</span><span class="s1">.</span><span class="s3">title </span><span class="s1">{</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s7">120</span><span class="s1">%</span><span class="s2">;</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">bold</span><span class="s2">;</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* Visually separate an element from previous content in a section */</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body </span><span class="s1">.</span><span class="s3">leading </span><span class="s1">{</span>
+    <span class="s5">margin-top</span><span class="s6">: </span><span class="s7">0.5</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* Visually separate an element from following content in a section */</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body </span><span class="s1">.</span><span class="s3">trailing </span><span class="s1">{</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">0.75</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* An element that spans the width of its section */</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body div</span><span class="s1">.</span><span class="s3">fullwidth div</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body div</span><span class="s1">.</span><span class="s3">fullwidth img </span><span class="s1">{</span>
+    <span class="s5">display</span><span class="s6">: </span><span class="s8">block</span><span class="s2">;</span>
+    <span class="s5">margin-left</span><span class="s6">: </span><span class="s8">auto</span><span class="s2">;</span>
+    <span class="s5">margin-right</span><span class="s6">: </span><span class="s8">auto</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body div</span><span class="s1">.</span><span class="s3">fullwidth p </span><span class="s1">{</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">center</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* A two column table with link, description pairs. */</span>
+<span class="s3">table</span><span class="s1">.</span><span class="s3">more-to-explore</span><span class="s2">,</span>
+<span class="s3">table</span><span class="s1">.</span><span class="s3">more-to-explore th</span><span class="s2">,</span>
+<span class="s3">table</span><span class="s1">.</span><span class="s3">more-to-explore td </span><span class="s1">{</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">0.2</span><span class="s8">em double black</span><span class="s2">;</span>
+    <span class="s5">border-collapse</span><span class="s6">: </span><span class="s8">collapse</span><span class="s2">;</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s8">inherit</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">table</span><span class="s1">.</span><span class="s3">more-to-explore caption </span><span class="s1">{</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">left</span><span class="s2">;</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s8">larger</span><span class="s2">;</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s8">inherit</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">table</span><span class="s1">.</span><span class="s3">more-to-explore th</span><span class="s2">,</span>
+<span class="s3">table</span><span class="s1">.</span><span class="s3">more-to-explore td </span><span class="s1">{</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0.2</span><span class="s8">em </span><span class="s7">2</span><span class="s8">em </span><span class="s7">0.3</span><span class="s8">em </span><span class="s7">0.5</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body p</span><span class="s1">.</span><span class="s3">small-heading </span><span class="s1">{</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">0.2</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s8">small</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* Inlined element float right */</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body div</span><span class="s1">.</span><span class="s3">inlined</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body img</span><span class="s1">.</span><span class="s3">inlined-right </span><span class="s1">{</span>
+    <span class="s5">float</span><span class="s6">: </span><span class="s8">right</span><span class="s2">;</span>
+    <span class="s5">margin</span><span class="s6">: </span><span class="s7">1</span><span class="s8">em </span><span class="s7">0</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body </span><span class="s1">.</span><span class="s3">inset </span><span class="s1">{</span>
+    <span class="s5">margin-left</span><span class="s6">: </span><span class="s7">2</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* Code line reference text style */</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">body span</span><span class="s1">.</span><span class="s3">codelineref </span><span class="s1">{</span>
+    <span class="s5">text-decoration</span><span class="s6">: </span><span class="s8">underline</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* Highlight Code types and functions. */</span>
+<span class="s1">.</span><span class="s3">py-class </span><span class="s1">.</span><span class="s3">pre</span><span class="s2">,</span>
+<span class="s1">.</span><span class="s3">reference</span><span class="s1">.</span><span class="s3">internal em </span><span class="s1">{</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">bold</span><span class="s2">;</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#90ee90</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">span</span><span class="s1">.</span><span class="s3">linenos </span><span class="s1">{</span>
+    <span class="s5">margin-right</span><span class="s6">: </span><span class="s7">15</span><span class="s8">px</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* Examples section: contains one or more example subsections */</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">examples </span><span class="s1">&gt; </span><span class="s3">div</span><span class="s1">.</span><span class="s3">example </span><span class="s1">{</span>
+    <span class="s5">clear</span><span class="s6">: </span><span class="s8">both</span><span class="s2">;</span>
+    <span class="s5">margin-top</span><span class="s6">: </span><span class="s7">0.2</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">0.1</span><span class="s8">em solid teal</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">0.2</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">example img </span><span class="s1">{</span>
+    <span class="s5">float</span><span class="s6">: </span><span class="s8">left</span><span class="s2">;</span>
+    <span class="s5">padding-right</span><span class="s6">: </span><span class="s7">0.3</span><span class="s8">em</span><span class="s2">;</span>
+    <span class="s5">padding-bottom</span><span class="s6">: </span><span class="s7">0.1</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">example p</span><span class="s2">,</span>
+<span class="s3">div</span><span class="s1">.</span><span class="s3">example pre </span><span class="s1">{</span>
+    <span class="s5">margin-top</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">0.4</span><span class="s8">em</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">div</span><span class="s1">.</span><span class="s3">example div</span><span class="s1">.</span><span class="s3">break </span><span class="s1">{</span>
+    <span class="s5">clear</span><span class="s6">: </span><span class="s8">both</span><span class="s2">;</span>
+    <span class="s5">height</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- tooltip style --------------------------------------------------------- */</span>
+
+<span class="s3">a</span><span class="s1">.</span><span class="s3">tooltip </span><span class="s1">{</span>
+    <span class="s5">text-decoration</span><span class="s6">: </span><span class="s8">underline</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">a</span><span class="s1">.</span><span class="s3">tooltip</span><span class="s6">:</span><span class="s3">hover </span><span class="s1">{</span>
+    <span class="s5">text-decoration</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s3">tooltip-content </span><span class="s1">{</span>
+    <span class="s5">width</span><span class="s6">: </span><span class="s7">250</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#c2fc20</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">1</span><span class="s8">px solid </span><span class="s7">#ace01C</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">3</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">border-radius</span><span class="s6">: </span><span class="s7">5</span><span class="s8">px </span><span class="s7">5</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">-moz-border-radius</span><span class="s6">: </span><span class="s7">5</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">-webkit-border-radius</span><span class="s6">: </span><span class="s7">5</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">box-shadow</span><span class="s6">: </span><span class="s7">5</span><span class="s8">px </span><span class="s7">5</span><span class="s8">px </span><span class="s7">5</span><span class="s8">px </span><span class="s3">rgba</span><span class="s1">(</span><span class="s7">0</span><span class="s2">, </span><span class="s7">0</span><span class="s2">, </span><span class="s7">0</span><span class="s2">, </span><span class="s7">0.1</span><span class="s1">)</span><span class="s2">;</span>
+    <span class="s5">-webkit-box-shadow</span><span class="s6">: </span><span class="s7">5</span><span class="s8">px </span><span class="s7">5</span><span class="s8">px </span><span class="s3">rgba</span><span class="s1">(</span><span class="s7">0</span><span class="s2">, </span><span class="s7">0</span><span class="s2">, </span><span class="s7">0</span><span class="s2">, </span><span class="s7">0.1</span><span class="s1">)</span><span class="s2">;</span>
+    <span class="s5">-moz-box-shadow</span><span class="s6">: </span><span class="s7">5</span><span class="s8">px </span><span class="s7">5</span><span class="s8">px </span><span class="s3">rgba</span><span class="s1">(</span><span class="s7">0</span><span class="s2">, </span><span class="s7">0</span><span class="s2">, </span><span class="s7">0</span><span class="s2">, </span><span class="s7">0.1</span><span class="s1">)</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- comments style --------------------------------------------------------- */</span>
+
+<span class="s3">form</span><span class="s1">.</span><span class="s3">addcomment </span><span class="s1">{</span>
+    <span class="s5">display</span><span class="s6">:</span><span class="s8">inline</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s1">.</span><span class="s3">addcomment input</span><span class="s2">,</span>
+<span class="s3">a</span><span class="s1">.</span><span class="s3">commentButton </span><span class="s1">{</span>
+    <span class="s5">background-color</span><span class="s6">: </span><span class="s7">#6aee28</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">1</span><span class="s8">px solid </span><span class="s7">#000000</span><span class="s2">;</span>
+    <span class="s5">font-family</span><span class="s6">: </span><span class="s3">Arial</span><span class="s2">,</span><span class="s3">Helvetica</span><span class="s2">,</span><span class="s8">sans-serif</span><span class="s2">;</span>
+    <span class="s5">font-size</span><span class="s6">: </span><span class="s7">12</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">font-weight</span><span class="s6">: </span><span class="s8">bold</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">6</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">margin-right</span><span class="s6">: </span><span class="s7">4</span><span class="s8">px</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">article</span><span class="s1">.</span><span class="s3">commentsArticle </span><span class="s1">{</span>
+    <span class="s5">background</span><span class="s6">: </span><span class="s8">none repeat scroll </span><span class="s7">0 0 #FEF790</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">1</span><span class="s8">px solid black</span><span class="s2">;</span>
+    <span class="s5">margin-bottom</span><span class="s6">: </span><span class="s7">12</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">margin-top</span><span class="s6">: </span><span class="s7">12</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">padding</span><span class="s6">: </span><span class="s7">4</span><span class="s8">px</span><span class="s2">;</span>
+
+<span class="s1">}</span>
+
+<span class="s3">article</span><span class="s1">.</span><span class="s3">hidden </span><span class="s1">{</span>
+    <span class="s5">display</span><span class="s6">:</span><span class="s8">none</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">header</span><span class="s1">.</span><span class="s3">commentHeading </span><span class="s1">{</span>
+    <span class="s5">background</span><span class="s6">: </span><span class="s8">none repeat scroll </span><span class="s7">0 0 #FDE42D</span><span class="s2">;</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">center</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s3">pre</span><span class="s1">.</span><span class="s3">commentContent </span><span class="s1">{</span>
+    <span class="s5">overflow</span><span class="s6">: </span><span class="s8">auto</span><span class="s2">;</span>
+    <span class="s5">max-width</span><span class="s6">: </span><span class="s7">800</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s5">margin-left</span><span class="s6">:</span><span class="s7">0</span><span class="s2">;</span>
+    <span class="s5">border</span><span class="s6">: </span><span class="s7">0</span><span class="s2">;</span>
+    <span class="s5">white-space</span><span class="s6">: </span><span class="s8">pre-wrap</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- logos page ---------------------------------------------------------------- */</span>
+
+<span class="s1">.</span><span class="s3">fullwidth </span><span class="s1">.</span><span class="s3">line-block </span><span class="s1">{</span>
+    <span class="s5">text-align</span><span class="s6">: </span><span class="s8">center</span><span class="s2">;</span>
+<span class="s1">}</span>
+
+<span class="s0">/* -- responsive design --------------------------------------------------------- */</span>
+
+<span class="s2">@media </span><span class="s3">only </span><span class="s8">screen </span><span class="s3">and </span><span class="s1">(</span><span class="s5">max-width</span><span class="s6">: </span><span class="s7">680</span><span class="s8">px</span><span class="s1">) {</span>
+    <span class="s0">/* Make tables be responsive-ish. */</span>
+    <span class="s3">table</span><span class="s2">, </span><span class="s3">thead</span><span class="s2">, </span><span class="s3">tbody</span><span class="s2">, </span><span class="s3">th</span><span class="s2">, </span><span class="s3">td</span><span class="s2">, </span><span class="s3">tr </span><span class="s1">{</span>
+        <span class="s5">display</span><span class="s6">: </span><span class="s8">block</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s3">div</span><span class="s1">.</span><span class="s3">body img</span><span class="s1">.</span><span class="s3">inlined-right </span><span class="s1">{</span>
+        <span class="s5">float</span><span class="s6">: </span><span class="s8">none</span><span class="s2">;</span>
+        <span class="s5">display</span><span class="s6">: </span><span class="s8">block</span><span class="s2">;</span>
+        <span class="s5">margin</span><span class="s6">: </span><span class="s8">auto</span>
+    <span class="s1">}</span>
+
+    <span class="s3">span</span><span class="s1">.</span><span class="s3">linenos </span><span class="s1">{</span>
+        <span class="s5">margin-right</span><span class="s6">: </span><span class="s7">10</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.</span><span class="s3">addcomment input</span><span class="s2">, </span><span class="s3">a</span><span class="s1">.</span><span class="s3">commentButton </span><span class="s1">{</span>
+        <span class="s5">font-size</span><span class="s6">: </span><span class="s7">10</span><span class="s8">px</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s3">pre </span><span class="s1">{</span>
+        <span class="s5">white-space</span><span class="s6">: </span><span class="s8">pre-wrap</span><span class="s2">;</span>
+        <span class="s5">word-wrap</span><span class="s6">: </span><span class="s8">break-word</span><span class="s2">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">.</span><span class="s3">toc td </span><span class="s1">{</span>
+        <span class="s5">width</span><span class="s6">: </span><span class="s7">100</span><span class="s1">%</span><span class="s2">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

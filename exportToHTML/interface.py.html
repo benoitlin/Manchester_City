@@ -1,0 +1,188 @@
+<html>
+<head>
+<title>interface.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+interface.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">pygame</span><span class="s0">,</span><span class="s1">sys</span>
+<span class="s1">pygame.init()</span>
+<span class="s0">from </span><span class="s1">game </span><span class="s0">import </span><span class="s1">Game</span>
+
+
+<span class="s1">game = Game()</span>
+<span class="s1">running = </span><span class="s0">True</span>
+
+<span class="s2"># Fenetre du jeu</span>
+<span class="s1">pygame.display.set_caption(</span><span class="s3">&quot;Dodge Game&quot;</span><span class="s1">)</span>
+<span class="s1">screen = pygame.display.set_mode((</span><span class="s4">1280</span><span class="s0">, </span><span class="s4">720</span><span class="s1">))</span>
+
+<span class="s2"># import du menu 1</span>
+<span class="s1">menu = pygame.image.load(</span><span class="s3">'assets/menu_1.png'</span><span class="s1">)</span>
+
+
+<span class="s2"># importer charger notre boutton start, rules, exit et back</span>
+<span class="s1">start_button = pygame.image.load(</span><span class="s3">&quot;assets/play_button.png&quot;</span><span class="s1">)</span>
+<span class="s1">start_button = pygame.transform.scale(start_button</span><span class="s0">,</span><span class="s1">(</span><span class="s4">380</span><span class="s0">, </span><span class="s4">100</span><span class="s1">))</span>
+<span class="s1">start_button_rect = start_button.get_rect()</span>
+<span class="s1">start_button_rect.x = screen.get_width()/</span><span class="s4">2.9</span>
+<span class="s1">start_button_rect.y = screen.get_width()/</span><span class="s4">3.7</span>
+
+<span class="s1">rules_button = pygame.image.load(</span><span class="s3">&quot;assets/rules_button.png&quot;</span><span class="s1">)</span>
+<span class="s1">rules_button = pygame.transform.scale(rules_button</span><span class="s0">,</span><span class="s1">(</span><span class="s4">60</span><span class="s0">, </span><span class="s4">60</span><span class="s1">))</span>
+<span class="s1">rules_button_rect = rules_button.get_rect()</span>
+<span class="s1">rules_button_rect.x = screen.get_width()/</span><span class="s4">1.9</span>
+<span class="s1">rules_button_rect.y = screen.get_width()/</span><span class="s4">2.6</span>
+
+<span class="s1">exit_button = pygame.image.load(</span><span class="s3">&quot;assets/exit_button.png&quot;</span><span class="s1">)</span>
+<span class="s1">exit_button = pygame.transform.scale(exit_button</span><span class="s0">,</span><span class="s1">(</span><span class="s4">60</span><span class="s0">, </span><span class="s4">60</span><span class="s1">))</span>
+<span class="s1">exit_button_rect = exit_button.get_rect()</span>
+<span class="s1">exit_button_rect.x = screen.get_width()/</span><span class="s4">2.3</span>
+<span class="s1">exit_button_rect.y = screen.get_width()/</span><span class="s4">2.6</span>
+
+<span class="s1">back_button = pygame.image.load(</span><span class="s3">&quot;assets/Replay_button.png&quot;</span><span class="s1">)</span>
+<span class="s1">back_button = pygame.transform.scale(back_button</span><span class="s0">,</span><span class="s1">(</span><span class="s4">60</span><span class="s0">, </span><span class="s4">60</span><span class="s1">))</span>
+<span class="s1">back_button_rect = back_button.get_rect()</span>
+<span class="s1">back_button_rect.x = screen.get_width()/</span><span class="s4">2.1</span>
+<span class="s1">back_button_rect.y = screen.get_width()/</span><span class="s4">2</span>
+
+
+<span class="s1">mode_1_button = pygame.image.load(</span><span class="s3">&quot;assets/mode_1_button.png&quot;</span><span class="s1">)</span>
+<span class="s1">mode_1_button = pygame.transform.scale(mode_1_button</span><span class="s0">,</span><span class="s1">(</span><span class="s4">250</span><span class="s0">, </span><span class="s4">350</span><span class="s1">))</span>
+<span class="s1">mode_1_button_rect = mode_1_button.get_rect()</span>
+<span class="s1">mode_1_button_rect.x = screen.get_width()/</span><span class="s4">3.8</span>
+<span class="s1">mode_1_button_rect.y = screen.get_width()/</span><span class="s4">5</span>
+
+<span class="s1">mode_2_button = pygame.image.load(</span><span class="s3">&quot;assets/mode_2_button.png&quot;</span><span class="s1">)</span>
+<span class="s1">mode_2_button = pygame.transform.scale(mode_2_button</span><span class="s0">,</span><span class="s1">(</span><span class="s4">250</span><span class="s0">, </span><span class="s4">350</span><span class="s1">))</span>
+<span class="s1">mode_2_button_rect = mode_2_button.get_rect()</span>
+<span class="s1">mode_2_button_rect.x = screen.get_width()/</span><span class="s4">1.9</span>
+<span class="s1">mode_2_button_rect.y = screen.get_width()/</span><span class="s4">5</span>
+
+
+<span class="s0">def </span><span class="s1">start():</span>
+
+    <span class="s2"># permet de maintenir la fenetre ouverte</span>
+    <span class="s0">while True</span><span class="s1">:</span>
+
+        <span class="s2"># Fenetre des modes de jeu</span>
+        <span class="s1">pygame.display.set_caption(</span><span class="s3">&quot;Dodge Game&quot;</span><span class="s1">)</span>
+
+        <span class="s2"># import du menu</span>
+        <span class="s1">game_mode = pygame.image.load(</span><span class="s3">'assets/game_mode.png'</span><span class="s1">)</span>
+
+        <span class="s2"># appliquer le fond 'game mode' dans la fenetre avec le bouton back</span>
+        <span class="s1">screen.blit(game_mode</span><span class="s0">, </span><span class="s1">(</span><span class="s4">0</span><span class="s0">, </span><span class="s4">0</span><span class="s1">))</span>
+        <span class="s1">screen.blit(mode_1_button</span><span class="s0">, </span><span class="s1">mode_1_button_rect)</span>
+        <span class="s1">screen.blit(mode_2_button</span><span class="s0">, </span><span class="s1">mode_2_button_rect)</span>
+        <span class="s1">screen.blit(back_button</span><span class="s0">, </span><span class="s1">back_button_rect)</span>
+
+        <span class="s2"># appliquer le fond 'game mode' dans la fenetre avec le choix des 2 modes</span>
+        <span class="s0">for </span><span class="s1">event </span><span class="s0">in </span><span class="s1">pygame.event.get():</span>
+
+            <span class="s2"># verifier si event est fermeture de la fenetre</span>
+            <span class="s0">if </span><span class="s1">event.type == pygame.QUIT:</span>
+                <span class="s1">pygame.quit()</span>
+
+            <span class="s2"># verifier si on click bien sur le bouton back</span>
+            <span class="s0">if </span><span class="s1">event.type == pygame.MOUSEBUTTONDOWN:</span>
+                <span class="s0">if </span><span class="s1">back_button_rect.collidepoint(event.pos):</span>
+                    <span class="s1">main_menu()</span>
+                <span class="s2"># verifier mode de jeu 1 ou 2</span>
+                <span class="s0">if </span><span class="s1">mode_1_button_rect.collidepoint(event.pos):</span>
+                    <span class="s1">mode_1()</span>
+                <span class="s0">if </span><span class="s1">mode_2_button_rect.collidepoint(event.pos):</span>
+                    <span class="s1">mode_2()</span>
+
+        <span class="s2"># mettre à jour la fenetre</span>
+        <span class="s1">pygame.display.update()</span>
+
+<span class="s0">def </span><span class="s1">rules():</span>
+
+    <span class="s2"># permet de maintenir la fenetre ouverte</span>
+    <span class="s0">while True</span><span class="s1">:</span>
+
+        <span class="s2"># Fenetre des regles</span>
+        <span class="s1">pygame.display.set_caption(</span><span class="s3">&quot;Dodge Game&quot;</span><span class="s1">)</span>
+
+        <span class="s2"># import du fond avec les regles et le bouton back</span>
+        <span class="s1">rules = pygame.image.load(</span><span class="s3">'assets/rules_interface.png'</span><span class="s1">)</span>
+
+        <span class="s2"># appliquer le fond 'rule' et le bouton back</span>
+        <span class="s1">screen.blit(rules</span><span class="s0">, </span><span class="s1">(</span><span class="s4">0</span><span class="s0">, </span><span class="s4">0</span><span class="s1">))</span>
+        <span class="s1">screen.blit(back_button</span><span class="s0">, </span><span class="s1">back_button_rect)</span>
+
+        <span class="s0">for </span><span class="s1">event </span><span class="s0">in </span><span class="s1">pygame.event.get():</span>
+            <span class="s2"># verifier si envent est fermeture de la fenetre</span>
+            <span class="s0">if </span><span class="s1">event.type == pygame.QUIT:</span>
+                <span class="s1">pygame.quit()</span>
+            <span class="s2"># verifier si on click bien sur le bouton back</span>
+            <span class="s0">if </span><span class="s1">event.type == pygame.MOUSEBUTTONDOWN:</span>
+                <span class="s0">if </span><span class="s1">back_button_rect.collidepoint(event.pos):</span>
+                    <span class="s1">main_menu()</span>
+        <span class="s2"># mettre à jour la fenetre</span>
+        <span class="s1">pygame.display.update()</span>
+
+
+<span class="s0">def </span><span class="s1">mode_1():</span>
+        <span class="s1">print(</span><span class="s3">&quot;mode 1&quot;</span><span class="s1">)</span>
+
+<span class="s0">def </span><span class="s1">mode_2():</span>
+    <span class="s1">print(</span><span class="s3">&quot;mode 2&quot;</span><span class="s1">)</span>
+
+<span class="s0">def </span><span class="s1">main_menu():</span>
+    <span class="s0">while True</span><span class="s1">:</span>
+        <span class="s2"># appliquer le background dans la fenetre</span>
+        <span class="s1">screen.blit(menu</span><span class="s0">, </span><span class="s1">(</span><span class="s4">0</span><span class="s0">,</span><span class="s4">0</span><span class="s1">))</span>
+
+        <span class="s2"># verifier si notre jeu a commencer ou pas</span>
+        <span class="s0">if </span><span class="s1">game.is_playing:</span>
+
+            <span class="s2"># declencher les intructions de la partie</span>
+            <span class="s1">game.update(screen)</span>
+
+        <span class="s2"># verifier si notre jeu n'a pas commencé</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s2"># afficher le menu 1 avec le fond + les bouttons</span>
+            <span class="s1">screen.blit(start_button</span><span class="s0">, </span><span class="s1">(start_button_rect))</span>
+            <span class="s1">screen.blit(rules_button</span><span class="s0">, </span><span class="s1">rules_button_rect)</span>
+            <span class="s1">screen.blit(exit_button</span><span class="s0">, </span><span class="s1">exit_button_rect)</span>
+            <span class="s1">screen.blit(back_button</span><span class="s0">, </span><span class="s1">back_button_rect)</span>
+
+        <span class="s2"># verifier si le joueur ferme la fenetre</span>
+        <span class="s0">for </span><span class="s1">event </span><span class="s0">in </span><span class="s1">pygame.event.get():</span>
+
+            <span class="s2"># verifier si event est fermeture de la fenetre</span>
+            <span class="s0">if </span><span class="s1">event.type == pygame.QUIT:</span>
+                <span class="s1">pygame.quit()</span>
+
+            <span class="s2"># detecter si un joueur click</span>
+            <span class="s0">if </span><span class="s1">event.type == pygame.MOUSEBUTTONDOWN:</span>
+                <span class="s2"># verrifier si on click bien sur le boutton start, rules, exit ou back</span>
+                <span class="s0">if </span><span class="s1">start_button_rect.collidepoint(event.pos):</span>
+                    <span class="s1">start()</span>
+                <span class="s0">if </span><span class="s1">rules_button_rect.collidepoint(event.pos):</span>
+                    <span class="s1">rules()</span>
+                <span class="s0">if </span><span class="s1">exit_button_rect.collidepoint(event.pos):</span>
+                    <span class="s1">pygame.quit()</span>
+                <span class="s0">if </span><span class="s1">back_button_rect.collidepoint(event.pos):</span>
+                    <span class="s2"># revenir sur le menu 1</span>
+                    <span class="s1">main_menu()</span>
+
+        <span class="s2"># mettre à jour la fenetre</span>
+        <span class="s1">pygame.display.update()</span>
+<span class="s1">main_menu()</span>
+</pre>
+</body>
+</html>

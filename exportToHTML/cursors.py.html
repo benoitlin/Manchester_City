@@ -1,0 +1,284 @@
+<html>
+<head>
+<title>cursors.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+cursors.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.cursors 
+Click a button and the cursor will change. 
+This example will show you: 
+*The different types of cursors that exist 
+*How to create a cursor 
+*How to set a cursor 
+*How to make a simple button 
+&quot;&quot;&quot;</span>
+
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+<span class="s3">import </span><span class="s1">os</span>
+
+
+<span class="s0"># Create a system cursor</span>
+
+<span class="s1">system_cursor1 = pg.SYSTEM_CURSOR_CROSSHAIR</span>
+<span class="s1">system_cursor2 = pg.SYSTEM_CURSOR_HAND</span>
+<span class="s1">system_cursor3 = pg.SYSTEM_CURSOR_IBEAM</span>
+
+
+<span class="s0"># Create a color cursor</span>
+
+<span class="s1">surf = pg.Surface((</span><span class="s4">40</span><span class="s3">, </span><span class="s4">40</span><span class="s1">))</span>
+<span class="s1">surf.fill((</span><span class="s4">120</span><span class="s3">, </span><span class="s4">50</span><span class="s3">, </span><span class="s4">50</span><span class="s1">))</span>
+<span class="s1">color_cursor = pg.cursors.Cursor((</span><span class="s4">20</span><span class="s3">, </span><span class="s4">20</span><span class="s1">)</span><span class="s3">, </span><span class="s1">surf)</span>
+
+
+<span class="s0"># Create a color cursor with an image surface</span>
+
+<span class="s1">main_dir = os.path.split(os.path.abspath(__file__))[</span><span class="s4">0</span><span class="s1">]</span>
+<span class="s1">image_name = os.path.join(main_dir</span><span class="s3">, </span><span class="s5">&quot;data&quot;</span><span class="s3">, </span><span class="s5">&quot;cursor.png&quot;</span><span class="s1">)</span>
+<span class="s1">image = pg.image.load(image_name)</span>
+<span class="s1">image_cursor = pg.cursors.Cursor(</span>
+    <span class="s1">(image.get_width() // </span><span class="s4">2</span><span class="s3">, </span><span class="s1">image.get_height() // </span><span class="s4">2</span><span class="s1">)</span><span class="s3">, </span><span class="s1">image</span>
+<span class="s1">)</span>
+
+
+<span class="s0"># Create a bitmap cursor from simple strings</span>
+
+<span class="s0"># sized 24x24</span>
+<span class="s1">thickarrow_strings = (</span>
+    <span class="s5">&quot;XX                      &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XXX                     &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XXXX                    &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX.XX                   &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX..XX                  &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX...XX                 &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX....XX                &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX.....XX               &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX......XX              &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX.......XX             &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX........XX            &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX........XXX           &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX......XXXXX           &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX.XXX..XX              &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XXXX XX..XX             &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;XX   XX..XX             &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;     XX..XX             &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;      XX..XX            &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;      XX..XX            &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;       XXXX             &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;       XX               &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;                        &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;                        &quot;</span><span class="s3">,</span>
+    <span class="s5">&quot;                        &quot;</span><span class="s3">,</span>
+<span class="s1">)</span>
+
+<span class="s1">bitmap_cursor1 = pg.cursors.Cursor(</span>
+    <span class="s1">(</span><span class="s4">24</span><span class="s3">, </span><span class="s4">24</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">*pg.cursors.compile(thickarrow_strings</span><span class="s3">, </span><span class="s1">black=</span><span class="s5">&quot;X&quot;</span><span class="s3">, </span><span class="s1">white=</span><span class="s5">&quot;.&quot;</span><span class="s3">, </span><span class="s1">xor=</span><span class="s5">&quot;o&quot;</span><span class="s1">)</span><span class="s3">,</span>
+<span class="s1">)</span>
+
+
+<span class="s0"># Create a bitmap cursor from premade simple strings</span>
+
+<span class="s1">bitmap_cursor2 = pg.cursors.diamond</span>
+
+
+<span class="s0"># Calculate if mouse position is inside circle</span>
+<span class="s3">def </span><span class="s1">check_circle(mouse_pos_x</span><span class="s3">, </span><span class="s1">mouse_pos_y</span><span class="s3">, </span><span class="s1">center_x</span><span class="s3">, </span><span class="s1">center_y</span><span class="s3">, </span><span class="s1">radius):</span>
+    <span class="s3">return </span><span class="s1">(mouse_pos_x - center_x) ** </span><span class="s4">2 </span><span class="s1">+ (mouse_pos_y - center_y) ** </span><span class="s4">2 </span><span class="s1">&lt; radius**</span><span class="s4">2</span>
+
+
+<span class="s3">def </span><span class="s1">main():</span>
+
+    <span class="s1">pg.init()</span>
+    <span class="s1">pg.display.set_caption(</span><span class="s5">&quot;Cursors Example&quot;</span><span class="s1">)</span>
+
+    <span class="s1">pg.font.init()</span>
+    <span class="s1">font = pg.font.Font(</span><span class="s3">None, </span><span class="s4">30</span><span class="s1">)</span>
+    <span class="s1">font1 = pg.font.Font(</span><span class="s3">None, </span><span class="s4">24</span><span class="s1">)</span>
+
+    <span class="s1">bg = pg.display.set_mode((</span><span class="s4">500</span><span class="s3">, </span><span class="s4">400</span><span class="s1">))</span>
+    <span class="s1">bg.fill((</span><span class="s4">183</span><span class="s3">, </span><span class="s4">201</span><span class="s3">, </span><span class="s4">226</span><span class="s1">))</span>
+
+    <span class="s0"># Initialize circles</span>
+    <span class="s1">radius1 = </span><span class="s4">40</span>
+    <span class="s1">radius2 = </span><span class="s4">40</span>
+    <span class="s1">radius3 = </span><span class="s4">40</span>
+    <span class="s1">radius4 = </span><span class="s4">40</span>
+    <span class="s1">radius5 = </span><span class="s4">40</span>
+    <span class="s1">radius6 = </span><span class="s4">40</span>
+    <span class="s1">radius7 = </span><span class="s4">40</span>
+
+    <span class="s1">pos_x1 = </span><span class="s4">82</span>
+    <span class="s1">pos_x2 = </span><span class="s4">138</span>
+    <span class="s1">pos_x3 = </span><span class="s4">194</span>
+    <span class="s1">pos_x4 = </span><span class="s4">250</span>
+    <span class="s1">pos_x5 = </span><span class="s4">306</span>
+    <span class="s1">pos_x6 = </span><span class="s4">362</span>
+    <span class="s1">pos_x7 = </span><span class="s4">418</span>
+
+    <span class="s1">pos_y1 = </span><span class="s4">140</span>
+    <span class="s1">pos_y2 = </span><span class="s4">220</span>
+    <span class="s1">pos_y3 = </span><span class="s4">140</span>
+    <span class="s1">pos_y4 = </span><span class="s4">220</span>
+    <span class="s1">pos_y5 = </span><span class="s4">140</span>
+    <span class="s1">pos_y6 = </span><span class="s4">220</span>
+    <span class="s1">pos_y7 = </span><span class="s4">140</span>
+
+    <span class="s1">circle1 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x1</span><span class="s3">, </span><span class="s1">pos_y1)</span><span class="s3">, </span><span class="s1">radius1)</span>
+    <span class="s1">circle2 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x2</span><span class="s3">, </span><span class="s1">pos_y2)</span><span class="s3">, </span><span class="s1">radius2)</span>
+    <span class="s1">circle3 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x3</span><span class="s3">, </span><span class="s1">pos_y3)</span><span class="s3">, </span><span class="s1">radius3)</span>
+    <span class="s1">circle4 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x4</span><span class="s3">, </span><span class="s1">pos_y4)</span><span class="s3">, </span><span class="s1">radius4)</span>
+    <span class="s1">circle5 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x5</span><span class="s3">, </span><span class="s1">pos_y5)</span><span class="s3">, </span><span class="s1">radius5)</span>
+    <span class="s1">circle6 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x6</span><span class="s3">, </span><span class="s1">pos_y6)</span><span class="s3">, </span><span class="s1">radius6)</span>
+    <span class="s1">circle7 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x7</span><span class="s3">, </span><span class="s1">pos_y7)</span><span class="s3">, </span><span class="s1">radius7)</span>
+
+    <span class="s0"># Initialize button</span>
+    <span class="s1">button_text = font1.render(</span><span class="s5">&quot;Click here to change cursor&quot;</span><span class="s3">, True, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))</span>
+    <span class="s1">button = pg.draw.rect(</span>
+        <span class="s1">bg</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s4">180</span><span class="s3">, </span><span class="s4">180</span><span class="s3">, </span><span class="s4">180</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s1">(</span><span class="s4">139</span><span class="s3">, </span><span class="s4">300</span><span class="s3">, </span><span class="s1">button_text.get_width() + </span><span class="s4">5</span><span class="s3">, </span><span class="s1">button_text.get_height() + </span><span class="s4">50</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">)</span>
+    <span class="s1">button_text_rect = button_text.get_rect(center=button.center)</span>
+    <span class="s1">bg.blit(button_text</span><span class="s3">, </span><span class="s1">button_text_rect)</span>
+
+    <span class="s1">pg.display.update()</span>
+
+    <span class="s1">cursors = [</span>
+        <span class="s1">system_cursor1</span><span class="s3">,</span>
+        <span class="s1">color_cursor</span><span class="s3">,</span>
+        <span class="s1">system_cursor2</span><span class="s3">,</span>
+        <span class="s1">image_cursor</span><span class="s3">,</span>
+        <span class="s1">system_cursor3</span><span class="s3">,</span>
+        <span class="s1">bitmap_cursor1</span><span class="s3">,</span>
+        <span class="s1">bitmap_cursor2</span><span class="s3">,</span>
+    <span class="s1">]</span>
+
+    <span class="s1">index = </span><span class="s4">0</span>
+    <span class="s1">pg.mouse.set_cursor(cursors[index])</span>
+
+    <span class="s1">pressed = </span><span class="s3">False</span>
+    <span class="s1">clock = pg.time.Clock()</span>
+
+    <span class="s3">while True</span><span class="s1">:</span>
+
+        <span class="s1">clock.tick(</span><span class="s4">50</span><span class="s1">)</span>
+
+        <span class="s1">mouse_x</span><span class="s3">, </span><span class="s1">mouse_y = pg.mouse.get_pos()</span>
+
+        <span class="s0"># Check if mouse is inside a circle to change its color</span>
+        <span class="s3">if </span><span class="s1">check_circle(mouse_x</span><span class="s3">, </span><span class="s1">mouse_y</span><span class="s3">, </span><span class="s1">circle1.centerx</span><span class="s3">, </span><span class="s1">circle1.centery</span><span class="s3">, </span><span class="s1">radius1):</span>
+            <span class="s1">circle1 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x1</span><span class="s3">, </span><span class="s1">pos_y1)</span><span class="s3">, </span><span class="s1">radius1)</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">circle1 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x1</span><span class="s3">, </span><span class="s1">pos_y1)</span><span class="s3">, </span><span class="s1">radius1)</span>
+
+        <span class="s3">if </span><span class="s1">check_circle(mouse_x</span><span class="s3">, </span><span class="s1">mouse_y</span><span class="s3">, </span><span class="s1">circle2.centerx</span><span class="s3">, </span><span class="s1">circle2.centery</span><span class="s3">, </span><span class="s1">radius2):</span>
+            <span class="s1">circle2 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">127</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x2</span><span class="s3">, </span><span class="s1">pos_y2)</span><span class="s3">, </span><span class="s1">radius2)</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">circle2 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x2</span><span class="s3">, </span><span class="s1">pos_y2)</span><span class="s3">, </span><span class="s1">radius2)</span>
+
+        <span class="s3">if </span><span class="s1">check_circle(mouse_x</span><span class="s3">, </span><span class="s1">mouse_y</span><span class="s3">, </span><span class="s1">circle3.centerx</span><span class="s3">, </span><span class="s1">circle3.centery</span><span class="s3">, </span><span class="s1">radius3):</span>
+            <span class="s1">circle3 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x3</span><span class="s3">, </span><span class="s1">pos_y3)</span><span class="s3">, </span><span class="s1">radius3)</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">circle3 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x3</span><span class="s3">, </span><span class="s1">pos_y3)</span><span class="s3">, </span><span class="s1">radius3)</span>
+
+        <span class="s3">if </span><span class="s1">check_circle(mouse_x</span><span class="s3">, </span><span class="s1">mouse_y</span><span class="s3">, </span><span class="s1">circle4.centerx</span><span class="s3">, </span><span class="s1">circle4.centery</span><span class="s3">, </span><span class="s1">radius3):</span>
+            <span class="s1">circle4 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x4</span><span class="s3">, </span><span class="s1">pos_y4)</span><span class="s3">, </span><span class="s1">radius4)</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">circle4 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x4</span><span class="s3">, </span><span class="s1">pos_y4)</span><span class="s3">, </span><span class="s1">radius4)</span>
+
+        <span class="s3">if </span><span class="s1">check_circle(mouse_x</span><span class="s3">, </span><span class="s1">mouse_y</span><span class="s3">, </span><span class="s1">circle5.centerx</span><span class="s3">, </span><span class="s1">circle5.centery</span><span class="s3">, </span><span class="s1">radius4):</span>
+            <span class="s1">circle5 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x5</span><span class="s3">, </span><span class="s1">pos_y5)</span><span class="s3">, </span><span class="s1">radius5)</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">circle5 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x5</span><span class="s3">, </span><span class="s1">pos_y5)</span><span class="s3">, </span><span class="s1">radius5)</span>
+
+        <span class="s3">if </span><span class="s1">check_circle(mouse_x</span><span class="s3">, </span><span class="s1">mouse_y</span><span class="s3">, </span><span class="s1">circle6.centerx</span><span class="s3">, </span><span class="s1">circle6.centery</span><span class="s3">, </span><span class="s1">radius6):</span>
+            <span class="s1">circle6 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">75</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">130</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x6</span><span class="s3">, </span><span class="s1">pos_y6)</span><span class="s3">, </span><span class="s1">radius6)</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">circle6 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x6</span><span class="s3">, </span><span class="s1">pos_y6)</span><span class="s3">, </span><span class="s1">radius6)</span>
+
+        <span class="s3">if </span><span class="s1">check_circle(mouse_x</span><span class="s3">, </span><span class="s1">mouse_y</span><span class="s3">, </span><span class="s1">circle7.centerx</span><span class="s3">, </span><span class="s1">circle7.centery</span><span class="s3">, </span><span class="s1">radius7):</span>
+            <span class="s1">circle7 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">148</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">211</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x7</span><span class="s3">, </span><span class="s1">pos_y7)</span><span class="s3">, </span><span class="s1">radius7)</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">circle7 = pg.draw.circle(bg</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(pos_x7</span><span class="s3">, </span><span class="s1">pos_y7)</span><span class="s3">, </span><span class="s1">radius7)</span>
+
+        <span class="s1">bg.fill((</span><span class="s4">183</span><span class="s3">, </span><span class="s4">201</span><span class="s3">, </span><span class="s4">226</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">15</span><span class="s3">, </span><span class="s1">bg.get_width()</span><span class="s3">, </span><span class="s4">50</span><span class="s1">))</span>
+        <span class="s1">text1 = font.render(</span>
+            <span class="s1">(</span><span class="s5">f&quot;This is a </span><span class="s3">{</span><span class="s1">pg.mouse.get_cursor().type</span><span class="s3">} </span><span class="s5">cursor&quot;</span><span class="s1">)</span><span class="s3">, True, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span>
+        <span class="s1">)</span>
+        <span class="s1">text_rect1 = text1.get_rect(center=(bg.get_width() / </span><span class="s4">2</span><span class="s3">, </span><span class="s4">40</span><span class="s1">))</span>
+        <span class="s1">bg.blit(text1</span><span class="s3">, </span><span class="s1">text_rect1)</span>
+
+        <span class="s1">button = pg.draw.rect(</span>
+            <span class="s1">bg</span><span class="s3">,</span>
+            <span class="s1">(</span><span class="s4">100</span><span class="s3">, </span><span class="s4">149</span><span class="s3">, </span><span class="s4">240</span><span class="s1">)</span><span class="s3">,</span>
+            <span class="s1">(</span><span class="s4">139</span><span class="s3">, </span><span class="s4">300</span><span class="s3">, </span><span class="s1">button_text.get_width() + </span><span class="s4">5</span><span class="s3">, </span><span class="s1">button_text.get_height() + </span><span class="s4">50</span><span class="s1">)</span><span class="s3">,</span>
+        <span class="s1">)</span>
+        <span class="s1">bg.blit(button_text</span><span class="s3">, </span><span class="s1">button_text_rect)</span>
+
+        <span class="s0"># Check if button was clicked and change cursor</span>
+        <span class="s3">if </span><span class="s1">button.collidepoint(mouse_x</span><span class="s3">, </span><span class="s1">mouse_y):</span>
+            <span class="s1">button = pg.draw.rect(</span>
+                <span class="s1">bg</span><span class="s3">,</span>
+                <span class="s1">(</span><span class="s4">60</span><span class="s3">, </span><span class="s4">100</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">,</span>
+                <span class="s1">(</span>
+                    <span class="s4">139</span><span class="s3">,</span>
+                    <span class="s4">300</span><span class="s3">,</span>
+                    <span class="s1">button_text.get_width() + </span><span class="s4">5</span><span class="s3">,</span>
+                    <span class="s1">button_text.get_height() + </span><span class="s4">50</span><span class="s3">,</span>
+                <span class="s1">)</span><span class="s3">,</span>
+            <span class="s1">)</span>
+            <span class="s1">bg.blit(button_text</span><span class="s3">, </span><span class="s1">button_text_rect)</span>
+
+            <span class="s3">if </span><span class="s1">pg.mouse.get_pressed()[</span><span class="s4">0</span><span class="s1">] == </span><span class="s4">1 </span><span class="s3">and </span><span class="s1">pressed == </span><span class="s3">False</span><span class="s1">:</span>
+                <span class="s1">button = pg.draw.rect(</span>
+                    <span class="s1">bg</span><span class="s3">,</span>
+                    <span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">139</span><span class="s1">)</span><span class="s3">,</span>
+                    <span class="s1">(</span>
+                        <span class="s4">139</span><span class="s3">,</span>
+                        <span class="s4">300</span><span class="s3">,</span>
+                        <span class="s1">button_text.get_width() + </span><span class="s4">5</span><span class="s3">,</span>
+                        <span class="s1">button_text.get_height() + </span><span class="s4">50</span><span class="s3">,</span>
+                    <span class="s1">)</span><span class="s3">,</span>
+                <span class="s1">)</span>
+                <span class="s1">bg.blit(button_text</span><span class="s3">, </span><span class="s1">button_text_rect)</span>
+                <span class="s1">index += </span><span class="s4">1</span>
+                <span class="s1">index %= len(cursors)</span>
+                <span class="s1">pg.mouse.set_cursor(cursors[index])</span>
+                <span class="s1">pg.display.update()</span>
+                <span class="s1">pg.time.delay(</span><span class="s4">40</span><span class="s1">)</span>
+
+        <span class="s3">if </span><span class="s1">pg.mouse.get_pressed()[</span><span class="s4">0</span><span class="s1">] == </span><span class="s4">1</span><span class="s1">:</span>
+            <span class="s1">pressed = </span><span class="s3">True</span>
+        <span class="s3">elif </span><span class="s1">pg.mouse.get_pressed()[</span><span class="s4">0</span><span class="s1">] == </span><span class="s4">0</span><span class="s1">:</span>
+            <span class="s1">pressed = </span><span class="s3">False</span>
+
+        <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">pg.event.get():</span>
+
+            <span class="s3">if </span><span class="s1">event.type == pg.QUIT:</span>
+                <span class="s1">pg.quit()</span>
+                <span class="s3">raise </span><span class="s1">SystemExit</span>
+
+        <span class="s1">pg.display.update()</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s5">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">main()</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<html>
+<head>
+<title>image.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+image.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Optional</span><span class="s0">, </span><span class="s1">Sequence</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">Union</span>
+
+<span class="s0">from </span><span class="s1">pygame.bufferproxy </span><span class="s0">import </span><span class="s1">BufferProxy</span>
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">FileArg</span><span class="s0">, </span><span class="s1">Literal</span>
+
+<span class="s1">_BufferStyle = Union[BufferProxy</span><span class="s0">, </span><span class="s1">bytes</span><span class="s0">, </span><span class="s1">bytearray</span><span class="s0">, </span><span class="s1">memoryview]</span>
+<span class="s1">_to_string_format = Literal[</span>
+    <span class="s2">&quot;P&quot;</span><span class="s0">, </span><span class="s2">&quot;RGB&quot;</span><span class="s0">, </span><span class="s2">&quot;RGBX&quot;</span><span class="s0">, </span><span class="s2">&quot;RGBA&quot;</span><span class="s0">, </span><span class="s2">&quot;ARGB&quot;</span><span class="s0">, </span><span class="s2">&quot;BGRA&quot;</span><span class="s0">, </span><span class="s2">&quot;RGBA_PREMULT&quot;</span><span class="s0">, </span><span class="s2">&quot;ARGB_PREMULT&quot;</span>
+<span class="s1">]</span>
+<span class="s1">_from_buffer_format = Literal[</span><span class="s2">&quot;P&quot;</span><span class="s0">, </span><span class="s2">&quot;RGB&quot;</span><span class="s0">, </span><span class="s2">&quot;BGR&quot;</span><span class="s0">, </span><span class="s2">&quot;BGRA&quot;</span><span class="s0">, </span><span class="s2">&quot;RGBX&quot;</span><span class="s0">, </span><span class="s2">&quot;RGBA&quot;</span><span class="s0">, </span><span class="s2">&quot;ARGB&quot;</span><span class="s1">]</span>
+<span class="s1">_from_string_format = Literal[</span><span class="s2">&quot;P&quot;</span><span class="s0">, </span><span class="s2">&quot;RGB&quot;</span><span class="s0">, </span><span class="s2">&quot;RGBX&quot;</span><span class="s0">, </span><span class="s2">&quot;RGBA&quot;</span><span class="s0">, </span><span class="s2">&quot;ARGB&quot;</span><span class="s0">, </span><span class="s2">&quot;BGRA&quot;</span><span class="s1">]</span>
+
+<span class="s0">def </span><span class="s1">load(filename: FileArg</span><span class="s0">, </span><span class="s1">namehint: str = </span><span class="s2">&quot;&quot;</span><span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">save(surface: Surface</span><span class="s0">, </span><span class="s1">filename: FileArg</span><span class="s0">, </span><span class="s1">namehint: str = </span><span class="s2">&quot;&quot;</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_sdl_image_version() -&gt; Optional[Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]]: ...</span>
+<span class="s0">def </span><span class="s1">get_extended() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">tostring(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">format: _to_string_format</span><span class="s0">, </span><span class="s1">flipped: bool = </span><span class="s0">False</span>
+<span class="s1">) -&gt; bytes: ...</span>
+<span class="s0">def </span><span class="s1">fromstring(</span>
+    <span class="s1">bytes: bytes</span><span class="s0">,</span>
+    <span class="s1">size: Union[Sequence[int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]]</span><span class="s0">,</span>
+    <span class="s1">format: _from_string_format</span><span class="s0">,</span>
+    <span class="s1">flipped: bool = </span><span class="s0">False,</span>
+<span class="s1">) -&gt; Surface: ...</span>
+<span class="s3"># the use of tobytes/frombytes is preferred over tostring/fromstring</span>
+<span class="s0">def </span><span class="s1">tobytes(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">format: _to_string_format</span><span class="s0">, </span><span class="s1">flipped: bool = </span><span class="s0">False</span>
+<span class="s1">) -&gt; bytes: ...</span>
+<span class="s0">def </span><span class="s1">frombytes(</span>
+    <span class="s1">bytes: bytes</span><span class="s0">,</span>
+    <span class="s1">size: Union[Sequence[int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]]</span><span class="s0">,</span>
+    <span class="s1">format: _from_string_format</span><span class="s0">,</span>
+    <span class="s1">flipped: bool = </span><span class="s0">False,</span>
+<span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">frombuffer(</span>
+    <span class="s1">bytes: _BufferStyle</span><span class="s0">,</span>
+    <span class="s1">size: Union[Sequence[int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]]</span><span class="s0">,</span>
+    <span class="s1">format: _from_buffer_format</span><span class="s0">,</span>
+<span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">load_basic(filename: FileArg) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">load_extended(filename: FileArg</span><span class="s0">, </span><span class="s1">namehint: str = </span><span class="s2">&quot;&quot;</span><span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">save_extended(surface: Surface</span><span class="s0">, </span><span class="s1">filename: FileArg</span><span class="s0">, </span><span class="s1">namehint: str = </span><span class="s2">&quot;&quot;</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+</pre>
+</body>
+</html>

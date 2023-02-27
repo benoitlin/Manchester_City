@@ -1,0 +1,271 @@
+<html>
+<head>
+<title>music_drop_fade.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+music_drop_fade.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.music_drop_fade 
+Fade in and play music from a list while observing several events 
+ 
+Adds music files to a playlist whenever played by one of the following methods 
+Music files passed from the commandline are played 
+Music files and filenames are played when drag and dropped onto the pygame window 
+Polls the clipboard and plays music files if it finds one there 
+ 
+Keyboard Controls: 
+* Press space or enter to pause music playback 
+* Press up or down to change the music volume 
+* Press left or right to seek 5 seconds into the track 
+* Press escape to quit 
+* Press any other button to skip to the next music file in the list 
+&quot;&quot;&quot;</span>
+
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+<span class="s3">import </span><span class="s1">os</span><span class="s3">, </span><span class="s1">sys</span>
+
+<span class="s1">VOLUME_CHANGE_AMOUNT = </span><span class="s4">0.02  </span><span class="s0"># how fast should up and down arrows change the volume?</span>
+
+
+<span class="s3">def </span><span class="s1">add_file(filename):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    This function will check if filename exists and is a music file 
+    If it is the file will be added to a list of music files(even if already there) 
+    Type checking is by the extension of the file, not by its contents 
+    We can only discover if the file is valid when we mixer.music.load() it later 
+ 
+    It looks in the file directory and its data subdirectory 
+    &quot;&quot;&quot;</span>
+    <span class="s3">if </span><span class="s1">filename.rpartition(</span><span class="s5">&quot;.&quot;</span><span class="s1">)[</span><span class="s4">2</span><span class="s1">].lower() </span><span class="s3">not in </span><span class="s1">music_file_types:</span>
+        <span class="s1">print(</span><span class="s5">f&quot;</span><span class="s3">{</span><span class="s1">filename</span><span class="s3">} </span><span class="s5">not added to file list&quot;</span><span class="s1">)</span>
+        <span class="s1">print(</span><span class="s5">&quot;only these files types are allowed: &quot;</span><span class="s3">, </span><span class="s1">music_file_types)</span>
+        <span class="s3">return False</span>
+    <span class="s3">elif </span><span class="s1">os.path.exists(filename):</span>
+        <span class="s1">music_file_list.append(filename)</span>
+    <span class="s3">elif </span><span class="s1">os.path.exists(os.path.join(main_dir</span><span class="s3">, </span><span class="s1">filename)):</span>
+        <span class="s1">music_file_list.append(os.path.join(main_dir</span><span class="s3">, </span><span class="s1">filename))</span>
+    <span class="s3">elif </span><span class="s1">os.path.exists(os.path.join(data_dir</span><span class="s3">, </span><span class="s1">filename)):</span>
+        <span class="s1">music_file_list.append(os.path.join(data_dir</span><span class="s3">, </span><span class="s1">filename))</span>
+    <span class="s3">else</span><span class="s1">:</span>
+        <span class="s1">print(</span><span class="s5">&quot;file not found&quot;</span><span class="s1">)</span>
+        <span class="s3">return False</span>
+    <span class="s1">print(</span><span class="s5">f&quot;</span><span class="s3">{</span><span class="s1">filename</span><span class="s3">} </span><span class="s5">added to file list&quot;</span><span class="s1">)</span>
+    <span class="s3">return True</span>
+
+
+<span class="s3">def </span><span class="s1">play_file(filename):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    This function will call add_file and play it if successful 
+    The music will fade in during the first 4 seconds 
+    set_endevent is used to post a MUSIC_DONE event when the song finishes 
+    The main loop will call play_next() when the MUSIC_DONE event is received 
+    &quot;&quot;&quot;</span>
+    <span class="s3">global </span><span class="s1">starting_pos</span>
+
+    <span class="s3">if </span><span class="s1">add_file(filename):</span>
+        <span class="s3">try</span><span class="s1">:  </span><span class="s0"># we must do this in case the file is not a valid audio file</span>
+            <span class="s1">pg.mixer.music.load(music_file_list[-</span><span class="s4">1</span><span class="s1">])</span>
+        <span class="s3">except </span><span class="s1">pg.error </span><span class="s3">as </span><span class="s1">e:</span>
+            <span class="s1">print(e)  </span><span class="s0"># print description such as 'Not an Ogg Vorbis audio stream'</span>
+            <span class="s3">if </span><span class="s1">filename </span><span class="s3">in </span><span class="s1">music_file_list:</span>
+                <span class="s1">music_file_list.remove(filename)</span>
+                <span class="s1">print(</span><span class="s5">f&quot;</span><span class="s3">{</span><span class="s1">filename</span><span class="s3">} </span><span class="s5">removed from file list&quot;</span><span class="s1">)</span>
+            <span class="s3">return</span>
+        <span class="s1">pg.mixer.music.play(fade_ms=</span><span class="s4">4000</span><span class="s1">)</span>
+        <span class="s1">pg.mixer.music.set_volume(volume)</span>
+
+        <span class="s3">if </span><span class="s1">filename.rpartition(</span><span class="s5">&quot;.&quot;</span><span class="s1">)[</span><span class="s4">2</span><span class="s1">].lower() </span><span class="s3">in </span><span class="s1">music_can_seek:</span>
+            <span class="s1">print(</span><span class="s5">&quot;file supports seeking&quot;</span><span class="s1">)</span>
+            <span class="s1">starting_pos = </span><span class="s4">0</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">print(</span><span class="s5">&quot;file does not support seeking&quot;</span><span class="s1">)</span>
+            <span class="s1">starting_pos = -</span><span class="s4">1</span>
+        <span class="s1">pg.mixer.music.set_endevent(MUSIC_DONE)</span>
+
+
+<span class="s3">def </span><span class="s1">play_next():</span>
+    <span class="s2">&quot;&quot;&quot; 
+    This function will play the next song in music_file_list 
+    It uses pop(0) to get the next song and then appends it to the end of the list 
+    The song will fade in during the first 4 seconds 
+    &quot;&quot;&quot;</span>
+
+    <span class="s3">global </span><span class="s1">starting_pos</span>
+    <span class="s3">if </span><span class="s1">len(music_file_list) &gt; </span><span class="s4">1</span><span class="s1">:</span>
+        <span class="s1">nxt = music_file_list.pop(</span><span class="s4">0</span><span class="s1">)</span>
+
+        <span class="s3">try</span><span class="s1">:</span>
+            <span class="s1">pg.mixer.music.load(nxt)</span>
+        <span class="s3">except </span><span class="s1">pg.error </span><span class="s3">as </span><span class="s1">e:</span>
+            <span class="s1">print(e)</span>
+            <span class="s1">print(</span><span class="s5">f&quot;</span><span class="s3">{</span><span class="s1">nxt</span><span class="s3">} </span><span class="s5">removed from file list&quot;</span><span class="s1">)</span>
+
+        <span class="s1">music_file_list.append(nxt)</span>
+        <span class="s1">print(</span><span class="s5">&quot;starting next song: &quot;</span><span class="s3">, </span><span class="s1">nxt)</span>
+    <span class="s3">else</span><span class="s1">:</span>
+        <span class="s1">nxt = music_file_list[</span><span class="s4">0</span><span class="s1">]</span>
+    <span class="s1">pg.mixer.music.play(fade_ms=</span><span class="s4">4000</span><span class="s1">)</span>
+    <span class="s1">pg.mixer.music.set_volume(volume)</span>
+    <span class="s1">pg.mixer.music.set_endevent(MUSIC_DONE)</span>
+
+    <span class="s3">if </span><span class="s1">nxt.rpartition(</span><span class="s5">&quot;.&quot;</span><span class="s1">)[</span><span class="s4">2</span><span class="s1">].lower() </span><span class="s3">in </span><span class="s1">music_can_seek:</span>
+        <span class="s1">starting_pos = </span><span class="s4">0</span>
+    <span class="s3">else</span><span class="s1">:</span>
+        <span class="s1">starting_pos = -</span><span class="s4">1</span>
+
+
+<span class="s3">def </span><span class="s1">draw_text_line(text</span><span class="s3">, </span><span class="s1">y=</span><span class="s4">0</span><span class="s1">):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Draws a line of text onto the display surface 
+    The text will be centered horizontally at the given y position 
+    The text's height is added to y and returned to the caller 
+    &quot;&quot;&quot;</span>
+    <span class="s1">screen = pg.display.get_surface()</span>
+    <span class="s1">surf = font.render(text</span><span class="s3">, </span><span class="s4">1</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">))</span>
+    <span class="s1">y += surf.get_height()</span>
+    <span class="s1">x = (screen.get_width() - surf.get_width()) / </span><span class="s4">2</span>
+    <span class="s1">screen.blit(surf</span><span class="s3">, </span><span class="s1">(x</span><span class="s3">, </span><span class="s1">y))</span>
+    <span class="s3">return </span><span class="s1">y</span>
+
+
+<span class="s3">def </span><span class="s1">change_music_position(amount):</span>
+    <span class="s2">&quot;&quot;&quot; 
+    Changes current playback position by amount seconds. 
+    This only works with OGG and MP3 files. 
+    music.get_pos() returns how many milliseconds the song has played, not 
+    the current position in the file. We must track the starting position 
+    ourselves. music.set_pos() will set the position in seconds. 
+    &quot;&quot;&quot;</span>
+    <span class="s3">global </span><span class="s1">starting_pos</span>
+
+    <span class="s3">if </span><span class="s1">starting_pos &gt;= </span><span class="s4">0</span><span class="s1">:  </span><span class="s0"># will be -1 unless play_file() was OGG or MP3</span>
+        <span class="s1">played_for = pg.mixer.music.get_pos() / </span><span class="s4">1000.0</span>
+        <span class="s1">old_pos = starting_pos + played_for</span>
+        <span class="s1">starting_pos = old_pos + amount</span>
+        <span class="s1">pg.mixer.music.play(start=starting_pos)</span>
+        <span class="s1">print(</span><span class="s5">f&quot;jumped from </span><span class="s3">{</span><span class="s1">old_pos</span><span class="s3">} </span><span class="s5">to </span><span class="s3">{</span><span class="s1">starting_pos</span><span class="s3">}</span><span class="s5">&quot;</span><span class="s1">)</span>
+
+
+<span class="s1">MUSIC_DONE = pg.event.custom_type()  </span><span class="s0"># event to be set as mixer.music.set_endevent()</span>
+<span class="s1">main_dir = os.path.split(os.path.abspath(__file__))[</span><span class="s4">0</span><span class="s1">]</span>
+<span class="s1">data_dir = os.path.join(main_dir</span><span class="s3">, </span><span class="s5">&quot;data&quot;</span><span class="s1">)</span>
+
+<span class="s1">starting_pos = </span><span class="s4">0  </span><span class="s0"># needed to fast forward and rewind</span>
+<span class="s1">volume = </span><span class="s4">0.75</span>
+<span class="s1">music_file_list = []</span>
+<span class="s1">music_file_types = (</span><span class="s5">&quot;mp3&quot;</span><span class="s3">, </span><span class="s5">&quot;ogg&quot;</span><span class="s3">, </span><span class="s5">&quot;mid&quot;</span><span class="s3">, </span><span class="s5">&quot;mod&quot;</span><span class="s3">, </span><span class="s5">&quot;it&quot;</span><span class="s3">, </span><span class="s5">&quot;xm&quot;</span><span class="s3">, </span><span class="s5">&quot;wav&quot;</span><span class="s1">)</span>
+<span class="s1">music_can_seek = (</span><span class="s5">&quot;mp3&quot;</span><span class="s3">, </span><span class="s5">&quot;ogg&quot;</span><span class="s3">, </span><span class="s5">&quot;mod&quot;</span><span class="s3">, </span><span class="s5">&quot;it&quot;</span><span class="s3">, </span><span class="s5">&quot;xm&quot;</span><span class="s1">)</span>
+
+
+<span class="s3">def </span><span class="s1">main():</span>
+    <span class="s3">global </span><span class="s1">font  </span><span class="s0"># this will be used by the draw_text_line function</span>
+    <span class="s3">global </span><span class="s1">volume</span><span class="s3">, </span><span class="s1">starting_pos</span>
+    <span class="s1">running = </span><span class="s3">True</span>
+    <span class="s1">paused = </span><span class="s3">False</span>
+
+    <span class="s0"># we will be polling for key up and key down events</span>
+    <span class="s0"># users should be able to change the volume by holding the up and down arrows</span>
+    <span class="s0"># the change_volume variable will be set by key down events and cleared by key up events</span>
+    <span class="s1">change_volume = </span><span class="s4">0</span>
+
+    <span class="s1">pg.init()</span>
+    <span class="s1">pg.display.set_mode((</span><span class="s4">640</span><span class="s3">, </span><span class="s4">480</span><span class="s1">))</span>
+    <span class="s1">font = pg.font.SysFont(</span><span class="s5">&quot;Arial&quot;</span><span class="s3">, </span><span class="s4">24</span><span class="s1">)</span>
+    <span class="s1">clock = pg.time.Clock()</span>
+
+    <span class="s1">pg.scrap.init()</span>
+    <span class="s1">pg.SCRAP_TEXT = pg.scrap.get_types()[</span><span class="s4">0</span><span class="s1">]  </span><span class="s0"># TODO remove when scrap module is fixed</span>
+    <span class="s1">clipped = pg.scrap.get(pg.SCRAP_TEXT).decode(</span><span class="s5">&quot;UTF-8&quot;</span><span class="s1">)</span>
+    <span class="s0"># store the current text from the clipboard TODO remove decode</span>
+
+    <span class="s0"># add the command line arguments to the  music_file_list</span>
+    <span class="s3">for </span><span class="s1">arg </span><span class="s3">in </span><span class="s1">sys.argv[</span><span class="s4">1</span><span class="s1">:]:</span>
+        <span class="s1">add_file(arg)</span>
+    <span class="s1">play_file(</span><span class="s5">&quot;house_lo.ogg&quot;</span><span class="s1">)  </span><span class="s0"># play default music included with pygame</span>
+
+    <span class="s0"># draw instructions on screen</span>
+    <span class="s1">y = draw_text_line(</span><span class="s5">&quot;Drop music files or path names onto this window&quot;</span><span class="s3">, </span><span class="s4">20</span><span class="s1">)</span>
+    <span class="s1">y = draw_text_line(</span><span class="s5">&quot;Copy file names into the clipboard&quot;</span><span class="s3">, </span><span class="s1">y)</span>
+    <span class="s1">y = draw_text_line(</span><span class="s5">&quot;Or feed them from the command line&quot;</span><span class="s3">, </span><span class="s1">y)</span>
+    <span class="s1">y = draw_text_line(</span><span class="s5">&quot;If it's music it will play!&quot;</span><span class="s3">, </span><span class="s1">y)</span>
+    <span class="s1">y = draw_text_line(</span><span class="s5">&quot;SPACE to pause or UP/DOWN to change volume&quot;</span><span class="s3">, </span><span class="s1">y)</span>
+    <span class="s1">y = draw_text_line(</span><span class="s5">&quot;LEFT and RIGHT will skip around the track&quot;</span><span class="s3">, </span><span class="s1">y)</span>
+    <span class="s1">draw_text_line(</span><span class="s5">&quot;Other keys will start the next track&quot;</span><span class="s3">, </span><span class="s1">y)</span>
+
+    <span class="s5">&quot;&quot;&quot; 
+    This is the main loop 
+    It will respond to drag and drop, clipboard changes, and key presses 
+    &quot;&quot;&quot;</span>
+    <span class="s3">while </span><span class="s1">running:</span>
+        <span class="s3">for </span><span class="s1">ev </span><span class="s3">in </span><span class="s1">pg.event.get():</span>
+            <span class="s3">if </span><span class="s1">ev.type == pg.QUIT:</span>
+                <span class="s1">running = </span><span class="s3">False</span>
+            <span class="s3">elif </span><span class="s1">ev.type == pg.DROPTEXT:</span>
+                <span class="s1">play_file(ev.text)</span>
+            <span class="s3">elif </span><span class="s1">ev.type == pg.DROPFILE:</span>
+                <span class="s1">play_file(ev.file)</span>
+            <span class="s3">elif </span><span class="s1">ev.type == MUSIC_DONE:</span>
+                <span class="s1">play_next()</span>
+            <span class="s3">elif </span><span class="s1">ev.type == pg.KEYDOWN:</span>
+                <span class="s3">if </span><span class="s1">ev.key == pg.K_ESCAPE:</span>
+                    <span class="s1">running = </span><span class="s3">False  </span><span class="s0"># exit loop</span>
+                <span class="s3">elif </span><span class="s1">ev.key </span><span class="s3">in </span><span class="s1">(pg.K_SPACE</span><span class="s3">, </span><span class="s1">pg.K_RETURN):</span>
+                    <span class="s3">if </span><span class="s1">paused:</span>
+                        <span class="s1">pg.mixer.music.unpause()</span>
+                        <span class="s1">paused = </span><span class="s3">False</span>
+                    <span class="s3">else</span><span class="s1">:</span>
+                        <span class="s1">pg.mixer.music.pause()</span>
+                        <span class="s1">paused = </span><span class="s3">True</span>
+                <span class="s3">elif </span><span class="s1">ev.key == pg.K_UP:</span>
+                    <span class="s1">change_volume = VOLUME_CHANGE_AMOUNT</span>
+                <span class="s3">elif </span><span class="s1">ev.key == pg.K_DOWN:</span>
+                    <span class="s1">change_volume = -VOLUME_CHANGE_AMOUNT</span>
+                <span class="s3">elif </span><span class="s1">ev.key == pg.K_RIGHT:</span>
+                    <span class="s1">change_music_position(+</span><span class="s4">5</span><span class="s1">)</span>
+                <span class="s3">elif </span><span class="s1">ev.key == pg.K_LEFT:</span>
+                    <span class="s1">change_music_position(-</span><span class="s4">5</span><span class="s1">)</span>
+
+                <span class="s3">else</span><span class="s1">:</span>
+                    <span class="s1">play_next()</span>
+
+            <span class="s3">elif </span><span class="s1">ev.type == pg.KEYUP:</span>
+                <span class="s3">if </span><span class="s1">ev.key </span><span class="s3">in </span><span class="s1">(pg.K_UP</span><span class="s3">, </span><span class="s1">pg.K_DOWN):</span>
+                    <span class="s1">change_volume = </span><span class="s4">0</span>
+
+        <span class="s0"># is the user holding up or down?</span>
+        <span class="s3">if </span><span class="s1">change_volume:</span>
+            <span class="s1">volume += change_volume</span>
+            <span class="s1">volume = min(max(</span><span class="s4">0</span><span class="s3">, </span><span class="s1">volume)</span><span class="s3">, </span><span class="s4">1</span><span class="s1">)  </span><span class="s0"># volume should be between 0 and 1</span>
+            <span class="s1">pg.mixer.music.set_volume(volume)</span>
+            <span class="s1">print(</span><span class="s5">&quot;volume:&quot;</span><span class="s3">, </span><span class="s1">volume)</span>
+
+        <span class="s0"># TODO remove decode when SDL2 scrap is fixed</span>
+        <span class="s1">new_text = pg.scrap.get(pg.SCRAP_TEXT).decode(</span><span class="s5">&quot;UTF-8&quot;</span><span class="s1">)</span>
+        <span class="s3">if </span><span class="s1">new_text != clipped:  </span><span class="s0"># has the clipboard changed?</span>
+            <span class="s1">clipped = new_text</span>
+            <span class="s1">play_file(clipped)  </span><span class="s0"># try to play the file if it has</span>
+
+        <span class="s1">pg.display.flip()</span>
+        <span class="s1">clock.tick(</span><span class="s4">9</span><span class="s1">)  </span><span class="s0"># keep CPU use down by updating screen less often</span>
+
+    <span class="s1">pg.quit()</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s5">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">main()</span>
+</pre>
+</body>
+</html>

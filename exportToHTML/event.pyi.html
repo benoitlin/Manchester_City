@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>event.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+event.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">(</span>
+    <span class="s1">Any</span><span class="s0">,</span>
+    <span class="s1">Dict</span><span class="s0">,</span>
+    <span class="s1">List</span><span class="s0">,</span>
+    <span class="s1">Optional</span><span class="s0">,</span>
+    <span class="s1">Sequence</span><span class="s0">,</span>
+    <span class="s1">SupportsInt</span><span class="s0">,</span>
+    <span class="s1">Tuple</span><span class="s0">,</span>
+    <span class="s1">Union</span><span class="s0">,</span>
+    <span class="s1">final</span><span class="s0">,</span>
+    <span class="s1">overload</span><span class="s0">,</span>
+<span class="s1">)</span>
+
+<span class="s1">@final</span>
+<span class="s0">class </span><span class="s1">Event:</span>
+    <span class="s1">type: int</span>
+    <span class="s1">dict: Dict[str</span><span class="s0">, </span><span class="s1">Any]</span>
+    <span class="s1">__dict__: Dict[str</span><span class="s0">, </span><span class="s1">Any]</span>
+    <span class="s1">__hash__: </span><span class="s0">None  </span><span class="s2"># type: ignore</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">type: int</span><span class="s0">, </span><span class="s1">dict: Dict[str</span><span class="s0">, </span><span class="s1">Any] = ...</span><span class="s0">, </span><span class="s1">**kwargs: Any</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__getattribute__(self</span><span class="s0">, </span><span class="s1">name: str) -&gt; Any: ...</span>
+    <span class="s0">def </span><span class="s1">__setattr__(self</span><span class="s0">, </span><span class="s1">name: str</span><span class="s0">, </span><span class="s1">value: Any) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__delattr__(self</span><span class="s0">, </span><span class="s1">name: str) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__bool__(self) -&gt; bool: ...</span>
+
+<span class="s1">_EventTypes = Union[SupportsInt</span><span class="s0">, </span><span class="s1">Tuple[SupportsInt</span><span class="s0">, </span><span class="s1">...]</span><span class="s0">, </span><span class="s1">Sequence[SupportsInt]]</span>
+
+<span class="s0">def </span><span class="s1">pump() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get(</span>
+    <span class="s1">eventtype: Optional[_EventTypes] = </span><span class="s0">None,</span>
+    <span class="s1">pump: Any = </span><span class="s0">True,</span>
+    <span class="s1">exclude: Optional[_EventTypes] = </span><span class="s0">None,</span>
+<span class="s1">) -&gt; List[Event]: ...</span>
+<span class="s0">def </span><span class="s1">poll() -&gt; Event: ...</span>
+<span class="s0">def </span><span class="s1">wait(timeout: int = </span><span class="s3">0</span><span class="s1">) -&gt; Event: ...</span>
+<span class="s0">def </span><span class="s1">peek(eventtype: Optional[_EventTypes] = </span><span class="s0">None, </span><span class="s1">pump: Any = </span><span class="s0">True</span><span class="s1">) -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">clear(eventtype: Optional[_EventTypes] = </span><span class="s0">None, </span><span class="s1">pump: Any = </span><span class="s0">True</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">event_name(type: int) -&gt; str: ...</span>
+<span class="s0">def </span><span class="s1">set_blocked(type: Optional[_EventTypes]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">set_allowed(type: Optional[_EventTypes]) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_blocked(type: _EventTypes) -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">set_grab(grab: bool) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_grab() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">post(event: Event) -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">custom_type() -&gt; int: ...</span>
+</pre>
+</body>
+</html>

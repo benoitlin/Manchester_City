@@ -1,0 +1,176 @@
+<html>
+<head>
+<title>scaletest.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+scaletest.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.scaletest 
+ 
+Shows an interactive image scaler. 
+ 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">sys</span>
+<span class="s3">import </span><span class="s1">time</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+
+
+<span class="s3">def </span><span class="s1">main(imagefile</span><span class="s3">, </span><span class="s1">convert_alpha=</span><span class="s3">False, </span><span class="s1">run_speed_test=</span><span class="s3">False</span><span class="s1">):</span>
+    <span class="s2">&quot;&quot;&quot;show an interactive image scaler 
+ 
+    Args: 
+        imagefile - name of source image (required) 
+        convert_alpha - use convert_alpha() on the surf (default False) 
+        run_speed_test - (default False) 
+    &quot;&quot;&quot;</span>
+
+    <span class="s0"># initialize display</span>
+    <span class="s1">pg.display.init()</span>
+    <span class="s0"># load background image</span>
+    <span class="s1">background = pg.image.load(imagefile)</span>
+
+    <span class="s3">if </span><span class="s1">run_speed_test:</span>
+        <span class="s3">if </span><span class="s1">convert_alpha:</span>
+            <span class="s0"># convert_alpha() requires the display mode to be set</span>
+            <span class="s1">pg.display.set_mode((</span><span class="s4">1</span><span class="s3">, </span><span class="s4">1</span><span class="s1">))</span>
+            <span class="s1">background = background.convert_alpha()</span>
+
+        <span class="s1">SpeedTest(background)</span>
+        <span class="s3">return</span>
+
+    <span class="s0"># start fullscreen mode</span>
+    <span class="s1">screen = pg.display.set_mode((</span><span class="s4">1024</span><span class="s3">, </span><span class="s4">768</span><span class="s1">)</span><span class="s3">, </span><span class="s1">pg.FULLSCREEN)</span>
+    <span class="s3">if </span><span class="s1">convert_alpha:</span>
+        <span class="s1">background = background.convert_alpha()</span>
+
+    <span class="s0"># turn off the mouse pointer</span>
+    <span class="s1">pg.mouse.set_visible(</span><span class="s4">0</span><span class="s1">)</span>
+    <span class="s0"># main loop</span>
+    <span class="s1">bRunning = </span><span class="s3">True</span>
+    <span class="s1">bUp = </span><span class="s3">False</span>
+    <span class="s1">bDown = </span><span class="s3">False</span>
+    <span class="s1">bLeft = </span><span class="s3">False</span>
+    <span class="s1">bRight = </span><span class="s3">False</span>
+    <span class="s1">cursize = [background.get_width()</span><span class="s3">, </span><span class="s1">background.get_height()]</span>
+    <span class="s3">while </span><span class="s1">bRunning:</span>
+        <span class="s1">image = pg.transform.smoothscale(background</span><span class="s3">, </span><span class="s1">cursize)</span>
+        <span class="s1">imgpos = image.get_rect(centerx=</span><span class="s4">512</span><span class="s3">, </span><span class="s1">centery=</span><span class="s4">384</span><span class="s1">)</span>
+        <span class="s1">screen.fill((</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">))</span>
+        <span class="s1">screen.blit(image</span><span class="s3">, </span><span class="s1">imgpos)</span>
+        <span class="s1">pg.display.flip()</span>
+        <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">pg.event.get():</span>
+            <span class="s3">if </span><span class="s1">event.type == pg.QUIT </span><span class="s3">or </span><span class="s1">(</span>
+                <span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key == pg.K_ESCAPE</span>
+            <span class="s1">):</span>
+                <span class="s1">bRunning = </span><span class="s3">False</span>
+            <span class="s3">if </span><span class="s1">event.type == pg.KEYDOWN:</span>
+                <span class="s3">if </span><span class="s1">event.key == pg.K_UP:</span>
+                    <span class="s1">bUp = </span><span class="s3">True</span>
+                <span class="s3">if </span><span class="s1">event.key == pg.K_DOWN:</span>
+                    <span class="s1">bDown = </span><span class="s3">True</span>
+                <span class="s3">if </span><span class="s1">event.key == pg.K_LEFT:</span>
+                    <span class="s1">bLeft = </span><span class="s3">True</span>
+                <span class="s3">if </span><span class="s1">event.key == pg.K_RIGHT:</span>
+                    <span class="s1">bRight = </span><span class="s3">True</span>
+            <span class="s3">if </span><span class="s1">event.type == pg.KEYUP:</span>
+                <span class="s3">if </span><span class="s1">event.key == pg.K_UP:</span>
+                    <span class="s1">bUp = </span><span class="s3">False</span>
+                <span class="s3">if </span><span class="s1">event.key == pg.K_DOWN:</span>
+                    <span class="s1">bDown = </span><span class="s3">False</span>
+                <span class="s3">if </span><span class="s1">event.key == pg.K_LEFT:</span>
+                    <span class="s1">bLeft = </span><span class="s3">False</span>
+                <span class="s3">if </span><span class="s1">event.key == pg.K_RIGHT:</span>
+                    <span class="s1">bRight = </span><span class="s3">False</span>
+        <span class="s3">if </span><span class="s1">bUp:</span>
+            <span class="s1">cursize[</span><span class="s4">1</span><span class="s1">] -= </span><span class="s4">2</span>
+            <span class="s3">if </span><span class="s1">cursize[</span><span class="s4">1</span><span class="s1">] &lt; </span><span class="s4">1</span><span class="s1">:</span>
+                <span class="s1">cursize[</span><span class="s4">1</span><span class="s1">] = </span><span class="s4">1</span>
+        <span class="s3">if </span><span class="s1">bDown:</span>
+            <span class="s1">cursize[</span><span class="s4">1</span><span class="s1">] += </span><span class="s4">2</span>
+        <span class="s3">if </span><span class="s1">bLeft:</span>
+            <span class="s1">cursize[</span><span class="s4">0</span><span class="s1">] -= </span><span class="s4">2</span>
+            <span class="s3">if </span><span class="s1">cursize[</span><span class="s4">0</span><span class="s1">] &lt; </span><span class="s4">1</span><span class="s1">:</span>
+                <span class="s1">cursize[</span><span class="s4">0</span><span class="s1">] = </span><span class="s4">1</span>
+        <span class="s3">if </span><span class="s1">bRight:</span>
+            <span class="s1">cursize[</span><span class="s4">0</span><span class="s1">] += </span><span class="s4">2</span>
+    <span class="s1">pg.quit()</span>
+
+
+<span class="s3">def </span><span class="s1">SpeedTest(image):</span>
+    <span class="s1">print(</span><span class="s5">f&quot;</span><span class="s3">\n</span><span class="s5">Image Scaling Speed Test - Image Size </span><span class="s3">{</span><span class="s1">str(image.get_size())</span><span class="s3">}\n</span><span class="s5">&quot;</span><span class="s1">)</span>
+
+    <span class="s1">imgsize = [image.get_width()</span><span class="s3">, </span><span class="s1">image.get_height()]</span>
+    <span class="s1">duration = </span><span class="s4">0.0</span>
+    <span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s4">128</span><span class="s1">):</span>
+        <span class="s1">shrinkx = (imgsize[</span><span class="s4">0</span><span class="s1">] * i) // </span><span class="s4">128</span>
+        <span class="s1">shrinky = (imgsize[</span><span class="s4">1</span><span class="s1">] * i) // </span><span class="s4">128</span>
+        <span class="s1">start = time.time()</span>
+        <span class="s1">tempimg = pg.transform.smoothscale(image</span><span class="s3">, </span><span class="s1">(shrinkx</span><span class="s3">, </span><span class="s1">shrinky))</span>
+        <span class="s1">duration += time.time() - start</span>
+        <span class="s3">del </span><span class="s1">tempimg</span>
+
+    <span class="s1">print(</span><span class="s5">f&quot;Average transform.smoothscale shrink time: </span><span class="s3">{</span><span class="s1">duration / </span><span class="s4">128 </span><span class="s1">* </span><span class="s4">1000</span><span class="s3">:</span><span class="s5">.4f</span><span class="s3">} </span><span class="s5">ms.&quot;</span><span class="s1">)</span>
+
+    <span class="s1">duration = </span><span class="s4">0.0</span>
+    <span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s4">128</span><span class="s1">):</span>
+        <span class="s1">expandx = (imgsize[</span><span class="s4">0</span><span class="s1">] * (i + </span><span class="s4">129</span><span class="s1">)) // </span><span class="s4">128</span>
+        <span class="s1">expandy = (imgsize[</span><span class="s4">1</span><span class="s1">] * (i + </span><span class="s4">129</span><span class="s1">)) // </span><span class="s4">128</span>
+        <span class="s1">start = time.time()</span>
+        <span class="s1">tempimg = pg.transform.smoothscale(image</span><span class="s3">, </span><span class="s1">(expandx</span><span class="s3">, </span><span class="s1">expandy))</span>
+        <span class="s1">duration += time.time() - start</span>
+        <span class="s3">del </span><span class="s1">tempimg</span>
+
+    <span class="s1">print(</span><span class="s5">f&quot;Average transform.smoothscale expand time: </span><span class="s3">{</span><span class="s1">duration / </span><span class="s4">128 </span><span class="s1">* </span><span class="s4">1000</span><span class="s3">:</span><span class="s5">.4f</span><span class="s3">} </span><span class="s5">ms.&quot;</span><span class="s1">)</span>
+
+    <span class="s1">duration = </span><span class="s4">0.0</span>
+    <span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s4">128</span><span class="s1">):</span>
+        <span class="s1">shrinkx = (imgsize[</span><span class="s4">0</span><span class="s1">] * i) // </span><span class="s4">128</span>
+        <span class="s1">shrinky = (imgsize[</span><span class="s4">1</span><span class="s1">] * i) // </span><span class="s4">128</span>
+        <span class="s1">start = time.time()</span>
+        <span class="s1">tempimg = pg.transform.scale(image</span><span class="s3">, </span><span class="s1">(shrinkx</span><span class="s3">, </span><span class="s1">shrinky))</span>
+        <span class="s1">duration += time.time() - start</span>
+        <span class="s3">del </span><span class="s1">tempimg</span>
+
+    <span class="s1">print(</span><span class="s5">f&quot;Average transform.scale shrink time: </span><span class="s3">{</span><span class="s1">duration / </span><span class="s4">128 </span><span class="s1">* </span><span class="s4">1000</span><span class="s3">:</span><span class="s5">.4f</span><span class="s3">} </span><span class="s5">ms.&quot;</span><span class="s1">)</span>
+
+    <span class="s1">duration = </span><span class="s4">0.0</span>
+    <span class="s3">for </span><span class="s1">i </span><span class="s3">in </span><span class="s1">range(</span><span class="s4">128</span><span class="s1">):</span>
+        <span class="s1">expandx = (imgsize[</span><span class="s4">0</span><span class="s1">] * (i + </span><span class="s4">129</span><span class="s1">)) // </span><span class="s4">128</span>
+        <span class="s1">expandy = (imgsize[</span><span class="s4">1</span><span class="s1">] * (i + </span><span class="s4">129</span><span class="s1">)) // </span><span class="s4">128</span>
+        <span class="s1">start = time.time()</span>
+        <span class="s1">tempimg = pg.transform.scale(image</span><span class="s3">, </span><span class="s1">(expandx</span><span class="s3">, </span><span class="s1">expandy))</span>
+        <span class="s1">duration += time.time() - start</span>
+        <span class="s3">del </span><span class="s1">tempimg</span>
+
+    <span class="s1">print(</span><span class="s5">f&quot;Average transform.scale expand time: </span><span class="s3">{</span><span class="s1">duration / </span><span class="s4">128 </span><span class="s1">* </span><span class="s4">1000</span><span class="s3">:</span><span class="s5">.4f</span><span class="s3">} </span><span class="s5">ms.&quot;</span><span class="s1">)</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s5">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s0"># check input parameters</span>
+    <span class="s3">if </span><span class="s1">len(sys.argv) &lt; </span><span class="s4">2</span><span class="s1">:</span>
+        <span class="s1">print(</span><span class="s5">f&quot;</span><span class="s3">\n</span><span class="s5">Usage: </span><span class="s3">{</span><span class="s1">sys.argv[</span><span class="s4">0</span><span class="s1">]</span><span class="s3">} </span><span class="s5">imagefile [-t] [-convert_alpha]&quot;</span><span class="s1">)</span>
+        <span class="s1">print(</span><span class="s5">&quot;    imagefile       image filename (required)&quot;</span><span class="s1">)</span>
+        <span class="s1">print(</span><span class="s5">&quot;    -t              run speed test&quot;</span><span class="s1">)</span>
+        <span class="s1">print(</span><span class="s5">&quot;    -convert_alpha  use convert_alpha() on the image's &quot; &quot;surface</span><span class="s3">\n</span><span class="s5">&quot;</span><span class="s1">)</span>
+    <span class="s3">else</span><span class="s1">:</span>
+        <span class="s1">main(</span>
+            <span class="s1">sys.argv[</span><span class="s4">1</span><span class="s1">]</span><span class="s3">,</span>
+            <span class="s1">convert_alpha=</span><span class="s5">&quot;-convert_alpha&quot; </span><span class="s3">in </span><span class="s1">sys.argv</span><span class="s3">,</span>
+            <span class="s1">run_speed_test=</span><span class="s5">&quot;-t&quot; </span><span class="s3">in </span><span class="s1">sys.argv</span><span class="s3">,</span>
+        <span class="s1">)</span>
+</pre>
+</body>
+</html>

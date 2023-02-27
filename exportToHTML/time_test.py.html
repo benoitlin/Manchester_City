@@ -1,0 +1,414 @@
+<html>
+<head>
+<title>time_test.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #629755; font-style: italic;}
+.s4 { color: #808080;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+time_test.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">unittest</span>
+<span class="s0">import </span><span class="s1">pygame</span>
+<span class="s0">import </span><span class="s1">time</span>
+
+<span class="s1">Clock = pygame.time.Clock</span>
+
+
+<span class="s0">class </span><span class="s1">ClockTypeTest(unittest.TestCase):</span>
+    <span class="s1">__tags__ = [</span><span class="s2">&quot;timing&quot;</span><span class="s1">]</span>
+
+    <span class="s0">def </span><span class="s1">test_construction(self):</span>
+        <span class="s3">&quot;&quot;&quot;Ensure a Clock object can be created&quot;&quot;&quot;</span>
+        <span class="s1">c = Clock()</span>
+
+        <span class="s1">self.assertTrue(c</span><span class="s0">, </span><span class="s2">&quot;Clock cannot be constructed&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_fps(self):</span>
+        <span class="s3">&quot;&quot;&quot;test_get_fps tests pygame.time.get_fps()&quot;&quot;&quot;</span>
+        <span class="s4"># Initialization check, first call should return 0 fps</span>
+        <span class="s1">c = Clock()</span>
+        <span class="s1">self.assertEqual(c.get_fps()</span><span class="s0">, </span><span class="s5">0</span><span class="s1">)</span>
+        <span class="s4"># Type check get_fps should return float</span>
+        <span class="s1">self.assertTrue(type(c.get_fps()) == float)</span>
+        <span class="s4"># Allowable margin of error in percentage</span>
+        <span class="s1">delta = </span><span class="s5">0.30</span>
+        <span class="s4"># Test fps correctness for 100, 60 and 30 fps</span>
+        <span class="s1">self._fps_test(c</span><span class="s0">, </span><span class="s5">100</span><span class="s0">, </span><span class="s1">delta)</span>
+        <span class="s1">self._fps_test(c</span><span class="s0">, </span><span class="s5">60</span><span class="s0">, </span><span class="s1">delta)</span>
+        <span class="s1">self._fps_test(c</span><span class="s0">, </span><span class="s5">30</span><span class="s0">, </span><span class="s1">delta)</span>
+
+    <span class="s0">def </span><span class="s1">_fps_test(self</span><span class="s0">, </span><span class="s1">clock</span><span class="s0">, </span><span class="s1">fps</span><span class="s0">, </span><span class="s1">delta):</span>
+        <span class="s3">&quot;&quot;&quot;ticks fps times each second, hence get_fps() should return fps&quot;&quot;&quot;</span>
+        <span class="s1">delay_per_frame = </span><span class="s5">1.0 </span><span class="s1">/ fps</span>
+        <span class="s0">for </span><span class="s1">f </span><span class="s0">in </span><span class="s1">range(fps):  </span><span class="s4"># For one second tick and sleep</span>
+            <span class="s1">clock.tick()</span>
+            <span class="s1">time.sleep(delay_per_frame)</span>
+        <span class="s4"># We should get around fps (+- fps*delta -- delta % of fps)</span>
+        <span class="s1">self.assertAlmostEqual(clock.get_fps()</span><span class="s0">, </span><span class="s1">fps</span><span class="s0">, </span><span class="s1">delta=fps * delta)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_rawtime(self):</span>
+
+        <span class="s1">iterations = </span><span class="s5">10</span>
+        <span class="s1">delay = </span><span class="s5">0.1</span>
+        <span class="s1">delay_miliseconds = delay * (</span><span class="s5">10</span><span class="s1">**</span><span class="s5">3</span><span class="s1">)  </span><span class="s4"># actual time difference between ticks</span>
+        <span class="s1">framerate_limit = </span><span class="s5">5</span>
+        <span class="s1">delta = </span><span class="s5">50  </span><span class="s4"># allowable error in milliseconds</span>
+
+        <span class="s4"># Testing Clock Initialization</span>
+        <span class="s1">c = Clock()</span>
+        <span class="s1">self.assertEqual(c.get_rawtime()</span><span class="s0">, </span><span class="s5">0</span><span class="s1">)</span>
+
+        <span class="s4"># Testing Raw Time with Frame Delay</span>
+        <span class="s0">for </span><span class="s1">f </span><span class="s0">in </span><span class="s1">range(iterations):</span>
+            <span class="s1">time.sleep(delay)</span>
+            <span class="s1">c.tick(framerate_limit)</span>
+            <span class="s1">c1 = c.get_rawtime()</span>
+            <span class="s1">self.assertAlmostEqual(delay_miliseconds</span><span class="s0">, </span><span class="s1">c1</span><span class="s0">, </span><span class="s1">delta=delta)</span>
+
+        <span class="s4"># Testing get_rawtime() = get_time()</span>
+        <span class="s0">for </span><span class="s1">f </span><span class="s0">in </span><span class="s1">range(iterations):</span>
+            <span class="s1">time.sleep(delay)</span>
+            <span class="s1">c.tick()</span>
+            <span class="s1">c1 = c.get_rawtime()</span>
+            <span class="s1">c2 = c.get_time()</span>
+            <span class="s1">self.assertAlmostEqual(c1</span><span class="s0">, </span><span class="s1">c2</span><span class="s0">, </span><span class="s1">delta=delta)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_time(self):</span>
+        <span class="s4"># Testing parameters</span>
+        <span class="s1">delay = </span><span class="s5">0.1  </span><span class="s4"># seconds</span>
+        <span class="s1">delay_miliseconds = delay * (</span><span class="s5">10</span><span class="s1">**</span><span class="s5">3</span><span class="s1">)</span>
+        <span class="s1">iterations = </span><span class="s5">10</span>
+        <span class="s1">delta = </span><span class="s5">50  </span><span class="s4"># milliseconds</span>
+
+        <span class="s4"># Testing Clock Initialization</span>
+        <span class="s1">c = Clock()</span>
+        <span class="s1">self.assertEqual(c.get_time()</span><span class="s0">, </span><span class="s5">0</span><span class="s1">)</span>
+
+        <span class="s4"># Testing within delay parameter range</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(iterations):</span>
+            <span class="s1">time.sleep(delay)</span>
+            <span class="s1">c.tick()</span>
+            <span class="s1">c1 = c.get_time()</span>
+            <span class="s1">self.assertAlmostEqual(delay_miliseconds</span><span class="s0">, </span><span class="s1">c1</span><span class="s0">, </span><span class="s1">delta=delta)</span>
+
+        <span class="s4"># Comparing get_time() results with the 'time' module</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(iterations):</span>
+            <span class="s1">t0 = time.time()</span>
+            <span class="s1">time.sleep(delay)</span>
+            <span class="s1">c.tick()</span>
+            <span class="s1">t1 = time.time()</span>
+            <span class="s1">c1 = c.get_time()  </span><span class="s4"># elapsed time in milliseconds</span>
+            <span class="s1">d0 = (t1 - t0) * (</span>
+                <span class="s5">10</span><span class="s1">**</span><span class="s5">3</span>
+            <span class="s1">)  </span><span class="s4">#'time' module elapsed time converted to milliseconds</span>
+            <span class="s1">self.assertAlmostEqual(d0</span><span class="s0">, </span><span class="s1">c1</span><span class="s0">, </span><span class="s1">delta=delta)</span>
+
+    <span class="s0">def </span><span class="s1">test_tick(self):</span>
+        <span class="s3">&quot;&quot;&quot;Tests time.Clock.tick()&quot;&quot;&quot;</span>
+        <span class="s2">&quot;&quot;&quot; 
+        Loops with a set delay a few times then checks what tick reports to 
+        verify its accuracy. Then calls tick with a desired frame-rate and 
+        verifies it is not faster than the desired frame-rate nor is it taking 
+        a dramatically long time to complete 
+        &quot;&quot;&quot;</span>
+
+        <span class="s4"># Adjust this value to increase the acceptable sleep jitter</span>
+        <span class="s1">epsilon = </span><span class="s5">1.5</span>
+        <span class="s4"># Adjust this value to increase the acceptable locked frame-rate jitter</span>
+        <span class="s1">epsilon2 = </span><span class="s5">0.3</span>
+        <span class="s4"># adjust this value to increase the acceptable frame-rate margin</span>
+        <span class="s1">epsilon3 = </span><span class="s5">20</span>
+        <span class="s1">testing_framerate = </span><span class="s5">60</span>
+        <span class="s1">milliseconds = </span><span class="s5">5.0</span>
+
+        <span class="s1">collection = []</span>
+        <span class="s1">c = Clock()</span>
+
+        <span class="s4"># verify time.Clock.tick() will measure the time correctly</span>
+        <span class="s1">c.tick()</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s5">100</span><span class="s1">):</span>
+            <span class="s1">time.sleep(milliseconds / </span><span class="s5">1000</span><span class="s1">)  </span><span class="s4"># convert to seconds</span>
+            <span class="s1">collection.append(c.tick())</span>
+
+        <span class="s4"># removes the first highest and lowest value</span>
+        <span class="s0">for </span><span class="s1">outlier </span><span class="s0">in </span><span class="s1">[min(collection)</span><span class="s0">, </span><span class="s1">max(collection)]:</span>
+            <span class="s0">if </span><span class="s1">outlier != milliseconds:</span>
+                <span class="s1">collection.remove(outlier)</span>
+
+        <span class="s1">average_time = float(sum(collection)) / len(collection)</span>
+
+        <span class="s4"># assert the deviation from the intended frame-rate is within the</span>
+        <span class="s4"># acceptable amount (the delay is not taking a dramatically long time)</span>
+        <span class="s1">self.assertAlmostEqual(average_time</span><span class="s0">, </span><span class="s1">milliseconds</span><span class="s0">, </span><span class="s1">delta=epsilon)</span>
+
+        <span class="s4"># verify tick will control the frame-rate</span>
+
+        <span class="s1">c = Clock()</span>
+        <span class="s1">collection = []</span>
+
+        <span class="s1">start = time.time()</span>
+
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(testing_framerate):</span>
+            <span class="s1">collection.append(c.tick(testing_framerate))</span>
+
+        <span class="s4"># remove the highest and lowest outliers</span>
+        <span class="s0">for </span><span class="s1">outlier </span><span class="s0">in </span><span class="s1">[min(collection)</span><span class="s0">, </span><span class="s1">max(collection)]:</span>
+            <span class="s0">if </span><span class="s1">outlier != round(</span><span class="s5">1000 </span><span class="s1">/ testing_framerate):</span>
+                <span class="s1">collection.remove(outlier)</span>
+
+        <span class="s1">end = time.time()</span>
+
+        <span class="s4"># Since calling tick with a desired fps will prevent the program from</span>
+        <span class="s4"># running at greater than the given fps, 100 iterations at 100 fps</span>
+        <span class="s4"># should last no less than 1 second</span>
+        <span class="s1">self.assertAlmostEqual(end - start</span><span class="s0">, </span><span class="s5">1</span><span class="s0">, </span><span class="s1">delta=epsilon2)</span>
+
+        <span class="s1">average_tick_time = float(sum(collection)) / len(collection)</span>
+        <span class="s1">self.assertAlmostEqual(</span>
+            <span class="s5">1000 </span><span class="s1">/ average_tick_time</span><span class="s0">, </span><span class="s1">testing_framerate</span><span class="s0">, </span><span class="s1">delta=epsilon3</span>
+        <span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_tick_busy_loop(self):</span>
+        <span class="s3">&quot;&quot;&quot;Test tick_busy_loop&quot;&quot;&quot;</span>
+
+        <span class="s1">c = Clock()</span>
+
+        <span class="s4"># Test whether the return value of tick_busy_loop is equal to</span>
+        <span class="s4"># (FPS is accurate) or greater than (slower than the set FPS)</span>
+        <span class="s4"># with a small margin for error based on differences in how this</span>
+        <span class="s4"># test runs in practise - it either sometimes runs slightly fast</span>
+        <span class="s4"># or seems to based on a rounding error.</span>
+        <span class="s1">second_length = </span><span class="s5">1000</span>
+        <span class="s1">shortfall_tolerance = </span><span class="s5">1  </span><span class="s4"># (ms) The amount of time a tick is allowed to run short of, to account for underlying rounding errors</span>
+        <span class="s1">sample_fps = </span><span class="s5">40</span>
+
+        <span class="s1">self.assertGreaterEqual(</span>
+            <span class="s1">c.tick_busy_loop(sample_fps)</span><span class="s0">,</span>
+            <span class="s1">(second_length / sample_fps) - shortfall_tolerance</span><span class="s0">,</span>
+        <span class="s1">)</span>
+        <span class="s1">pygame.time.wait(</span><span class="s5">10</span><span class="s1">)  </span><span class="s4"># incur delay between ticks that's faster than sample_fps</span>
+        <span class="s1">self.assertGreaterEqual(</span>
+            <span class="s1">c.tick_busy_loop(sample_fps)</span><span class="s0">,</span>
+            <span class="s1">(second_length / sample_fps) - shortfall_tolerance</span><span class="s0">,</span>
+        <span class="s1">)</span>
+        <span class="s1">pygame.time.wait(</span><span class="s5">200</span><span class="s1">)  </span><span class="s4"># incur delay between ticks that's slower than sample_fps</span>
+        <span class="s1">self.assertGreaterEqual(</span>
+            <span class="s1">c.tick_busy_loop(sample_fps)</span><span class="s0">,</span>
+            <span class="s1">(second_length / sample_fps) - shortfall_tolerance</span><span class="s0">,</span>
+        <span class="s1">)</span>
+
+        <span class="s1">high_fps = </span><span class="s5">500</span>
+        <span class="s1">self.assertGreaterEqual(</span>
+            <span class="s1">c.tick_busy_loop(high_fps)</span><span class="s0">, </span><span class="s1">(second_length / high_fps) - shortfall_tolerance</span>
+        <span class="s1">)</span>
+
+        <span class="s1">low_fps = </span><span class="s5">1</span>
+        <span class="s1">self.assertGreaterEqual(</span>
+            <span class="s1">c.tick_busy_loop(low_fps)</span><span class="s0">, </span><span class="s1">(second_length / low_fps) - shortfall_tolerance</span>
+        <span class="s1">)</span>
+
+        <span class="s1">low_non_factor_fps = </span><span class="s5">35  </span><span class="s4"># 1000/35 makes 28.5714285714</span>
+        <span class="s1">frame_length_without_decimal_places = int(</span>
+            <span class="s1">second_length / low_non_factor_fps</span>
+        <span class="s1">)  </span><span class="s4"># Same result as math.floor</span>
+        <span class="s1">self.assertGreaterEqual(</span>
+            <span class="s1">c.tick_busy_loop(low_non_factor_fps)</span><span class="s0">,</span>
+            <span class="s1">frame_length_without_decimal_places - shortfall_tolerance</span><span class="s0">,</span>
+        <span class="s1">)</span>
+
+        <span class="s1">high_non_factor_fps = </span><span class="s5">750  </span><span class="s4"># 1000/750 makes 1.3333...</span>
+        <span class="s1">frame_length_without_decimal_places_2 = int(</span>
+            <span class="s1">second_length / high_non_factor_fps</span>
+        <span class="s1">)  </span><span class="s4"># Same result as math.floor</span>
+        <span class="s1">self.assertGreaterEqual(</span>
+            <span class="s1">c.tick_busy_loop(high_non_factor_fps)</span><span class="s0">,</span>
+            <span class="s1">frame_length_without_decimal_places_2 - shortfall_tolerance</span><span class="s0">,</span>
+        <span class="s1">)</span>
+
+        <span class="s1">zero_fps = </span><span class="s5">0</span>
+        <span class="s1">self.assertEqual(c.tick_busy_loop(zero_fps)</span><span class="s0">, </span><span class="s5">0</span><span class="s1">)</span>
+
+        <span class="s4"># Check behaviour of unexpected values</span>
+
+        <span class="s1">negative_fps = -</span><span class="s5">1</span>
+        <span class="s1">self.assertEqual(c.tick_busy_loop(negative_fps)</span><span class="s0">, </span><span class="s5">0</span><span class="s1">)</span>
+
+        <span class="s1">fractional_fps = </span><span class="s5">32.75</span>
+        <span class="s1">frame_length_without_decimal_places_3 = int(second_length / fractional_fps)</span>
+        <span class="s1">self.assertGreaterEqual(</span>
+            <span class="s1">c.tick_busy_loop(fractional_fps)</span><span class="s0">,</span>
+            <span class="s1">frame_length_without_decimal_places_3 - shortfall_tolerance</span><span class="s0">,</span>
+        <span class="s1">)</span>
+
+        <span class="s1">bool_fps = </span><span class="s0">True</span>
+        <span class="s1">self.assertGreaterEqual(</span>
+            <span class="s1">c.tick_busy_loop(bool_fps)</span><span class="s0">, </span><span class="s1">(second_length / bool_fps) - shortfall_tolerance</span>
+        <span class="s1">)</span>
+
+
+<span class="s0">class </span><span class="s1">TimeModuleTest(unittest.TestCase):</span>
+    <span class="s1">__tags__ = [</span><span class="s2">&quot;timing&quot;</span><span class="s1">]</span>
+
+    <span class="s0">def </span><span class="s1">test_delay(self):</span>
+        <span class="s3">&quot;&quot;&quot;Tests time.delay() function.&quot;&quot;&quot;</span>
+        <span class="s1">millis = </span><span class="s5">50  </span><span class="s4"># millisecond to wait on each iteration</span>
+        <span class="s1">iterations = </span><span class="s5">20  </span><span class="s4"># number of iterations</span>
+        <span class="s1">delta = </span><span class="s5">150  </span><span class="s4"># Represents acceptable margin of error for wait in ms</span>
+        <span class="s4"># Call checking function</span>
+        <span class="s1">self._wait_delay_check(pygame.time.delay</span><span class="s0">, </span><span class="s1">millis</span><span class="s0">, </span><span class="s1">iterations</span><span class="s0">, </span><span class="s1">delta)</span>
+        <span class="s4"># After timing behaviour, check argument type exceptions</span>
+        <span class="s1">self._type_error_checks(pygame.time.delay)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_ticks(self):</span>
+        <span class="s3">&quot;&quot;&quot;Tests time.get_ticks()&quot;&quot;&quot;</span>
+        <span class="s2">&quot;&quot;&quot; 
+         Iterates and delays for arbitrary amount of time for each iteration, 
+         check get_ticks to equal correct gap time 
+        &quot;&quot;&quot;</span>
+        <span class="s1">iterations = </span><span class="s5">20</span>
+        <span class="s1">millis = </span><span class="s5">50</span>
+        <span class="s1">delta = </span><span class="s5">15  </span><span class="s4"># Acceptable margin of error in ms</span>
+        <span class="s4"># Assert return type to be int</span>
+        <span class="s1">self.assertTrue(type(pygame.time.get_ticks()) == int)</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(iterations):</span>
+            <span class="s1">curr_ticks = pygame.time.get_ticks()  </span><span class="s4"># Save current tick count</span>
+            <span class="s1">curr_time = time.time()  </span><span class="s4"># Save current time</span>
+            <span class="s1">pygame.time.delay(millis)  </span><span class="s4"># Delay for millis</span>
+            <span class="s4"># Time and Ticks difference from start of the iteration</span>
+            <span class="s1">time_diff = round((time.time() - curr_time) * </span><span class="s5">1000</span><span class="s1">)</span>
+            <span class="s1">ticks_diff = pygame.time.get_ticks() - curr_ticks</span>
+            <span class="s4"># Assert almost equality of the ticking time and time difference</span>
+            <span class="s1">self.assertAlmostEqual(ticks_diff</span><span class="s0">, </span><span class="s1">time_diff</span><span class="s0">, </span><span class="s1">delta=delta)</span>
+
+    <span class="s0">def </span><span class="s1">test_set_timer(self):</span>
+        <span class="s3">&quot;&quot;&quot;Tests time.set_timer()&quot;&quot;&quot;</span>
+        <span class="s2">&quot;&quot;&quot; 
+        Tests if a timer will post the correct amount of eventid events in 
+        the specified delay. Test is posting event objects work. 
+        Also tests if setting milliseconds to 0 stops the timer and if 
+        the once argument and repeat arguments work. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">pygame.init()</span>
+        <span class="s1">TIMER_EVENT_TYPE = pygame.event.custom_type()</span>
+        <span class="s1">timer_event = pygame.event.Event(TIMER_EVENT_TYPE)</span>
+        <span class="s1">delta = </span><span class="s5">50</span>
+        <span class="s1">timer_delay = </span><span class="s5">100</span>
+        <span class="s1">test_number = </span><span class="s5">8  </span><span class="s4"># Number of events to read for the test</span>
+        <span class="s1">events = </span><span class="s5">0  </span><span class="s4"># Events read</span>
+
+        <span class="s1">pygame.event.clear()</span>
+        <span class="s1">pygame.time.set_timer(TIMER_EVENT_TYPE</span><span class="s0">, </span><span class="s1">timer_delay)</span>
+
+        <span class="s4"># Test that 'test_number' events are posted in the right amount of time</span>
+        <span class="s1">t1 = pygame.time.get_ticks()</span>
+        <span class="s1">max_test_time = t1 + timer_delay * test_number + delta</span>
+        <span class="s0">while </span><span class="s1">events &lt; test_number:</span>
+            <span class="s0">for </span><span class="s1">event </span><span class="s0">in </span><span class="s1">pygame.event.get():</span>
+                <span class="s0">if </span><span class="s1">event == timer_event:</span>
+                    <span class="s1">events += </span><span class="s5">1</span>
+
+            <span class="s4"># The test takes too much time</span>
+            <span class="s0">if </span><span class="s1">pygame.time.get_ticks() &gt; max_test_time:</span>
+                <span class="s0">break</span>
+
+        <span class="s1">pygame.time.set_timer(TIMER_EVENT_TYPE</span><span class="s0">, </span><span class="s5">0</span><span class="s1">)</span>
+        <span class="s1">t2 = pygame.time.get_ticks()</span>
+        <span class="s4"># Is the number ef events and the timing right?</span>
+        <span class="s1">self.assertEqual(events</span><span class="s0">, </span><span class="s1">test_number)</span>
+        <span class="s1">self.assertAlmostEqual(timer_delay * test_number</span><span class="s0">, </span><span class="s1">t2 - t1</span><span class="s0">, </span><span class="s1">delta=delta)</span>
+
+        <span class="s4"># Test that the timer stopped when set with 0ms delay.</span>
+        <span class="s1">pygame.time.delay(</span><span class="s5">200</span><span class="s1">)</span>
+        <span class="s1">self.assertNotIn(timer_event</span><span class="s0">, </span><span class="s1">pygame.event.get())</span>
+
+        <span class="s4"># Test that the old timer for an event is deleted when a new timer is set</span>
+        <span class="s1">pygame.time.set_timer(TIMER_EVENT_TYPE</span><span class="s0">, </span><span class="s1">timer_delay)</span>
+        <span class="s1">pygame.time.delay(int(timer_delay * </span><span class="s5">3.5</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(pygame.event.get().count(timer_event)</span><span class="s0">, </span><span class="s5">3</span><span class="s1">)</span>
+        <span class="s1">pygame.time.set_timer(TIMER_EVENT_TYPE</span><span class="s0">, </span><span class="s1">timer_delay * </span><span class="s5">10</span><span class="s1">)  </span><span class="s4"># long wait time</span>
+        <span class="s1">pygame.time.delay(timer_delay * </span><span class="s5">5</span><span class="s1">)</span>
+        <span class="s1">self.assertNotIn(timer_event</span><span class="s0">, </span><span class="s1">pygame.event.get())</span>
+        <span class="s1">pygame.time.set_timer(TIMER_EVENT_TYPE</span><span class="s0">, </span><span class="s1">timer_delay * </span><span class="s5">3</span><span class="s1">)</span>
+        <span class="s1">pygame.time.delay(timer_delay * </span><span class="s5">7</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(pygame.event.get().count(timer_event)</span><span class="s0">, </span><span class="s5">2</span><span class="s1">)</span>
+        <span class="s1">pygame.time.set_timer(TIMER_EVENT_TYPE</span><span class="s0">, </span><span class="s1">timer_delay)</span>
+        <span class="s1">pygame.time.delay(int(timer_delay * </span><span class="s5">5.5</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(pygame.event.get().count(timer_event)</span><span class="s0">, </span><span class="s5">5</span><span class="s1">)</span>
+
+        <span class="s4"># Test that the loops=True works</span>
+        <span class="s1">pygame.time.set_timer(TIMER_EVENT_TYPE</span><span class="s0">, </span><span class="s5">10</span><span class="s0">, True</span><span class="s1">)</span>
+        <span class="s1">pygame.time.delay(</span><span class="s5">40</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(pygame.event.get().count(timer_event)</span><span class="s0">, </span><span class="s5">1</span><span class="s1">)</span>
+
+        <span class="s4"># Test a variety of event objects, test loops argument</span>
+        <span class="s1">events_to_test = [</span>
+            <span class="s1">pygame.event.Event(TIMER_EVENT_TYPE)</span><span class="s0">,</span>
+            <span class="s1">pygame.event.Event(</span>
+                <span class="s1">TIMER_EVENT_TYPE</span><span class="s0">, </span><span class="s1">foo=</span><span class="s2">&quot;9gwz5&quot;</span><span class="s0">, </span><span class="s1">baz=</span><span class="s5">12</span><span class="s0">, </span><span class="s1">lol=[</span><span class="s5">124</span><span class="s0">, </span><span class="s1">(</span><span class="s5">34</span><span class="s0">, </span><span class="s2">&quot;&quot;</span><span class="s1">)]</span>
+            <span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">pygame.event.Event(pygame.KEYDOWN</span><span class="s0">, </span><span class="s1">key=pygame.K_a</span><span class="s0">, </span><span class="s1">unicode=</span><span class="s2">&quot;a&quot;</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s1">]</span>
+        <span class="s1">repeat = </span><span class="s5">3</span>
+        <span class="s1">millis = </span><span class="s5">50</span>
+        <span class="s0">for </span><span class="s1">e </span><span class="s0">in </span><span class="s1">events_to_test:</span>
+            <span class="s1">pygame.time.set_timer(e</span><span class="s0">, </span><span class="s1">millis</span><span class="s0">, </span><span class="s1">loops=repeat)</span>
+            <span class="s1">pygame.time.delay(</span><span class="s5">2 </span><span class="s1">* millis * repeat)</span>
+            <span class="s1">self.assertEqual(pygame.event.get().count(e)</span><span class="s0">, </span><span class="s1">repeat)</span>
+        <span class="s1">pygame.quit()</span>
+
+    <span class="s0">def </span><span class="s1">test_wait(self):</span>
+        <span class="s3">&quot;&quot;&quot;Tests time.wait() function.&quot;&quot;&quot;</span>
+        <span class="s1">millis = </span><span class="s5">100  </span><span class="s4"># millisecond to wait on each iteration</span>
+        <span class="s1">iterations = </span><span class="s5">10  </span><span class="s4"># number of iterations</span>
+        <span class="s1">delta = </span><span class="s5">50  </span><span class="s4"># Represents acceptable margin of error for wait in ms</span>
+        <span class="s4"># Call checking function</span>
+        <span class="s1">self._wait_delay_check(pygame.time.wait</span><span class="s0">, </span><span class="s1">millis</span><span class="s0">, </span><span class="s1">iterations</span><span class="s0">, </span><span class="s1">delta)</span>
+        <span class="s4"># After timing behaviour, check argument type exceptions</span>
+        <span class="s1">self._type_error_checks(pygame.time.wait)</span>
+
+    <span class="s0">def </span><span class="s1">_wait_delay_check(self</span><span class="s0">, </span><span class="s1">func_to_check</span><span class="s0">, </span><span class="s1">millis</span><span class="s0">, </span><span class="s1">iterations</span><span class="s0">, </span><span class="s1">delta):</span>
+        <span class="s3">&quot;&quot;&quot; &quot; 
+        call func_to_check(millis) &quot;iterations&quot; times and check each time if 
+        function &quot;waited&quot; for given millisecond (+- delta). At the end, take 
+        average time for each call (whole_duration/iterations), which should 
+        be equal to millis (+- delta - acceptable margin of error). 
+        *Created to avoid code duplication during delay and wait tests 
+        &quot;&quot;&quot;</span>
+        <span class="s4"># take starting time for duration calculation</span>
+        <span class="s1">start_time = time.time()</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(iterations):</span>
+            <span class="s1">wait_time = func_to_check(millis)</span>
+            <span class="s4"># Check equality of wait_time and millis with margin of error delta</span>
+            <span class="s1">self.assertAlmostEqual(wait_time</span><span class="s0">, </span><span class="s1">millis</span><span class="s0">, </span><span class="s1">delta=delta)</span>
+        <span class="s1">stop_time = time.time()</span>
+        <span class="s4"># Cycle duration in millisecond</span>
+        <span class="s1">duration = round((stop_time - start_time) * </span><span class="s5">1000</span><span class="s1">)</span>
+        <span class="s4"># Duration/Iterations should be (almost) equal to predefined millis</span>
+        <span class="s1">self.assertAlmostEqual(duration / iterations</span><span class="s0">, </span><span class="s1">millis</span><span class="s0">, </span><span class="s1">delta=delta)</span>
+
+    <span class="s0">def </span><span class="s1">_type_error_checks(self</span><span class="s0">, </span><span class="s1">func_to_check):</span>
+        <span class="s3">&quot;&quot;&quot;Checks 3 TypeError (float, tuple, string) for the func_to_check&quot;&quot;&quot;</span>
+        <span class="s2">&quot;&quot;&quot;Intended for time.delay and time.wait functions&quot;&quot;&quot;</span>
+        <span class="s4"># Those methods throw no exceptions on negative integers</span>
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">func_to_check</span><span class="s0">, </span><span class="s5">0.1</span><span class="s1">)  </span><span class="s4"># check float</span>
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">pygame.time.delay</span><span class="s0">, </span><span class="s1">(</span><span class="s5">0</span><span class="s0">, </span><span class="s5">1</span><span class="s1">))  </span><span class="s4"># check tuple</span>
+        <span class="s1">self.assertRaises(TypeError</span><span class="s0">, </span><span class="s1">pygame.time.delay</span><span class="s0">, </span><span class="s2">&quot;10&quot;</span><span class="s1">)  </span><span class="s4"># check string</span>
+
+
+<span class="s4">###############################################################################</span>
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s2">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">unittest.main()</span>
+</pre>
+</body>
+</html>

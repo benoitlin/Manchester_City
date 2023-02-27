@@ -1,0 +1,125 @@
+<html>
+<head>
+<title>tests.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+tests.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.tests`</span>
+<span class="s0">===================</span>
+
+<span class="s0">.. module:: pygame.tests</span>
+   <span class="s0">:synopsis: Pygame unit test suite package</span>
+
+<span class="s0">| :sl:`Pygame unit test suite package`</span>
+
+<span class="s0">A quick way to run the test suite package from the command line is to import</span>
+<span class="s0">the go submodule with the Python -m option:</span>
+
+<span class="s0">::</span>
+
+  <span class="s0">python -m pygame.tests [&lt;test options&gt;]</span>
+
+<span class="s0">Command line option --help displays a usage message. Available options</span>
+<span class="s0">correspond to the :func:`pygame.tests.run` arguments.</span>
+
+<span class="s0">The xxxx_test submodules of the tests package are unit test suites for</span>
+<span class="s0">individual parts of pygame. Each can also be run as a main program. This is</span>
+<span class="s0">useful if the test, such as cdrom_test, is interactive.</span>
+
+<span class="s0">For pygame development the test suite can be run from a pygame distribution</span>
+<span class="s0">root directory. Program ``run_tests.py`` is provided for convenience, though</span>
+<span class="s0">test/go.py can be run directly.</span>
+
+<span class="s0">Module level tags control which modules are included in a unit test run. Tags</span>
+<span class="s0">are assigned to a unit test module with a corresponding &lt;name&gt;_tags.py module.</span>
+<span class="s0">The tags module has the global __tags__, a list of tag names. For example,</span>
+<span class="s0">``cdrom_test.py`` has a tag file ``cdrom_tags.py`` containing a tags list that</span>
+<span class="s0">has the 'interactive' string. The 'interactive' tag indicates ``cdrom_test.py``</span>
+<span class="s0">expects user input. It is excluded from a ``run_tests.py`` or</span>
+<span class="s0">``pygame.tests.go`` run. Two other tags that are excluded are 'ignore' and</span>
+<span class="s0">'subprocess_ignore'. These two tags indicate unit tests that will not run on a</span>
+<span class="s0">particular platform, or for which no corresponding pygame module is available.</span>
+<span class="s0">The test runner will list each excluded module along with the tag responsible.</span>
+
+<span class="s0">.. function:: run</span>
+
+   <span class="s0">| :sl:`Run the pygame unit test suite`</span>
+   <span class="s0">| :sg:`run(*args, **kwds) -&gt; tuple`</span>
+
+   <span class="s0">Positional arguments (optional):</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">The names of tests to include. If omitted then all tests are run. Test names</span>
+       <span class="s0">need not include the trailing '_test'.</span>
+
+   <span class="s0">Keyword arguments:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">incomplete - fail incomplete tests (default False)</span>
+       <span class="s0">nosubprocess - run all test suites in the current process</span>
+                      <span class="s0">(default False, use separate subprocesses)</span>
+       <span class="s0">dump - dump failures/errors as dict ready to eval (default False)</span>
+       <span class="s0">file - if provided, the name of a file into which to dump failures/errors</span>
+       <span class="s0">timings - if provided, the number of times to run each individual test to</span>
+                 <span class="s0">get an average run time (default is run each test once)</span>
+       <span class="s0">exclude - A list of TAG names to exclude from the run</span>
+       <span class="s0">show_output - show silenced stderr/stdout on errors (default False)</span>
+       <span class="s0">all - dump all results, not just errors (default False)</span>
+       <span class="s0">randomize - randomize order of tests (default False)</span>
+       <span class="s0">seed - if provided, a seed randomizer integer</span>
+       <span class="s0">multi_thread - if provided, the number of THREADS in which to run</span>
+                      <span class="s0">subprocessed tests</span>
+       <span class="s0">time_out - if subprocess is True then the time limit in seconds before</span>
+                  <span class="s0">killing a test (default 30)</span>
+       <span class="s0">fake - if provided, the name of the fake tests package in the</span>
+              <span class="s0">run_tests__tests subpackage to run instead of the normal</span>
+              <span class="s0">pygame tests</span>
+       <span class="s0">python - the path to a python executable to run subprocessed tests</span>
+                <span class="s0">(default sys.executable)</span>
+
+   <span class="s0">Return value:</span>
+
+   <span class="s0">::</span>
+
+       <span class="s0">A tuple of total number of tests run, dictionary of error information.</span>
+       <span class="s0">The dictionary is empty if no errors were recorded.</span>
+
+   <span class="s0">By default individual test modules are run in separate subprocesses. This</span>
+   <span class="s0">recreates normal pygame usage where ``pygame.init()`` and ``pygame.quit()``</span>
+   <span class="s0">are called only once per program execution, and avoids unfortunate</span>
+   <span class="s0">interactions between test modules. Also, a time limit is placed on test</span>
+   <span class="s0">execution, so frozen tests are killed when their time allotment expired. Use</span>
+   <span class="s0">the single process option if threading is not working properly or if tests</span>
+   <span class="s0">are taking too long. It is not guaranteed that all tests will pass in single</span>
+   <span class="s0">process mode.</span>
+
+   <span class="s0">Tests are run in a randomized order if the randomize argument is True or a</span>
+   <span class="s0">seed argument is provided. If no seed integer is provided then the system</span>
+   <span class="s0">time is used.</span>
+
+   <span class="s0">Individual test modules may have a __tags__ attribute, a list of tag strings</span>
+   <span class="s0">used to selectively omit modules from a run. By default only 'interactive'</span>
+   <span class="s0">modules such as cdrom_test are ignored. An interactive module must be run</span>
+   <span class="s0">from the console as a Python program.</span>
+
+   <span class="s0">This function can only be called once per Python session. It is not</span>
+   <span class="s0">reentrant.</span>
+
+   <span class="s0">.. ## pygame.tests.run ##</span>
+
+<span class="s0">.. ## pygame.tests ##</span>
+</pre>
+</body>
+</html>

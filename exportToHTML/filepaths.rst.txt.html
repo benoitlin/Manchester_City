@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>filepaths.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+filepaths.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">File Path Function Arguments</span>
+<span class="s0">============================</span>
+
+<span class="s0">A pygame function or method which takes a file path argument will accept</span>
+<span class="s0">either a Unicode or a byte (8-bit or ASCII character) string.</span>
+<span class="s0">Unicode strings are translated to Python's default filesystem encoding,</span>
+<span class="s0">as returned by sys.getfilesystemencoding().  A Unicode code point</span>
+<span class="s0">above U+FFFF (``\uFFFF``) can be coded directly with a 32-bit escape sequences</span>
+<span class="s0">(``\Uxxxxxxxx``), even for Python interpreters built with an UCS-2</span>
+<span class="s0">(16-bit character) Unicode type.  Byte strings are passed</span>
+<span class="s0">to the operating system unchanged.</span>
+
+<span class="s0">Null characters (``\x00``) are not permitted in the path, raising an exception.</span>
+<span class="s0">An exception is also raised if an Unicode file path cannot be encoded.</span>
+<span class="s0">How UTF-16 surrogate codes are handled is Python-interpreter-dependent.</span>
+<span class="s0">Use UTF-32 code points and 32-bit escape sequences instead.</span>
+<span class="s0">The exception types are function-dependent.</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<html>
+<head>
+<title>camera.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+camera.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.camera`</span>
+<span class="s0">====================</span>
+
+<span class="s0">.. module:: pygame.camera</span>
+   <span class="s0">:synopsis: pygame module for camera use</span>
+
+<span class="s0">| :sl:`pygame module for camera use`</span>
+
+<span class="s0">Pygame currently supports Linux (V4L2) and Windows (MSMF) cameras natively,</span>
+<span class="s0">with wider platform support available via an integrated OpenCV backend.</span>
+
+<span class="s0">.. versionadded:: 2.0.2 Windows native camera support</span>
+<span class="s0">.. versionadded:: 2.0.3 New OpenCV backends</span>
+
+<span class="s0">EXPERIMENTAL!: This API may change or disappear in later pygame releases. If</span>
+<span class="s0">you use this, your code will very likely break with the next pygame release.</span>
+
+<span class="s0">The Bayer to ``RGB`` function is based on:</span>
+
+<span class="s0">::</span>
+
+ <span class="s0">Sonix SN9C101 based webcam basic I/F routines</span>
+ <span class="s0">Copyright (C) 2004 Takafumi Mizuno &lt;taka-qce@ls-a.jp&gt;</span>
+ <span class="s0">Redistribution and use in source and binary forms, with or without</span>
+ <span class="s0">modification, are permitted provided that the following conditions</span>
+ <span class="s0">are met:</span>
+ <span class="s0">1. Redistributions of source code must retain the above copyright</span>
+    <span class="s0">notice, this list of conditions and the following disclaimer.</span>
+ <span class="s0">2. Redistributions in binary form must reproduce the above copyright</span>
+    <span class="s0">notice, this list of conditions and the following disclaimer in the</span>
+    <span class="s0">documentation and/or other materials provided with the distribution.</span>
+ <span class="s0">THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND</span>
+ <span class="s0">ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</span>
+ <span class="s0">IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</span>
+ <span class="s0">ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</span>
+ <span class="s0">FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</span>
+ <span class="s0">DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</span>
+ <span class="s0">OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</span>
+ <span class="s0">HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</span>
+ <span class="s0">LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</span>
+ <span class="s0">OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</span>
+ <span class="s0">SUCH DAMAGE.</span>
+
+<span class="s0">New in pygame 1.9.0.</span>
+
+<span class="s0">.. function:: init</span>
+
+   <span class="s0">| :sl:`Module init`</span>
+   <span class="s0">| :sg:`init(backend = None) -&gt; None`</span>
+
+   <span class="s0">This function starts up the camera module, choosing the best webcam backend</span>
+   <span class="s0">it can find for your system. This is not guaranteed to succeed, and may even</span>
+   <span class="s0">attempt to import third party modules, like `OpenCV`. If you want to</span>
+   <span class="s0">override its backend choice, you can call pass the name of the backend you</span>
+   <span class="s0">want into this function. More about backends in</span>
+   <span class="s0">:func:`get_backends()`.</span>
+
+   <span class="s0">.. versionchanged:: 2.0.3 Option to explicitly select backend</span>
+
+   <span class="s0">.. ## pygame.camera.init ##</span>
+
+<span class="s0">.. function:: get_backends</span>
+
+   <span class="s0">| :sl:`Get the backends supported on this system`</span>
+   <span class="s0">| :sg:`get_backends() -&gt; [str]`</span>
+
+   <span class="s0">This function returns every backend it thinks has a possibility of working</span>
+   <span class="s0">on your system, in order of priority.</span>
+
+   <span class="s0">pygame.camera Backends:</span>
+   <span class="s0">::</span>
+
+      <span class="s0">Backend           OS        Description</span>
+      <span class="s0">---------------------------------------------------------------------------------</span>
+      <span class="s0">_camera (MSMF)    Windows   Builtin, works on Windows 8+ Python3</span>
+      <span class="s0">_camera (V4L2)    Linux     Builtin</span>
+      <span class="s0">OpenCV            Any       Uses `opencv-python` module, can't enumerate cameras</span>
+      <span class="s0">OpenCV-Mac        Mac       Same as OpenCV, but has camera enumeration</span>
+      <span class="s0">VideoCapture      Windows   Uses abandoned `VideoCapture` module, can't enumerate</span>
+                                  <span class="s0">cameras, may be removed in the future</span>
+
+   <span class="s0">There are two main differences among backends.</span>
+
+   <span class="s0">The _camera backends are built in to pygame itself, and require no third</span>
+   <span class="s0">party imports. All the other backends do. For the OpenCV and VideoCapture</span>
+   <span class="s0">backends, those modules need to be installed on your system.</span>
+
+   <span class="s0">The other big difference is &quot;camera enumeration.&quot; Some backends don't have</span>
+   <span class="s0">a way to list out camera names, or even the number of cameras on the</span>
+   <span class="s0">system. In these cases, :func:`list_cameras()` will return</span>
+   <span class="s0">something like ``[0]``. If you know you have multiple cameras on the </span>
+   <span class="s0">system, these backend ports will pass through a &quot;camera index number&quot; </span>
+   <span class="s0">through if you use that as the ``device`` parameter.</span>
+
+   <span class="s0">.. versionadded:: 2.0.3</span>
+
+   <span class="s0">.. ## pygame.camera.get_backends ##</span>
+
+<span class="s0">.. function:: colorspace</span>
+
+   <span class="s0">| :sl:`Surface colorspace conversion`</span>
+   <span class="s0">| :sg:`colorspace(Surface, format, DestSurface = None) -&gt; Surface`</span>
+
+   <span class="s0">Allows for conversion from &quot;RGB&quot; to a destination colorspace of &quot;HSV&quot; or</span>
+   <span class="s0">&quot;YUV&quot;. The source and destination surfaces must be the same size and pixel</span>
+   <span class="s0">depth. This is useful for computer vision on devices with limited processing</span>
+   <span class="s0">power. Capture as small of an image as possible, ``transform.scale()`` it</span>
+   <span class="s0">even smaller, and then convert the colorspace to ``YUV`` or ``HSV`` before</span>
+   <span class="s0">doing any processing on it.</span>
+
+   <span class="s0">.. ## pygame.camera.colorspace ##</span>
+
+<span class="s0">.. function:: list_cameras</span>
+
+   <span class="s0">| :sl:`returns a list of available cameras`</span>
+   <span class="s0">| :sg:`list_cameras() -&gt; [cameras]`</span>
+
+   <span class="s0">Checks the computer for available cameras and returns a list of strings of</span>
+   <span class="s0">camera names, ready to be fed into :class:`pygame.camera.Camera`.</span>
+
+   <span class="s0">If the camera backend doesn't support webcam enumeration, this will return</span>
+   <span class="s0">something like ``[0]``. See :func:`get_backends()` for much more</span>
+   <span class="s0">information.</span>
+
+   <span class="s0">.. ## pygame.camera.list_cameras ##</span>
+
+<span class="s0">.. class:: Camera</span>
+
+   <span class="s0">| :sl:`load a camera`</span>
+   <span class="s0">| :sg:`Camera(device, (width, height), format) -&gt; Camera`</span>
+
+   <span class="s0">Loads a camera. On Linux, the device is typically something like</span>
+   <span class="s0">&quot;/dev/video0&quot;. Default width and height are 640 by 480. </span>
+   <span class="s0">Format is the desired colorspace of the output. </span>
+   <span class="s0">This is useful for computer vision purposes. The default is</span>
+   <span class="s0">``RGB``. The following are supported:</span>
+
+      <span class="s0">* ``RGB`` - Red, Green, Blue</span>
+
+      <span class="s0">* ``YUV`` - Luma, Blue Chrominance, Red Chrominance</span>
+
+      <span class="s0">* ``HSV`` - Hue, Saturation, Value</span>
+
+   <span class="s0">.. method:: start</span>
+
+      <span class="s0">| :sl:`opens, initializes, and starts capturing`</span>
+      <span class="s0">| :sg:`start() -&gt; None`</span>
+
+      <span class="s0">Opens the camera device, attempts to initialize it, and begins recording</span>
+      <span class="s0">images to a buffer. The camera must be started before any of the below</span>
+      <span class="s0">functions can be used.</span>
+
+      <span class="s0">.. ## Camera.start ##</span>
+
+   <span class="s0">.. method:: stop</span>
+
+      <span class="s0">| :sl:`stops, uninitializes, and closes the camera`</span>
+      <span class="s0">| :sg:`stop() -&gt; None`</span>
+
+      <span class="s0">Stops recording, uninitializes the camera, and closes it. Once a camera</span>
+      <span class="s0">is stopped, the below functions cannot be used until it is started again.</span>
+
+      <span class="s0">.. ## Camera.stop ##</span>
+
+   <span class="s0">.. method:: get_controls</span>
+
+      <span class="s0">| :sl:`gets current values of user controls`</span>
+      <span class="s0">| :sg:`get_controls() -&gt; (hflip = bool, vflip = bool, brightness)`</span>
+
+      <span class="s0">If the camera supports it, get_controls will return the current settings</span>
+      <span class="s0">for horizontal and vertical image flip as bools and brightness as an int.</span>
+      <span class="s0">If unsupported, it will return the default values of (0, 0, 0). Note that</span>
+      <span class="s0">the return values here may be different than those returned by</span>
+      <span class="s0">set_controls, though these are more likely to be correct.</span>
+
+      <span class="s0">.. ## Camera.get_controls ##</span>
+
+   <span class="s0">.. method:: set_controls</span>
+
+      <span class="s0">| :sl:`changes camera settings if supported by the camera`</span>
+      <span class="s0">| :sg:`set_controls(hflip = bool, vflip = bool, brightness) -&gt; (hflip = bool, vflip = bool, brightness)`</span>
+
+      <span class="s0">Allows you to change camera settings if the camera supports it. The</span>
+      <span class="s0">return values will be the input values if the camera claims it succeeded</span>
+      <span class="s0">or the values previously in use if not. Each argument is optional, and</span>
+      <span class="s0">the desired one can be chosen by supplying the keyword, like hflip. Note</span>
+      <span class="s0">that the actual settings being used by the camera may not be the same as</span>
+      <span class="s0">those returned by set_controls. On Windows, :code:`hflip` and :code:`vflip` are</span>
+      <span class="s0">implemented by pygame, not by the Camera, so they should always work, but</span>
+      <span class="s0">:code:`brightness` is unsupported.</span>
+
+      <span class="s0">.. ## Camera.set_controls ##</span>
+
+   <span class="s0">.. method:: get_size</span>
+
+      <span class="s0">| :sl:`returns the dimensions of the images being recorded`</span>
+      <span class="s0">| :sg:`get_size() -&gt; (width, height)`</span>
+
+      <span class="s0">Returns the current dimensions of the images being captured by the</span>
+      <span class="s0">camera. This will return the actual size, which may be different than the</span>
+      <span class="s0">one specified during initialization if the camera did not support that</span>
+      <span class="s0">size.</span>
+
+      <span class="s0">.. ## Camera.get_size ##</span>
+
+   <span class="s0">.. method:: query_image</span>
+
+      <span class="s0">| :sl:`checks if a frame is ready`</span>
+      <span class="s0">| :sg:`query_image() -&gt; bool`</span>
+
+      <span class="s0">If an image is ready to get, it returns true. Otherwise it returns false.</span>
+      <span class="s0">Note that some webcams will always return False and will only queue a</span>
+      <span class="s0">frame when called with a blocking function like :func:`get_image()`.</span>
+      <span class="s0">On Windows (MSMF), and the  OpenCV backends, :func:`query_image()`</span>
+      <span class="s0">should be reliable, though. This is useful to separate the framerate of</span>
+      <span class="s0">the game from that of the camera without having to use threading. </span>
+
+      <span class="s0">.. ## Camera.query_image ##</span>
+
+   <span class="s0">.. method:: get_image</span>
+
+      <span class="s0">| :sl:`captures an image as a Surface`</span>
+      <span class="s0">| :sg:`get_image(Surface = None) -&gt; Surface`</span>
+
+      <span class="s0">Pulls an image off of the buffer as an ``RGB`` Surface. It can optionally</span>
+      <span class="s0">reuse an existing Surface to save time. The bit-depth of the surface is</span>
+      <span class="s0">24 bits on Linux, 32 bits on Windows, or the same as the optionally</span>
+      <span class="s0">supplied Surface.</span>
+
+      <span class="s0">.. ## Camera.get_image ##</span>
+
+   <span class="s0">.. method:: get_raw</span>
+
+      <span class="s0">| :sl:`returns an unmodified image as bytes`</span>
+      <span class="s0">| :sg:`get_raw() -&gt; bytes`</span>
+
+      <span class="s0">Gets an image from a camera as a string in the native pixelformat of the</span>
+      <span class="s0">camera. Useful for integration with other libraries. This returns a</span>
+      <span class="s0">bytes object</span>
+
+      <span class="s0">.. ## Camera.get_raw ##</span>
+
+   <span class="s0">.. ## pygame.camera.Camera ##</span>
+
+<span class="s0">.. ## pygame.camera ##</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>player.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6897bb;}
+.s4 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+player.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">pygame</span>
+
+
+<span class="s2"># creation d'une classe pour le personnage</span>
+<span class="s0">class </span><span class="s1">Player(pygame.sprite.Sprite) :</span>
+
+    <span class="s0">def </span><span class="s1">__init__(self):</span>
+        <span class="s1">super().__init__()</span>
+        <span class="s1">self.health = </span><span class="s3">15</span>
+        <span class="s1">self.max_health = </span><span class="s3">15</span>
+        <span class="s1">self.velocity_x = </span><span class="s3">5</span>
+        <span class="s1">self.velocity_y = </span><span class="s3">1</span>
+        <span class="s1">self.image = pygame.image.load(</span><span class="s4">'assets/AmongUsBenoit.png'</span><span class="s1">)</span>
+        <span class="s1">self.rect = self.image.get_rect()</span>
+        <span class="s1">self.rect.x = </span><span class="s3">0</span>
+        <span class="s1">self.rect.y = </span><span class="s3">400</span>
+
+        <span class="s1">self.saut = </span><span class="s3">0</span>
+        <span class="s1">self.saut_montee = </span><span class="s3">0</span>
+        <span class="s1">self.saut_descente = </span><span class="s3">2</span>
+        <span class="s1">self.nombre_de_saut = </span><span class="s3">0</span>
+        <span class="s1">self.a_sauter = </span><span class="s0">False</span>
+        <span class="s1">self.ground = </span><span class="s0">True</span>
+
+
+    <span class="s0">def </span><span class="s1">move_right(self):</span>
+        <span class="s1">self.rect.x += self.velocity_x</span>
+
+    <span class="s0">def </span><span class="s1">move_left(self):</span>
+        <span class="s1">self.rect.x -= self.velocity_x</span>
+
+
+
+
+    <span class="s0">def </span><span class="s1">jump(self):</span>
+        <span class="s0">if </span><span class="s1">self.possible :</span>
+            <span class="s0">if </span><span class="s1">self.saut_montee &gt;= </span><span class="s3">10 </span><span class="s1">:</span>
+
+                <span class="s1">self.saut_descente -= </span><span class="s3">1</span>
+                <span class="s1">self.saut = self.saut_descente</span>
+            <span class="s0">else</span><span class="s1">:</span>
+                <span class="s1">self.saut_montee += </span><span class="s3">1</span>
+                <span class="s1">self.saut = self.saut_montee</span>
+
+            <span class="s0">if </span><span class="s1">self.saut_descente &lt; </span><span class="s3">0</span><span class="s1">:</span>
+                <span class="s1">self.saut_montee = </span><span class="s3">0</span>
+                <span class="s1">self.saut_descente = </span><span class="s3">5</span>
+                <span class="s1">self.possible = </span><span class="s0">False</span>
+
+        <span class="s1">self.rect.y -= (</span><span class="s3">10 </span><span class="s1">* (</span><span class="s3">12 </span><span class="s1">/ </span><span class="s3">2</span><span class="s1">))</span>
+
+
+    <span class="s0">def </span><span class="s1">gravite(self):</span>
+        <span class="s0">if </span><span class="s1">self.ground </span><span class="s0">and </span><span class="s1">self.rect.y &lt; </span><span class="s3">400</span><span class="s1">:</span>
+            <span class="s1">self.rect.y += (</span><span class="s3">10 </span><span class="s1">* (</span><span class="s3">8 </span><span class="s1">/ </span><span class="s3">2</span><span class="s1">))</span>
+            <span class="s0">if </span><span class="s1">self.rect.y &gt; </span><span class="s3">400</span><span class="s1">:</span>
+                <span class="s1">self.ground = </span><span class="s0">False</span>
+            <span class="s1">self.ground = </span><span class="s0">True</span></pre>
+</body>
+</html>

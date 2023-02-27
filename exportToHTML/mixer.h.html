@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>mixer.h</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+mixer.h</font>
+</center></td></tr></table>
+<pre><span class="s0">#ifndef </span><span class="s1">MIXER_INTERNAL_H</span>
+<span class="s0">#define </span><span class="s1">MIXER_INTERNAL_H</span>
+
+<span class="s0">#include </span><span class="s1">&lt;SDL_mixer.h&gt;</span>
+
+<span class="s2">/* test mixer initializations */</span>
+<span class="s0">#define </span><span class="s1">MIXER_INIT_CHECK()            \</span>
+    <span class="s0">if </span><span class="s1">(!SDL_WasInit(SDL_INIT_AUDIO)) \</span>
+    <span class="s0">return </span><span class="s1">RAISE(pgExc_SDLError, </span><span class="s3">&quot;mixer not initialized&quot;</span><span class="s1">)</span>
+
+<span class="s0">#define </span><span class="s1">PYGAMEAPI_MIXER_NUMSLOTS </span><span class="s4">5</span>
+<span class="s0">#include </span><span class="s3">&quot;include/pygame_mixer.h&quot;</span>
+
+<span class="s0">#endif </span><span class="s2">/* ~MIXER_INTERNAL_H */</span>
+</pre>
+</body>
+</html>

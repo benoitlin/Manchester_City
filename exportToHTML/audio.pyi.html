@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>audio.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+audio.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Callable</span><span class="s0">, </span><span class="s1">List</span>
+
+<span class="s1">AUDIO_U8: int</span>
+<span class="s1">AUDIO_S8: int</span>
+<span class="s1">AUDIO_U16LSB: int</span>
+<span class="s1">AUDIO_S16LSB: int</span>
+<span class="s1">AUDIO_U16MSB: int</span>
+<span class="s1">AUDIO_S16MSB: int</span>
+<span class="s1">AUDIO_U16: int</span>
+<span class="s1">AUDIO_S16: int</span>
+<span class="s1">AUDIO_S32LSB: int</span>
+<span class="s1">AUDIO_S32MSB: int</span>
+<span class="s1">AUDIO_S32: int</span>
+<span class="s1">AUDIO_F32LSB: int</span>
+<span class="s1">AUDIO_F32MSB: int</span>
+<span class="s1">AUDIO_F32: int</span>
+
+<span class="s1">AUDIO_ALLOW_FREQUENCY_CHANGE: int</span>
+<span class="s1">AUDIO_ALLOW_FORMAT_CHANGE: int</span>
+<span class="s1">AUDIO_ALLOW_CHANNELS_CHANGE: int</span>
+<span class="s1">AUDIO_ALLOW_ANY_CHANGE: int</span>
+
+<span class="s0">def </span><span class="s1">get_audio_device_names(iscapture: bool = </span><span class="s0">False</span><span class="s1">) -&gt; List[str]: ...</span>
+
+<span class="s0">class </span><span class="s1">AudioDevice:</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">devicename: str</span><span class="s0">,</span>
+        <span class="s1">iscapture: bool</span><span class="s0">,</span>
+        <span class="s1">frequency: int</span><span class="s0">,</span>
+        <span class="s1">audioformat: int</span><span class="s0">,</span>
+        <span class="s1">numchannels: int</span><span class="s0">,</span>
+        <span class="s1">chunksize: int</span><span class="s0">,</span>
+        <span class="s1">allowed_changes: int</span><span class="s0">,</span>
+        <span class="s1">callback: Callable[[AudioDevice</span><span class="s0">, </span><span class="s1">memoryview]</span><span class="s0">, None</span><span class="s1">]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">iscapture(self) -&gt; bool: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">deviceid(self) -&gt; int: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">devicename(self) -&gt; str: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">callback(self) -&gt; Callable[[AudioDevice</span><span class="s0">, </span><span class="s1">memoryview]</span><span class="s0">, None</span><span class="s1">]: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">frequency(self) -&gt; int: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">audioformat(self) -&gt; int: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">numchannels(self) -&gt; int: ...</span>
+    <span class="s1">@property</span>
+    <span class="s0">def </span><span class="s1">chunksize(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">pause(self</span><span class="s0">, </span><span class="s1">pause_on: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">close(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+</pre>
+</body>
+</html>

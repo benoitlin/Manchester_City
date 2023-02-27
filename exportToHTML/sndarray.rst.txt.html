@@ -1,0 +1,112 @@
+<html>
+<head>
+<title>sndarray.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+sndarray.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.sndarray`</span>
+<span class="s0">======================</span>
+
+<span class="s0">.. module:: pygame.sndarray</span>
+   <span class="s0">:synopsis: pygame module for accessing sound sample data</span>
+
+<span class="s0">| :sl:`pygame module for accessing sound sample data`</span>
+
+<span class="s0">Functions to convert between NumPy arrays and Sound objects. This</span>
+<span class="s0">module will only be functional when pygame can use the external NumPy</span>
+<span class="s0">package. If NumPy can't be imported, ``surfarray`` becomes a ``MissingModule``</span>
+<span class="s0">object.</span>
+
+<span class="s0">Sound data is made of thousands of samples per second, and each sample is the</span>
+<span class="s0">amplitude of the wave at a particular moment in time. For example, in 22-kHz</span>
+<span class="s0">format, element number 5 of the array is the amplitude of the wave after</span>
+<span class="s0">5/22000 seconds.</span>
+
+<span class="s0">The arrays are indexed by the ``X`` axis first, followed by the ``Y`` axis.</span>
+<span class="s0">Each sample is an 8-bit or 16-bit integer, depending on the data format. A</span>
+<span class="s0">stereo sound file has two values per sample, while a mono sound file only has</span>
+<span class="s0">one.</span>
+
+<span class="s0">.. function:: array</span>
+
+   <span class="s0">| :sl:`copy Sound samples into an array`</span>
+   <span class="s0">| :sg:`array(Sound) -&gt; array`</span>
+
+   <span class="s0">Creates a new array for the sound data and copies the samples. The array</span>
+   <span class="s0">will always be in the format returned from ``pygame.mixer.get_init()``.</span>
+
+   <span class="s0">.. ## pygame.sndarray.array ##</span>
+
+<span class="s0">.. function:: samples</span>
+
+   <span class="s0">| :sl:`reference Sound samples into an array`</span>
+   <span class="s0">| :sg:`samples(Sound) -&gt; array`</span>
+
+   <span class="s0">Creates a new array that directly references the samples in a Sound object.</span>
+   <span class="s0">Modifying the array will change the Sound. The array will always be in the</span>
+   <span class="s0">format returned from ``pygame.mixer.get_init()``.</span>
+
+   <span class="s0">.. ## pygame.sndarray.samples ##</span>
+
+<span class="s0">.. function:: make_sound</span>
+
+   <span class="s0">| :sl:`convert an array into a Sound object`</span>
+   <span class="s0">| :sg:`make_sound(array) -&gt; Sound`</span>
+
+   <span class="s0">Create a new playable Sound object from an array. The mixer module must be</span>
+   <span class="s0">initialized and the array format must be similar to the mixer audio format.</span>
+
+   <span class="s0">.. ## pygame.sndarray.make_sound ##</span>
+
+<span class="s0">.. function:: use_arraytype</span>
+
+   <span class="s0">| :sl:`Sets the array system to be used for sound arrays`</span>
+   <span class="s0">| :sg:`use_arraytype (arraytype) -&gt; None`</span>
+
+   <span class="s0">DEPRECATED: Uses the requested array type for the module functions. The</span>
+   <span class="s0">only supported arraytype is ``'numpy'``. Other values will raise ValueError.</span>
+   <span class="s0">Using this function will raise a ``DeprecationWarning``.</span>
+   <span class="s0">.. ## pygame.sndarray.use_arraytype ##</span>
+
+<span class="s0">.. function:: get_arraytype</span>
+
+   <span class="s0">| :sl:`Gets the currently active array type.`</span>
+   <span class="s0">| :sg:`get_arraytype () -&gt; str`</span>
+
+   <span class="s0">DEPRECATED: Returns the currently active array type. This will be a value of the</span>
+   <span class="s0">``get_arraytypes()`` tuple and indicates which type of array module is used</span>
+   <span class="s0">for the array creation. Using this function will raise a ``DeprecationWarning``.</span>
+
+   <span class="s0">.. versionadded:: 1.8</span>
+
+   <span class="s0">.. ## pygame.sndarray.get_arraytype ##</span>
+
+<span class="s0">.. function:: get_arraytypes</span>
+
+   <span class="s0">| :sl:`Gets the array system types currently supported.`</span>
+   <span class="s0">| :sg:`get_arraytypes () -&gt; tuple`</span>
+
+   <span class="s0">DEPRECATED: Checks, which array systems are available and returns them as a tuple of</span>
+   <span class="s0">strings. The values of the tuple can be used directly in the</span>
+   <span class="s0">:func:`pygame.sndarray.use_arraytype` () method. If no supported array</span>
+   <span class="s0">system could be found, None will be returned.  Using this function will raise a</span>
+   <span class="s0">``DeprecationWarning``.</span>
+
+   <span class="s0">.. versionadded:: 1.8</span>
+
+   <span class="s0">.. ## pygame.sndarray.get_arraytypes ##</span>
+
+<span class="s0">.. ## pygame.sndarray ##</span>
+</pre>
+</body>
+</html>

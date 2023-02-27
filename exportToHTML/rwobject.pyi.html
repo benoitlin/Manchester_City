@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>rwobject.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+rwobject.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Any</span><span class="s0">, </span><span class="s1">Optional</span><span class="s0">, </span><span class="s1">overload</span><span class="s0">, </span><span class="s1">Type</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">AnyPath</span>
+
+<span class="s0">def </span><span class="s1">encode_string(</span>
+    <span class="s1">obj: Optional[AnyPath]</span><span class="s0">,</span>
+    <span class="s1">encoding: Optional[str] = </span><span class="s2">&quot;unicode_escape&quot;</span><span class="s0">,</span>
+    <span class="s1">errors: Optional[str] = </span><span class="s2">&quot;backslashreplace&quot;</span><span class="s0">,</span>
+    <span class="s1">etype: Optional[Type[Exception]] = UnicodeEncodeError</span><span class="s0">,</span>
+<span class="s1">) -&gt; bytes: ...</span>
+<span class="s1">@overload</span>
+<span class="s0">def </span><span class="s1">encode_file_path(</span>
+    <span class="s1">obj: Optional[AnyPath]</span><span class="s0">, </span><span class="s1">etype: Optional[Type[Exception]] = UnicodeEncodeError</span>
+<span class="s1">) -&gt; bytes: ...</span>
+<span class="s1">@overload</span>
+<span class="s0">def </span><span class="s1">encode_file_path(</span>
+    <span class="s1">obj: Any</span><span class="s0">, </span><span class="s1">etype: Optional[Type[Exception]] = UnicodeEncodeError</span>
+<span class="s1">) -&gt; bytes: ...</span>
+</pre>
+</body>
+</html>

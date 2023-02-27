@@ -1,0 +1,303 @@
+<html>
+<head>
+<title>font_viewer.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+font_viewer.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.font_viewer 
+Scroll through your system fonts from a list of surfaces or one huge buffer. 
+ 
+This example exhibits: 
+* iterate over available fonts using font.get_fonts and font.SysFont() 
+* click and drag using mouse input 
+* scrolling with the scroll wheel 
+* save a surface to disk 
+* work with a very large surface 
+* simple mouse and keyboard scroll speed acceleration 
+ 
+By default this example uses the fonts returned by pygame.font.get_fonts() 
+and opens them using pygame.font.SysFont(). 
+Alternatively, you may pass a path to the command line. The TTF files found 
+in that directory will be used instead. 
+ 
+Mouse Controls: 
+* Use the mouse wheel or click and drag to scroll 
+ 
+Keyboard Controls: 
+* Press up or down to scroll 
+* Press escape to exit 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">sys</span>
+<span class="s3">import </span><span class="s1">os</span>
+
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+
+<span class="s1">use_big_surface = </span><span class="s3">False  </span><span class="s0"># draw into large buffer and save png file</span>
+
+
+<span class="s3">class </span><span class="s1">FontViewer:</span>
+    <span class="s2">&quot;&quot;&quot; 
+    This example is encapsulated by the fontviewer class 
+    It initializes the pygame window, handles input, and draws itself 
+    to the screen. 
+    &quot;&quot;&quot;</span>
+
+    <span class="s1">KEY_SCROLL_SPEED = </span><span class="s4">10</span>
+    <span class="s1">MOUSE_SCROLL_SPEED = </span><span class="s4">50</span>
+
+    <span class="s3">def </span><span class="s1">__init__(self):</span>
+        <span class="s1">pg.init()</span>
+
+        <span class="s0"># create a window that uses 80 percent of the screen</span>
+        <span class="s1">info = pg.display.Info()</span>
+        <span class="s1">w = info.current_w</span>
+        <span class="s1">h = info.current_h</span>
+        <span class="s1">pg.display.set_mode((int(w * </span><span class="s4">0.8</span><span class="s1">)</span><span class="s3">, </span><span class="s1">int(h * </span><span class="s4">0.8</span><span class="s1">)))</span>
+        <span class="s1">self.font_size = h // </span><span class="s4">20</span>
+
+        <span class="s1">self.clock = pg.time.Clock()</span>
+        <span class="s1">self.y_offset = </span><span class="s4">0</span>
+        <span class="s1">self.grabbed = </span><span class="s3">False</span>
+        <span class="s1">self.render_fonts(</span><span class="s5">&quot;&amp;N abcDEF789&quot;</span><span class="s1">)</span>
+
+        <span class="s3">if </span><span class="s1">use_big_surface </span><span class="s3">or </span><span class="s5">&quot;big&quot; </span><span class="s3">in </span><span class="s1">sys.argv:</span>
+            <span class="s1">self.render_surface()</span>
+            <span class="s1">self.display_surface()</span>
+            <span class="s1">self.save_png()</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">self.display_fonts()</span>
+
+    <span class="s3">def </span><span class="s1">get_font_list(self):</span>
+        <span class="s2">&quot;&quot;&quot; 
+        Generate a font list using font.get_fonts() for system fonts or 
+        from a path from the command line. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">path = </span><span class="s5">&quot;&quot;</span>
+        <span class="s3">if </span><span class="s1">len(sys.argv) &gt; </span><span class="s4">1 </span><span class="s3">and </span><span class="s1">os.path.exists(sys.argv[</span><span class="s4">1</span><span class="s1">]):</span>
+            <span class="s1">path = os.path.join(sys.argv[</span><span class="s4">1</span><span class="s1">]</span><span class="s3">, </span><span class="s5">&quot;&quot;</span><span class="s1">)</span>
+        <span class="s1">fonts = []</span>
+        <span class="s3">if </span><span class="s1">os.path.exists(path):</span>
+            <span class="s0"># this list comprehension could replace the following loop</span>
+            <span class="s0"># fonts = [f in os.listdir(path) if f.endswith('.ttf')]</span>
+            <span class="s3">for </span><span class="s1">font </span><span class="s3">in </span><span class="s1">os.listdir(path):</span>
+                <span class="s3">if </span><span class="s1">font.endswith(</span><span class="s5">&quot;.ttf&quot;</span><span class="s1">):</span>
+                    <span class="s1">fonts.append(font)</span>
+        <span class="s3">return </span><span class="s1">fonts </span><span class="s3">or </span><span class="s1">pg.font.get_fonts()</span><span class="s3">, </span><span class="s1">path</span>
+
+    <span class="s3">def </span><span class="s1">render_fonts(self</span><span class="s3">, </span><span class="s1">text=</span><span class="s5">&quot;A display of font &amp;N&quot;</span><span class="s1">):</span>
+        <span class="s2">&quot;&quot;&quot; 
+        Build a list that includes a surface and the running total of their 
+        height for each font in the font list. Store the largest width and 
+        other variables for later use. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">font_size = self.font_size</span>
+        <span class="s1">color = (</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span>
+        <span class="s1">instruction_color = (</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span>
+        <span class="s1">self.back_color = (</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span>
+
+        <span class="s1">fonts</span><span class="s3">, </span><span class="s1">path = self.get_font_list()</span>
+        <span class="s1">font_surfaces = []</span>
+        <span class="s1">total_height = </span><span class="s4">0</span>
+        <span class="s1">max_width = </span><span class="s4">0</span>
+
+        <span class="s1">load_font = pg.font.Font </span><span class="s3">if </span><span class="s1">path </span><span class="s3">else </span><span class="s1">pg.font.SysFont</span>
+
+        <span class="s0"># display instructions at the top of the display</span>
+        <span class="s1">font = pg.font.SysFont(pg.font.get_default_font()</span><span class="s3">, </span><span class="s1">font_size)</span>
+        <span class="s1">lines = (</span>
+            <span class="s5">&quot;Use the scroll wheel or click and drag&quot;</span><span class="s3">,</span>
+            <span class="s5">&quot;to scroll up and down.&quot;</span><span class="s3">,</span>
+            <span class="s5">&quot;Fonts that don't use the Latin Alphabet&quot;</span><span class="s3">,</span>
+            <span class="s5">&quot;might render incorrectly.&quot;</span><span class="s3">,</span>
+            <span class="s5">f&quot;Here are your </span><span class="s3">{</span><span class="s1">len(fonts)</span><span class="s3">} </span><span class="s5">fonts&quot;</span><span class="s3">,</span>
+            <span class="s5">&quot;&quot;</span><span class="s3">,</span>
+        <span class="s1">)</span>
+        <span class="s3">for </span><span class="s1">line </span><span class="s3">in </span><span class="s1">lines:</span>
+            <span class="s1">surf = font.render(line</span><span class="s3">, </span><span class="s4">1</span><span class="s3">, </span><span class="s1">instruction_color</span><span class="s3">, </span><span class="s1">self.back_color)</span>
+            <span class="s1">font_surfaces.append((surf</span><span class="s3">, </span><span class="s1">total_height))</span>
+            <span class="s1">total_height += surf.get_height()</span>
+            <span class="s1">max_width = max(max_width</span><span class="s3">, </span><span class="s1">surf.get_width())</span>
+
+        <span class="s0"># render all the fonts and store them with the total height</span>
+        <span class="s3">for </span><span class="s1">name </span><span class="s3">in </span><span class="s1">sorted(fonts):</span>
+            <span class="s3">try</span><span class="s1">:</span>
+                <span class="s1">font = load_font(path + name</span><span class="s3">, </span><span class="s1">font_size)</span>
+            <span class="s3">except </span><span class="s1">OSError:</span>
+                <span class="s3">continue</span>
+            <span class="s1">line = text.replace(</span><span class="s5">&quot;&amp;N&quot;</span><span class="s3">, </span><span class="s1">name)</span>
+            <span class="s3">try</span><span class="s1">:</span>
+                <span class="s1">surf = font.render(line</span><span class="s3">, </span><span class="s4">1</span><span class="s3">, </span><span class="s1">color</span><span class="s3">, </span><span class="s1">self.back_color)</span>
+            <span class="s3">except </span><span class="s1">pg.error </span><span class="s3">as </span><span class="s1">e:</span>
+                <span class="s1">print(e)</span>
+                <span class="s3">break</span>
+
+            <span class="s1">max_width = max(max_width</span><span class="s3">, </span><span class="s1">surf.get_width())</span>
+            <span class="s1">font_surfaces.append((surf</span><span class="s3">, </span><span class="s1">total_height))</span>
+            <span class="s1">total_height += surf.get_height()</span>
+
+        <span class="s0"># store variables for later usage</span>
+        <span class="s1">self.total_height = total_height</span>
+        <span class="s1">self.max_width = max_width</span>
+        <span class="s1">self.font_surfaces = font_surfaces</span>
+        <span class="s1">self.max_y = total_height - pg.display.get_surface().get_height()</span>
+
+    <span class="s3">def </span><span class="s1">display_fonts(self):</span>
+        <span class="s2">&quot;&quot;&quot; 
+        Display the visible fonts based on the y_offset value(updated in 
+        handle_events) and the height of the pygame window. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">pg.display.set_caption(</span><span class="s5">&quot;Font Viewer&quot;</span><span class="s1">)</span>
+        <span class="s1">display = pg.display.get_surface()</span>
+        <span class="s1">clock = pg.time.Clock()</span>
+        <span class="s1">center = display.get_width() // </span><span class="s4">2</span>
+
+        <span class="s3">while True</span><span class="s1">:</span>
+            <span class="s0"># draw visible surfaces</span>
+            <span class="s1">display.fill(self.back_color)</span>
+            <span class="s3">for </span><span class="s1">surface</span><span class="s3">, </span><span class="s1">top </span><span class="s3">in </span><span class="s1">self.font_surfaces:</span>
+                <span class="s1">bottom = top + surface.get_height()</span>
+                <span class="s3">if </span><span class="s1">(</span>
+                    <span class="s1">bottom &gt;= self.y_offset</span>
+                    <span class="s3">and </span><span class="s1">top &lt;= self.y_offset + display.get_height()</span>
+                <span class="s1">):</span>
+                    <span class="s1">x = center - surface.get_width() // </span><span class="s4">2</span>
+                    <span class="s1">display.blit(surface</span><span class="s3">, </span><span class="s1">(x</span><span class="s3">, </span><span class="s1">top - self.y_offset))</span>
+            <span class="s0"># get input and update the screen</span>
+            <span class="s3">if not </span><span class="s1">self.handle_events():</span>
+                <span class="s3">break</span>
+            <span class="s1">pg.display.flip()</span>
+            <span class="s1">clock.tick(</span><span class="s4">30</span><span class="s1">)</span>
+
+    <span class="s3">def </span><span class="s1">render_surface(self):</span>
+        <span class="s2">&quot;&quot;&quot; 
+        Note: this method uses twice the memory and is only called if 
+        big_surface is set to true or big is added to the command line. 
+ 
+        Optionally generates one large buffer to draw all the font surfaces 
+        into. This is necessary to save the display to a png file and may 
+        be useful for testing large surfaces. 
+        &quot;&quot;&quot;</span>
+
+        <span class="s1">large_surface = pg.surface.Surface(</span>
+            <span class="s1">(self.max_width</span><span class="s3">, </span><span class="s1">self.total_height)</span>
+        <span class="s1">).convert()</span>
+        <span class="s1">large_surface.fill(self.back_color)</span>
+        <span class="s1">print(</span><span class="s5">&quot;scrolling surface created&quot;</span><span class="s1">)</span>
+
+        <span class="s0"># display the surface size and memory usage</span>
+        <span class="s1">byte_size = large_surface.get_bytesize()</span>
+        <span class="s1">total_size = byte_size * (self.max_width * self.total_height)</span>
+        <span class="s1">print(</span>
+            <span class="s5">&quot;Surface Size = {}x{} @ {}bpp: {:,.3f}mb&quot;</span><span class="s1">.format(</span>
+                <span class="s1">self.max_width</span><span class="s3">, </span><span class="s1">self.total_height</span><span class="s3">, </span><span class="s1">byte_size</span><span class="s3">, </span><span class="s1">total_size / </span><span class="s4">1000000.0</span>
+            <span class="s1">)</span>
+        <span class="s1">)</span>
+
+        <span class="s1">y = </span><span class="s4">0</span>
+        <span class="s1">center = int(self.max_width / </span><span class="s4">2</span><span class="s1">)</span>
+        <span class="s3">for </span><span class="s1">surface</span><span class="s3">, </span><span class="s1">top </span><span class="s3">in </span><span class="s1">self.font_surfaces:</span>
+            <span class="s1">w = surface.get_width()</span>
+            <span class="s1">x = center - int(w / </span><span class="s4">2</span><span class="s1">)</span>
+            <span class="s1">large_surface.blit(surface</span><span class="s3">, </span><span class="s1">(x</span><span class="s3">, </span><span class="s1">y))</span>
+            <span class="s1">y += surface.get_height()</span>
+        <span class="s1">self.max_y = large_surface.get_height() - pg.display.get_surface().get_height()</span>
+        <span class="s1">self.surface = large_surface</span>
+
+    <span class="s3">def </span><span class="s1">display_surface(self</span><span class="s3">, </span><span class="s1">time=</span><span class="s4">10</span><span class="s1">):</span>
+        <span class="s2">&quot;&quot;&quot; 
+        Display the large surface created by the render_surface method. Scrolls 
+        based on the y_offset value(set in handle_events) and the height of the 
+        pygame window. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">screen = pg.display.get_surface()</span>
+
+        <span class="s0"># Create a Rect equal to size of screen. Then we can just change its</span>
+        <span class="s0"># top attribute to draw the desired part of the rendered font surface</span>
+        <span class="s0"># to the display surface</span>
+        <span class="s1">rect = pg.rect.Rect(</span>
+            <span class="s4">0</span><span class="s3">,</span>
+            <span class="s4">0</span><span class="s3">,</span>
+            <span class="s1">self.surface.get_width()</span><span class="s3">,</span>
+            <span class="s1">min(self.surface.get_height()</span><span class="s3">, </span><span class="s1">screen.get_height())</span><span class="s3">,</span>
+        <span class="s1">)</span>
+
+        <span class="s1">x = int((screen.get_width() - self.surface.get_width()) / </span><span class="s4">2</span><span class="s1">)</span>
+        <span class="s1">going = </span><span class="s3">True</span>
+        <span class="s3">while </span><span class="s1">going:</span>
+            <span class="s3">if not </span><span class="s1">self.handle_events():</span>
+                <span class="s1">going = </span><span class="s3">False</span>
+            <span class="s1">screen.fill(self.back_color)</span>
+            <span class="s1">rect.top = self.y_offset</span>
+            <span class="s1">screen.blit(self.surface</span><span class="s3">, </span><span class="s1">(x</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s1">rect)</span>
+            <span class="s1">pg.display.flip()</span>
+            <span class="s1">self.clock.tick(</span><span class="s4">20</span><span class="s1">)</span>
+
+    <span class="s3">def </span><span class="s1">save_png(self</span><span class="s3">, </span><span class="s1">name=</span><span class="s5">&quot;font_viewer.png&quot;</span><span class="s1">):</span>
+        <span class="s1">pg.image.save(self.surface</span><span class="s3">, </span><span class="s1">name)</span>
+        <span class="s1">file_size = os.path.getsize(name) // </span><span class="s4">1024</span>
+        <span class="s1">print(</span><span class="s5">f&quot;font surface saved to </span><span class="s3">{</span><span class="s1">name</span><span class="s3">}\n</span><span class="s5">size: </span><span class="s3">{</span><span class="s1">file_size</span><span class="s3">:</span><span class="s5">,</span><span class="s3">}</span><span class="s5">Kb&quot;</span><span class="s1">)</span>
+
+    <span class="s3">def </span><span class="s1">handle_events(self):</span>
+        <span class="s2">&quot;&quot;&quot; 
+        This method handles user input. It returns False when it receives 
+        a pygame.QUIT event or the user presses escape. The y_offset is 
+        changed based on mouse and keyboard input. display_fonts() and 
+        display_surface() use the y_offset to scroll display. 
+        &quot;&quot;&quot;</span>
+        <span class="s1">events = pg.event.get()</span>
+        <span class="s3">for </span><span class="s1">e </span><span class="s3">in </span><span class="s1">events:</span>
+            <span class="s3">if </span><span class="s1">e.type == pg.QUIT:</span>
+                <span class="s3">return False</span>
+            <span class="s3">elif </span><span class="s1">e.type == pg.KEYDOWN:</span>
+                <span class="s3">if </span><span class="s1">e.key == pg.K_ESCAPE:</span>
+                    <span class="s3">return False</span>
+            <span class="s3">elif </span><span class="s1">e.type == pg.MOUSEWHEEL:</span>
+                <span class="s1">self.y_offset += e.y * self.MOUSE_SCROLL_SPEED * -</span><span class="s4">1</span>
+            <span class="s3">elif </span><span class="s1">e.type == pg.MOUSEBUTTONDOWN:</span>
+                <span class="s0"># enter dragging mode on mouse down</span>
+                <span class="s1">self.grabbed = </span><span class="s3">True</span>
+                <span class="s1">pg.event.set_grab(</span><span class="s3">True</span><span class="s1">)</span>
+            <span class="s3">elif </span><span class="s1">e.type == pg.MOUSEBUTTONUP:</span>
+                <span class="s0"># exit drag mode on mouse up</span>
+                <span class="s1">self.grabbed = </span><span class="s3">False</span>
+                <span class="s1">pg.event.set_grab(</span><span class="s3">False</span><span class="s1">)</span>
+
+        <span class="s0"># allow simple accelerated scrolling with the keyboard</span>
+        <span class="s1">keys = pg.key.get_pressed()</span>
+        <span class="s3">if </span><span class="s1">keys[pg.K_UP]:</span>
+            <span class="s1">self.key_held += </span><span class="s4">1</span>
+            <span class="s1">self.y_offset -= int(self.KEY_SCROLL_SPEED * (self.key_held // </span><span class="s4">10</span><span class="s1">))</span>
+        <span class="s3">elif </span><span class="s1">keys[pg.K_DOWN]:</span>
+            <span class="s1">self.key_held += </span><span class="s4">1</span>
+            <span class="s1">self.y_offset += int(self.KEY_SCROLL_SPEED * (self.key_held // </span><span class="s4">10</span><span class="s1">))</span>
+        <span class="s3">else</span><span class="s1">:</span>
+            <span class="s1">self.key_held = </span><span class="s4">20</span>
+
+        <span class="s0"># set the y_offset for scrolling and keep it between 0 and max_y</span>
+        <span class="s1">y = pg.mouse.get_rel()[</span><span class="s4">1</span><span class="s1">]</span>
+        <span class="s3">if </span><span class="s1">y </span><span class="s3">and </span><span class="s1">self.grabbed:</span>
+            <span class="s1">self.y_offset -= y</span>
+
+        <span class="s1">self.y_offset = min((max(self.y_offset</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s1">self.max_y))</span>
+        <span class="s3">return True</span>
+
+
+<span class="s1">viewer = FontViewer()</span>
+<span class="s1">pg.quit()</span>
+</pre>
+</body>
+</html>

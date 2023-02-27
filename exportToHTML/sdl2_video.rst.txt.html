@@ -1,0 +1,350 @@
+<html>
+<head>
+<title>sdl2_video.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+sdl2_video.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">:mod:`pygame.sdl2_video`</span>
+<span class="s0">========================</span>
+
+<span class="s0">.. module:: pygame._sdl2.video</span>
+   <span class="s0">:synopsis: Experimental pygame module for porting new SDL video systems</span>
+
+<span class="s0">.. warning::</span>
+	<span class="s0">This module isn't ready for prime time yet, it's still in development.</span>
+        <span class="s0">These docs are primarily meant to help the pygame developers and super-early adopters</span>
+        <span class="s0">who are in communication with the developers. This API will change.</span>
+
+<span class="s0">| :sl:`Experimental pygame module for porting new SDL video systems`</span>
+
+<span class="s0">.. class:: Window</span>
+
+   <span class="s0">| :sl:`pygame object that represents a window`</span>
+   <span class="s0">| :sg:`Window(title=&quot;pygame&quot;, size=(640, 480), position=None, fullscreen=False, fullscreen_desktop=False, keywords) -&gt; Window`</span>
+
+   <span class="s0">.. classmethod:: from_display_module</span>
+   
+      <span class="s0">| :sl:`Creates window using window created by pygame.display.set_mode().`</span>
+      <span class="s0">| :sg:`from_display_module() -&gt; Window`</span>
+
+   <span class="s0">.. attribute:: grab</span>
+
+      <span class="s0">| :sl:`Gets or sets whether the mouse is confined to the window.`</span>
+      <span class="s0">| :sg:`grab -&gt; bool`</span>
+
+   <span class="s0">.. attribute:: relative_mouse</span>
+
+      <span class="s0">| :sl:`Gets or sets the window's relative mouse motion state.`</span>
+      <span class="s0">| :sg:`relative_mouse -&gt; bool`</span>
+
+   <span class="s0">.. method:: set_windowed</span>
+
+      <span class="s0">| :sl:`Enable windowed mode (exit fullscreen).`</span>
+      <span class="s0">| :sg:`set_windowed() -&gt; None`</span>
+
+   <span class="s0">.. method:: set_fullscreen</span>
+
+      <span class="s0">| :sl:`Enter fullscreen.`</span>
+      <span class="s0">| :sg:`set_fullscreen(desktop=False) -&gt; None`</span>
+
+   <span class="s0">.. attribute:: title</span>
+
+      <span class="s0">| :sl:`Gets or sets whether the window title.`</span>
+      <span class="s0">| :sg:`title -&gt; string`</span>
+
+   <span class="s0">.. method:: destroy</span>
+
+      <span class="s0">| :sl:`Destroys the window.`</span>
+      <span class="s0">| :sg:`destroy() -&gt; None`</span>
+
+   <span class="s0">.. method:: hide</span>
+
+      <span class="s0">| :sl:`Hide the window.`</span>
+      <span class="s0">| :sg:`hide() -&gt; None`</span>
+
+   <span class="s0">.. method:: show</span>
+
+      <span class="s0">| :sl:`Show the window.`</span>
+      <span class="s0">| :sg:`show() -&gt; None`</span>
+
+   <span class="s0">.. method:: focus</span>
+
+      <span class="s0">| :sl:`Raise the window above other windows and set the input focus. The &quot;input_only&quot; argument is only supported on X11.`</span>
+      <span class="s0">| :sg:`focus(input_only=False) -&gt; None`</span>
+
+   <span class="s0">.. method:: restore</span>
+
+      <span class="s0">| :sl:`Restore the size and position of a minimized or maximized window.`</span>
+      <span class="s0">| :sg:`restore() -&gt; None`</span>
+
+   <span class="s0">.. method:: maximize</span>
+
+      <span class="s0">| :sl:`Maximize the window.`</span>
+      <span class="s0">| :sg:`maximize() -&gt; None`</span>
+
+   <span class="s0">.. method:: minimize</span>
+
+      <span class="s0">| :sl:`Minimize the window.`</span>
+      <span class="s0">| :sg:`maximize() -&gt; None`</span>
+
+   <span class="s0">.. attribute:: resizable</span>
+
+      <span class="s0">| :sl:`Gets and sets whether the window is resizable.`</span>
+      <span class="s0">| :sg:`resizable -&gt; bool`</span>
+
+   <span class="s0">.. attribute:: borderless</span>
+
+      <span class="s0">| :sl:`Add or remove the border from the window.`</span>
+      <span class="s0">| :sg:`borderless -&gt; bool`</span>
+
+   <span class="s0">.. method:: set_icon</span>
+
+      <span class="s0">| :sl:`Set the icon for the window.`</span>
+      <span class="s0">| :sg:`set_icon(surface) -&gt; None`</span>
+
+   <span class="s0">.. attribute:: id</span>
+
+      <span class="s0">| :sl:`Get the unique window ID. *Read-only*`</span>
+      <span class="s0">| :sg:`id -&gt; int`</span>
+
+   <span class="s0">.. attribute:: size</span>
+
+      <span class="s0">| :sl:`Gets and sets the window size.`</span>
+      <span class="s0">| :sg:`size -&gt; (int, int)`</span>
+
+   <span class="s0">.. attribute:: position</span>
+
+      <span class="s0">| :sl:`Gets and sets the window position.`</span>
+      <span class="s0">| :sg:`position -&gt; (int, int) or WINDOWPOS_CENTERED or WINDOWPOS_UNDEFINED`	</span>
+
+   <span class="s0">.. attribute:: opacity</span>
+
+      <span class="s0">| :sl:`Gets and sets the window opacity. Between 0.0 (fully transparent) and 1.0 (fully opaque).`</span>
+      <span class="s0">| :sg:`opacity -&gt; float`</span>
+
+   <span class="s0">.. attribute:: brightness</span>
+
+      <span class="s0">| :sl:`Gets and sets the brightness (gamma multiplier) for the display that owns the window.`</span>
+      <span class="s0">| :sg:`brightness -&gt; float`</span>
+
+   <span class="s0">.. attribute:: display_index</span>
+
+      <span class="s0">| :sl:`Get the index of the display that owns the window. *Read-only*`</span>
+      <span class="s0">| :sg:`display_index -&gt; int`</span>
+
+   <span class="s0">.. method:: set_modal_for</span>
+
+      <span class="s0">| :sl:`Set the window as a modal for a parent window. This function is only supported on X11.`</span>
+      <span class="s0">| :sg:`set_modal_for(Window) -&gt; None`</span>
+
+<span class="s0">.. class:: Texture	</span>
+
+   <span class="s0">| :sl:`pygame object that representing a Texture.`</span>
+   <span class="s0">| :sg:`Texture(renderer, size, depth=0, static=False, streaming=False, target=False) -&gt; Texture`</span>
+
+   <span class="s0">.. staticmethod:: from_surface</span>
+
+      <span class="s0">| :sl:`Create a texture from an existing surface.`</span>
+      <span class="s0">| :sg:`from_surface(renderer, surface) -&gt; Texture`</span>
+
+   <span class="s0">.. attribute:: renderer</span>
+
+      <span class="s0">| :sl:`Gets the renderer associated with the Texture. *Read-only*`</span>
+      <span class="s0">| :sg:`renderer -&gt; Renderer`</span>
+
+   <span class="s0">.. attribute:: width</span>
+
+      <span class="s0">| :sl:`Gets the width of the Texture. *Read-only*`</span>
+      <span class="s0">| :sg:`width -&gt; int`</span>
+
+   <span class="s0">.. attribute:: height</span>
+
+      <span class="s0">| :sl:`Gets the height of the Texture. *Read-only*`</span>
+      <span class="s0">| :sg:`height -&gt; int`</span>
+
+   <span class="s0">.. attribute:: alpha</span>
+
+      <span class="s0">| :sl:`Gets and sets an additional alpha value multiplied into render copy operations.`</span>
+      <span class="s0">| :sg:`alpha -&gt; int`</span>
+
+   <span class="s0">.. attribute:: blend_mode</span>
+
+      <span class="s0">| :sl:`Gets and sets the blend mode for the Texture.`</span>
+      <span class="s0">| :sg:`blend_mode -&gt; int`</span>
+
+   <span class="s0">.. attribute:: color</span>
+
+      <span class="s0">| :sl:`Gets and sets an additional color value multiplied into render copy operations.`</span>
+      <span class="s0">| :sg:`color -&gt; color`</span>
+
+   <span class="s0">.. method:: get_rect</span>
+
+      <span class="s0">| :sl:`Get the rectangular area of the texture.`</span>
+      <span class="s0">| :sg:`get_rect(**kwargs) -&gt; Rect`</span>
+
+   <span class="s0">.. method:: draw</span>
+
+      <span class="s0">| :sl:`Copy a portion of the texture to the rendering target.`</span>
+      <span class="s0">| :sg:`draw(srcrect=None, dstrect=None, angle=0, origin=None, flip_x=False, flip_y=False) -&gt; None`</span>
+
+   <span class="s0">.. method:: update</span>
+
+      <span class="s0">| :sl:`Update the texture with a Surface. WARNING: Slow operation, use sparingly.`</span>
+      <span class="s0">| :sg:`update(surface, area=None) -&gt; None`</span>
+
+<span class="s0">.. class:: Image</span>
+
+   <span class="s0">| :sl:`Easy way to use a portion of a Texture without worrying about srcrect all the time.`</span>
+   <span class="s0">| :sg:`Image(textureOrImage, srcrect=None) -&gt; Image`</span>
+
+   <span class="s0">.. method:: get_rect</span>
+
+      <span class="s0">| :sl:`Get the rectangular area of the Image.`</span>
+      <span class="s0">| :sg:`get_rect() -&gt; Rect`</span>
+
+   <span class="s0">.. method:: draw</span>
+
+      <span class="s0">| :sl:`Copy a portion of the Image to the rendering target.`</span>
+      <span class="s0">| :sg:`draw(srcrect=None, dstrect=None) -&gt; None`</span>
+
+   <span class="s0">.. attribute:: angle</span>
+
+      <span class="s0">| :sl:`Gets and sets the angle the Image draws itself with.`</span>
+      <span class="s0">| :sg:`angle -&gt; float`</span>
+
+   <span class="s0">.. attribute:: origin</span>
+
+      <span class="s0">| :sl:`Gets and sets the origin. Origin=None means the Image will be rotated around its center.`</span>
+      <span class="s0">| :sg:`origin -&gt; (float, float) or None.`</span>
+
+   <span class="s0">.. attribute:: flip_x</span>
+
+      <span class="s0">| :sl:`Gets and sets whether the Image is flipped on the x axis.`</span>
+      <span class="s0">| :sg:`flip_x -&gt; bool`</span>
+
+   <span class="s0">.. attribute:: flip_y</span>
+
+      <span class="s0">| :sl:`Gets and sets whether the Image is flipped on the y axis.`</span>
+      <span class="s0">| :sg:`flip_y -&gt; bool`</span>
+
+   <span class="s0">.. attribute:: color</span>
+
+      <span class="s0">| :sl:`Gets and sets the Image color modifier.`</span>
+      <span class="s0">| :sg:`color -&gt; Color`</span>
+
+   <span class="s0">.. attribute:: alpha</span>
+
+      <span class="s0">| :sl:`Gets and sets the Image alpha modifier.`</span>
+      <span class="s0">| :sg:`alpha -&gt; float`</span>
+
+   <span class="s0">.. attribute:: blend_mode</span>
+
+      <span class="s0">| :sl:`Gets and sets the blend mode for the Image.`</span>
+      <span class="s0">| :sg:`blend_mode -&gt; int`</span>
+
+   <span class="s0">.. attribute:: texture</span>
+
+      <span class="s0">| :sl:`Gets and sets the Texture the Image is based on.`</span>
+      <span class="s0">| :sg:`texture -&gt; Texture`</span>
+
+   <span class="s0">.. attribute:: srcrect</span>
+
+      <span class="s0">| :sl:`Gets and sets the Rect the Image is based on.`</span>
+      <span class="s0">| :sg:`srcrect -&gt; Rect`</span>
+
+<span class="s0">.. class:: Renderer</span>
+
+   <span class="s0">| :sl:`Create a 2D rendering context for a window.`</span>
+   <span class="s0">| :sg:`Renderer(window, index=-1, accelerated=-1, vsync=False, target_texture=False) -&gt; Renderer`</span>
+
+   <span class="s0">.. classmethod:: from_window</span>
+
+      <span class="s0">| :sl:`Easy way to create a Renderer.`</span>
+      <span class="s0">| :sg:`from_window(window) -&gt; Renderer`</span>
+
+   <span class="s0">.. attribute:: draw_blend_mode</span>
+
+      <span class="s0">| :sl:`Gets and sets the blend mode used by the drawing functions.`</span>
+      <span class="s0">| :sg:`draw_blend_mode -&gt; int`   </span>
+
+   <span class="s0">.. attribute:: draw_color</span>
+
+      <span class="s0">| :sl:`Gets and sets the color used by the drawing functions.`</span>
+      <span class="s0">| :sg:`draw_color -&gt; Color`</span>
+
+   <span class="s0">.. method:: clear</span>
+
+      <span class="s0">| :sl:`Clear the current rendering target with the drawing color.`</span>
+      <span class="s0">| :sg:`clear() -&gt; None`</span>
+
+   <span class="s0">.. method:: present</span>
+
+      <span class="s0">| :sl:`Updates the screen with any new rendering since previous call.`</span>
+      <span class="s0">| :sg:`present() -&gt; None`	</span>
+
+   <span class="s0">.. method:: get_viewport</span>
+
+      <span class="s0">| :sl:`Returns the drawing area on the target.`</span>
+      <span class="s0">| :sg:`get_viewport() -&gt; Rect`</span>
+
+   <span class="s0">.. method:: set_viewport</span>
+
+      <span class="s0">| :sl:`Set the drawing area on the target. If area is None, the entire target will be used.`</span>
+      <span class="s0">| :sg:`set_viewport(area) -&gt; None`</span>
+
+   <span class="s0">.. attribute:: logical_size</span>
+
+      <span class="s0">| :sl:`Gets and sets the logical size.`</span>
+      <span class="s0">| :sg:`logical_size -&gt; (int width, int height)`</span>
+
+   <span class="s0">.. attribute:: scale</span>
+
+      <span class="s0">| :sl:`Gets and sets the scale.`</span>
+      <span class="s0">| :sg:`scale -&gt; (float x_scale, float y_scale)`</span>
+
+   <span class="s0">.. attribute:: target</span>
+
+      <span class="s0">| :sl:`Gets and sets the render target. None represents the default target (the renderer).`</span>
+      <span class="s0">| :sg:`target -&gt; Texture or None`</span>
+
+   <span class="s0">.. method:: blit</span>
+
+      <span class="s0">| :sl:`For compatibility purposes. Textures created by different Renderers cannot be shared!`</span>
+      <span class="s0">| :sg:`blit(source, dest, area=None, special_flags=0)-&gt; Rect`</span>
+
+   <span class="s0">.. method:: draw_line</span>
+
+      <span class="s0">| :sl:`Draws a line.`</span>
+      <span class="s0">| :sg:`draw_line(p1, p2) -&gt; None`</span>
+
+   <span class="s0">.. method:: draw_point</span>
+
+      <span class="s0">| :sl:`Draws a point.`</span>
+      <span class="s0">| :sg:`draw_point(point) -&gt; None`</span>
+
+   <span class="s0">.. method:: draw_rect</span>
+
+      <span class="s0">| :sl:`Draws a rectangle.`</span>
+      <span class="s0">| :sg:`draw_rect(rect)-&gt; None`</span>
+
+   <span class="s0">.. method:: fill_rect</span>
+
+      <span class="s0">| :sl:`Fills a rectangle.`</span>
+      <span class="s0">| :sg:`fill_rect(rect)-&gt; None`</span>
+
+   <span class="s0">.. method:: to_surface</span>
+
+      <span class="s0">| :sl:`Read pixels from current render target and create a pygame.Surface. WARNING: Slow operation, use sparingly.`</span>
+      <span class="s0">| :sg:`to_surface(surface=None, area=None)-&gt; Surface`</span></pre>
+</body>
+</html>

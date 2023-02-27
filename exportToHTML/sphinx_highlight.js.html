@@ -1,0 +1,166 @@
+<html>
+<head>
+<title>sphinx_highlight.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #cc7832;}
+.s4 { color: #629755; font-style: italic;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+sphinx_highlight.js</font>
+</center></td></tr></table>
+<pre><span class="s0">/* Highlighting utilities for Sphinx HTML documentation. */</span>
+<span class="s2">&quot;use strict&quot;</span><span class="s3">;</span>
+
+<span class="s3">const </span><span class="s1">SPHINX_HIGHLIGHT_ENABLED = </span><span class="s3">true</span>
+
+<span class="s4">/**</span>
+ <span class="s4">* highlight a given string on a node by wrapping it in</span>
+ <span class="s4">* span elements with the given class name.</span>
+ <span class="s4">*/</span>
+<span class="s3">const </span><span class="s1">_highlight = (node</span><span class="s3">, </span><span class="s1">addItems</span><span class="s3">, </span><span class="s1">text</span><span class="s3">, </span><span class="s1">className) =&gt; {</span>
+  <span class="s3">if </span><span class="s1">(node.nodeType === Node.TEXT_NODE) {</span>
+    <span class="s3">const </span><span class="s1">val = node.nodeValue</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">parent = node.parentNode</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">pos = val.toLowerCase().indexOf(text)</span><span class="s3">;</span>
+    <span class="s3">if </span><span class="s1">(</span>
+      <span class="s1">pos &gt;= </span><span class="s5">0 </span><span class="s1">&amp;&amp;</span>
+      <span class="s1">!parent.classList.contains(className) &amp;&amp;</span>
+      <span class="s1">!parent.classList.contains(</span><span class="s2">&quot;nohighlight&quot;</span><span class="s1">)</span>
+    <span class="s1">) {</span>
+      <span class="s3">let </span><span class="s1">span</span><span class="s3">;</span>
+
+      <span class="s3">const </span><span class="s1">closestNode = parent.closest(</span><span class="s2">&quot;body, svg, foreignObject&quot;</span><span class="s1">)</span><span class="s3">;</span>
+      <span class="s3">const </span><span class="s1">isInSVG = closestNode &amp;&amp; closestNode.matches(</span><span class="s2">&quot;svg&quot;</span><span class="s1">)</span><span class="s3">;</span>
+      <span class="s3">if </span><span class="s1">(isInSVG) {</span>
+        <span class="s1">span = document.createElementNS(</span><span class="s2">&quot;http://www.w3.org/2000/svg&quot;</span><span class="s3">, </span><span class="s2">&quot;tspan&quot;</span><span class="s1">)</span><span class="s3">;</span>
+      <span class="s1">} </span><span class="s3">else </span><span class="s1">{</span>
+        <span class="s1">span = document.createElement(</span><span class="s2">&quot;span&quot;</span><span class="s1">)</span><span class="s3">;</span>
+        <span class="s1">span.classList.add(className)</span><span class="s3">;</span>
+      <span class="s1">}</span>
+
+      <span class="s1">span.appendChild(document.createTextNode(val.substr(pos</span><span class="s3">, </span><span class="s1">text.length)))</span><span class="s3">;</span>
+      <span class="s1">parent.insertBefore(</span>
+        <span class="s1">span</span><span class="s3">,</span>
+        <span class="s1">parent.insertBefore(</span>
+          <span class="s1">document.createTextNode(val.substr(pos + text.length))</span><span class="s3">,</span>
+          <span class="s1">node.nextSibling</span>
+        <span class="s1">)</span>
+      <span class="s1">)</span><span class="s3">;</span>
+      <span class="s1">node.nodeValue = val.substr(</span><span class="s5">0</span><span class="s3">, </span><span class="s1">pos)</span><span class="s3">;</span>
+
+      <span class="s3">if </span><span class="s1">(isInSVG) {</span>
+        <span class="s3">const </span><span class="s1">rect = document.createElementNS(</span>
+          <span class="s2">&quot;http://www.w3.org/2000/svg&quot;</span><span class="s3">,</span>
+          <span class="s2">&quot;rect&quot;</span>
+        <span class="s1">)</span><span class="s3">;</span>
+        <span class="s3">const </span><span class="s1">bbox = parent.getBBox()</span><span class="s3">;</span>
+        <span class="s1">rect.x.baseVal.value = bbox.x</span><span class="s3">;</span>
+        <span class="s1">rect.y.baseVal.value = bbox.y</span><span class="s3">;</span>
+        <span class="s1">rect.width.baseVal.value = bbox.width</span><span class="s3">;</span>
+        <span class="s1">rect.height.baseVal.value = bbox.height</span><span class="s3">;</span>
+        <span class="s1">rect.setAttribute(</span><span class="s2">&quot;class&quot;</span><span class="s3">, </span><span class="s1">className)</span><span class="s3">;</span>
+        <span class="s1">addItems.push({ parent: parent</span><span class="s3">, </span><span class="s1">target: rect })</span><span class="s3">;</span>
+      <span class="s1">}</span>
+    <span class="s1">}</span>
+  <span class="s1">} </span><span class="s3">else if </span><span class="s1">(node.matches &amp;&amp; !node.matches(</span><span class="s2">&quot;button, select, textarea&quot;</span><span class="s1">)) {</span>
+    <span class="s1">node.childNodes.forEach((el) =&gt; _highlight(el</span><span class="s3">, </span><span class="s1">addItems</span><span class="s3">, </span><span class="s1">text</span><span class="s3">, </span><span class="s1">className))</span><span class="s3">;</span>
+  <span class="s1">}</span>
+<span class="s1">}</span><span class="s3">;</span>
+<span class="s3">const </span><span class="s1">_highlightText = (thisNode</span><span class="s3">, </span><span class="s1">text</span><span class="s3">, </span><span class="s1">className) =&gt; {</span>
+  <span class="s3">let </span><span class="s1">addItems = []</span><span class="s3">;</span>
+  <span class="s1">_highlight(thisNode</span><span class="s3">, </span><span class="s1">addItems</span><span class="s3">, </span><span class="s1">text</span><span class="s3">, </span><span class="s1">className)</span><span class="s3">;</span>
+  <span class="s1">addItems.forEach((obj) =&gt;</span>
+    <span class="s1">obj.parent.insertAdjacentElement(</span><span class="s2">&quot;beforebegin&quot;</span><span class="s3">, </span><span class="s1">obj.target)</span>
+  <span class="s1">)</span><span class="s3">;</span>
+<span class="s1">}</span><span class="s3">;</span>
+
+<span class="s4">/**</span>
+ <span class="s4">* Small JavaScript module for the documentation.</span>
+ <span class="s4">*/</span>
+<span class="s3">const </span><span class="s1">SphinxHighlight = {</span>
+
+  <span class="s4">/**</span>
+   <span class="s4">* highlight the search words provided in localstorage in the text</span>
+   <span class="s4">*/</span>
+  <span class="s1">highlightSearchWords: () =&gt; {</span>
+    <span class="s3">if </span><span class="s1">(!SPHINX_HIGHLIGHT_ENABLED) </span><span class="s3">return;  </span><span class="s0">// bail if no highlight</span>
+
+    <span class="s0">// get and clear terms from localstorage</span>
+    <span class="s3">const </span><span class="s1">url = </span><span class="s3">new </span><span class="s1">URL(window.location)</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">highlight =</span>
+        <span class="s1">localStorage.getItem(</span><span class="s2">&quot;sphinx_highlight_terms&quot;</span><span class="s1">)</span>
+        <span class="s1">|| url.searchParams.get(</span><span class="s2">&quot;highlight&quot;</span><span class="s1">)</span>
+        <span class="s1">|| </span><span class="s2">&quot;&quot;</span><span class="s3">;</span>
+    <span class="s1">localStorage.removeItem(</span><span class="s2">&quot;sphinx_highlight_terms&quot;</span><span class="s1">)</span>
+    <span class="s1">url.searchParams.delete(</span><span class="s2">&quot;highlight&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">window.history.replaceState({}</span><span class="s3">, </span><span class="s2">&quot;&quot;</span><span class="s3">, </span><span class="s1">url)</span><span class="s3">;</span>
+
+    <span class="s0">// get individual terms from highlight string</span>
+    <span class="s3">const </span><span class="s1">terms = highlight.toLowerCase().split(</span><span class="s5">/\s+/</span><span class="s1">).filter(x =&gt; x)</span><span class="s3">;</span>
+    <span class="s3">if </span><span class="s1">(terms.length === </span><span class="s5">0</span><span class="s1">) </span><span class="s3">return; </span><span class="s0">// nothing to do</span>
+
+    <span class="s0">// There should never be more than one element matching &quot;div.body&quot;</span>
+    <span class="s3">const </span><span class="s1">divBody = document.querySelectorAll(</span><span class="s2">&quot;div.body&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s3">const </span><span class="s1">body = divBody.length ? divBody[</span><span class="s5">0</span><span class="s1">] : document.querySelector(</span><span class="s2">&quot;body&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s1">window.setTimeout(() =&gt; {</span>
+      <span class="s1">terms.forEach((term) =&gt; _highlightText(body</span><span class="s3">, </span><span class="s1">term</span><span class="s3">, </span><span class="s2">&quot;highlighted&quot;</span><span class="s1">))</span><span class="s3">;</span>
+    <span class="s1">}</span><span class="s3">, </span><span class="s5">10</span><span class="s1">)</span><span class="s3">;</span>
+
+    <span class="s3">const </span><span class="s1">searchBox = document.getElementById(</span><span class="s2">&quot;searchbox&quot;</span><span class="s1">)</span><span class="s3">;</span>
+    <span class="s3">if </span><span class="s1">(searchBox === </span><span class="s3">null</span><span class="s1">) </span><span class="s3">return;</span>
+    <span class="s1">searchBox.appendChild(</span>
+      <span class="s1">document</span>
+        <span class="s1">.createRange()</span>
+        <span class="s1">.createContextualFragment(</span>
+          <span class="s2">'&lt;p class=&quot;highlight-link&quot;&gt;' </span><span class="s1">+</span>
+            <span class="s2">'&lt;a href=&quot;javascript:SphinxHighlight.hideSearchWords()&quot;&gt;' </span><span class="s1">+</span>
+            <span class="s1">_(</span><span class="s2">&quot;Hide Search Matches&quot;</span><span class="s1">) +</span>
+            <span class="s2">&quot;&lt;/a&gt;&lt;/p&gt;&quot;</span>
+        <span class="s1">)</span>
+    <span class="s1">)</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s4">/**</span>
+   <span class="s4">* helper function to hide the search marks again</span>
+   <span class="s4">*/</span>
+  <span class="s1">hideSearchWords: () =&gt; {</span>
+    <span class="s1">document</span>
+      <span class="s1">.querySelectorAll(</span><span class="s2">&quot;#searchbox .highlight-link&quot;</span><span class="s1">)</span>
+      <span class="s1">.forEach((el) =&gt; el.remove())</span><span class="s3">;</span>
+    <span class="s1">document</span>
+      <span class="s1">.querySelectorAll(</span><span class="s2">&quot;span.highlighted&quot;</span><span class="s1">)</span>
+      <span class="s1">.forEach((el) =&gt; el.classList.remove(</span><span class="s2">&quot;highlighted&quot;</span><span class="s1">))</span><span class="s3">;</span>
+    <span class="s1">localStorage.removeItem(</span><span class="s2">&quot;sphinx_highlight_terms&quot;</span><span class="s1">)</span>
+  <span class="s1">}</span><span class="s3">,</span>
+
+  <span class="s1">initEscapeListener: () =&gt; {</span>
+    <span class="s0">// only install a listener if it is really needed</span>
+    <span class="s3">if </span><span class="s1">(!DOCUMENTATION_OPTIONS.ENABLE_SEARCH_SHORTCUTS) </span><span class="s3">return;</span>
+
+    <span class="s1">document.addEventListener(</span><span class="s2">&quot;keydown&quot;</span><span class="s3">, </span><span class="s1">(event) =&gt; {</span>
+      <span class="s0">// bail for input elements</span>
+      <span class="s3">if </span><span class="s1">(BLACKLISTED_KEY_CONTROL_ELEMENTS.has(document.activeElement.tagName)) </span><span class="s3">return;</span>
+      <span class="s0">// bail with special keys</span>
+      <span class="s3">if </span><span class="s1">(event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) </span><span class="s3">return;</span>
+      <span class="s3">if </span><span class="s1">(DOCUMENTATION_OPTIONS.ENABLE_SEARCH_SHORTCUTS &amp;&amp; (event.key === </span><span class="s2">&quot;Escape&quot;</span><span class="s1">)) {</span>
+        <span class="s1">SphinxHighlight.hideSearchWords()</span><span class="s3">;</span>
+        <span class="s1">event.preventDefault()</span><span class="s3">;</span>
+      <span class="s1">}</span>
+    <span class="s1">})</span><span class="s3">;</span>
+  <span class="s1">}</span><span class="s3">,</span>
+<span class="s1">}</span><span class="s3">;</span>
+
+<span class="s1">_ready(SphinxHighlight.highlightSearchWords)</span><span class="s3">;</span>
+<span class="s1">_ready(SphinxHighlight.initEscapeListener)</span><span class="s3">;</span>
+</pre>
+</body>
+</html>

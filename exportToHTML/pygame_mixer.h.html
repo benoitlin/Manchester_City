@@ -1,0 +1,93 @@
+<html>
+<head>
+<title>pygame_mixer.h</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #cc7832;}
+.s3 { color: #6a8759;}
+.s4 { color: #0f9795;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+pygame_mixer.h</font>
+</center></td></tr></table>
+<pre><span class="s0">/* 
+    pygame - Python Game Library 
+    Copyright (C) 2000-2001  Pete Shinners 
+ 
+    This library is free software; you can redistribute it and/or 
+    modify it under the terms of the GNU Library General Public 
+    License as published by the Free Software Foundation; either 
+    version 2 of the License, or (at your option) any later version. 
+ 
+    This library is distributed in the hope that it will be useful, 
+    but WITHOUT ANY WARRANTY; without even the implied warranty of 
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+    Library General Public License for more details. 
+ 
+    You should have received a copy of the GNU Library General Public 
+    License along with this library; if not, write to the Free 
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+ 
+    Pete Shinners 
+    pete@shinners.org 
+*/</span>
+
+<span class="s2">#ifndef </span><span class="s1">PGMIXER_H</span>
+<span class="s2">#define </span><span class="s1">PGMIXER_H</span>
+
+<span class="s2">#include </span><span class="s1">&lt;Python.h&gt;</span>
+<span class="s2">#include </span><span class="s1">&lt;structmember.h&gt;</span>
+
+<span class="s2">#include </span><span class="s3">&quot;pgcompat.h&quot;</span>
+
+<span class="s2">struct </span><span class="s1">Mix_Chunk;</span>
+
+<span class="s2">typedef struct </span><span class="s1">{</span>
+    <span class="s1">PyObject_HEAD Mix_Chunk *chunk;</span>
+    <span class="s1">Uint8 *mem;</span>
+    <span class="s1">PyObject *weakreflist;</span>
+<span class="s1">} pgSoundObject;</span>
+
+<span class="s2">typedef struct </span><span class="s1">{</span>
+    <span class="s1">PyObject_HEAD </span><span class="s2">int </span><span class="s1">chan;</span>
+<span class="s1">} pgChannelObject;</span>
+
+<span class="s2">#define </span><span class="s1">pgSound_AsChunk(x) (((pgSoundObject *)x)</span><span class="s4">-&gt;</span><span class="s1">chunk)</span>
+<span class="s2">#define </span><span class="s1">pgChannel_AsInt(x) (((pgChannelObject *)x)</span><span class="s4">-&gt;</span><span class="s1">chan)</span>
+
+<span class="s2">#include </span><span class="s3">&quot;pgimport.h&quot;</span>
+
+<span class="s2">#ifndef </span><span class="s1">PYGAMEAPI_MIXER_INTERNAL</span>
+
+<span class="s1">PYGAMEAPI_DEFINE_SLOTS(mixer);</span>
+
+<span class="s2">#define </span><span class="s1">pgSound_Type (*(PyTypeObject *)PYGAMEAPI_GET_SLOT(mixer, </span><span class="s5">0</span><span class="s1">))</span>
+
+<span class="s2">#define </span><span class="s1">pgSound_Check(x) ((x)</span><span class="s4">-&gt;</span><span class="s1">ob_type == &amp;pgSound_Type)</span>
+
+<span class="s2">#define </span><span class="s1">pgSound_New \</span>
+    <span class="s1">(*(PyObject * (*)(Mix_Chunk *)) PYGAMEAPI_GET_SLOT(mixer, </span><span class="s5">1</span><span class="s1">))</span>
+
+<span class="s2">#define </span><span class="s1">pgSound_Play \</span>
+    <span class="s1">(*(PyObject * (*)(PyObject *, PyObject *)) PYGAMEAPI_GET_SLOT(mixer, </span><span class="s5">2</span><span class="s1">))</span>
+
+<span class="s2">#define </span><span class="s1">pgChannel_Type (*(PyTypeObject *)PYGAMEAPI_GET_SLOT(mixer, </span><span class="s5">3</span><span class="s1">))</span>
+<span class="s2">#define </span><span class="s1">pgChannel_Check(x) ((x)</span><span class="s4">-&gt;</span><span class="s1">ob_type == &amp;pgChannel_Type)</span>
+
+<span class="s2">#define </span><span class="s1">pgChannel_New (*(PyObject * (*)(</span><span class="s2">int</span><span class="s1">)) PYGAMEAPI_GET_SLOT(mixer, </span><span class="s5">4</span><span class="s1">))</span>
+
+<span class="s2">#define </span><span class="s1">import_pygame_mixer() _IMPORT_PYGAME_MODULE(mixer)</span>
+
+<span class="s2">#endif </span><span class="s0">/* PYGAMEAPI_MIXER_INTERNAL */</span>
+
+<span class="s2">#endif </span><span class="s0">/* ~PGMIXER_H */</span>
+</pre>
+</body>
+</html>

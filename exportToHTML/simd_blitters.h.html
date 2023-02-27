@@ -1,0 +1,84 @@
+<html>
+<head>
+<title>simd_blitters.h</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #808080;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+simd_blitters.h</font>
+</center></td></tr></table>
+<pre><span class="s0">#define </span><span class="s1">NO_PYGAME_C_API</span>
+<span class="s0">#include </span><span class="s2">&quot;_surface.h&quot;</span>
+<span class="s0">#include </span><span class="s2">&quot;_blit_info.h&quot;</span>
+
+<span class="s0">#if </span><span class="s1">!defined(PG_ENABLE_ARM_NEON) &amp;&amp; defined(__aarch64__)</span>
+<span class="s3">// arm64 has neon optimisations enabled by default, even when fpu=neon is not</span>
+<span class="s3">// passed</span>
+<span class="s0">#define </span><span class="s1">PG_ENABLE_ARM_NEON </span><span class="s4">1</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#if </span><span class="s1">(defined(__SSE2__) || defined(PG_ENABLE_ARM_NEON))</span>
+<span class="s0">void</span>
+<span class="s1">alphablit_alpha_sse2_argb_surf_alpha(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">alphablit_alpha_sse2_argb_no_surf_alpha(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">alphablit_alpha_sse2_argb_no_surf_alpha_opaque_dst(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgba_mul_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgb_mul_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgba_add_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgb_add_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgba_sub_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgb_sub_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgba_max_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgb_max_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgba_min_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgb_min_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_premultiplied_sse2(SDL_BlitInfo *info);</span>
+<span class="s0">#endif </span><span class="s3">/* (defined(__SSE2__) || defined(PG_ENABLE_ARM_NEON)) */</span>
+
+<span class="s0">int</span>
+<span class="s1">pg_has_avx2();</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgba_mul_avx2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgb_mul_avx2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgba_add_avx2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgb_add_avx2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgba_sub_avx2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgb_sub_avx2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgba_max_avx2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgb_max_avx2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgba_min_avx2(SDL_BlitInfo *info);</span>
+<span class="s0">void</span>
+<span class="s1">blit_blend_rgb_min_avx2(SDL_BlitInfo *info);</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<html>
+<head>
+<title>_camera_opencv.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #808080;}
+.s4 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+_camera_opencv.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">numpy</span>
+<span class="s0">import </span><span class="s1">cv2</span>
+<span class="s0">import </span><span class="s1">time</span>
+
+<span class="s0">import </span><span class="s1">pygame</span>
+
+
+<span class="s0">def </span><span class="s1">list_cameras():</span>
+    <span class="s0">return </span><span class="s1">[</span><span class="s2">0</span><span class="s1">]</span>
+
+
+<span class="s0">def </span><span class="s1">list_cameras_darwin():</span>
+    <span class="s0">import </span><span class="s1">subprocess</span>
+    <span class="s0">from </span><span class="s1">xml.etree </span><span class="s0">import </span><span class="s1">ElementTree</span>
+
+    <span class="s3"># pylint: disable=consider-using-with</span>
+    <span class="s1">flout</span><span class="s0">, </span><span class="s1">_ = subprocess.Popen(</span>
+        <span class="s4">&quot;system_profiler -xml SPCameraDataType&quot;</span><span class="s0">,</span>
+        <span class="s1">shell=</span><span class="s0">True,</span>
+        <span class="s1">stdout=subprocess.PIPE</span><span class="s0">,</span>
+        <span class="s1">stderr=subprocess.PIPE</span><span class="s0">,</span>
+    <span class="s1">).communicate()</span>
+
+    <span class="s1">last_text = </span><span class="s0">None</span>
+    <span class="s1">cameras = []</span>
+
+    <span class="s0">for </span><span class="s1">node </span><span class="s0">in </span><span class="s1">ElementTree.fromstring(flout).iterfind(</span><span class="s4">&quot;./array/dict/array/dict/*&quot;</span><span class="s1">):</span>
+        <span class="s0">if </span><span class="s1">last_text == </span><span class="s4">&quot;_name&quot;</span><span class="s1">:</span>
+            <span class="s1">cameras.append(node.text)</span>
+        <span class="s1">last_text = node.text</span>
+
+    <span class="s0">return </span><span class="s1">cameras</span>
+
+
+<span class="s0">class </span><span class="s1">Camera:</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">device=</span><span class="s2">0</span><span class="s0">, </span><span class="s1">size=(</span><span class="s2">640</span><span class="s0">, </span><span class="s2">480</span><span class="s1">)</span><span class="s0">, </span><span class="s1">mode=</span><span class="s4">&quot;RGB&quot;</span><span class="s1">):</span>
+        <span class="s1">self._device_index = device</span>
+        <span class="s1">self._size = size</span>
+
+        <span class="s0">if </span><span class="s1">mode == </span><span class="s4">&quot;RGB&quot;</span><span class="s1">:</span>
+            <span class="s1">self._fmt = cv2.COLOR_BGR2RGB</span>
+        <span class="s0">elif </span><span class="s1">mode == </span><span class="s4">&quot;YUV&quot;</span><span class="s1">:</span>
+            <span class="s1">self._fmt = cv2.COLOR_BGR2YUV</span>
+        <span class="s0">elif </span><span class="s1">mode == </span><span class="s4">&quot;HSV&quot;</span><span class="s1">:</span>
+            <span class="s1">self._fmt = cv2.COLOR_BGR2HSV</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s0">raise </span><span class="s1">ValueError(</span><span class="s4">&quot;Not a supported mode&quot;</span><span class="s1">)</span>
+
+        <span class="s1">self._open = </span><span class="s0">False</span>
+
+    <span class="s3"># all of this could have been done in the constructor, but creating</span>
+    <span class="s3"># the VideoCapture is very time consuming, so it makes more sense in the</span>
+    <span class="s3"># actual start() method</span>
+    <span class="s0">def </span><span class="s1">start(self):</span>
+        <span class="s0">if </span><span class="s1">self._open:</span>
+            <span class="s0">return</span>
+
+        <span class="s1">self._cam = cv2.VideoCapture(self._device_index)</span>
+
+        <span class="s0">if not </span><span class="s1">self._cam.isOpened():</span>
+            <span class="s0">raise </span><span class="s1">ValueError(</span><span class="s4">&quot;Could not open camera.&quot;</span><span class="s1">)</span>
+
+        <span class="s1">self._cam.set(cv2.CAP_PROP_FRAME_WIDTH</span><span class="s0">, </span><span class="s1">self._size[</span><span class="s2">0</span><span class="s1">])</span>
+        <span class="s1">self._cam.set(cv2.CAP_PROP_FRAME_HEIGHT</span><span class="s0">, </span><span class="s1">self._size[</span><span class="s2">1</span><span class="s1">])</span>
+
+        <span class="s1">w = self._cam.get(cv2.CAP_PROP_FRAME_WIDTH)</span>
+        <span class="s1">h = self._cam.get(cv2.CAP_PROP_FRAME_HEIGHT)</span>
+        <span class="s1">self._size = (int(w)</span><span class="s0">, </span><span class="s1">int(h))</span>
+
+        <span class="s1">self._flipx = </span><span class="s0">False</span>
+        <span class="s1">self._flipy = </span><span class="s0">False</span>
+        <span class="s1">self._brightness = </span><span class="s2">1</span>
+
+        <span class="s1">self._frametime = </span><span class="s2">1 </span><span class="s1">/ self._cam.get(cv2.CAP_PROP_FPS)</span>
+        <span class="s1">self._last_frame_time = </span><span class="s2">0</span>
+
+        <span class="s1">self._open = </span><span class="s0">True</span>
+
+    <span class="s0">def </span><span class="s1">stop(self):</span>
+        <span class="s0">if </span><span class="s1">self._open:</span>
+            <span class="s1">self._cam.release()</span>
+            <span class="s1">self._cam = </span><span class="s0">None</span>
+            <span class="s1">self._open = </span><span class="s0">False</span>
+
+    <span class="s0">def </span><span class="s1">_check_open(self):</span>
+        <span class="s0">if not </span><span class="s1">self._open:</span>
+            <span class="s0">raise </span><span class="s1">pygame.error(</span><span class="s4">&quot;Camera must be started&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">get_size(self):</span>
+        <span class="s1">self._check_open()</span>
+
+        <span class="s0">return </span><span class="s1">self._size</span>
+
+    <span class="s0">def </span><span class="s1">set_controls(self</span><span class="s0">, </span><span class="s1">hflip=</span><span class="s0">None, </span><span class="s1">vflip=</span><span class="s0">None, </span><span class="s1">brightness=</span><span class="s0">None</span><span class="s1">):</span>
+        <span class="s1">self._check_open()</span>
+
+        <span class="s0">if </span><span class="s1">hflip </span><span class="s0">is not None</span><span class="s1">:</span>
+            <span class="s1">self._flipx = bool(hflip)</span>
+        <span class="s0">if </span><span class="s1">vflip </span><span class="s0">is not None</span><span class="s1">:</span>
+            <span class="s1">self._flipy = bool(vflip)</span>
+        <span class="s0">if </span><span class="s1">brightness </span><span class="s0">is not None</span><span class="s1">:</span>
+            <span class="s1">self._cam.set(cv2.CAP_PROP_BRIGHTNESS</span><span class="s0">, </span><span class="s1">brightness)</span>
+
+        <span class="s0">return </span><span class="s1">self.get_controls()</span>
+
+    <span class="s0">def </span><span class="s1">get_controls(self):</span>
+        <span class="s1">self._check_open()</span>
+
+        <span class="s0">return </span><span class="s1">(self._flipx</span><span class="s0">, </span><span class="s1">self._flipy</span><span class="s0">, </span><span class="s1">self._cam.get(cv2.CAP_PROP_BRIGHTNESS))</span>
+
+    <span class="s0">def </span><span class="s1">query_image(self):</span>
+        <span class="s1">self._check_open()</span>
+
+        <span class="s1">current_time = time.time()</span>
+        <span class="s0">if </span><span class="s1">current_time - self._last_frame_time &gt; self._frametime:</span>
+            <span class="s0">return True</span>
+        <span class="s0">return False</span>
+
+    <span class="s0">def </span><span class="s1">get_image(self</span><span class="s0">, </span><span class="s1">dest_surf=</span><span class="s0">None</span><span class="s1">):</span>
+        <span class="s1">self._check_open()</span>
+
+        <span class="s1">self._last_frame_time = time.time()</span>
+
+        <span class="s1">_</span><span class="s0">, </span><span class="s1">image = self._cam.read()</span>
+
+        <span class="s1">image = cv2.cvtColor(image</span><span class="s0">, </span><span class="s1">self._fmt)</span>
+
+        <span class="s1">flip_code = </span><span class="s0">None</span>
+        <span class="s0">if </span><span class="s1">self._flipx:</span>
+            <span class="s0">if </span><span class="s1">self._flipy:</span>
+                <span class="s1">flip_code = -</span><span class="s2">1</span>
+            <span class="s0">else</span><span class="s1">:</span>
+                <span class="s1">flip_code = </span><span class="s2">1</span>
+        <span class="s0">elif </span><span class="s1">self._flipy:</span>
+            <span class="s1">flip_code = </span><span class="s2">0</span>
+
+        <span class="s0">if </span><span class="s1">flip_code </span><span class="s0">is not None</span><span class="s1">:</span>
+            <span class="s1">image = cv2.flip(image</span><span class="s0">, </span><span class="s1">flip_code)</span>
+
+        <span class="s1">image = numpy.fliplr(image)</span>
+        <span class="s1">image = numpy.rot90(image)</span>
+
+        <span class="s1">surf = pygame.surfarray.make_surface(image)</span>
+
+        <span class="s0">if </span><span class="s1">dest_surf:</span>
+            <span class="s1">dest_surf.blit(surf</span><span class="s0">, </span><span class="s1">(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span>
+            <span class="s0">return </span><span class="s1">dest_surf</span>
+
+        <span class="s0">return </span><span class="s1">surf</span>
+
+    <span class="s0">def </span><span class="s1">get_raw(self):</span>
+        <span class="s1">self._check_open()</span>
+
+        <span class="s1">self._last_frame_time = time.time()</span>
+
+        <span class="s1">_</span><span class="s0">, </span><span class="s1">image = self._cam.read()</span>
+
+        <span class="s0">return </span><span class="s1">image.tobytes()</span>
+
+
+<span class="s0">class </span><span class="s1">CameraMac(Camera):</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">device=</span><span class="s2">0</span><span class="s0">, </span><span class="s1">size=(</span><span class="s2">640</span><span class="s0">, </span><span class="s2">480</span><span class="s1">)</span><span class="s0">, </span><span class="s1">mode=</span><span class="s4">&quot;RGB&quot;</span><span class="s1">):</span>
+
+        <span class="s0">if </span><span class="s1">isinstance(device</span><span class="s0">, </span><span class="s1">int):</span>
+            <span class="s1">_dev = device</span>
+        <span class="s0">elif </span><span class="s1">isinstance(device</span><span class="s0">, </span><span class="s1">str):</span>
+            <span class="s1">_dev = list_cameras_darwin().index(device)</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s0">raise </span><span class="s1">TypeError(</span>
+                <span class="s4">&quot;OpenCV-Mac backend can take device indices or names, ints or strings, not &quot;</span><span class="s0">,</span>
+                <span class="s1">str(type(device))</span><span class="s0">,</span>
+            <span class="s1">)</span>
+
+        <span class="s1">super().__init__(_dev</span><span class="s0">, </span><span class="s1">size</span><span class="s0">, </span><span class="s1">mode)</span>
+</pre>
+</body>
+</html>

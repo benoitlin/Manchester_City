@@ -1,0 +1,40 @@
+<html>
+<head>
+<title>mixer_music.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+mixer_music.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Optional</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">FileArg</span>
+
+<span class="s0">def </span><span class="s1">load(filename: FileArg</span><span class="s0">, </span><span class="s1">namehint: Optional[str] = </span><span class="s2">&quot;&quot;</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">unload() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">play(loops: int = </span><span class="s3">0</span><span class="s0">, </span><span class="s1">start: float = </span><span class="s3">0.0</span><span class="s0">, </span><span class="s1">fade_ms: int = </span><span class="s3">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">rewind() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">stop() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">pause() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">unpause() -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">fadeout(time: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">set_volume(volume: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_volume() -&gt; float: ...</span>
+<span class="s0">def </span><span class="s1">get_busy() -&gt; bool: ...</span>
+<span class="s0">def </span><span class="s1">set_pos(pos: float) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_pos() -&gt; int: ...</span>
+<span class="s0">def </span><span class="s1">queue(filename: FileArg</span><span class="s0">, </span><span class="s1">namehint: str = </span><span class="s2">&quot;&quot;</span><span class="s0">, </span><span class="s1">loops: int = </span><span class="s3">0</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">set_endevent(event_type: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">get_endevent() -&gt; int: ...</span>
+</pre>
+</body>
+</html>

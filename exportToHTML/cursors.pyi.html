@@ -1,0 +1,110 @@
+<html>
+<head>
+<title>cursors.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+cursors.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Any</span><span class="s0">, </span><span class="s1">Iterator</span><span class="s0">, </span><span class="s1">Sequence</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">Union</span><span class="s0">, </span><span class="s1">overload</span>
+
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">FileArg</span><span class="s0">, </span><span class="s1">Literal</span>
+
+<span class="s1">_Small_string = Tuple[</span>
+    <span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span><span class="s0">, </span><span class="s1">str</span>
+<span class="s1">]</span>
+<span class="s1">_Big_string = Tuple[</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+    <span class="s1">str</span><span class="s0">,</span>
+<span class="s1">]</span>
+
+<span class="s1">arrow: Cursor</span>
+<span class="s1">diamond: Cursor</span>
+<span class="s1">broken_x: Cursor</span>
+<span class="s1">tri_left: Cursor</span>
+<span class="s1">tri_right: Cursor</span>
+<span class="s1">ball: Cursor</span>
+<span class="s1">thickarrow_strings: _Big_string</span>
+<span class="s1">sizer_x_strings: _Small_string</span>
+<span class="s1">sizer_y_strings: _Big_string</span>
+<span class="s1">sizer_xy_strings: _Small_string</span>
+<span class="s1">textmarker_strings: _Small_string</span>
+
+<span class="s0">def </span><span class="s1">compile(</span>
+    <span class="s1">strings: Sequence[str]</span><span class="s0">,</span>
+    <span class="s1">black: str = </span><span class="s2">&quot;X&quot;</span><span class="s0">,</span>
+    <span class="s1">white: str = </span><span class="s2">&quot;.&quot;</span><span class="s0">,</span>
+    <span class="s1">xor: str = </span><span class="s2">&quot;o&quot;</span><span class="s0">,</span>
+<span class="s1">) -&gt; Tuple[Tuple[int</span><span class="s0">, </span><span class="s1">...]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">...]]: ...</span>
+<span class="s0">def </span><span class="s1">load_xbm(</span>
+    <span class="s1">curs: FileArg</span><span class="s0">, </span><span class="s1">mask: FileArg</span>
+<span class="s1">) -&gt; Tuple[Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">...]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">...]]: ...</span>
+
+<span class="s0">class </span><span class="s1">Cursor:</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">constant: int = ...) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">cursor: Cursor) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">size: Union[Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Sequence[int]]</span><span class="s0">,</span>
+        <span class="s1">hotspot: Union[Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Sequence[int]]</span><span class="s0">,</span>
+        <span class="s1">xormasks: Sequence[int]</span><span class="s0">,</span>
+        <span class="s1">andmasks: Sequence[int]</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">hotspot: Union[Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Sequence[int]]</span><span class="s0">,</span>
+        <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__iter__(self) -&gt; Iterator[Any]: ...</span>
+    <span class="s0">def </span><span class="s1">__len__(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">__copy__(self) -&gt; Cursor: ...</span>
+    <span class="s0">def </span><span class="s1">__hash__(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">__getitem__(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">index: int</span>
+    <span class="s1">) -&gt; Union[int</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Sequence[int]</span><span class="s0">, </span><span class="s1">Surface]: ...</span>
+    <span class="s1">copy = __copy__</span>
+    <span class="s1">type: Literal[</span><span class="s2">&quot;system&quot;</span><span class="s0">, </span><span class="s2">&quot;color&quot;</span><span class="s0">, </span><span class="s2">&quot;bitmap&quot;</span><span class="s1">]</span>
+    <span class="s1">data: Union[</span>
+        <span class="s1">Tuple[int]</span><span class="s0">,</span>
+        <span class="s1">Tuple[Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">...]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">...]]</span><span class="s0">,</span>
+        <span class="s1">Tuple[Union[Tuple[int</span><span class="s0">, </span><span class="s1">int]</span><span class="s0">, </span><span class="s1">Sequence[int]]</span><span class="s0">, </span><span class="s1">Surface]</span><span class="s0">,</span>
+    <span class="s1">]</span>
+</pre>
+</body>
+</html>

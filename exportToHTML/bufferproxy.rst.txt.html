@@ -1,0 +1,130 @@
+<html>
+<head>
+<title>bufferproxy.rst.txt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+bufferproxy.rst.txt</font>
+</center></td></tr></table>
+<pre><span class="s0">.. include:: common.txt</span>
+
+<span class="s0">.. default-domain:: py</span>
+
+<span class="s0">:class:`pygame.BufferProxy`</span>
+<span class="s0">===========================</span>
+
+<span class="s0">.. currentmodule:: pygame</span>
+
+<span class="s0">.. class:: BufferProxy</span>
+
+   <span class="s0">| :sl:`pygame object to export a surface buffer through an array protocol`</span>
+   <span class="s0">| :sg:`BufferProxy(&lt;parent&gt;) -&gt; BufferProxy`</span>
+
+   <span class="s0">:class:`BufferProxy` is a pygame support type, designed as the return value</span>
+   <span class="s0">of the :meth:`Surface.get_buffer` and :meth:`Surface.get_view` methods.</span>
+   <span class="s0">For all Python versions a :class:`BufferProxy` object exports a C struct</span>
+   <span class="s0">and Python level array interface on behalf of its parent object's buffer.</span>
+   <span class="s0">A new buffer interface is also exported.</span>
+   <span class="s0">In pygame, :class:`BufferProxy` is key to implementing the</span>
+   <span class="s0">:mod:`pygame.surfarray` module.</span>
+
+   <span class="s0">:class:`BufferProxy` instances can be created directly from Python code,</span>
+   <span class="s0">either for a parent that exports an interface, or from a Python ``dict``</span>
+   <span class="s0">describing an object's buffer layout. The dict entries are based on the</span>
+   <span class="s0">Python level array interface mapping. The following keys are recognized:</span>
+
+      <span class="s0">``&quot;shape&quot;`` : tuple</span>
+         <span class="s0">The length of each array dimension as a tuple of integers. The</span>
+         <span class="s0">length of the tuple is the number of dimensions in the array.</span>
+
+      <span class="s0">``&quot;typestr&quot;`` : string</span>
+         <span class="s0">The array element type as a length 3 string. The first character</span>
+         <span class="s0">gives byteorder, '&lt;' for little-endian, '&gt;' for big-endian, and</span>
+         <span class="s0">'\|' for not applicable. The second character is the element type,</span>
+         <span class="s0">'i' for signed integer, 'u' for unsigned integer, 'f' for floating</span>
+         <span class="s0">point, and 'V' for an chunk of bytes. The third character gives the</span>
+         <span class="s0">bytesize of the element, from '1' to '9' bytes. So, for example,</span>
+         <span class="s0">&quot;&lt;u4&quot; is an unsigned 4 byte little-endian integer, such as a</span>
+         <span class="s0">32 bit pixel on a PC, while &quot;\|V3&quot; would represent a 24 bit pixel,</span>
+         <span class="s0">which has no integer equivalent.</span>
+
+      <span class="s0">``&quot;data&quot;`` : tuple</span>
+         <span class="s0">The physical buffer start address and a read-only flag as a length</span>
+         <span class="s0">2 tuple. The address is an integer value, while the read-only flag</span>
+         <span class="s0">is a bool—``False`` for writable, ``True`` for read-only.</span>
+
+      <span class="s0">``&quot;strides&quot;`` : tuple : (optional)</span>
+         <span class="s0">Array stride information as a tuple of integers. It is required</span>
+	 <span class="s0">only of non C-contiguous arrays. The tuple length must match</span>
+	 <span class="s0">that of ``&quot;shape&quot;``.</span>
+
+      <span class="s0">``&quot;parent&quot;`` : object : (optional)</span>
+         <span class="s0">The exporting object. It can be used to keep the parent object</span>
+         <span class="s0">alive while its buffer is visible.</span>
+
+      <span class="s0">``&quot;before&quot;`` : callable : (optional)</span>
+         <span class="s0">Callback invoked when the :class:`BufferProxy` instance</span>
+         <span class="s0">exports the buffer. The callback is given one argument, the</span>
+	 <span class="s0">``&quot;parent&quot;`` object if given, otherwise ``None``.</span>
+         <span class="s0">The callback is useful for setting a lock on the parent.</span>
+
+      <span class="s0">``&quot;after&quot;`` : callable : (optional)</span>
+         <span class="s0">Callback invoked when an exported buffer is released.</span>
+         <span class="s0">The callback is passed on argument, the ``&quot;parent&quot;`` object if given,</span>
+         <span class="s0">otherwise None. The callback is useful for releasing a lock on the</span>
+         <span class="s0">parent.</span>
+      
+   <span class="s0">The BufferProxy class supports subclassing, instance variables, and weak</span>
+   <span class="s0">references.</span>
+
+   <span class="s0">.. versionadded:: 1.8.0</span>
+   <span class="s0">.. versionextended:: 1.9.2</span>
+
+   <span class="s0">.. attribute:: parent</span>
+
+      <span class="s0">| :sl:`Return wrapped exporting object.`</span>
+      <span class="s0">| :sg:`parent -&gt; Surface`</span>
+      <span class="s0">| :sg:`parent -&gt; &lt;parent&gt;`</span>
+
+      <span class="s0">The :class:`Surface` which returned the :class:`BufferProxy` object or</span>
+      <span class="s0">the object passed to a :class:`BufferProxy` call.</span>
+
+   <span class="s0">.. attribute:: length</span>
+
+      <span class="s0">| :sl:`The size, in bytes, of the exported buffer.`</span>
+      <span class="s0">| :sg:`length -&gt; int`</span>
+
+      <span class="s0">The number of valid bytes of data exported. For discontinuous data,</span>
+      <span class="s0">that is data which is not a single block of memory, the bytes within</span>
+      <span class="s0">the gaps are excluded from the count. This property is equivalent to</span>
+      <span class="s0">the ``Py_buffer`` C struct ``len`` field.</span>
+
+   <span class="s0">.. attribute:: raw</span>
+
+      <span class="s0">| :sl:`A copy of the exported buffer as a single block of bytes.`</span>
+      <span class="s0">| :sg:`raw -&gt; bytes`</span>
+
+      <span class="s0">The buffer data as a ``str``/``bytes`` object.</span>
+      <span class="s0">Any gaps in the exported data are removed.</span>
+
+   <span class="s0">.. method:: write</span>
+
+      <span class="s0">| :sl:`Write raw bytes to object buffer.`</span>
+      <span class="s0">| :sg:`write(buffer, offset=0)`</span>
+
+      <span class="s0">Overwrite bytes in the parent object's data. The data must be C or F</span>
+      <span class="s0">contiguous, otherwise a ValueError is raised. Argument `buffer` is a</span>
+      <span class="s0">``str``/``bytes`` object. An optional offset gives a</span>
+      <span class="s0">start position, in bytes, within the buffer where overwriting begins.</span>
+      <span class="s0">If the offset is negative or greater that or equal to the buffer proxy's</span>
+      <span class="s0">:attr:`length` value, an ``IndexException`` is raised.</span>
+      <span class="s0">If ``len(buffer) &gt; proxy.length + offset``, a ``ValueError`` is raised.</span>
+</pre>
+</body>
+</html>

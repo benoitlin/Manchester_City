@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>transform.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+transform.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Optional</span><span class="s0">, </span><span class="s1">Sequence</span><span class="s0">, </span><span class="s1">Union</span>
+
+<span class="s0">from </span><span class="s1">pygame.color </span><span class="s0">import </span><span class="s1">Color</span>
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">ColorValue</span><span class="s0">, </span><span class="s1">Coordinate</span><span class="s0">, </span><span class="s1">RectValue</span>
+
+<span class="s0">def </span><span class="s1">flip(surface: Surface</span><span class="s0">, </span><span class="s1">flip_x: bool</span><span class="s0">, </span><span class="s1">flip_y: bool) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">scale(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">size: Coordinate</span><span class="s0">,</span>
+    <span class="s1">dest_surface: Optional[Surface] = </span><span class="s0">None,</span>
+<span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">scale_by(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">factor: Union[float</span><span class="s0">, </span><span class="s1">Sequence[float]]</span><span class="s0">,</span>
+    <span class="s1">dest_surface: Optional[Surface] = </span><span class="s0">None,</span>
+<span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">rotate(surface: Surface</span><span class="s0">, </span><span class="s1">angle: float) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">rotozoom(surface: Surface</span><span class="s0">, </span><span class="s1">angle: float</span><span class="s0">, </span><span class="s1">scale: float) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">scale2x(surface: Surface</span><span class="s0">, </span><span class="s1">dest_surface: Optional[Surface] = </span><span class="s0">None</span><span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">smoothscale(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">size: Coordinate</span><span class="s0">,</span>
+    <span class="s1">dest_surface: Optional[Surface] = </span><span class="s0">None,</span>
+<span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">smoothscale_by(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">factor: Union[float</span><span class="s0">, </span><span class="s1">Sequence[float]]</span><span class="s0">,</span>
+    <span class="s1">dest_surface: Optional[Surface] = </span><span class="s0">None,</span>
+<span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">get_smoothscale_backend() -&gt; str: ...</span>
+<span class="s0">def </span><span class="s1">set_smoothscale_backend(backend: str) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+<span class="s0">def </span><span class="s1">chop(surface: Surface</span><span class="s0">, </span><span class="s1">rect: RectValue) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">laplacian(surface: Surface</span><span class="s0">, </span><span class="s1">dest_surface: Optional[Surface] = </span><span class="s0">None</span><span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">average_surfaces(</span>
+    <span class="s1">surfaces: Sequence[Surface]</span><span class="s0">,</span>
+    <span class="s1">dest_surface: Optional[Surface] = </span><span class="s0">None,</span>
+    <span class="s1">palette_colors: Union[bool</span><span class="s0">, </span><span class="s1">int] = </span><span class="s2">1</span><span class="s0">,</span>
+<span class="s1">) -&gt; Surface: ...</span>
+<span class="s0">def </span><span class="s1">average_color(</span>
+    <span class="s1">surface: Surface</span><span class="s0">, </span><span class="s1">rect: Optional[RectValue] = </span><span class="s0">None, </span><span class="s1">consider_alpha: bool = </span><span class="s0">False</span>
+<span class="s1">) -&gt; Color: ...</span>
+<span class="s0">def </span><span class="s1">threshold(</span>
+    <span class="s1">dest_surface: Optional[Surface]</span><span class="s0">,</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">search_color: Optional[ColorValue]</span><span class="s0">,</span>
+    <span class="s1">threshold: ColorValue = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">set_color: Optional[ColorValue] = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">set_behavior: int = </span><span class="s2">1</span><span class="s0">,</span>
+    <span class="s1">search_surf: Optional[Surface] = </span><span class="s0">None,</span>
+    <span class="s1">inverse_set: bool = </span><span class="s0">False,</span>
+<span class="s1">) -&gt; int: ...</span>
+</pre>
+</body>
+</html>

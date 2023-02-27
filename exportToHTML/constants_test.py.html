@@ -1,0 +1,448 @@
+<html>
+<head>
+<title>constants_test.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+.s4 { color: #629755; font-style: italic;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+constants_test.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">unittest</span>
+<span class="s0">import </span><span class="s1">pygame.constants</span>
+
+
+<span class="s2"># K_* and KSCAN_* common names.</span>
+<span class="s1">K_AND_KSCAN_COMMON_NAMES = (</span>
+    <span class="s3">&quot;UNKNOWN&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;BACKSPACE&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;TAB&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;CLEAR&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;RETURN&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;PAUSE&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;ESCAPE&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;SPACE&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;COMMA&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;MINUS&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;PERIOD&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;SLASH&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;0&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;1&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;2&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;3&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;4&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;5&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;6&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;7&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;8&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;9&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;SEMICOLON&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;EQUALS&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;LEFTBRACKET&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;BACKSLASH&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;RIGHTBRACKET&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;DELETE&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP0&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP1&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP2&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP3&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP4&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP5&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP6&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP7&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP8&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP9&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_PERIOD&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_DIVIDE&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_MULTIPLY&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_MINUS&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_PLUS&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_ENTER&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_EQUALS&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;UP&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;DOWN&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;RIGHT&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;LEFT&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;INSERT&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;HOME&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;END&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;PAGEUP&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;PAGEDOWN&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F1&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F2&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F3&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F4&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F5&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F6&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F7&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F8&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F9&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F10&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F11&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F12&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F13&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F14&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;F15&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;NUMLOCK&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;CAPSLOCK&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;SCROLLOCK&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;RSHIFT&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;LSHIFT&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;RCTRL&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;LCTRL&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;RALT&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;LALT&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;RMETA&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;LMETA&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;LSUPER&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;RSUPER&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;MODE&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;HELP&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;PRINT&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;SYSREQ&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;BREAK&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;MENU&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;POWER&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;EURO&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_0&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_1&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_2&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_3&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_4&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_5&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_6&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_7&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_8&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;KP_9&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;NUMLOCKCLEAR&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;SCROLLLOCK&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;RGUI&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;LGUI&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;PRINTSCREEN&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;CURRENCYUNIT&quot;</span><span class="s0">,</span>
+    <span class="s3">&quot;CURRENCYSUBUNIT&quot;</span><span class="s0">,</span>
+<span class="s1">)</span>
+
+<span class="s2"># Constants that have the same value.</span>
+<span class="s1">K_AND_KSCAN_COMMON_OVERLAPS = (</span>
+    <span class="s1">(</span><span class="s3">&quot;KP0&quot;</span><span class="s0">, </span><span class="s3">&quot;KP_0&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;KP1&quot;</span><span class="s0">, </span><span class="s3">&quot;KP_1&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;KP2&quot;</span><span class="s0">, </span><span class="s3">&quot;KP_2&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;KP3&quot;</span><span class="s0">, </span><span class="s3">&quot;KP_3&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;KP4&quot;</span><span class="s0">, </span><span class="s3">&quot;KP_4&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;KP5&quot;</span><span class="s0">, </span><span class="s3">&quot;KP_5&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;KP6&quot;</span><span class="s0">, </span><span class="s3">&quot;KP_6&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;KP7&quot;</span><span class="s0">, </span><span class="s3">&quot;KP_7&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;KP8&quot;</span><span class="s0">, </span><span class="s3">&quot;KP_8&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;KP9&quot;</span><span class="s0">, </span><span class="s3">&quot;KP_9&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;NUMLOCK&quot;</span><span class="s0">, </span><span class="s3">&quot;NUMLOCKCLEAR&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;SCROLLOCK&quot;</span><span class="s0">, </span><span class="s3">&quot;SCROLLLOCK&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;LSUPER&quot;</span><span class="s0">, </span><span class="s3">&quot;LMETA&quot;</span><span class="s0">, </span><span class="s3">&quot;LGUI&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;RSUPER&quot;</span><span class="s0">, </span><span class="s3">&quot;RMETA&quot;</span><span class="s0">, </span><span class="s3">&quot;RGUI&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;PRINT&quot;</span><span class="s0">, </span><span class="s3">&quot;PRINTSCREEN&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;BREAK&quot;</span><span class="s0">, </span><span class="s3">&quot;PAUSE&quot;</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">(</span><span class="s3">&quot;EURO&quot;</span><span class="s0">, </span><span class="s3">&quot;CURRENCYUNIT&quot;</span><span class="s1">)</span><span class="s0">,</span>
+<span class="s1">)</span>
+
+
+<span class="s0">def </span><span class="s1">create_overlap_set(constant_names):</span>
+    <span class="s4">&quot;&quot;&quot;Helper function to find overlapping constant values/names. 
+ 
+    Returns a set of fronzensets: 
+        set(frozenset(names of overlapping constants), ...) 
+    &quot;&quot;&quot;</span>
+    <span class="s2"># Create an overlap dict.</span>
+    <span class="s1">overlap_dict = {}</span>
+
+    <span class="s0">for </span><span class="s1">name </span><span class="s0">in </span><span class="s1">constant_names:</span>
+        <span class="s1">value = getattr(pygame.constants</span><span class="s0">, </span><span class="s1">name)</span>
+        <span class="s1">overlap_dict.setdefault(value</span><span class="s0">, </span><span class="s1">set()).add(name)</span>
+
+    <span class="s2"># Get all entries with more than 1 value.</span>
+    <span class="s1">overlaps = set()</span>
+
+    <span class="s0">for </span><span class="s1">overlap_names </span><span class="s0">in </span><span class="s1">overlap_dict.values():</span>
+        <span class="s0">if </span><span class="s1">len(overlap_names) &gt; </span><span class="s5">1</span><span class="s1">:</span>
+            <span class="s1">overlaps.add(frozenset(overlap_names))</span>
+
+    <span class="s0">return </span><span class="s1">overlaps</span>
+
+
+<span class="s0">class </span><span class="s1">KConstantsTests(unittest.TestCase):</span>
+    <span class="s4">&quot;&quot;&quot;Test K_* (key) constants.&quot;&quot;&quot;</span>
+
+    <span class="s2"># K_* specific names.</span>
+    <span class="s1">K_SPECIFIC_NAMES = (</span>
+        <span class="s3">&quot;a&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;b&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;c&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;d&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;e&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;f&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;g&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;h&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;i&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;j&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;k&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;l&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;m&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;n&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;o&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;p&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;q&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;r&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;s&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;t&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;u&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;v&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;w&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;x&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;y&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;z&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;QUOTE&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;BACKQUOTE&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;EXCLAIM&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;QUOTEDBL&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;HASH&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;DOLLAR&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;AMPERSAND&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LEFTPAREN&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;RIGHTPAREN&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;ASTERISK&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;PLUS&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;COLON&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LESS&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;GREATER&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;QUESTION&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;AT&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;CARET&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;UNDERSCORE&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;PERCENT&quot;</span><span class="s0">,</span>
+    <span class="s1">)</span>
+
+    <span class="s2"># Create a sequence of all the K_* constant names.</span>
+    <span class="s1">K_NAMES = tuple(</span><span class="s3">&quot;K_&quot; </span><span class="s1">+ n </span><span class="s0">for </span><span class="s1">n </span><span class="s0">in </span><span class="s1">K_AND_KSCAN_COMMON_NAMES + K_SPECIFIC_NAMES)</span>
+
+    <span class="s0">def </span><span class="s1">test_k__existence(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures K constants exist.&quot;&quot;&quot;</span>
+        <span class="s0">for </span><span class="s1">name </span><span class="s0">in </span><span class="s1">self.K_NAMES:</span>
+            <span class="s1">self.assertTrue(hasattr(pygame.constants</span><span class="s0">, </span><span class="s1">name)</span><span class="s0">, </span><span class="s3">f&quot;missing constant </span><span class="s0">{</span><span class="s1">name</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_k__type(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures K constants are the correct type.&quot;&quot;&quot;</span>
+        <span class="s0">for </span><span class="s1">name </span><span class="s0">in </span><span class="s1">self.K_NAMES:</span>
+            <span class="s1">value = getattr(pygame.constants</span><span class="s0">, </span><span class="s1">name)</span>
+
+            <span class="s1">self.assertIs(type(value)</span><span class="s0">, </span><span class="s1">int)</span>
+
+    <span class="s0">def </span><span class="s1">test_k__value_overlap(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures no unexpected K constant values overlap.&quot;&quot;&quot;</span>
+        <span class="s1">EXPECTED_OVERLAPS = {</span>
+            <span class="s1">frozenset(</span><span class="s3">&quot;K_&quot; </span><span class="s1">+ n </span><span class="s0">for </span><span class="s1">n </span><span class="s0">in </span><span class="s1">item) </span><span class="s0">for </span><span class="s1">item </span><span class="s0">in </span><span class="s1">K_AND_KSCAN_COMMON_OVERLAPS</span>
+        <span class="s1">}</span>
+
+        <span class="s1">overlaps = create_overlap_set(self.K_NAMES)</span>
+
+        <span class="s1">self.assertSetEqual(overlaps</span><span class="s0">, </span><span class="s1">EXPECTED_OVERLAPS)</span>
+
+
+<span class="s0">class </span><span class="s1">KscanConstantsTests(unittest.TestCase):</span>
+    <span class="s4">&quot;&quot;&quot;Test KSCAN_* (scancode) constants.&quot;&quot;&quot;</span>
+
+    <span class="s2"># KSCAN_* specific names.</span>
+    <span class="s1">KSCAN_SPECIFIC_NAMES = (</span>
+        <span class="s3">&quot;A&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;B&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;C&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;D&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;E&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;F&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;G&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;H&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;I&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;J&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;K&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;L&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;M&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;N&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;O&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;P&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;Q&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;R&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;S&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;T&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;U&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;V&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;W&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;X&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;Y&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;Z&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;APOSTROPHE&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;GRAVE&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;INTERNATIONAL1&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;INTERNATIONAL2&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;INTERNATIONAL3&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;INTERNATIONAL4&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;INTERNATIONAL5&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;INTERNATIONAL6&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;INTERNATIONAL7&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;INTERNATIONAL8&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;INTERNATIONAL9&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LANG1&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LANG2&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LANG3&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LANG4&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LANG5&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LANG6&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LANG7&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LANG8&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;LANG9&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;NONUSBACKSLASH&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;NONUSHASH&quot;</span><span class="s0">,</span>
+    <span class="s1">)</span>
+
+    <span class="s2"># Create a sequence of all the KSCAN_* constant names.</span>
+    <span class="s1">KSCAN_NAMES = tuple(</span>
+        <span class="s3">&quot;KSCAN_&quot; </span><span class="s1">+ n </span><span class="s0">for </span><span class="s1">n </span><span class="s0">in </span><span class="s1">K_AND_KSCAN_COMMON_NAMES + KSCAN_SPECIFIC_NAMES</span>
+    <span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_kscan__existence(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures KSCAN constants exist.&quot;&quot;&quot;</span>
+        <span class="s0">for </span><span class="s1">name </span><span class="s0">in </span><span class="s1">self.KSCAN_NAMES:</span>
+            <span class="s1">self.assertTrue(hasattr(pygame.constants</span><span class="s0">, </span><span class="s1">name)</span><span class="s0">, </span><span class="s3">f&quot;missing constant </span><span class="s0">{</span><span class="s1">name</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_kscan__type(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures KSCAN constants are the correct type.&quot;&quot;&quot;</span>
+        <span class="s0">for </span><span class="s1">name </span><span class="s0">in </span><span class="s1">self.KSCAN_NAMES:</span>
+            <span class="s1">value = getattr(pygame.constants</span><span class="s0">, </span><span class="s1">name)</span>
+
+            <span class="s1">self.assertIs(type(value)</span><span class="s0">, </span><span class="s1">int)</span>
+
+    <span class="s0">def </span><span class="s1">test_kscan__value_overlap(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures no unexpected KSCAN constant values overlap.&quot;&quot;&quot;</span>
+        <span class="s1">EXPECTED_OVERLAPS = {</span>
+            <span class="s1">frozenset(</span><span class="s3">&quot;KSCAN_&quot; </span><span class="s1">+ n </span><span class="s0">for </span><span class="s1">n </span><span class="s0">in </span><span class="s1">item)</span>
+            <span class="s0">for </span><span class="s1">item </span><span class="s0">in </span><span class="s1">K_AND_KSCAN_COMMON_OVERLAPS</span>
+        <span class="s1">}</span>
+
+        <span class="s1">overlaps = create_overlap_set(self.KSCAN_NAMES)</span>
+
+        <span class="s1">self.assertSetEqual(overlaps</span><span class="s0">, </span><span class="s1">EXPECTED_OVERLAPS)</span>
+
+
+<span class="s0">class </span><span class="s1">KmodConstantsTests(unittest.TestCase):</span>
+    <span class="s4">&quot;&quot;&quot;Test KMOD_* (key modifier) constants.&quot;&quot;&quot;</span>
+
+    <span class="s2"># KMOD_* constant names.</span>
+    <span class="s1">KMOD_CONSTANTS = (</span>
+        <span class="s3">&quot;KMOD_NONE&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_LSHIFT&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_RSHIFT&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_SHIFT&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_LCTRL&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_RCTRL&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_CTRL&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_LALT&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_RALT&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_ALT&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_LMETA&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_RMETA&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_META&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_NUM&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_CAPS&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_MODE&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_LGUI&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_RGUI&quot;</span><span class="s0">,</span>
+        <span class="s3">&quot;KMOD_GUI&quot;</span><span class="s0">,</span>
+    <span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_kmod__existence(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures KMOD constants exist.&quot;&quot;&quot;</span>
+        <span class="s0">for </span><span class="s1">name </span><span class="s0">in </span><span class="s1">self.KMOD_CONSTANTS:</span>
+            <span class="s1">self.assertTrue(hasattr(pygame.constants</span><span class="s0">, </span><span class="s1">name)</span><span class="s0">, </span><span class="s3">f&quot;missing constant </span><span class="s0">{</span><span class="s1">name</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_kmod__type(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures KMOD constants are the correct type.&quot;&quot;&quot;</span>
+        <span class="s0">for </span><span class="s1">name </span><span class="s0">in </span><span class="s1">self.KMOD_CONSTANTS:</span>
+            <span class="s1">value = getattr(pygame.constants</span><span class="s0">, </span><span class="s1">name)</span>
+
+            <span class="s1">self.assertIs(type(value)</span><span class="s0">, </span><span class="s1">int)</span>
+
+    <span class="s0">def </span><span class="s1">test_kmod__value_overlap(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures no unexpected KMOD constant values overlap.&quot;&quot;&quot;</span>
+        <span class="s2"># KMODs that have the same values.</span>
+        <span class="s1">EXPECTED_OVERLAPS = {</span>
+            <span class="s1">frozenset([</span><span class="s3">&quot;KMOD_LGUI&quot;</span><span class="s0">, </span><span class="s3">&quot;KMOD_LMETA&quot;</span><span class="s1">])</span><span class="s0">,</span>
+            <span class="s1">frozenset([</span><span class="s3">&quot;KMOD_RGUI&quot;</span><span class="s0">, </span><span class="s3">&quot;KMOD_RMETA&quot;</span><span class="s1">])</span><span class="s0">,</span>
+            <span class="s1">frozenset([</span><span class="s3">&quot;KMOD_GUI&quot;</span><span class="s0">, </span><span class="s3">&quot;KMOD_META&quot;</span><span class="s1">])</span><span class="s0">,</span>
+        <span class="s1">}</span>
+
+        <span class="s1">overlaps = create_overlap_set(self.KMOD_CONSTANTS)</span>
+
+        <span class="s1">self.assertSetEqual(overlaps</span><span class="s0">, </span><span class="s1">EXPECTED_OVERLAPS)</span>
+
+    <span class="s0">def </span><span class="s1">test_kmod__no_bitwise_overlap(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures certain KMOD constants have no overlapping bits.&quot;&quot;&quot;</span>
+        <span class="s1">NO_BITWISE_OVERLAP = (</span>
+            <span class="s3">&quot;KMOD_NONE&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_LSHIFT&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_RSHIFT&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_LCTRL&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_RCTRL&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_LALT&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_RALT&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_LMETA&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_RMETA&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_NUM&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_CAPS&quot;</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_MODE&quot;</span><span class="s0">,</span>
+        <span class="s1">)</span>
+
+        <span class="s1">kmods = </span><span class="s5">0</span>
+
+        <span class="s0">for </span><span class="s1">name </span><span class="s0">in </span><span class="s1">NO_BITWISE_OVERLAP:</span>
+            <span class="s1">value = getattr(pygame.constants</span><span class="s0">, </span><span class="s1">name)</span>
+
+            <span class="s1">self.assertFalse(kmods &amp; value)</span>
+
+            <span class="s1">kmods |= value</span>
+
+    <span class="s0">def </span><span class="s1">test_kmod__bitwise_overlap(self):</span>
+        <span class="s4">&quot;&quot;&quot;Ensures certain KMOD constants have overlapping bits.&quot;&quot;&quot;</span>
+        <span class="s2"># KMODS that are comprised of other KMODs.</span>
+        <span class="s1">KMOD_COMPRISED_DICT = {</span>
+            <span class="s3">&quot;KMOD_SHIFT&quot;</span><span class="s1">: (</span><span class="s3">&quot;KMOD_LSHIFT&quot;</span><span class="s0">, </span><span class="s3">&quot;KMOD_RSHIFT&quot;</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_CTRL&quot;</span><span class="s1">: (</span><span class="s3">&quot;KMOD_LCTRL&quot;</span><span class="s0">, </span><span class="s3">&quot;KMOD_RCTRL&quot;</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_ALT&quot;</span><span class="s1">: (</span><span class="s3">&quot;KMOD_LALT&quot;</span><span class="s0">, </span><span class="s3">&quot;KMOD_RALT&quot;</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_META&quot;</span><span class="s1">: (</span><span class="s3">&quot;KMOD_LMETA&quot;</span><span class="s0">, </span><span class="s3">&quot;KMOD_RMETA&quot;</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s3">&quot;KMOD_GUI&quot;</span><span class="s1">: (</span><span class="s3">&quot;KMOD_LGUI&quot;</span><span class="s0">, </span><span class="s3">&quot;KMOD_RGUI&quot;</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s1">}</span>
+
+        <span class="s0">for </span><span class="s1">base_name</span><span class="s0">, </span><span class="s1">seq_names </span><span class="s0">in </span><span class="s1">KMOD_COMPRISED_DICT.items():</span>
+            <span class="s1">expected_value = </span><span class="s5">0  </span><span class="s2"># Reset.</span>
+
+            <span class="s0">for </span><span class="s1">name </span><span class="s0">in </span><span class="s1">seq_names:</span>
+                <span class="s1">expected_value |= getattr(pygame.constants</span><span class="s0">, </span><span class="s1">name)</span>
+
+            <span class="s1">value = getattr(pygame.constants</span><span class="s0">, </span><span class="s1">base_name)</span>
+
+            <span class="s1">self.assertEqual(value</span><span class="s0">, </span><span class="s1">expected_value)</span>
+
+
+<span class="s2">################################################################################</span>
+
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s3">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">unittest.main()</span>
+</pre>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<html>
+<head>
+<title>pgcompat.h</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+pgcompat.h</font>
+</center></td></tr></table>
+<pre><span class="s0">#if </span><span class="s1">!defined(PGCOMPAT_H)</span>
+<span class="s0">#define </span><span class="s1">PGCOMPAT_H</span>
+
+<span class="s0">#include </span><span class="s1">&lt;Python.h&gt;</span>
+
+<span class="s2">/* In CPython, Py_Exit finalises the python interpreter before calling C exit() 
+ * This does not exist on PyPy, so use exit() directly here */</span>
+<span class="s0">#ifdef </span><span class="s1">PYPY_VERSION</span>
+<span class="s0">#define </span><span class="s1">PG_EXIT(n) exit(n)</span>
+<span class="s0">#else</span>
+<span class="s0">#define </span><span class="s1">PG_EXIT(n) Py_Exit(n)</span>
+<span class="s0">#endif</span>
+
+<span class="s2">/* define common types where SDL is not included */</span>
+<span class="s0">#ifndef </span><span class="s1">SDL_VERSION_ATLEAST</span>
+<span class="s0">#ifdef </span><span class="s1">_MSC_VER</span>
+<span class="s0">typedef unsigned </span><span class="s1">__int8 uint8_t;</span>
+<span class="s0">typedef unsigned </span><span class="s1">__int32 uint32_t;</span>
+<span class="s0">#else</span>
+<span class="s0">#include </span><span class="s1">&lt;stdint.h&gt;</span>
+<span class="s0">#endif</span>
+<span class="s0">typedef </span><span class="s1">uint32_t Uint32;</span>
+<span class="s0">typedef </span><span class="s1">uint8_t Uint8;</span>
+<span class="s0">#endif </span><span class="s2">/* no SDL */</span>
+
+<span class="s0">#if </span><span class="s1">defined(SDL_VERSION_ATLEAST)</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_VULKAN</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_VULKAN </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_ALWAYS_ON_TOP</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_ALWAYS_ON_TOP </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_SKIP_TASKBAR</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_SKIP_TASKBAR </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_UTILITY</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_UTILITY </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_TOOLTIP</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_TOOLTIP </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_POPUP_MENU</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_POPUP_MENU </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_INPUT_GRABBED</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_INPUT_GRABBED </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_INPUT_FOCUS</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_INPUT_FOCUS </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_MOUSE_FOCUS</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_MOUSE_FOCUS </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_FOREIGN</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_FOREIGN </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_ALLOW_HIGHDPI</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_ALLOW_HIGHDPI </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_MOUSE_CAPTURE</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_MOUSE_CAPTURE </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_ALWAYS_ON_TOP</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_ALWAYS_ON_TOP </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_SKIP_TASKBAR</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_SKIP_TASKBAR </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_UTILITY</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_UTILITY </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_TOOLTIP</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_TOOLTIP </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_WINDOW_POPUP_MENU</span>
+<span class="s0">#define </span><span class="s1">SDL_WINDOW_POPUP_MENU </span><span class="s3">0</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#ifndef </span><span class="s1">SDL_MOUSEWHEEL_FLIPPED</span>
+<span class="s0">#define </span><span class="s1">NO_SDL_MOUSEWHEEL_FLIPPED</span>
+<span class="s0">#endif</span>
+
+<span class="s0">#endif </span><span class="s2">/* defined(SDL_VERSION_ATLEAST) */</span>
+
+<span class="s0">#endif </span><span class="s2">/* ~defined(PGCOMPAT_H) */</span>
+</pre>
+</body>
+</html>

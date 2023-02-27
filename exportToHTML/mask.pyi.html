@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>mask.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+mask.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Any</span><span class="s0">, </span><span class="s1">List</span><span class="s0">, </span><span class="s1">Optional</span><span class="s0">, </span><span class="s1">Sequence</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">Union</span>
+
+<span class="s0">from </span><span class="s1">pygame.rect </span><span class="s0">import </span><span class="s1">Rect</span>
+<span class="s0">from </span><span class="s1">pygame.surface </span><span class="s0">import </span><span class="s1">Surface</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">ColorValue</span><span class="s0">, </span><span class="s1">Coordinate</span><span class="s0">, </span><span class="s1">RectValue</span>
+
+<span class="s0">def </span><span class="s1">from_surface(surface: Surface</span><span class="s0">, </span><span class="s1">threshold: int = </span><span class="s2">127</span><span class="s1">) -&gt; Mask: ...</span>
+<span class="s0">def </span><span class="s1">from_threshold(</span>
+    <span class="s1">surface: Surface</span><span class="s0">,</span>
+    <span class="s1">color: ColorValue</span><span class="s0">,</span>
+    <span class="s1">threshold: ColorValue = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">othersurface: Optional[Surface] = </span><span class="s0">None,</span>
+    <span class="s1">palette_colors: int = </span><span class="s2">1</span><span class="s0">,</span>
+<span class="s1">) -&gt; Mask: ...</span>
+
+<span class="s0">class </span><span class="s1">Mask:</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">size: Coordinate</span><span class="s0">, </span><span class="s1">fill: bool = </span><span class="s0">False</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__copy__(self) -&gt; Mask: ...</span>
+    <span class="s1">copy = __copy__</span>
+    <span class="s0">def </span><span class="s1">get_size(self) -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+    <span class="s0">def </span><span class="s1">get_rect(self</span><span class="s0">, </span><span class="s1">**kwargs: Any) -&gt; Rect: ...  </span><span class="s3"># Dict type needs to be completed</span>
+    <span class="s0">def </span><span class="s1">get_at(self</span><span class="s0">, </span><span class="s1">pos: Coordinate) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">set_at(self</span><span class="s0">, </span><span class="s1">pos: Coordinate</span><span class="s0">, </span><span class="s1">value: int = </span><span class="s2">1</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">overlap(self</span><span class="s0">, </span><span class="s1">other: Mask</span><span class="s0">, </span><span class="s1">offset: Coordinate) -&gt; Optional[Tuple[int</span><span class="s0">, </span><span class="s1">int]]: ...</span>
+    <span class="s0">def </span><span class="s1">overlap_area(self</span><span class="s0">, </span><span class="s1">other: Mask</span><span class="s0">, </span><span class="s1">offset: Coordinate) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">overlap_mask(self</span><span class="s0">, </span><span class="s1">other: Mask</span><span class="s0">, </span><span class="s1">offset: Coordinate) -&gt; Mask: ...</span>
+    <span class="s0">def </span><span class="s1">fill(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">clear(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">invert(self) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">scale(self</span><span class="s0">, </span><span class="s1">scale: Coordinate) -&gt; Mask: ...</span>
+    <span class="s0">def </span><span class="s1">draw(self</span><span class="s0">, </span><span class="s1">other: Mask</span><span class="s0">, </span><span class="s1">offset: Coordinate) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">erase(self</span><span class="s0">, </span><span class="s1">other: Mask</span><span class="s0">, </span><span class="s1">offset: Coordinate) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">count(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">centroid(self) -&gt; Tuple[int</span><span class="s0">, </span><span class="s1">int]: ...</span>
+    <span class="s0">def </span><span class="s1">angle(self) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">outline(self</span><span class="s0">, </span><span class="s1">every: int = </span><span class="s2">1</span><span class="s1">) -&gt; List[Tuple[int</span><span class="s0">, </span><span class="s1">int]]: ...</span>
+    <span class="s0">def </span><span class="s1">convolve(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">other: Mask</span><span class="s0">,</span>
+        <span class="s1">output: Optional[Mask] = </span><span class="s0">None,</span>
+        <span class="s1">offset: Coordinate = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">) -&gt; Mask: ...</span>
+    <span class="s0">def </span><span class="s1">connected_component(</span>
+        <span class="s1">self</span><span class="s0">, </span><span class="s1">pos: Union[Sequence[int]</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int]] = ...</span>
+    <span class="s1">) -&gt; Mask: ...</span>
+    <span class="s0">def </span><span class="s1">connected_components(self</span><span class="s0">, </span><span class="s1">minimum: int = </span><span class="s2">0</span><span class="s1">) -&gt; List[Mask]: ...</span>
+    <span class="s0">def </span><span class="s1">get_bounding_rects(self) -&gt; Rect: ...</span>
+    <span class="s0">def </span><span class="s1">to_surface(</span>
+        <span class="s1">self</span><span class="s0">,</span>
+        <span class="s1">surface: Optional[Surface] = </span><span class="s0">None,</span>
+        <span class="s1">setsurface: Optional[Surface] = </span><span class="s0">None,</span>
+        <span class="s1">unsetsurface: Optional[Surface] = </span><span class="s0">None,</span>
+        <span class="s1">setcolor: Optional[ColorValue] = (</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s1">unsetcolor: Optional[ColorValue] = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s1">dest: Union[RectValue</span><span class="s0">, </span><span class="s1">Coordinate] = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">,</span>
+    <span class="s1">) -&gt; Surface: ...</span>
+
+<span class="s1">MaskType = Mask</span>
+</pre>
+</body>
+</html>

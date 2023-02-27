@@ -1,0 +1,1294 @@
+<html>
+<head>
+<title>image_test.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #629755; font-style: italic;}
+.s4 { color: #6a8759;}
+.s5 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+image_test.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">array</span>
+<span class="s0">import </span><span class="s1">binascii</span>
+<span class="s0">import </span><span class="s1">io</span>
+<span class="s0">import </span><span class="s1">os</span>
+<span class="s0">import </span><span class="s1">tempfile</span>
+<span class="s0">import </span><span class="s1">unittest</span>
+<span class="s0">import </span><span class="s1">glob</span>
+<span class="s0">import </span><span class="s1">pathlib</span>
+
+<span class="s0">from </span><span class="s1">pygame.tests.test_utils </span><span class="s0">import </span><span class="s1">example_path</span><span class="s0">, </span><span class="s1">png</span><span class="s0">, </span><span class="s1">tostring</span>
+<span class="s0">import </span><span class="s1">pygame</span><span class="s0">, </span><span class="s1">pygame.image</span><span class="s0">, </span><span class="s1">pygame.pkgdata</span>
+
+<span class="s1">sdl_image_svg_jpeg_save_bug = </span><span class="s0">False</span>
+<span class="s1">_sdl_image_ver = pygame.image.get_sdl_image_version()</span>
+<span class="s0">if </span><span class="s1">_sdl_image_ver </span><span class="s0">is not None</span><span class="s1">:</span>
+    <span class="s1">sdl_image_svg_jpeg_save_bug = (</span>
+        <span class="s1">_sdl_image_ver &lt;= (</span><span class="s2">2</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">5</span><span class="s1">) </span><span class="s0">and </span><span class="s1">pygame.get_sdl_byteorder() == pygame.BIG_ENDIAN</span>
+    <span class="s1">)</span>
+
+
+<span class="s0">def </span><span class="s1">test_magic(f</span><span class="s0">, </span><span class="s1">magic_hexes):</span>
+    <span class="s3">&quot;&quot;&quot;Tests a given file to see if the magic hex matches.&quot;&quot;&quot;</span>
+    <span class="s1">data = f.read(len(magic_hexes))</span>
+    <span class="s0">if </span><span class="s1">len(data) != len(magic_hexes):</span>
+        <span class="s0">return </span><span class="s2">0</span>
+    <span class="s0">for </span><span class="s1">i</span><span class="s0">, </span><span class="s1">magic_hex </span><span class="s0">in </span><span class="s1">enumerate(magic_hexes):</span>
+        <span class="s0">if </span><span class="s1">magic_hex != data[i]:</span>
+            <span class="s0">return </span><span class="s2">0</span>
+    <span class="s0">return </span><span class="s2">1</span>
+
+
+<span class="s0">class </span><span class="s1">ImageModuleTest(unittest.TestCase):</span>
+    <span class="s0">def </span><span class="s1">testLoadIcon(self):</span>
+        <span class="s3">&quot;&quot;&quot;see if we can load the pygame icon.&quot;&quot;&quot;</span>
+        <span class="s1">f = pygame.pkgdata.getResource(</span><span class="s4">&quot;pygame_icon.bmp&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(f.mode</span><span class="s0">, </span><span class="s4">&quot;rb&quot;</span><span class="s1">)</span>
+
+        <span class="s1">surf = pygame.image.load_basic(f)</span>
+
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">(</span><span class="s2">5</span><span class="s0">, </span><span class="s2">4</span><span class="s0">, </span><span class="s2">5</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(surf.get_height()</span><span class="s0">, </span><span class="s2">32</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(surf.get_width()</span><span class="s0">, </span><span class="s2">32</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">testLoadPNG(self):</span>
+        <span class="s3">&quot;&quot;&quot;see if we can load a png with color values in the proper channels.&quot;&quot;&quot;</span>
+        <span class="s5"># Create a PNG file with known colors</span>
+        <span class="s1">reddish_pixel = (</span><span class="s2">210</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span>
+        <span class="s1">greenish_pixel = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">220</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span>
+        <span class="s1">bluish_pixel = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">230</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span>
+        <span class="s1">greyish_pixel = (</span><span class="s2">110</span><span class="s0">, </span><span class="s2">120</span><span class="s0">, </span><span class="s2">130</span><span class="s0">, </span><span class="s2">140</span><span class="s1">)</span>
+        <span class="s1">pixel_array = [reddish_pixel + greenish_pixel</span><span class="s0">, </span><span class="s1">bluish_pixel + greyish_pixel]</span>
+
+        <span class="s1">f_descriptor</span><span class="s0">, </span><span class="s1">f_path = tempfile.mkstemp(suffix=</span><span class="s4">&quot;.png&quot;</span><span class="s1">)</span>
+
+        <span class="s0">with </span><span class="s1">os.fdopen(f_descriptor</span><span class="s0">, </span><span class="s4">&quot;wb&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">f:</span>
+            <span class="s1">w = png.Writer(</span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s0">, </span><span class="s1">alpha=</span><span class="s0">True</span><span class="s1">)</span>
+            <span class="s1">w.write(f</span><span class="s0">, </span><span class="s1">pixel_array)</span>
+
+        <span class="s5"># Read the PNG file and verify that pygame interprets it correctly</span>
+        <span class="s1">surf = pygame.image.load(f_path)</span>
+
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">reddish_pixel)</span>
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">greenish_pixel)</span>
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">bluish_pixel)</span>
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">greyish_pixel)</span>
+
+        <span class="s5"># Read the PNG file obj. and verify that pygame interprets it correctly</span>
+        <span class="s0">with </span><span class="s1">open(f_path</span><span class="s0">, </span><span class="s4">&quot;rb&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">f:</span>
+            <span class="s1">surf = pygame.image.load(f)</span>
+
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">reddish_pixel)</span>
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">greenish_pixel)</span>
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">bluish_pixel)</span>
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">greyish_pixel)</span>
+
+        <span class="s1">os.remove(f_path)</span>
+
+    <span class="s0">def </span><span class="s1">testLoadJPG(self):</span>
+        <span class="s3">&quot;&quot;&quot;to see if we can load a jpg.&quot;&quot;&quot;</span>
+        <span class="s1">f = example_path(</span><span class="s4">&quot;data/alien1.jpg&quot;</span><span class="s1">)</span>
+        <span class="s1">surf = pygame.image.load(f)</span>
+
+        <span class="s0">with </span><span class="s1">open(f</span><span class="s0">, </span><span class="s4">&quot;rb&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">f:</span>
+            <span class="s1">surf = pygame.image.load(f)</span>
+
+    <span class="s0">def </span><span class="s1">testLoadBytesIO(self):</span>
+        <span class="s3">&quot;&quot;&quot;to see if we can load images with BytesIO.&quot;&quot;&quot;</span>
+        <span class="s1">files = [</span>
+            <span class="s4">&quot;data/alien1.png&quot;</span><span class="s0">,</span>
+            <span class="s4">&quot;data/alien1.jpg&quot;</span><span class="s0">,</span>
+            <span class="s4">&quot;data/alien1.gif&quot;</span><span class="s0">,</span>
+            <span class="s4">&quot;data/asprite.bmp&quot;</span><span class="s0">,</span>
+        <span class="s1">]</span>
+
+        <span class="s0">for </span><span class="s1">fname </span><span class="s0">in </span><span class="s1">files:</span>
+            <span class="s0">with </span><span class="s1">self.subTest(fname=fname):</span>
+                <span class="s0">with </span><span class="s1">open(example_path(fname)</span><span class="s0">, </span><span class="s4">&quot;rb&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">f:</span>
+                    <span class="s1">img_bytes = f.read()</span>
+                    <span class="s1">img_file = io.BytesIO(img_bytes)</span>
+                    <span class="s1">image = pygame.image.load(img_file)</span>
+
+    <span class="s1">@unittest.skipIf(</span>
+        <span class="s1">sdl_image_svg_jpeg_save_bug</span><span class="s0">,</span>
+        <span class="s4">&quot;SDL_image 2.0.5 and older has a big endian bug in jpeg saving&quot;</span><span class="s0">,</span>
+    <span class="s1">)</span>
+    <span class="s0">def </span><span class="s1">testSaveJPG(self):</span>
+        <span class="s3">&quot;&quot;&quot;JPG equivalent to issue #211 - color channel swapping 
+ 
+        Make sure the SDL surface color masks represent the rgb memory format 
+        required by the JPG library. The masks are machine endian dependent 
+        &quot;&quot;&quot;</span>
+
+        <span class="s0">from </span><span class="s1">pygame </span><span class="s0">import </span><span class="s1">Color</span><span class="s0">, </span><span class="s1">Rect</span>
+
+        <span class="s5"># The source image is a 2 by 2 square of four colors. Since JPEG is</span>
+        <span class="s5"># lossy, there can be color bleed. Make each color square 16 by 16,</span>
+        <span class="s5"># to avoid the significantly color value distorts found at color</span>
+        <span class="s5"># boundaries due to the compression value set by Pygame.</span>
+        <span class="s1">square_len = </span><span class="s2">16</span>
+        <span class="s1">sz = </span><span class="s2">2 </span><span class="s1">* square_len</span><span class="s0">, </span><span class="s2">2 </span><span class="s1">* square_len</span>
+
+        <span class="s5">#  +---------------------------------+</span>
+        <span class="s5">#  | red            | green          |</span>
+        <span class="s5">#  |----------------+----------------|</span>
+        <span class="s5">#  | blue           | (255, 128, 64) |</span>
+        <span class="s5">#  +---------------------------------+</span>
+        <span class="s5">#</span>
+        <span class="s5">#  as (rect, color) pairs.</span>
+        <span class="s0">def </span><span class="s1">as_rect(square_x</span><span class="s0">, </span><span class="s1">square_y):</span>
+            <span class="s0">return </span><span class="s1">Rect(</span>
+                <span class="s1">square_x * square_len</span><span class="s0">, </span><span class="s1">square_y * square_len</span><span class="s0">, </span><span class="s1">square_len</span><span class="s0">, </span><span class="s1">square_len</span>
+            <span class="s1">)</span>
+
+        <span class="s1">squares = [</span>
+            <span class="s1">(as_rect(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">, </span><span class="s1">Color(</span><span class="s4">&quot;red&quot;</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(as_rect(</span><span class="s2">1</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">, </span><span class="s1">Color(</span><span class="s4">&quot;green&quot;</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(as_rect(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">1</span><span class="s1">)</span><span class="s0">, </span><span class="s1">Color(</span><span class="s4">&quot;blue&quot;</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(as_rect(</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">)</span><span class="s0">, </span><span class="s1">Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">128</span><span class="s0">, </span><span class="s2">64</span><span class="s1">))</span><span class="s0">,</span>
+        <span class="s1">]</span>
+
+        <span class="s5"># A surface format which is not directly usable with libjpeg.</span>
+        <span class="s1">surf = pygame.Surface(sz</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">32</span><span class="s1">)</span>
+        <span class="s0">for </span><span class="s1">rect</span><span class="s0">, </span><span class="s1">color </span><span class="s0">in </span><span class="s1">squares:</span>
+            <span class="s1">surf.fill(color</span><span class="s0">, </span><span class="s1">rect)</span>
+
+        <span class="s5"># Assume pygame.image.Load works correctly as it is handled by the</span>
+        <span class="s5"># third party SDL_image library.</span>
+        <span class="s1">f_path = tempfile.mktemp(suffix=</span><span class="s4">&quot;.jpg&quot;</span><span class="s1">)</span>
+        <span class="s1">pygame.image.save(surf</span><span class="s0">, </span><span class="s1">f_path)</span>
+        <span class="s1">jpg_surf = pygame.image.load(f_path)</span>
+
+        <span class="s5"># Allow for small differences in the restored colors.</span>
+        <span class="s0">def </span><span class="s1">approx(c):</span>
+            <span class="s1">mask = </span><span class="s2">0xFC</span>
+            <span class="s0">return </span><span class="s1">pygame.Color(c.r &amp; mask</span><span class="s0">, </span><span class="s1">c.g &amp; mask</span><span class="s0">, </span><span class="s1">c.b &amp; mask)</span>
+
+        <span class="s1">offset = square_len // </span><span class="s2">2</span>
+        <span class="s0">for </span><span class="s1">rect</span><span class="s0">, </span><span class="s1">color </span><span class="s0">in </span><span class="s1">squares:</span>
+            <span class="s1">posn = rect.move((offset</span><span class="s0">, </span><span class="s1">offset)).topleft</span>
+            <span class="s1">self.assertEqual(approx(jpg_surf.get_at(posn))</span><span class="s0">, </span><span class="s1">approx(color))</span>
+
+        <span class="s1">os.remove(f_path)</span>
+
+    <span class="s0">def </span><span class="s1">testSavePNG32(self):</span>
+        <span class="s3">&quot;&quot;&quot;see if we can save a png with color values in the proper channels.&quot;&quot;&quot;</span>
+        <span class="s5"># Create a PNG file with known colors</span>
+        <span class="s1">reddish_pixel = (</span><span class="s2">215</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span>
+        <span class="s1">greenish_pixel = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">225</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span>
+        <span class="s1">bluish_pixel = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">235</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span>
+        <span class="s1">greyish_pixel = (</span><span class="s2">115</span><span class="s0">, </span><span class="s2">125</span><span class="s0">, </span><span class="s2">135</span><span class="s0">, </span><span class="s2">145</span><span class="s1">)</span>
+
+        <span class="s1">surf = pygame.Surface((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">4</span><span class="s1">)</span><span class="s0">, </span><span class="s1">pygame.SRCALPHA</span><span class="s0">, </span><span class="s2">32</span><span class="s1">)</span>
+        <span class="s1">surf.set_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">, </span><span class="s1">reddish_pixel)</span>
+        <span class="s1">surf.set_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">1</span><span class="s1">)</span><span class="s0">, </span><span class="s1">greenish_pixel)</span>
+        <span class="s1">surf.set_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">2</span><span class="s1">)</span><span class="s0">, </span><span class="s1">bluish_pixel)</span>
+        <span class="s1">surf.set_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">3</span><span class="s1">)</span><span class="s0">, </span><span class="s1">greyish_pixel)</span>
+
+        <span class="s1">f_path = tempfile.mktemp(suffix=</span><span class="s4">&quot;.png&quot;</span><span class="s1">)</span>
+        <span class="s1">pygame.image.save(surf</span><span class="s0">, </span><span class="s1">f_path)</span>
+
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s5"># Read the PNG file and verify that pygame saved it correctly</span>
+            <span class="s1">reader = png.Reader(filename=f_path)</span>
+            <span class="s1">width</span><span class="s0">, </span><span class="s1">height</span><span class="s0">, </span><span class="s1">pixels</span><span class="s0">, </span><span class="s1">metadata = reader.asRGBA8()</span>
+
+            <span class="s5"># pixels is a generator</span>
+            <span class="s1">self.assertEqual(tuple(next(pixels))</span><span class="s0">, </span><span class="s1">reddish_pixel)</span>
+            <span class="s1">self.assertEqual(tuple(next(pixels))</span><span class="s0">, </span><span class="s1">greenish_pixel)</span>
+            <span class="s1">self.assertEqual(tuple(next(pixels))</span><span class="s0">, </span><span class="s1">bluish_pixel)</span>
+            <span class="s1">self.assertEqual(tuple(next(pixels))</span><span class="s0">, </span><span class="s1">greyish_pixel)</span>
+
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s5"># Ensures proper clean up.</span>
+            <span class="s0">if not </span><span class="s1">reader.file.closed:</span>
+                <span class="s1">reader.file.close()</span>
+            <span class="s0">del </span><span class="s1">reader</span>
+            <span class="s1">os.remove(f_path)</span>
+
+    <span class="s0">def </span><span class="s1">testSavePNG24(self):</span>
+        <span class="s3">&quot;&quot;&quot;see if we can save a png with color values in the proper channels.&quot;&quot;&quot;</span>
+        <span class="s5"># Create a PNG file with known colors</span>
+        <span class="s1">reddish_pixel = (</span><span class="s2">215</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span>
+        <span class="s1">greenish_pixel = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">225</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span>
+        <span class="s1">bluish_pixel = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">235</span><span class="s1">)</span>
+        <span class="s1">greyish_pixel = (</span><span class="s2">115</span><span class="s0">, </span><span class="s2">125</span><span class="s0">, </span><span class="s2">135</span><span class="s1">)</span>
+
+        <span class="s1">surf = pygame.Surface((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">4</span><span class="s1">)</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">24</span><span class="s1">)</span>
+        <span class="s1">surf.set_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">, </span><span class="s1">reddish_pixel)</span>
+        <span class="s1">surf.set_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">1</span><span class="s1">)</span><span class="s0">, </span><span class="s1">greenish_pixel)</span>
+        <span class="s1">surf.set_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">2</span><span class="s1">)</span><span class="s0">, </span><span class="s1">bluish_pixel)</span>
+        <span class="s1">surf.set_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">3</span><span class="s1">)</span><span class="s0">, </span><span class="s1">greyish_pixel)</span>
+
+        <span class="s1">f_path = tempfile.mktemp(suffix=</span><span class="s4">&quot;.png&quot;</span><span class="s1">)</span>
+        <span class="s1">pygame.image.save(surf</span><span class="s0">, </span><span class="s1">f_path)</span>
+
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s5"># Read the PNG file and verify that pygame saved it correctly</span>
+            <span class="s1">reader = png.Reader(filename=f_path)</span>
+            <span class="s1">width</span><span class="s0">, </span><span class="s1">height</span><span class="s0">, </span><span class="s1">pixels</span><span class="s0">, </span><span class="s1">metadata = reader.asRGB8()</span>
+
+            <span class="s5"># pixels is a generator</span>
+            <span class="s1">self.assertEqual(tuple(next(pixels))</span><span class="s0">, </span><span class="s1">reddish_pixel)</span>
+            <span class="s1">self.assertEqual(tuple(next(pixels))</span><span class="s0">, </span><span class="s1">greenish_pixel)</span>
+            <span class="s1">self.assertEqual(tuple(next(pixels))</span><span class="s0">, </span><span class="s1">bluish_pixel)</span>
+            <span class="s1">self.assertEqual(tuple(next(pixels))</span><span class="s0">, </span><span class="s1">greyish_pixel)</span>
+
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s5"># Ensures proper clean up.</span>
+            <span class="s0">if not </span><span class="s1">reader.file.closed:</span>
+                <span class="s1">reader.file.close()</span>
+            <span class="s0">del </span><span class="s1">reader</span>
+            <span class="s1">os.remove(f_path)</span>
+
+    <span class="s0">def </span><span class="s1">testSavePNG8(self):</span>
+        <span class="s3">&quot;&quot;&quot;see if we can save an 8 bit png correctly&quot;&quot;&quot;</span>
+        <span class="s5"># Create an 8-bit PNG file with known colors</span>
+        <span class="s1">set_pixels = [(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">, </span><span class="s1">(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">, </span><span class="s1">(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span><span class="s0">, </span><span class="s1">(</span><span class="s2">170</span><span class="s0">, </span><span class="s2">146</span><span class="s0">, </span><span class="s2">170</span><span class="s1">)]</span>
+
+        <span class="s1">size = (</span><span class="s2">1</span><span class="s0">, </span><span class="s1">len(set_pixels))</span>
+        <span class="s1">surf = pygame.Surface(size</span><span class="s0">, </span><span class="s1">depth=</span><span class="s2">8</span><span class="s1">)</span>
+        <span class="s0">for </span><span class="s1">cnt</span><span class="s0">, </span><span class="s1">pix </span><span class="s0">in </span><span class="s1">enumerate(set_pixels):</span>
+            <span class="s1">surf.set_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s1">cnt)</span><span class="s0">, </span><span class="s1">pix)</span>
+
+        <span class="s1">f_path = tempfile.mktemp(suffix=</span><span class="s4">&quot;.png&quot;</span><span class="s1">)</span>
+        <span class="s1">pygame.image.save(surf</span><span class="s0">, </span><span class="s1">f_path)</span>
+
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s5"># Read the PNG file and verify that pygame saved it correctly</span>
+            <span class="s1">reader = png.Reader(filename=f_path)</span>
+            <span class="s1">width</span><span class="s0">, </span><span class="s1">height</span><span class="s0">, </span><span class="s1">pixels</span><span class="s0">, </span><span class="s1">_ = reader.asRGB8()</span>
+
+            <span class="s1">self.assertEqual(size</span><span class="s0">, </span><span class="s1">(width</span><span class="s0">, </span><span class="s1">height))</span>
+
+            <span class="s5"># pixels is a generator</span>
+            <span class="s1">self.assertEqual(list(map(tuple</span><span class="s0">, </span><span class="s1">pixels))</span><span class="s0">, </span><span class="s1">set_pixels)</span>
+
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s5"># Ensures proper clean up.</span>
+            <span class="s0">if not </span><span class="s1">reader.file.closed:</span>
+                <span class="s1">reader.file.close()</span>
+            <span class="s0">del </span><span class="s1">reader</span>
+            <span class="s1">os.remove(f_path)</span>
+
+    <span class="s0">def </span><span class="s1">testSavePaletteAsPNG8(self):</span>
+        <span class="s3">&quot;&quot;&quot;see if we can save a png with color values in the proper channels.&quot;&quot;&quot;</span>
+        <span class="s5"># Create a PNG file with known colors</span>
+        <span class="s1">pygame.display.init()</span>
+
+        <span class="s1">reddish_pixel = (</span><span class="s2">215</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span>
+        <span class="s1">greenish_pixel = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">225</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span>
+        <span class="s1">bluish_pixel = (</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">235</span><span class="s1">)</span>
+        <span class="s1">greyish_pixel = (</span><span class="s2">115</span><span class="s0">, </span><span class="s2">125</span><span class="s0">, </span><span class="s2">135</span><span class="s1">)</span>
+
+        <span class="s1">surf = pygame.Surface((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">4</span><span class="s1">)</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">8</span><span class="s1">)</span>
+        <span class="s1">surf.set_palette_at(</span><span class="s2">0</span><span class="s0">, </span><span class="s1">reddish_pixel)</span>
+        <span class="s1">surf.set_palette_at(</span><span class="s2">1</span><span class="s0">, </span><span class="s1">greenish_pixel)</span>
+        <span class="s1">surf.set_palette_at(</span><span class="s2">2</span><span class="s0">, </span><span class="s1">bluish_pixel)</span>
+        <span class="s1">surf.set_palette_at(</span><span class="s2">3</span><span class="s0">, </span><span class="s1">greyish_pixel)</span>
+
+        <span class="s1">f_path = tempfile.mktemp(suffix=</span><span class="s4">&quot;.png&quot;</span><span class="s1">)</span>
+        <span class="s1">pygame.image.save(surf</span><span class="s0">, </span><span class="s1">f_path)</span>
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s5"># Read the PNG file and verify that pygame saved it correctly</span>
+            <span class="s1">reader = png.Reader(filename=f_path)</span>
+            <span class="s1">reader.read()</span>
+            <span class="s1">palette = reader.palette()</span>
+
+            <span class="s5"># pixels is a generator</span>
+            <span class="s1">self.assertEqual(tuple(next(palette))</span><span class="s0">, </span><span class="s1">reddish_pixel)</span>
+            <span class="s1">self.assertEqual(tuple(next(palette))</span><span class="s0">, </span><span class="s1">greenish_pixel)</span>
+            <span class="s1">self.assertEqual(tuple(next(palette))</span><span class="s0">, </span><span class="s1">bluish_pixel)</span>
+            <span class="s1">self.assertEqual(tuple(next(palette))</span><span class="s0">, </span><span class="s1">greyish_pixel)</span>
+
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s5"># Ensures proper clean up.</span>
+            <span class="s0">if not </span><span class="s1">reader.file.closed:</span>
+                <span class="s1">reader.file.close()</span>
+            <span class="s0">del </span><span class="s1">reader</span>
+            <span class="s1">os.remove(f_path)</span>
+
+    <span class="s0">def </span><span class="s1">test_save(self):</span>
+
+        <span class="s1">s = pygame.Surface((</span><span class="s2">10</span><span class="s0">, </span><span class="s2">10</span><span class="s1">))</span>
+        <span class="s1">s.fill((</span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s1">))</span>
+        <span class="s1">magic_hex = {}</span>
+        <span class="s1">magic_hex[</span><span class="s4">&quot;jpg&quot;</span><span class="s1">] = [</span><span class="s2">0xFF</span><span class="s0">, </span><span class="s2">0xD8</span><span class="s0">, </span><span class="s2">0xFF</span><span class="s0">, </span><span class="s2">0xE0</span><span class="s1">]</span>
+        <span class="s1">magic_hex[</span><span class="s4">&quot;png&quot;</span><span class="s1">] = [</span><span class="s2">0x89</span><span class="s0">, </span><span class="s2">0x50</span><span class="s0">, </span><span class="s2">0x4E</span><span class="s0">, </span><span class="s2">0x47</span><span class="s1">]</span>
+        <span class="s5"># magic_hex['tga'] = [0x0, 0x0, 0xa]</span>
+        <span class="s1">magic_hex[</span><span class="s4">&quot;bmp&quot;</span><span class="s1">] = [</span><span class="s2">0x42</span><span class="s0">, </span><span class="s2">0x4D</span><span class="s1">]</span>
+
+        <span class="s1">formats = [</span><span class="s4">&quot;jpg&quot;</span><span class="s0">, </span><span class="s4">&quot;png&quot;</span><span class="s0">, </span><span class="s4">&quot;bmp&quot;</span><span class="s1">]</span>
+        <span class="s5"># uppercase too... JPG</span>
+        <span class="s1">formats = formats + [x.upper() </span><span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">formats]</span>
+
+        <span class="s0">for </span><span class="s1">fmt </span><span class="s0">in </span><span class="s1">formats:</span>
+            <span class="s0">try</span><span class="s1">:</span>
+                <span class="s1">temp_filename = </span><span class="s4">f&quot;tmpimg.</span><span class="s0">{</span><span class="s1">fmt</span><span class="s0">}</span><span class="s4">&quot;</span>
+                <span class="s1">pygame.image.save(s</span><span class="s0">, </span><span class="s1">temp_filename)</span>
+
+                <span class="s5"># Using 'with' ensures the file is closed even if test fails.</span>
+                <span class="s0">with </span><span class="s1">open(temp_filename</span><span class="s0">, </span><span class="s4">&quot;rb&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">handle:</span>
+                    <span class="s5"># Test the magic numbers at the start of the file to ensure</span>
+                    <span class="s5"># they are saved as the correct file type.</span>
+                    <span class="s1">self.assertEqual(</span>
+                        <span class="s1">(</span><span class="s2">1</span><span class="s0">, </span><span class="s1">fmt)</span><span class="s0">, </span><span class="s1">(test_magic(handle</span><span class="s0">, </span><span class="s1">magic_hex[fmt.lower()])</span><span class="s0">, </span><span class="s1">fmt)</span>
+                    <span class="s1">)</span>
+
+                <span class="s5"># load the file to make sure it was saved correctly.</span>
+                <span class="s5">#    Note load can load a jpg saved with a .png file name.</span>
+                <span class="s1">s2 = pygame.image.load(temp_filename)</span>
+                <span class="s5"># compare contents, might only work reliably for png...</span>
+                <span class="s5">#   but because it's all one color it seems to work with jpg.</span>
+                <span class="s1">self.assertEqual(s2.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">s.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)))</span>
+            <span class="s0">finally</span><span class="s1">:</span>
+                <span class="s5"># clean up the temp file, comment out to leave tmp file after run.</span>
+                <span class="s1">os.remove(temp_filename)</span>
+
+    <span class="s0">def </span><span class="s1">test_save_to_fileobject(self):</span>
+        <span class="s1">s = pygame.Surface((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span>
+        <span class="s1">s.fill((</span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s1">))</span>
+        <span class="s1">bytes_stream = io.BytesIO()</span>
+
+        <span class="s1">pygame.image.save(s</span><span class="s0">, </span><span class="s1">bytes_stream)</span>
+        <span class="s1">bytes_stream.seek(</span><span class="s2">0</span><span class="s1">)</span>
+        <span class="s1">s2 = pygame.image.load(bytes_stream</span><span class="s0">, </span><span class="s4">&quot;tga&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(s.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">s2.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)))</span>
+
+    <span class="s0">def </span><span class="s1">test_save_tga(self):</span>
+        <span class="s1">s = pygame.Surface((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span>
+        <span class="s1">s.fill((</span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s1">))</span>
+        <span class="s0">with </span><span class="s1">tempfile.NamedTemporaryFile(suffix=</span><span class="s4">&quot;.tga&quot;</span><span class="s0">, </span><span class="s1">delete=</span><span class="s0">False</span><span class="s1">) </span><span class="s0">as </span><span class="s1">f:</span>
+            <span class="s1">temp_filename = f.name</span>
+
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s1">pygame.image.save(s</span><span class="s0">, </span><span class="s1">temp_filename)</span>
+            <span class="s1">s2 = pygame.image.load(temp_filename)</span>
+            <span class="s1">self.assertEqual(s2.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">s.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)))</span>
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s5"># clean up the temp file, even if test fails</span>
+            <span class="s1">os.remove(temp_filename)</span>
+
+    <span class="s0">def </span><span class="s1">test_save_pathlib(self):</span>
+        <span class="s1">surf = pygame.Surface((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span>
+        <span class="s1">surf.fill((</span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s1">))</span>
+        <span class="s0">with </span><span class="s1">tempfile.NamedTemporaryFile(suffix=</span><span class="s4">&quot;.tga&quot;</span><span class="s0">, </span><span class="s1">delete=</span><span class="s0">False</span><span class="s1">) </span><span class="s0">as </span><span class="s1">f:</span>
+            <span class="s1">temp_filename = f.name</span>
+
+        <span class="s1">path = pathlib.Path(temp_filename)</span>
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s1">pygame.image.save(surf</span><span class="s0">, </span><span class="s1">path)</span>
+            <span class="s1">s2 = pygame.image.load(path)</span>
+            <span class="s1">self.assertEqual(s2.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)))</span>
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s1">os.remove(temp_filename)</span>
+
+    <span class="s0">def </span><span class="s1">test_save__to_fileobject_w_namehint_argument(self):</span>
+        <span class="s1">s = pygame.Surface((</span><span class="s2">10</span><span class="s0">, </span><span class="s2">10</span><span class="s1">))</span>
+        <span class="s1">s.fill((</span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s1">))</span>
+        <span class="s1">magic_hex = {}</span>
+        <span class="s1">magic_hex[</span><span class="s4">&quot;jpg&quot;</span><span class="s1">] = [</span><span class="s2">0xFF</span><span class="s0">, </span><span class="s2">0xD8</span><span class="s0">, </span><span class="s2">0xFF</span><span class="s0">, </span><span class="s2">0xE0</span><span class="s1">]</span>
+        <span class="s1">magic_hex[</span><span class="s4">&quot;png&quot;</span><span class="s1">] = [</span><span class="s2">0x89</span><span class="s0">, </span><span class="s2">0x50</span><span class="s0">, </span><span class="s2">0x4E</span><span class="s0">, </span><span class="s2">0x47</span><span class="s1">]</span>
+        <span class="s1">magic_hex[</span><span class="s4">&quot;bmp&quot;</span><span class="s1">] = [</span><span class="s2">0x42</span><span class="s0">, </span><span class="s2">0x4D</span><span class="s1">]</span>
+
+        <span class="s1">formats = [</span><span class="s4">&quot;tga&quot;</span><span class="s0">, </span><span class="s4">&quot;jpg&quot;</span><span class="s0">, </span><span class="s4">&quot;bmp&quot;</span><span class="s0">, </span><span class="s4">&quot;png&quot;</span><span class="s1">]</span>
+        <span class="s5"># uppercase too... JPG</span>
+        <span class="s1">formats = formats + [x.upper() </span><span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">formats]</span>
+
+        <span class="s1">SDL_Im_version = pygame.image.get_sdl_image_version()</span>
+        <span class="s5"># We assume here that minor version and patch level of SDL_Image</span>
+        <span class="s5"># never goes above 99</span>
+        <span class="s1">isAtLeastSDL_image_2_0_2 = (SDL_Im_version </span><span class="s0">is not None</span><span class="s1">) </span><span class="s0">and </span><span class="s1">(</span>
+            <span class="s1">SDL_Im_version[</span><span class="s2">0</span><span class="s1">] * </span><span class="s2">10000 </span><span class="s1">+ SDL_Im_version[</span><span class="s2">1</span><span class="s1">] * </span><span class="s2">100 </span><span class="s1">+ SDL_Im_version[</span><span class="s2">2</span><span class="s1">]</span>
+        <span class="s1">) &gt;= </span><span class="s2">20002</span>
+        <span class="s0">for </span><span class="s1">fmt </span><span class="s0">in </span><span class="s1">formats:</span>
+            <span class="s1">tmp_file</span><span class="s0">, </span><span class="s1">tmp_filename = tempfile.mkstemp(suffix=</span><span class="s4">f&quot;.</span><span class="s0">{</span><span class="s1">fmt</span><span class="s0">}</span><span class="s4">&quot;</span><span class="s1">)</span>
+            <span class="s0">if not </span><span class="s1">isAtLeastSDL_image_2_0_2 </span><span class="s0">and </span><span class="s1">fmt.lower() == </span><span class="s4">&quot;jpg&quot;</span><span class="s1">:</span>
+                <span class="s0">with </span><span class="s1">os.fdopen(tmp_file</span><span class="s0">, </span><span class="s4">&quot;wb&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">handle:</span>
+                    <span class="s0">with </span><span class="s1">self.assertRaises(pygame.error):</span>
+                        <span class="s1">pygame.image.save(s</span><span class="s0">, </span><span class="s1">handle</span><span class="s0">, </span><span class="s1">tmp_filename)</span>
+            <span class="s0">else</span><span class="s1">:</span>
+                <span class="s0">with </span><span class="s1">os.fdopen(tmp_file</span><span class="s0">, </span><span class="s4">&quot;r+b&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">handle:</span>
+                    <span class="s1">pygame.image.save(s</span><span class="s0">, </span><span class="s1">handle</span><span class="s0">, </span><span class="s1">tmp_filename)</span>
+
+                    <span class="s0">if </span><span class="s1">fmt.lower() </span><span class="s0">in </span><span class="s1">magic_hex:</span>
+                        <span class="s5"># Test the magic numbers at the start of the file to</span>
+                        <span class="s5"># ensure they are saved as the correct file type.</span>
+                        <span class="s1">handle.seek(</span><span class="s2">0</span><span class="s1">)</span>
+                        <span class="s1">self.assertEqual(</span>
+                            <span class="s1">(</span><span class="s2">1</span><span class="s0">, </span><span class="s1">fmt)</span><span class="s0">, </span><span class="s1">(test_magic(handle</span><span class="s0">, </span><span class="s1">magic_hex[fmt.lower()])</span><span class="s0">, </span><span class="s1">fmt)</span>
+                        <span class="s1">)</span>
+                    <span class="s5"># load the file to make sure it was saved correctly.</span>
+                    <span class="s1">handle.flush()</span>
+                    <span class="s1">handle.seek(</span><span class="s2">0</span><span class="s1">)</span>
+                    <span class="s1">s2 = pygame.image.load(handle</span><span class="s0">, </span><span class="s1">tmp_filename)</span>
+                    <span class="s1">self.assertEqual(s2.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">s.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)))</span>
+            <span class="s1">os.remove(tmp_filename)</span>
+
+    <span class="s0">def </span><span class="s1">test_save_colorkey(self):</span>
+        <span class="s3">&quot;&quot;&quot;make sure the color key is not changed when saving.&quot;&quot;&quot;</span>
+        <span class="s1">s = pygame.Surface((</span><span class="s2">10</span><span class="s0">, </span><span class="s2">10</span><span class="s1">)</span><span class="s0">, </span><span class="s1">pygame.SRCALPHA</span><span class="s0">, </span><span class="s2">32</span><span class="s1">)</span>
+        <span class="s1">s.fill((</span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s1">))</span>
+        <span class="s1">s.set_colorkey((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span>
+        <span class="s1">colorkey1 = s.get_colorkey()</span>
+        <span class="s1">p1 = s.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span>
+
+        <span class="s1">temp_filename = </span><span class="s4">&quot;tmpimg.png&quot;</span>
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s1">pygame.image.save(s</span><span class="s0">, </span><span class="s1">temp_filename)</span>
+            <span class="s1">s2 = pygame.image.load(temp_filename)</span>
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s1">os.remove(temp_filename)</span>
+
+        <span class="s1">colorkey2 = s.get_colorkey()</span>
+        <span class="s5"># check that the pixel and the colorkey is correct.</span>
+        <span class="s1">self.assertEqual(colorkey1</span><span class="s0">, </span><span class="s1">colorkey2)</span>
+        <span class="s1">self.assertEqual(p1</span><span class="s0">, </span><span class="s1">s2.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)))</span>
+
+    <span class="s0">def </span><span class="s1">test_load_unicode_path(self):</span>
+        <span class="s0">import </span><span class="s1">shutil</span>
+
+        <span class="s1">orig = example_path(</span><span class="s4">&quot;data/asprite.bmp&quot;</span><span class="s1">)</span>
+        <span class="s1">temp = os.path.join(example_path(</span><span class="s4">&quot;data&quot;</span><span class="s1">)</span><span class="s0">, </span><span class="s4">&quot;你好.bmp&quot;</span><span class="s1">)</span>
+        <span class="s1">shutil.copy(orig</span><span class="s0">, </span><span class="s1">temp)</span>
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s1">im = pygame.image.load(temp)</span>
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s1">os.remove(temp)</span>
+
+    <span class="s0">def </span><span class="s1">_unicode_save(self</span><span class="s0">, </span><span class="s1">temp_file):</span>
+        <span class="s1">im = pygame.Surface((</span><span class="s2">10</span><span class="s0">, </span><span class="s2">10</span><span class="s1">)</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">32</span><span class="s1">)</span>
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s0">with </span><span class="s1">open(temp_file</span><span class="s0">, </span><span class="s4">&quot;w&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">f:</span>
+                <span class="s0">pass</span>
+            <span class="s1">os.remove(temp_file)</span>
+        <span class="s0">except </span><span class="s1">OSError:</span>
+            <span class="s0">raise </span><span class="s1">unittest.SkipTest(</span><span class="s4">&quot;the path cannot be opened&quot;</span><span class="s1">)</span>
+
+        <span class="s1">self.assertFalse(os.path.exists(temp_file))</span>
+
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s1">pygame.image.save(im</span><span class="s0">, </span><span class="s1">temp_file)</span>
+
+            <span class="s1">self.assertGreater(os.path.getsize(temp_file)</span><span class="s0">, </span><span class="s2">10</span><span class="s1">)</span>
+        <span class="s0">finally</span><span class="s1">:</span>
+            <span class="s0">try</span><span class="s1">:</span>
+                <span class="s1">os.remove(temp_file)</span>
+            <span class="s0">except </span><span class="s1">OSError:</span>
+                <span class="s0">pass</span>
+
+    <span class="s0">def </span><span class="s1">test_save_unicode_path(self):</span>
+        <span class="s3">&quot;&quot;&quot;save unicode object with non-ASCII chars&quot;&quot;&quot;</span>
+        <span class="s1">self._unicode_save(</span><span class="s4">&quot;你好.bmp&quot;</span><span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">assertPremultipliedAreEqual(self</span><span class="s0">, </span><span class="s1">string1</span><span class="s0">, </span><span class="s1">string2</span><span class="s0">, </span><span class="s1">source_string):</span>
+        <span class="s1">self.assertEqual(len(string1)</span><span class="s0">, </span><span class="s1">len(string2))</span>
+        <span class="s1">block_size = </span><span class="s2">20</span>
+        <span class="s0">if </span><span class="s1">string1 != string2:</span>
+            <span class="s0">for </span><span class="s1">block_start </span><span class="s0">in </span><span class="s1">range(</span><span class="s2">0</span><span class="s0">, </span><span class="s1">len(string1)</span><span class="s0">, </span><span class="s1">block_size):</span>
+                <span class="s1">block_end = min(block_start + block_size</span><span class="s0">, </span><span class="s1">len(string1))</span>
+                <span class="s1">block1 = string1[block_start:block_end]</span>
+                <span class="s1">block2 = string2[block_start:block_end]</span>
+                <span class="s0">if </span><span class="s1">block1 != block2:</span>
+                    <span class="s1">source_block = source_string[block_start:block_end]</span>
+                    <span class="s1">msg = (</span>
+                        <span class="s4">&quot;string difference in %d to %d of %d:</span><span class="s0">\n</span><span class="s4">%s</span><span class="s0">\n</span><span class="s4">%s</span><span class="s0">\n</span><span class="s4">source:</span><span class="s0">\n</span><span class="s4">%s&quot;</span>
+                        <span class="s1">% (</span>
+                            <span class="s1">block_start</span><span class="s0">,</span>
+                            <span class="s1">block_end</span><span class="s0">,</span>
+                            <span class="s1">len(string1)</span><span class="s0">,</span>
+                            <span class="s1">binascii.hexlify(block1)</span><span class="s0">,</span>
+                            <span class="s1">binascii.hexlify(block2)</span><span class="s0">,</span>
+                            <span class="s1">binascii.hexlify(source_block)</span><span class="s0">,</span>
+                        <span class="s1">)</span>
+                    <span class="s1">)</span>
+                    <span class="s1">self.fail(msg)</span>
+
+    <span class="s0">def </span><span class="s1">test_to_string__premultiplied(self):</span>
+        <span class="s3">&quot;&quot;&quot;test to make sure we can export a surface to a premultiplied alpha string&quot;&quot;&quot;</span>
+
+        <span class="s0">def </span><span class="s1">convertRGBAtoPremultiplied(surface_to_modify):</span>
+            <span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">range(surface_to_modify.get_width()):</span>
+                <span class="s0">for </span><span class="s1">y </span><span class="s0">in </span><span class="s1">range(surface_to_modify.get_height()):</span>
+                    <span class="s1">color = surface_to_modify.get_at((x</span><span class="s0">, </span><span class="s1">y))</span>
+                    <span class="s1">premult_color = (</span>
+                        <span class="s1">color[</span><span class="s2">0</span><span class="s1">] * color[</span><span class="s2">3</span><span class="s1">] / </span><span class="s2">255</span><span class="s0">,</span>
+                        <span class="s1">color[</span><span class="s2">1</span><span class="s1">] * color[</span><span class="s2">3</span><span class="s1">] / </span><span class="s2">255</span><span class="s0">,</span>
+                        <span class="s1">color[</span><span class="s2">2</span><span class="s1">] * color[</span><span class="s2">3</span><span class="s1">] / </span><span class="s2">255</span><span class="s0">,</span>
+                        <span class="s1">color[</span><span class="s2">3</span><span class="s1">]</span><span class="s0">,</span>
+                    <span class="s1">)</span>
+                    <span class="s1">surface_to_modify.set_at((x</span><span class="s0">, </span><span class="s1">y)</span><span class="s0">, </span><span class="s1">premult_color)</span>
+
+        <span class="s1">test_surface = pygame.Surface((</span><span class="s2">256</span><span class="s0">, </span><span class="s2">256</span><span class="s1">)</span><span class="s0">, </span><span class="s1">pygame.SRCALPHA</span><span class="s0">, </span><span class="s2">32</span><span class="s1">)</span>
+        <span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">range(test_surface.get_width()):</span>
+            <span class="s0">for </span><span class="s1">y </span><span class="s0">in </span><span class="s1">range(test_surface.get_height()):</span>
+                <span class="s1">i = x + y * test_surface.get_width()</span>
+                <span class="s1">test_surface.set_at(</span>
+                    <span class="s1">(x</span><span class="s0">, </span><span class="s1">y)</span><span class="s0">, </span><span class="s1">((i * </span><span class="s2">7</span><span class="s1">) % </span><span class="s2">256</span><span class="s0">, </span><span class="s1">(i * </span><span class="s2">13</span><span class="s1">) % </span><span class="s2">256</span><span class="s0">, </span><span class="s1">(i * </span><span class="s2">27</span><span class="s1">) % </span><span class="s2">256</span><span class="s0">, </span><span class="s1">y)</span>
+                <span class="s1">)</span>
+        <span class="s1">premultiplied_copy = test_surface.copy()</span>
+        <span class="s1">convertRGBAtoPremultiplied(premultiplied_copy)</span>
+        <span class="s1">self.assertPremultipliedAreEqual(</span>
+            <span class="s1">pygame.image.tostring(test_surface</span><span class="s0">, </span><span class="s4">&quot;RGBA_PREMULT&quot;</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">pygame.image.tostring(premultiplied_copy</span><span class="s0">, </span><span class="s4">&quot;RGBA&quot;</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">pygame.image.tostring(test_surface</span><span class="s0">, </span><span class="s4">&quot;RGBA&quot;</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s1">)</span>
+        <span class="s1">self.assertPremultipliedAreEqual(</span>
+            <span class="s1">pygame.image.tostring(test_surface</span><span class="s0">, </span><span class="s4">&quot;ARGB_PREMULT&quot;</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">pygame.image.tostring(premultiplied_copy</span><span class="s0">, </span><span class="s4">&quot;ARGB&quot;</span><span class="s1">)</span><span class="s0">,</span>
+            <span class="s1">pygame.image.tostring(test_surface</span><span class="s0">, </span><span class="s4">&quot;ARGB&quot;</span><span class="s1">)</span><span class="s0">,</span>
+        <span class="s1">)</span>
+
+        <span class="s1">no_alpha_surface = pygame.Surface((</span><span class="s2">256</span><span class="s0">, </span><span class="s2">256</span><span class="s1">)</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">24</span><span class="s1">)</span>
+        <span class="s1">self.assertRaises(</span>
+            <span class="s1">ValueError</span><span class="s0">, </span><span class="s1">pygame.image.tostring</span><span class="s0">, </span><span class="s1">no_alpha_surface</span><span class="s0">, </span><span class="s4">&quot;RGBA_PREMULT&quot;</span>
+        <span class="s1">)</span>
+
+    <span class="s5"># Custom assert method to check for identical surfaces.</span>
+    <span class="s0">def </span><span class="s1">_assertSurfaceEqual(self</span><span class="s0">, </span><span class="s1">surf_a</span><span class="s0">, </span><span class="s1">surf_b</span><span class="s0">, </span><span class="s1">msg=</span><span class="s0">None</span><span class="s1">):</span>
+        <span class="s1">a_width</span><span class="s0">, </span><span class="s1">a_height = surf_a.get_width()</span><span class="s0">, </span><span class="s1">surf_a.get_height()</span>
+
+        <span class="s5"># Check a few things to see if the surfaces are equal.</span>
+        <span class="s1">self.assertEqual(a_width</span><span class="s0">, </span><span class="s1">surf_b.get_width()</span><span class="s0">, </span><span class="s1">msg)</span>
+        <span class="s1">self.assertEqual(a_height</span><span class="s0">, </span><span class="s1">surf_b.get_height()</span><span class="s0">, </span><span class="s1">msg)</span>
+        <span class="s1">self.assertEqual(surf_a.get_size()</span><span class="s0">, </span><span class="s1">surf_b.get_size()</span><span class="s0">, </span><span class="s1">msg)</span>
+        <span class="s1">self.assertEqual(surf_a.get_rect()</span><span class="s0">, </span><span class="s1">surf_b.get_rect()</span><span class="s0">, </span><span class="s1">msg)</span>
+        <span class="s1">self.assertEqual(surf_a.get_colorkey()</span><span class="s0">, </span><span class="s1">surf_b.get_colorkey()</span><span class="s0">, </span><span class="s1">msg)</span>
+        <span class="s1">self.assertEqual(surf_a.get_alpha()</span><span class="s0">, </span><span class="s1">surf_b.get_alpha()</span><span class="s0">, </span><span class="s1">msg)</span>
+        <span class="s1">self.assertEqual(surf_a.get_flags()</span><span class="s0">, </span><span class="s1">surf_b.get_flags()</span><span class="s0">, </span><span class="s1">msg)</span>
+        <span class="s1">self.assertEqual(surf_a.get_bitsize()</span><span class="s0">, </span><span class="s1">surf_b.get_bitsize()</span><span class="s0">, </span><span class="s1">msg)</span>
+        <span class="s1">self.assertEqual(surf_a.get_bytesize()</span><span class="s0">, </span><span class="s1">surf_b.get_bytesize()</span><span class="s0">, </span><span class="s1">msg)</span>
+        <span class="s5"># Anything else?</span>
+
+        <span class="s5"># Making the method lookups local for a possible speed up.</span>
+        <span class="s1">surf_a_get_at = surf_a.get_at</span>
+        <span class="s1">surf_b_get_at = surf_b.get_at</span>
+        <span class="s0">for </span><span class="s1">y </span><span class="s0">in </span><span class="s1">range(a_height):</span>
+            <span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">range(a_width):</span>
+                <span class="s1">self.assertEqual(</span>
+                    <span class="s1">surf_a_get_at((x</span><span class="s0">, </span><span class="s1">y))</span><span class="s0">,</span>
+                    <span class="s1">surf_b_get_at((x</span><span class="s0">, </span><span class="s1">y))</span><span class="s0">,</span>
+                    <span class="s4">&quot;%s (pixel: %d, %d)&quot; </span><span class="s1">% (msg</span><span class="s0">, </span><span class="s1">x</span><span class="s0">, </span><span class="s1">y)</span><span class="s0">,</span>
+                <span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_fromstring__and_tostring(self):</span>
+        <span class="s3">&quot;&quot;&quot;Ensure methods tostring() and fromstring() are symmetric.&quot;&quot;&quot;</span>
+
+        <span class="s0">import </span><span class="s1">itertools</span>
+
+        <span class="s1">fmts = (</span><span class="s4">&quot;RGBA&quot;</span><span class="s0">, </span><span class="s4">&quot;ARGB&quot;</span><span class="s0">, </span><span class="s4">&quot;BGRA&quot;</span><span class="s1">)</span>
+        <span class="s1">fmt_permutations = itertools.permutations(fmts</span><span class="s0">, </span><span class="s2">2</span><span class="s1">)</span>
+        <span class="s1">fmt_combinations = itertools.combinations(fmts</span><span class="s0">, </span><span class="s2">2</span><span class="s1">)</span>
+
+        <span class="s0">def </span><span class="s1">convert(fmt1</span><span class="s0">, </span><span class="s1">fmt2</span><span class="s0">, </span><span class="s1">str_buf):</span>
+            <span class="s1">pos_fmt1 = {k: v </span><span class="s0">for </span><span class="s1">v</span><span class="s0">, </span><span class="s1">k </span><span class="s0">in </span><span class="s1">enumerate(fmt1)}</span>
+            <span class="s1">pos_fmt2 = {k: v </span><span class="s0">for </span><span class="s1">v</span><span class="s0">, </span><span class="s1">k </span><span class="s0">in </span><span class="s1">enumerate(fmt2)}</span>
+            <span class="s1">byte_buf = array.array(</span><span class="s4">&quot;B&quot;</span><span class="s0">, </span><span class="s1">str_buf)</span>
+            <span class="s1">num_quads = len(byte_buf) // </span><span class="s2">4</span>
+            <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(num_quads):</span>
+                <span class="s1">i4 = i * </span><span class="s2">4</span>
+                <span class="s1">R = byte_buf[i4 + pos_fmt1[</span><span class="s4">&quot;R&quot;</span><span class="s1">]]</span>
+                <span class="s1">G = byte_buf[i4 + pos_fmt1[</span><span class="s4">&quot;G&quot;</span><span class="s1">]]</span>
+                <span class="s1">B = byte_buf[i4 + pos_fmt1[</span><span class="s4">&quot;B&quot;</span><span class="s1">]]</span>
+                <span class="s1">A = byte_buf[i4 + pos_fmt1[</span><span class="s4">&quot;A&quot;</span><span class="s1">]]</span>
+                <span class="s1">byte_buf[i4 + pos_fmt2[</span><span class="s4">&quot;R&quot;</span><span class="s1">]] = R</span>
+                <span class="s1">byte_buf[i4 + pos_fmt2[</span><span class="s4">&quot;G&quot;</span><span class="s1">]] = G</span>
+                <span class="s1">byte_buf[i4 + pos_fmt2[</span><span class="s4">&quot;B&quot;</span><span class="s1">]] = B</span>
+                <span class="s1">byte_buf[i4 + pos_fmt2[</span><span class="s4">&quot;A&quot;</span><span class="s1">]] = A</span>
+            <span class="s0">return </span><span class="s1">tostring(byte_buf)</span>
+
+        <span class="s5">####################################################################</span>
+        <span class="s1">test_surface = pygame.Surface((</span><span class="s2">64</span><span class="s0">, </span><span class="s2">256</span><span class="s1">)</span><span class="s0">, </span><span class="s1">flags=pygame.SRCALPHA</span><span class="s0">, </span><span class="s1">depth=</span><span class="s2">32</span><span class="s1">)</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s2">256</span><span class="s1">):</span>
+            <span class="s0">for </span><span class="s1">j </span><span class="s0">in </span><span class="s1">range(</span><span class="s2">16</span><span class="s1">):</span>
+                <span class="s1">intensity = j * </span><span class="s2">16 </span><span class="s1">+ </span><span class="s2">15</span>
+                <span class="s1">test_surface.set_at((j + </span><span class="s2">0</span><span class="s0">, </span><span class="s1">i)</span><span class="s0">, </span><span class="s1">(intensity</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">i))</span>
+                <span class="s1">test_surface.set_at((j + </span><span class="s2">16</span><span class="s0">, </span><span class="s1">i)</span><span class="s0">, </span><span class="s1">(i</span><span class="s0">, </span><span class="s1">intensity</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">i))</span>
+                <span class="s1">test_surface.set_at((j + </span><span class="s2">32</span><span class="s0">, </span><span class="s1">i)</span><span class="s0">, </span><span class="s1">(i</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">intensity</span><span class="s0">, </span><span class="s1">i))</span>
+                <span class="s1">test_surface.set_at((j + </span><span class="s2">32</span><span class="s0">, </span><span class="s1">i)</span><span class="s0">, </span><span class="s1">(i</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">intensity))</span>
+
+        <span class="s1">self._assertSurfaceEqual(</span>
+            <span class="s1">test_surface</span><span class="s0">, </span><span class="s1">test_surface</span><span class="s0">, </span><span class="s4">&quot;failing with identical surfaces&quot;</span>
+        <span class="s1">)</span>
+
+        <span class="s0">for </span><span class="s1">pair </span><span class="s0">in </span><span class="s1">fmt_combinations:</span>
+            <span class="s1">fmt1_buf = pygame.image.tostring(test_surface</span><span class="s0">, </span><span class="s1">pair[</span><span class="s2">0</span><span class="s1">])</span>
+            <span class="s1">fmt1_convert_buf = convert(</span>
+                <span class="s1">pair[</span><span class="s2">1</span><span class="s1">]</span><span class="s0">, </span><span class="s1">pair[</span><span class="s2">0</span><span class="s1">]</span><span class="s0">, </span><span class="s1">convert(pair[</span><span class="s2">0</span><span class="s1">]</span><span class="s0">, </span><span class="s1">pair[</span><span class="s2">1</span><span class="s1">]</span><span class="s0">, </span><span class="s1">fmt1_buf)</span>
+            <span class="s1">)</span>
+            <span class="s1">test_convert_two_way = pygame.image.fromstring(</span>
+                <span class="s1">fmt1_convert_buf</span><span class="s0">, </span><span class="s1">test_surface.get_size()</span><span class="s0">, </span><span class="s1">pair[</span><span class="s2">0</span><span class="s1">]</span>
+            <span class="s1">)</span>
+
+            <span class="s1">self._assertSurfaceEqual(</span>
+                <span class="s1">test_surface</span><span class="s0">,</span>
+                <span class="s1">test_convert_two_way</span><span class="s0">,</span>
+                <span class="s4">f&quot;converting </span><span class="s0">{</span><span class="s1">pair[</span><span class="s2">0</span><span class="s1">]</span><span class="s0">} </span><span class="s4">to </span><span class="s0">{</span><span class="s1">pair[</span><span class="s2">1</span><span class="s1">]</span><span class="s0">} </span><span class="s4">and back is not symmetric&quot;</span><span class="s0">,</span>
+            <span class="s1">)</span>
+
+        <span class="s0">for </span><span class="s1">pair </span><span class="s0">in </span><span class="s1">fmt_permutations:</span>
+            <span class="s1">fmt1_buf = pygame.image.tostring(test_surface</span><span class="s0">, </span><span class="s1">pair[</span><span class="s2">0</span><span class="s1">])</span>
+            <span class="s1">fmt2_convert_buf = convert(pair[</span><span class="s2">0</span><span class="s1">]</span><span class="s0">, </span><span class="s1">pair[</span><span class="s2">1</span><span class="s1">]</span><span class="s0">, </span><span class="s1">fmt1_buf)</span>
+            <span class="s1">test_convert_one_way = pygame.image.fromstring(</span>
+                <span class="s1">fmt2_convert_buf</span><span class="s0">, </span><span class="s1">test_surface.get_size()</span><span class="s0">, </span><span class="s1">pair[</span><span class="s2">1</span><span class="s1">]</span>
+            <span class="s1">)</span>
+
+            <span class="s1">self._assertSurfaceEqual(</span>
+                <span class="s1">test_surface</span><span class="s0">,</span>
+                <span class="s1">test_convert_one_way</span><span class="s0">,</span>
+                <span class="s4">f&quot;converting </span><span class="s0">{</span><span class="s1">pair[</span><span class="s2">0</span><span class="s1">]</span><span class="s0">} </span><span class="s4">to </span><span class="s0">{</span><span class="s1">pair[</span><span class="s2">1</span><span class="s1">]</span><span class="s0">} </span><span class="s4">failed&quot;</span><span class="s0">,</span>
+            <span class="s1">)</span>
+
+        <span class="s0">for </span><span class="s1">fmt </span><span class="s0">in </span><span class="s1">fmts:</span>
+            <span class="s1">test_buf = pygame.image.tostring(test_surface</span><span class="s0">, </span><span class="s1">fmt)</span>
+            <span class="s1">test_to_from_fmt_string = pygame.image.fromstring(</span>
+                <span class="s1">test_buf</span><span class="s0">, </span><span class="s1">test_surface.get_size()</span><span class="s0">, </span><span class="s1">fmt</span>
+            <span class="s1">)</span>
+
+            <span class="s1">self._assertSurfaceEqual(</span>
+                <span class="s1">test_surface</span><span class="s0">,</span>
+                <span class="s1">test_to_from_fmt_string</span><span class="s0">,</span>
+                <span class="s4">&quot;tostring/fromstring functions are not &quot;</span>
+                <span class="s4">f&quot;symmetric with '</span><span class="s0">{</span><span class="s1">fmt</span><span class="s0">}</span><span class="s4">' format&quot;</span><span class="s0">,</span>
+            <span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_tostring_depth_24(self):</span>
+        <span class="s1">test_surface = pygame.Surface((</span><span class="s2">64</span><span class="s0">, </span><span class="s2">256</span><span class="s1">)</span><span class="s0">, </span><span class="s1">depth=</span><span class="s2">24</span><span class="s1">)</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s2">256</span><span class="s1">):</span>
+            <span class="s0">for </span><span class="s1">j </span><span class="s0">in </span><span class="s1">range(</span><span class="s2">16</span><span class="s1">):</span>
+                <span class="s1">intensity = j * </span><span class="s2">16 </span><span class="s1">+ </span><span class="s2">15</span>
+                <span class="s1">test_surface.set_at((j + </span><span class="s2">0</span><span class="s0">, </span><span class="s1">i)</span><span class="s0">, </span><span class="s1">(intensity</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">i))</span>
+                <span class="s1">test_surface.set_at((j + </span><span class="s2">16</span><span class="s0">, </span><span class="s1">i)</span><span class="s0">, </span><span class="s1">(i</span><span class="s0">, </span><span class="s1">intensity</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">i))</span>
+                <span class="s1">test_surface.set_at((j + </span><span class="s2">32</span><span class="s0">, </span><span class="s1">i)</span><span class="s0">, </span><span class="s1">(i</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">intensity</span><span class="s0">, </span><span class="s1">i))</span>
+                <span class="s1">test_surface.set_at((j + </span><span class="s2">32</span><span class="s0">, </span><span class="s1">i)</span><span class="s0">, </span><span class="s1">(i</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">intensity))</span>
+
+        <span class="s1">fmt = </span><span class="s4">&quot;RGB&quot;</span>
+        <span class="s1">fmt_buf = pygame.image.tostring(test_surface</span><span class="s0">, </span><span class="s1">fmt)</span>
+        <span class="s1">test_to_from_fmt_string = pygame.image.fromstring(</span>
+            <span class="s1">fmt_buf</span><span class="s0">, </span><span class="s1">test_surface.get_size()</span><span class="s0">, </span><span class="s1">fmt</span>
+        <span class="s1">)</span>
+
+        <span class="s1">self._assertSurfaceEqual(</span>
+            <span class="s1">test_surface</span><span class="s0">,</span>
+            <span class="s1">test_to_from_fmt_string</span><span class="s0">,</span>
+            <span class="s4">f'tostring/fromstring functions are not symmetric with &quot;</span><span class="s0">{</span><span class="s1">fmt</span><span class="s0">}</span><span class="s4">&quot; format'</span><span class="s0">,</span>
+        <span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">test_frombuffer_8bit(self):</span>
+        <span class="s3">&quot;&quot;&quot;test reading pixel data from a bytes buffer&quot;&quot;&quot;</span>
+        <span class="s1">pygame.display.init()</span>
+        <span class="s1">eight_bit_palette_buffer = bytearray(</span>
+            <span class="s1">[</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s0">, </span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s0">, </span><span class="s2">3</span><span class="s0">, </span><span class="s2">3</span><span class="s0">, </span><span class="s2">3</span><span class="s0">, </span><span class="s2">3</span><span class="s1">]</span>
+        <span class="s1">)</span>
+
+        <span class="s1">eight_bit_surf = pygame.image.frombuffer(eight_bit_palette_buffer</span><span class="s0">, </span><span class="s1">(</span><span class="s2">4</span><span class="s0">, </span><span class="s2">4</span><span class="s1">)</span><span class="s0">, </span><span class="s4">&quot;P&quot;</span><span class="s1">)</span>
+        <span class="s1">eight_bit_surf.set_palette(</span>
+            <span class="s1">[(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">10</span><span class="s0">, </span><span class="s2">20</span><span class="s1">)</span><span class="s0">, </span><span class="s1">(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">)</span><span class="s0">, </span><span class="s1">(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)</span><span class="s0">, </span><span class="s1">(</span><span class="s2">50</span><span class="s0">, </span><span class="s2">200</span><span class="s0">, </span><span class="s2">20</span><span class="s1">)]</span>
+        <span class="s1">)</span>
+        <span class="s1">self.assertEqual(eight_bit_surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">10</span><span class="s0">, </span><span class="s2">20</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(eight_bit_surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(eight_bit_surf.get_at((</span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(eight_bit_surf.get_at((</span><span class="s2">3</span><span class="s0">, </span><span class="s2">3</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">50</span><span class="s0">, </span><span class="s2">200</span><span class="s0">, </span><span class="s2">20</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_frombuffer_RGB(self):</span>
+        <span class="s1">rgb_buffer = bytearray(</span>
+            <span class="s1">[</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+            <span class="s1">]</span>
+        <span class="s1">)</span>
+
+        <span class="s1">rgb_surf = pygame.image.frombuffer(rgb_buffer</span><span class="s0">, </span><span class="s1">(</span><span class="s2">4</span><span class="s0">, </span><span class="s2">4</span><span class="s1">)</span><span class="s0">, </span><span class="s4">&quot;RGB&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(rgb_surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">10</span><span class="s0">, </span><span class="s2">20</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(rgb_surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(rgb_surf.get_at((</span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(rgb_surf.get_at((</span><span class="s2">3</span><span class="s0">, </span><span class="s2">3</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">50</span><span class="s0">, </span><span class="s2">200</span><span class="s0">, </span><span class="s2">20</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_frombuffer_BGR(self):</span>
+        <span class="s1">bgr_buffer = bytearray(</span>
+            <span class="s1">[</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+            <span class="s1">]</span>
+        <span class="s1">)</span>
+
+        <span class="s1">bgr_surf = pygame.image.frombuffer(bgr_buffer</span><span class="s0">, </span><span class="s1">(</span><span class="s2">4</span><span class="s0">, </span><span class="s2">4</span><span class="s1">)</span><span class="s0">, </span><span class="s4">&quot;BGR&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(bgr_surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">10</span><span class="s0">, </span><span class="s2">20</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(bgr_surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(bgr_surf.get_at((</span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(bgr_surf.get_at((</span><span class="s2">3</span><span class="s0">, </span><span class="s2">3</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">50</span><span class="s0">, </span><span class="s2">200</span><span class="s0">, </span><span class="s2">20</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_frombuffer_BGRA(self):</span>
+        <span class="s1">bgra_buffer = bytearray(</span>
+            <span class="s1">[</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+            <span class="s1">]</span>
+        <span class="s1">)</span>
+
+        <span class="s1">bgra_surf = pygame.image.frombuffer(bgra_buffer</span><span class="s0">, </span><span class="s1">(</span><span class="s2">4</span><span class="s0">, </span><span class="s2">4</span><span class="s1">)</span><span class="s0">, </span><span class="s4">&quot;BGRA&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(bgra_surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">20</span><span class="s0">, </span><span class="s2">10</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">200</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(bgra_surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">127</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(bgra_surf.get_at((</span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">79</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(bgra_surf.get_at((</span><span class="s2">3</span><span class="s0">, </span><span class="s2">3</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">20</span><span class="s0">, </span><span class="s2">200</span><span class="s0">, </span><span class="s2">50</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_frombuffer_RGBX(self):</span>
+        <span class="s1">rgbx_buffer = bytearray(</span>
+            <span class="s1">[</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+            <span class="s1">]</span>
+        <span class="s1">)</span>
+
+        <span class="s1">rgbx_surf = pygame.image.frombuffer(rgbx_buffer</span><span class="s0">, </span><span class="s1">(</span><span class="s2">4</span><span class="s0">, </span><span class="s2">4</span><span class="s1">)</span><span class="s0">, </span><span class="s4">&quot;RGBX&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(rgbx_surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">10</span><span class="s0">, </span><span class="s2">20</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(rgbx_surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(rgbx_surf.get_at((</span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(rgbx_surf.get_at((</span><span class="s2">3</span><span class="s0">, </span><span class="s2">3</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">50</span><span class="s0">, </span><span class="s2">200</span><span class="s0">, </span><span class="s2">20</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_frombuffer_RGBA(self):</span>
+        <span class="s1">rgba_buffer = bytearray(</span>
+            <span class="s1">[</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+            <span class="s1">]</span>
+        <span class="s1">)</span>
+
+        <span class="s1">rgba_surf = pygame.image.frombuffer(rgba_buffer</span><span class="s0">, </span><span class="s1">(</span><span class="s2">4</span><span class="s0">, </span><span class="s2">4</span><span class="s1">)</span><span class="s0">, </span><span class="s4">&quot;RGBA&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(rgba_surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">10</span><span class="s0">, </span><span class="s2">20</span><span class="s0">, </span><span class="s2">200</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(rgba_surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">127</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(rgba_surf.get_at((</span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">79</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(rgba_surf.get_at((</span><span class="s2">3</span><span class="s0">, </span><span class="s2">3</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">50</span><span class="s0">, </span><span class="s2">200</span><span class="s0">, </span><span class="s2">20</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_frombuffer_ARGB(self):</span>
+        <span class="s1">argb_buffer = bytearray(</span>
+            <span class="s1">[</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">10</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">127</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">79</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">0</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+                <span class="s2">255</span><span class="s0">,</span>
+                <span class="s2">50</span><span class="s0">,</span>
+                <span class="s2">200</span><span class="s0">,</span>
+                <span class="s2">20</span><span class="s0">,</span>
+            <span class="s1">]</span>
+        <span class="s1">)</span>
+
+        <span class="s1">argb_surf = pygame.image.frombuffer(argb_buffer</span><span class="s0">, </span><span class="s1">(</span><span class="s2">4</span><span class="s0">, </span><span class="s2">4</span><span class="s1">)</span><span class="s0">, </span><span class="s4">&quot;ARGB&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(argb_surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">10</span><span class="s0">, </span><span class="s2">20</span><span class="s0">, </span><span class="s2">200</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(argb_surf.get_at((</span><span class="s2">1</span><span class="s0">, </span><span class="s2">1</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">127</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(argb_surf.get_at((</span><span class="s2">2</span><span class="s0">, </span><span class="s2">2</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">79</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(argb_surf.get_at((</span><span class="s2">3</span><span class="s0">, </span><span class="s2">3</span><span class="s1">))</span><span class="s0">, </span><span class="s1">pygame.Color(</span><span class="s2">50</span><span class="s0">, </span><span class="s2">200</span><span class="s0">, </span><span class="s2">20</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_get_extended(self):</span>
+        <span class="s5"># Create a png file and try to load it. If it cannot, get_extended() should return False</span>
+        <span class="s1">raw_image = []</span>
+        <span class="s1">raw_image.append((</span><span class="s2">200</span><span class="s0">, </span><span class="s2">200</span><span class="s0">, </span><span class="s2">200</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">100</span><span class="s0">, </span><span class="s2">100</span><span class="s0">, </span><span class="s2">100</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+
+        <span class="s1">f_descriptor</span><span class="s0">, </span><span class="s1">f_path = tempfile.mkstemp(suffix=</span><span class="s4">&quot;.png&quot;</span><span class="s1">)</span>
+
+        <span class="s0">with </span><span class="s1">os.fdopen(f_descriptor</span><span class="s0">, </span><span class="s4">&quot;wb&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">file:</span>
+            <span class="s1">w = png.Writer(</span><span class="s2">2</span><span class="s0">, </span><span class="s2">1</span><span class="s0">, </span><span class="s1">alpha=</span><span class="s0">True</span><span class="s1">)</span>
+            <span class="s1">w.write(file</span><span class="s0">, </span><span class="s1">raw_image)</span>
+
+        <span class="s0">try</span><span class="s1">:</span>
+            <span class="s1">surf = pygame.image.load(f_path)</span>
+            <span class="s1">loaded = </span><span class="s0">True</span>
+        <span class="s0">except </span><span class="s1">pygame.error:</span>
+            <span class="s1">loaded = </span><span class="s0">False</span>
+
+        <span class="s1">self.assertEqual(pygame.image.get_extended()</span><span class="s0">, </span><span class="s1">loaded)</span>
+        <span class="s1">os.remove(f_path)</span>
+
+    <span class="s0">def </span><span class="s1">test_get_sdl_image_version(self):</span>
+        <span class="s5"># If get_extended() returns False then get_sdl_image_version() should</span>
+        <span class="s5"># return None</span>
+        <span class="s0">if not </span><span class="s1">pygame.image.get_extended():</span>
+            <span class="s1">self.assertIsNone(pygame.image.get_sdl_image_version())</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s1">expected_length = </span><span class="s2">3</span>
+            <span class="s1">expected_type = tuple</span>
+            <span class="s1">expected_item_type = int</span>
+
+            <span class="s1">version = pygame.image.get_sdl_image_version()</span>
+
+            <span class="s1">self.assertIsInstance(version</span><span class="s0">, </span><span class="s1">expected_type)</span>
+            <span class="s1">self.assertEqual(len(version)</span><span class="s0">, </span><span class="s1">expected_length)</span>
+
+            <span class="s0">for </span><span class="s1">item </span><span class="s0">in </span><span class="s1">version:</span>
+                <span class="s1">self.assertIsInstance(item</span><span class="s0">, </span><span class="s1">expected_item_type)</span>
+
+    <span class="s0">def </span><span class="s1">test_load_basic(self):</span>
+        <span class="s3">&quot;&quot;&quot;to see if we can load bmp from files and/or file-like objects in memory&quot;&quot;&quot;</span>
+
+        <span class="s5"># pygame.image.load(filename): return Surface</span>
+
+        <span class="s5"># test loading from a file</span>
+        <span class="s1">s = pygame.image.load_basic(example_path(</span><span class="s4">&quot;data/asprite.bmp&quot;</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(s.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+
+        <span class="s5"># test loading from io.BufferedReader</span>
+        <span class="s1">f = pygame.pkgdata.getResource(</span><span class="s4">&quot;pygame_icon.bmp&quot;</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(f.mode</span><span class="s0">, </span><span class="s4">&quot;rb&quot;</span><span class="s1">)</span>
+
+        <span class="s1">surf = pygame.image.load_basic(f)</span>
+
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">(</span><span class="s2">5</span><span class="s0">, </span><span class="s2">4</span><span class="s0">, </span><span class="s2">5</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+        <span class="s1">self.assertEqual(surf.get_height()</span><span class="s0">, </span><span class="s2">32</span><span class="s1">)</span>
+        <span class="s1">self.assertEqual(surf.get_width()</span><span class="s0">, </span><span class="s2">32</span><span class="s1">)</span>
+
+        <span class="s1">f.close()</span>
+
+    <span class="s0">def </span><span class="s1">test_load_extended(self):</span>
+        <span class="s3">&quot;&quot;&quot;can load different format images. 
+ 
+        We test loading the following file types: 
+            bmp, png, jpg, gif (non-animated), pcx, tga (uncompressed), tif, xpm, ppm, pgm 
+        Following file types are tested when using SDL 2 
+            svg, pnm, webp 
+        All the loaded images are smaller than 32 x 32 pixels. 
+        &quot;&quot;&quot;</span>
+
+        <span class="s1">filename_expected_color = [</span>
+            <span class="s1">(</span><span class="s4">&quot;asprite.bmp&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;laplacian.png&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">10</span><span class="s0">, </span><span class="s2">10</span><span class="s0">, </span><span class="s2">70</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;red.jpg&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">254</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;blue.gif&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;green.pcx&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;yellow.tga&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;turquoise.tif&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;purple.xpm&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;black.ppm&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;grey.pgm&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">120</span><span class="s0">, </span><span class="s2">120</span><span class="s0">, </span><span class="s2">120</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;teal.svg&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">0</span><span class="s0">, </span><span class="s2">128</span><span class="s0">, </span><span class="s2">128</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;crimson.pnm&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">220</span><span class="s0">, </span><span class="s2">20</span><span class="s0">, </span><span class="s2">60</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+            <span class="s1">(</span><span class="s4">&quot;scarlet.webp&quot;</span><span class="s0">, </span><span class="s1">(</span><span class="s2">252</span><span class="s0">, </span><span class="s2">14</span><span class="s0">, </span><span class="s2">53</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span><span class="s0">,</span>
+        <span class="s1">]</span>
+
+        <span class="s0">for </span><span class="s1">filename</span><span class="s0">, </span><span class="s1">expected_color </span><span class="s0">in </span><span class="s1">filename_expected_color:</span>
+            <span class="s0">if </span><span class="s1">filename.endswith(</span><span class="s4">&quot;svg&quot;</span><span class="s1">) </span><span class="s0">and </span><span class="s1">sdl_image_svg_jpeg_save_bug:</span>
+                <span class="s5"># SDL_image 2.0.5 and older has an svg loading bug on big</span>
+                <span class="s5"># endian platforms</span>
+                <span class="s0">continue</span>
+
+            <span class="s0">with </span><span class="s1">self.subTest(</span>
+                <span class="s4">f'Test loading a </span><span class="s0">{</span><span class="s1">filename.split(</span><span class="s4">&quot;.&quot;</span><span class="s1">)[-</span><span class="s2">1</span><span class="s1">]</span><span class="s0">}</span><span class="s4">'</span><span class="s0">,</span>
+                <span class="s1">filename=</span><span class="s4">&quot;examples/data/&quot; </span><span class="s1">+ filename</span><span class="s0">,</span>
+                <span class="s1">expected_color=expected_color</span><span class="s0">,</span>
+            <span class="s1">):</span>
+                <span class="s1">surf = pygame.image.load_extended(example_path(</span><span class="s4">&quot;data/&quot; </span><span class="s1">+ filename))</span>
+                <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">expected_color)</span>
+
+    <span class="s0">def </span><span class="s1">test_load_pathlib(self):</span>
+        <span class="s3">&quot;&quot;&quot;works loading using a Path argument.&quot;&quot;&quot;</span>
+        <span class="s1">path = pathlib.Path(example_path(</span><span class="s4">&quot;data/asprite.bmp&quot;</span><span class="s1">))</span>
+        <span class="s1">surf = pygame.image.load_extended(path)</span>
+        <span class="s1">self.assertEqual(surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">(</span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s0">, </span><span class="s2">255</span><span class="s1">))</span>
+
+    <span class="s0">def </span><span class="s1">test_save_extended(self):</span>
+        <span class="s1">surf = pygame.Surface((</span><span class="s2">5</span><span class="s0">, </span><span class="s2">5</span><span class="s1">))</span>
+        <span class="s1">surf.fill((</span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s0">, </span><span class="s2">23</span><span class="s1">))</span>
+
+        <span class="s1">passing_formats = [</span><span class="s4">&quot;jpg&quot;</span><span class="s0">, </span><span class="s4">&quot;png&quot;</span><span class="s1">]</span>
+        <span class="s1">passing_formats += [fmt.upper() </span><span class="s0">for </span><span class="s1">fmt </span><span class="s0">in </span><span class="s1">passing_formats]</span>
+
+        <span class="s1">magic_hex = {}</span>
+        <span class="s1">magic_hex[</span><span class="s4">&quot;jpg&quot;</span><span class="s1">] = [</span><span class="s2">0xFF</span><span class="s0">, </span><span class="s2">0xD8</span><span class="s0">, </span><span class="s2">0xFF</span><span class="s0">, </span><span class="s2">0xE0</span><span class="s1">]</span>
+        <span class="s1">magic_hex[</span><span class="s4">&quot;png&quot;</span><span class="s1">] = [</span><span class="s2">0x89</span><span class="s0">, </span><span class="s2">0x50</span><span class="s0">, </span><span class="s2">0x4E</span><span class="s0">, </span><span class="s2">0x47</span><span class="s1">]</span>
+
+        <span class="s1">failing_formats = [</span><span class="s4">&quot;bmp&quot;</span><span class="s0">, </span><span class="s4">&quot;tga&quot;</span><span class="s1">]</span>
+        <span class="s1">failing_formats += [fmt.upper() </span><span class="s0">for </span><span class="s1">fmt </span><span class="s0">in </span><span class="s1">failing_formats]</span>
+
+        <span class="s5"># check that .jpg and .png save</span>
+        <span class="s0">for </span><span class="s1">fmt </span><span class="s0">in </span><span class="s1">passing_formats:</span>
+            <span class="s1">temp_file_name = </span><span class="s4">f&quot;temp_file.</span><span class="s0">{</span><span class="s1">fmt</span><span class="s0">}</span><span class="s4">&quot;</span>
+            <span class="s5"># save image as .jpg and .png</span>
+            <span class="s1">pygame.image.save_extended(surf</span><span class="s0">, </span><span class="s1">temp_file_name)</span>
+            <span class="s0">with </span><span class="s1">open(temp_file_name</span><span class="s0">, </span><span class="s4">&quot;rb&quot;</span><span class="s1">) </span><span class="s0">as </span><span class="s1">file:</span>
+                <span class="s5"># Test the magic numbers at the start of the file to ensure</span>
+                <span class="s5"># they are saved as the correct file type.</span>
+                <span class="s1">self.assertEqual(</span><span class="s2">1</span><span class="s0">, </span><span class="s1">(test_magic(file</span><span class="s0">, </span><span class="s1">magic_hex[fmt.lower()])))</span>
+            <span class="s5"># load the file to make sure it was saved correctly</span>
+            <span class="s1">loaded_file = pygame.image.load(temp_file_name)</span>
+            <span class="s1">self.assertEqual(loaded_file.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">))</span><span class="s0">, </span><span class="s1">surf.get_at((</span><span class="s2">0</span><span class="s0">, </span><span class="s2">0</span><span class="s1">)))</span>
+            <span class="s5"># clean up the temp file</span>
+            <span class="s1">os.remove(temp_file_name)</span>
+        <span class="s5"># check that .bmp and .tga do not save</span>
+        <span class="s0">for </span><span class="s1">fmt </span><span class="s0">in </span><span class="s1">failing_formats:</span>
+            <span class="s1">self.assertRaises(</span>
+                <span class="s1">pygame.error</span><span class="s0">, </span><span class="s1">pygame.image.save_extended</span><span class="s0">, </span><span class="s1">surf</span><span class="s0">, </span><span class="s4">f&quot;temp_file.</span><span class="s0">{</span><span class="s1">fmt</span><span class="s0">}</span><span class="s4">&quot;</span>
+            <span class="s1">)</span>
+
+    <span class="s0">def </span><span class="s1">threads_load(self</span><span class="s0">, </span><span class="s1">images):</span>
+        <span class="s0">import </span><span class="s1">pygame.threads</span>
+
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(</span><span class="s2">10</span><span class="s1">):</span>
+            <span class="s1">surfs = pygame.threads.tmap(pygame.image.load</span><span class="s0">, </span><span class="s1">images)</span>
+            <span class="s0">for </span><span class="s1">s </span><span class="s0">in </span><span class="s1">surfs:</span>
+                <span class="s1">self.assertIsInstance(s</span><span class="s0">, </span><span class="s1">pygame.Surface)</span>
+
+    <span class="s0">def </span><span class="s1">test_load_png_threads(self):</span>
+        <span class="s1">self.threads_load(glob.glob(example_path(</span><span class="s4">&quot;data/*.png&quot;</span><span class="s1">)))</span>
+
+    <span class="s0">def </span><span class="s1">test_load_jpg_threads(self):</span>
+        <span class="s1">self.threads_load(glob.glob(example_path(</span><span class="s4">&quot;data/*.jpg&quot;</span><span class="s1">)))</span>
+
+    <span class="s0">def </span><span class="s1">test_load_bmp_threads(self):</span>
+        <span class="s1">self.threads_load(glob.glob(example_path(</span><span class="s4">&quot;data/*.bmp&quot;</span><span class="s1">)))</span>
+
+    <span class="s0">def </span><span class="s1">test_load_gif_threads(self):</span>
+        <span class="s1">self.threads_load(glob.glob(example_path(</span><span class="s4">&quot;data/*.gif&quot;</span><span class="s1">)))</span>
+
+    <span class="s0">def </span><span class="s1">test_from_to_bytes_exists(self):</span>
+        <span class="s1">getattr(pygame.image</span><span class="s0">, </span><span class="s4">&quot;frombytes&quot;</span><span class="s1">)</span>
+        <span class="s1">getattr(pygame.image</span><span class="s0">, </span><span class="s4">&quot;tobytes&quot;</span><span class="s1">)</span>
+
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s4">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">unittest.main()</span>
+</pre>
+</body>
+</html>

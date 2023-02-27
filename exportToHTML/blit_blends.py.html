@@ -1,0 +1,220 @@
+<html>
+<head>
+<title>blit_blends.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+blit_blends.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.blit_blends 
+ 
+Blending colors in different ways with different blend modes. 
+ 
+It also shows some tricks with the surfarray. 
+Including how to do additive blending. 
+ 
+ 
+Keyboard Controls 
+----------------- 
+ 
+* R, G, B - add a bit of Red, Green, or Blue. 
+* A - Add blend mode 
+* S - Subtractive blend mode 
+* M - Multiply blend mode 
+* = key BLEND_MAX blend mode. 
+* - key BLEND_MIN blend mode. 
+* 1, 2, 3, 4 - use different images. 
+ 
+&quot;&quot;&quot;</span>
+<span class="s3">import </span><span class="s1">os</span>
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+<span class="s3">import </span><span class="s1">time</span>
+
+<span class="s1">main_dir = os.path.split(os.path.abspath(__file__))[</span><span class="s4">0</span><span class="s1">]</span>
+<span class="s1">data_dir = os.path.join(main_dir</span><span class="s3">, </span><span class="s5">&quot;data&quot;</span><span class="s1">)</span>
+
+<span class="s3">try</span><span class="s1">:</span>
+    <span class="s3">import </span><span class="s1">pygame.surfarray</span>
+    <span class="s3">import </span><span class="s1">numpy</span>
+<span class="s3">except </span><span class="s1">ImportError:</span>
+    <span class="s1">print(</span><span class="s5">&quot;no surfarray for you!  install numpy&quot;</span><span class="s1">)</span>
+
+
+<span class="s3">def </span><span class="s1">main():</span>
+    <span class="s1">pg.init()</span>
+    <span class="s1">pg.mixer.quit()  </span><span class="s0"># remove ALSA underflow messages for Debian squeeze</span>
+    <span class="s1">screen = pg.display.set_mode((</span><span class="s4">640</span><span class="s3">, </span><span class="s4">480</span><span class="s1">))</span>
+
+    <span class="s1">im1 = pg.Surface(screen.get_size())</span>
+    <span class="s0"># im1= im1.convert()</span>
+    <span class="s1">im1.fill((</span><span class="s4">100</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))</span>
+
+    <span class="s1">im2 = pg.Surface(screen.get_size())</span>
+    <span class="s1">im2.fill((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">50</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))</span>
+    <span class="s0"># we make a srcalpha copy of it.</span>
+    <span class="s0"># im3= im2.convert(SRCALPHA)</span>
+    <span class="s1">im3 = im2</span>
+    <span class="s1">im3.set_alpha(</span><span class="s4">127</span><span class="s1">)</span>
+
+    <span class="s1">images = {}</span>
+    <span class="s1">images[pg.K_1] = im2</span>
+    <span class="s1">images[pg.K_2] = pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s5">&quot;chimp.png&quot;</span><span class="s1">))</span>
+    <span class="s1">images[pg.K_3] = pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s5">&quot;alien3.gif&quot;</span><span class="s1">))</span>
+    <span class="s1">images[pg.K_4] = pg.image.load(os.path.join(data_dir</span><span class="s3">, </span><span class="s5">&quot;liquid.bmp&quot;</span><span class="s1">))</span>
+    <span class="s1">img_to_blit = im2.convert()</span>
+    <span class="s1">iaa = img_to_blit.convert_alpha()</span>
+
+    <span class="s1">blits = {}</span>
+    <span class="s1">blits[pg.K_a] = pg.BLEND_ADD</span>
+    <span class="s1">blits[pg.K_s] = pg.BLEND_SUB</span>
+    <span class="s1">blits[pg.K_m] = pg.BLEND_MULT</span>
+    <span class="s1">blits[pg.K_EQUALS] = pg.BLEND_MAX</span>
+    <span class="s1">blits[pg.K_MINUS] = pg.BLEND_MIN</span>
+
+    <span class="s1">blitsn = {}</span>
+    <span class="s1">blitsn[pg.K_a] = </span><span class="s5">&quot;BLEND_ADD&quot;</span>
+    <span class="s1">blitsn[pg.K_s] = </span><span class="s5">&quot;BLEND_SUB&quot;</span>
+    <span class="s1">blitsn[pg.K_m] = </span><span class="s5">&quot;BLEND_MULT&quot;</span>
+    <span class="s1">blitsn[pg.K_EQUALS] = </span><span class="s5">&quot;BLEND_MAX&quot;</span>
+    <span class="s1">blitsn[pg.K_MINUS] = </span><span class="s5">&quot;BLEND_MIN&quot;</span>
+
+    <span class="s1">screen.blit(im1</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))</span>
+    <span class="s1">pg.display.flip()</span>
+    <span class="s1">clock = pg.time.Clock()</span>
+    <span class="s1">print(</span><span class="s5">&quot;one pixel is:%s:&quot; </span><span class="s1">% [im1.get_at((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))])</span>
+
+    <span class="s1">going = </span><span class="s3">True</span>
+    <span class="s3">while </span><span class="s1">going:</span>
+        <span class="s1">clock.tick(</span><span class="s4">60</span><span class="s1">)</span>
+
+        <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">pg.event.get():</span>
+            <span class="s3">if </span><span class="s1">event.type == pg.QUIT:</span>
+                <span class="s1">going = </span><span class="s3">False</span>
+            <span class="s3">if </span><span class="s1">event.type == pg.KEYDOWN:</span>
+                <span class="s1">usage()</span>
+
+            <span class="s3">if </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key == pg.K_ESCAPE:</span>
+                <span class="s1">going = </span><span class="s3">False</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key </span><span class="s3">in </span><span class="s1">images.keys():</span>
+                <span class="s1">img_to_blit = images[event.key]</span>
+                <span class="s1">iaa = img_to_blit.convert_alpha()</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key </span><span class="s3">in </span><span class="s1">blits.keys():</span>
+                <span class="s1">t1 = time.time()</span>
+                <span class="s0"># blits is a dict keyed with key -&gt; blit flag.  eg BLEND_ADD.</span>
+                <span class="s1">im1.blit(img_to_blit</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, None, </span><span class="s1">blits[event.key])</span>
+                <span class="s1">t2 = time.time()</span>
+                <span class="s1">print(</span><span class="s5">&quot;one pixel is:%s:&quot; </span><span class="s1">% [im1.get_at((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))])</span>
+                <span class="s1">print(</span><span class="s5">f&quot;time to do:</span><span class="s3">{</span><span class="s1">t2 - t1</span><span class="s3">}</span><span class="s5">:&quot;</span><span class="s1">)</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key </span><span class="s3">in </span><span class="s1">[pg.K_t]:</span>
+
+                <span class="s3">for </span><span class="s1">bkey </span><span class="s3">in </span><span class="s1">blits.keys():</span>
+                    <span class="s1">t1 = time.time()</span>
+
+                    <span class="s3">for </span><span class="s1">x </span><span class="s3">in </span><span class="s1">range(</span><span class="s4">300</span><span class="s1">):</span>
+                        <span class="s1">im1.blit(img_to_blit</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, None, </span><span class="s1">blits[bkey])</span>
+
+                    <span class="s1">t2 = time.time()</span>
+
+                    <span class="s0"># show which key we're doing...</span>
+                    <span class="s1">onedoing = blitsn[bkey]</span>
+                    <span class="s1">print(</span><span class="s5">f&quot;time to do :</span><span class="s3">{</span><span class="s1">onedoing</span><span class="s3">}</span><span class="s5">: is :</span><span class="s3">{</span><span class="s1">t2 - t1</span><span class="s3">}</span><span class="s5">:&quot;</span><span class="s1">)</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key </span><span class="s3">in </span><span class="s1">[pg.K_o]:</span>
+                <span class="s1">t1 = time.time()</span>
+                <span class="s0"># blits is a dict keyed with key -&gt; blit flag.  eg BLEND_ADD.</span>
+                <span class="s1">im1.blit(iaa</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))</span>
+                <span class="s1">t2 = time.time()</span>
+                <span class="s1">print(</span><span class="s5">&quot;one pixel is:%s:&quot; </span><span class="s1">% [im1.get_at((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))])</span>
+                <span class="s1">print(</span><span class="s5">f&quot;time to do:</span><span class="s3">{</span><span class="s1">t2 - t1</span><span class="s3">}</span><span class="s5">:&quot;</span><span class="s1">)</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key == pg.K_SPACE:</span>
+                <span class="s0"># this additive blend without clamp two surfaces.</span>
+                <span class="s0"># im1.set_alpha(127)</span>
+                <span class="s0"># im1.blit(im1, (0,0))</span>
+                <span class="s0"># im1.set_alpha(255)</span>
+                <span class="s1">t1 = time.time()</span>
+
+                <span class="s1">im1p = pygame.surfarray.pixels2d(im1)</span>
+                <span class="s1">im2p = pygame.surfarray.pixels2d(im2)</span>
+                <span class="s1">im1p += im2p</span>
+                <span class="s3">del </span><span class="s1">im1p</span>
+                <span class="s3">del </span><span class="s1">im2p</span>
+                <span class="s1">t2 = time.time()</span>
+                <span class="s1">print(</span><span class="s5">&quot;one pixel is:%s:&quot; </span><span class="s1">% [im1.get_at((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))])</span>
+                <span class="s1">print(</span><span class="s5">f&quot;time to do:</span><span class="s3">{</span><span class="s1">t2 - t1</span><span class="s3">}</span><span class="s5">:&quot;</span><span class="s1">)</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key </span><span class="s3">in </span><span class="s1">[pg.K_z]:</span>
+                <span class="s1">t1 = time.time()</span>
+                <span class="s1">im1p = pygame.surfarray.pixels3d(im1)</span>
+                <span class="s1">im2p = pygame.surfarray.pixels3d(im2)</span>
+                <span class="s1">im1p16 = im1p.astype(numpy.uint16)</span>
+                <span class="s1">im2p16 = im1p.astype(numpy.uint16)</span>
+                <span class="s1">im1p16 += im2p16</span>
+                <span class="s1">im1p16 = numpy.minimum(im1p16</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span>
+                <span class="s1">pygame.surfarray.blit_array(im1</span><span class="s3">, </span><span class="s1">im1p16)</span>
+
+                <span class="s3">del </span><span class="s1">im1p</span>
+                <span class="s3">del </span><span class="s1">im2p</span>
+                <span class="s1">t2 = time.time()</span>
+                <span class="s1">print(</span><span class="s5">&quot;one pixel is:%s:&quot; </span><span class="s1">% [im1.get_at((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))])</span>
+                <span class="s1">print(</span><span class="s5">f&quot;time to do:</span><span class="s3">{</span><span class="s1">t2 - t1</span><span class="s3">}</span><span class="s5">:&quot;</span><span class="s1">)</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key </span><span class="s3">in </span><span class="s1">[pg.K_r</span><span class="s3">, </span><span class="s1">pg.K_g</span><span class="s3">, </span><span class="s1">pg.K_b]:</span>
+                <span class="s0"># this adds one to each pixel.</span>
+                <span class="s1">colmap = {}</span>
+                <span class="s1">colmap[pg.K_r] = </span><span class="s4">0x10000</span>
+                <span class="s1">colmap[pg.K_g] = </span><span class="s4">0x00100</span>
+                <span class="s1">colmap[pg.K_b] = </span><span class="s4">0x00001</span>
+                <span class="s1">im1p = pygame.surfarray.pixels2d(im1)</span>
+                <span class="s1">im1p += colmap[event.key]</span>
+                <span class="s3">del </span><span class="s1">im1p</span>
+                <span class="s1">print(</span><span class="s5">&quot;one pixel is:%s:&quot; </span><span class="s1">% [im1.get_at((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))])</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key == pg.K_p:</span>
+                <span class="s1">print(</span><span class="s5">&quot;one pixel is:%s:&quot; </span><span class="s1">% [im1.get_at((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))])</span>
+
+            <span class="s3">elif </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key == pg.K_f:</span>
+                <span class="s0"># this additive blend without clamp two surfaces.</span>
+
+                <span class="s1">t1 = time.time()</span>
+                <span class="s1">im1.set_alpha(</span><span class="s4">127</span><span class="s1">)</span>
+                <span class="s1">im1.blit(im2</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))</span>
+                <span class="s1">im1.set_alpha(</span><span class="s4">255</span><span class="s1">)</span>
+
+                <span class="s1">t2 = time.time()</span>
+                <span class="s1">print(</span><span class="s5">&quot;one pixel is:%s:&quot; </span><span class="s1">% [im1.get_at((</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))])</span>
+                <span class="s1">print(</span><span class="s5">f&quot;time to do:</span><span class="s3">{</span><span class="s1">t2 - t1</span><span class="s3">}</span><span class="s5">:&quot;</span><span class="s1">)</span>
+
+        <span class="s1">screen.blit(im1</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))</span>
+        <span class="s1">pg.display.flip()</span>
+
+    <span class="s1">pg.quit()</span>
+
+
+<span class="s3">def </span><span class="s1">usage():</span>
+    <span class="s1">print(</span><span class="s5">&quot;press keys 1-5 to change image to blit.&quot;</span><span class="s1">)</span>
+    <span class="s1">print(</span><span class="s5">&quot;A - ADD, S- SUB, M- MULT, - MIN, + MAX&quot;</span><span class="s1">)</span>
+    <span class="s1">print(</span><span class="s5">&quot;T - timing test for special blend modes.&quot;</span><span class="s1">)</span>
+
+
+<span class="s3">if </span><span class="s1">__name__ == </span><span class="s5">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s1">usage()</span>
+    <span class="s1">main()</span>
+</pre>
+</body>
+</html>

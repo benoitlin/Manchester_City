@@ -1,0 +1,89 @@
+<html>
+<head>
+<title>setmodescale.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #cc7832;}
+.s4 { color: #6897bb;}
+.s5 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+setmodescale.py</font>
+</center></td></tr></table>
+<pre><span class="s0">#!/usr/bin/env python</span>
+<span class="s2">&quot;&quot;&quot; pygame.examples.setmodescale 
+ 
+On high resolution displays(4k, 1080p) and tiny graphics games (640x480) 
+show up very small so that they are unplayable. SCALED scales up the window 
+for you. The game thinks it's a 640x480 window, but really it can be bigger. 
+Mouse events are scaled for you, so your game doesn't need to do it. 
+ 
+Passing SCALED to pygame.display.set_mode means the resolution depends 
+on desktop size and the graphics are scaled. 
+&quot;&quot;&quot;</span>
+
+<span class="s3">import </span><span class="s1">pygame </span><span class="s3">as </span><span class="s1">pg</span>
+
+<span class="s1">pg.init()</span>
+
+<span class="s1">RES = (</span><span class="s4">160</span><span class="s3">, </span><span class="s4">120</span><span class="s1">)</span>
+<span class="s1">FPS = </span><span class="s4">30</span>
+<span class="s1">clock = pg.time.Clock()</span>
+
+<span class="s1">print(</span><span class="s5">&quot;desktops&quot;</span><span class="s3">, </span><span class="s1">pg.display.get_desktop_sizes())</span>
+<span class="s1">screen = pg.display.set_mode(RES</span><span class="s3">, </span><span class="s1">pg.SCALED | pg.RESIZABLE)</span>
+
+<span class="s0"># MAIN LOOP</span>
+
+<span class="s1">done = </span><span class="s3">False</span>
+
+<span class="s1">i = </span><span class="s4">0</span>
+<span class="s1">j = </span><span class="s4">0</span>
+
+<span class="s1">r_name</span><span class="s3">, </span><span class="s1">r_flags = pg.display._get_renderer_info()</span>
+<span class="s1">print(</span><span class="s5">&quot;renderer:&quot;</span><span class="s3">, </span><span class="s1">r_name</span><span class="s3">, </span><span class="s5">&quot;flags:&quot;</span><span class="s3">, </span><span class="s1">bin(r_flags))</span>
+<span class="s3">for </span><span class="s1">flag</span><span class="s3">, </span><span class="s1">name </span><span class="s3">in </span><span class="s1">[</span>
+    <span class="s1">(</span><span class="s4">1</span><span class="s3">, </span><span class="s5">&quot;software&quot;</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s4">2</span><span class="s3">, </span><span class="s5">&quot;accelerated&quot;</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s4">4</span><span class="s3">, </span><span class="s5">&quot;VSync&quot;</span><span class="s1">)</span><span class="s3">,</span>
+    <span class="s1">(</span><span class="s4">8</span><span class="s3">, </span><span class="s5">&quot;render to texture&quot;</span><span class="s1">)</span><span class="s3">,</span>
+<span class="s1">]:</span>
+    <span class="s3">if </span><span class="s1">flag &amp; r_flags:</span>
+        <span class="s1">print(name)</span>
+
+<span class="s3">while not </span><span class="s1">done:</span>
+    <span class="s3">for </span><span class="s1">event </span><span class="s3">in </span><span class="s1">pg.event.get():</span>
+        <span class="s3">if </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key == pg.K_q:</span>
+            <span class="s1">done = </span><span class="s3">True</span>
+        <span class="s3">if </span><span class="s1">event.type == pg.QUIT:</span>
+            <span class="s1">done = </span><span class="s3">True</span>
+        <span class="s3">if </span><span class="s1">event.type == pg.KEYDOWN </span><span class="s3">and </span><span class="s1">event.key == pg.K_f:</span>
+            <span class="s1">pg.display.toggle_fullscreen()</span>
+        <span class="s3">if </span><span class="s1">event.type == pg.VIDEORESIZE:</span>
+            <span class="s1">pg.display._resize_event(event)</span>
+
+    <span class="s1">i += </span><span class="s4">1</span>
+    <span class="s1">i = i % screen.get_width()</span>
+    <span class="s1">j += i % </span><span class="s4">2</span>
+    <span class="s1">j = j % screen.get_height()</span>
+
+    <span class="s1">screen.fill((</span><span class="s4">255</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">255</span><span class="s1">))</span>
+    <span class="s1">pg.draw.circle(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">100</span><span class="s3">, </span><span class="s4">100</span><span class="s1">)</span><span class="s3">, </span><span class="s4">20</span><span class="s1">)</span>
+    <span class="s1">pg.draw.circle(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">200</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s4">10</span><span class="s1">)</span>
+    <span class="s1">pg.draw.circle(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s4">200</span><span class="s3">, </span><span class="s4">0</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">160</span><span class="s3">, </span><span class="s4">120</span><span class="s1">)</span><span class="s3">, </span><span class="s4">30</span><span class="s1">)</span>
+    <span class="s1">pg.draw.line(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s4">250</span><span class="s3">, </span><span class="s4">250</span><span class="s3">, </span><span class="s4">0</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">0</span><span class="s3">, </span><span class="s4">120</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(</span><span class="s4">160</span><span class="s3">, </span><span class="s4">0</span><span class="s1">))</span>
+    <span class="s1">pg.draw.circle(screen</span><span class="s3">, </span><span class="s1">(</span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s3">, </span><span class="s4">255</span><span class="s1">)</span><span class="s3">, </span><span class="s1">(i</span><span class="s3">, </span><span class="s1">j)</span><span class="s3">, </span><span class="s4">5</span><span class="s1">)</span>
+
+    <span class="s1">pg.display.flip()</span>
+    <span class="s1">clock.tick(FPS)</span>
+<span class="s1">pg.quit()</span>
+</pre>
+</body>
+</html>

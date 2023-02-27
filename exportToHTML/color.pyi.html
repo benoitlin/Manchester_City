@@ -1,0 +1,75 @@
+<html>
+<head>
+<title>color.pyi</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6897bb;}
+.s3 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+color.pyi</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">sys</span>
+<span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Any</span><span class="s0">, </span><span class="s1">Dict</span><span class="s0">, </span><span class="s1">Iterator</span><span class="s0">, </span><span class="s1">Tuple</span><span class="s0">, </span><span class="s1">overload</span>
+
+<span class="s0">from </span><span class="s1">._common </span><span class="s0">import </span><span class="s1">ColorValue</span>
+
+<span class="s0">if </span><span class="s1">sys.version_info &gt;= (</span><span class="s2">3</span><span class="s0">, </span><span class="s2">9</span><span class="s1">):</span>
+    <span class="s0">from </span><span class="s1">collections.abc </span><span class="s0">import </span><span class="s1">Collection</span>
+<span class="s0">else</span><span class="s1">:</span>
+    <span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Collection</span>
+
+<span class="s1">THECOLORS: Dict[str</span><span class="s0">, </span><span class="s1">Tuple[int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int</span><span class="s0">, </span><span class="s1">int]]</span>
+
+<span class="s3"># Color confirms to the Collection ABC, since it also confirms to</span>
+<span class="s3"># Sized, Iterable and Container ABCs</span>
+<span class="s0">class </span><span class="s1">Color(Collection[int]):</span>
+    <span class="s1">r: int</span>
+    <span class="s1">g: int</span>
+    <span class="s1">b: int</span>
+    <span class="s1">a: int</span>
+    <span class="s1">cmy: Tuple[float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float]</span>
+    <span class="s1">hsva: Tuple[float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float]</span>
+    <span class="s1">hsla: Tuple[float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float]</span>
+    <span class="s1">i1i2i3: Tuple[float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float]</span>
+    <span class="s1">__hash__: </span><span class="s0">None  </span><span class="s3"># type: ignore</span>
+    <span class="s1">__array_struct__: Any</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">r: int</span><span class="s0">, </span><span class="s1">g: int</span><span class="s0">, </span><span class="s1">b: int</span><span class="s0">, </span><span class="s1">a: int = </span><span class="s2">255</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">rgbvalue: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__getitem__(self</span><span class="s0">, </span><span class="s1">i: int) -&gt; int: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">__getitem__(self</span><span class="s0">, </span><span class="s1">s: slice) -&gt; Tuple[int]: ...</span>
+    <span class="s0">def </span><span class="s1">__setitem__(self</span><span class="s0">, </span><span class="s1">key: int</span><span class="s0">, </span><span class="s1">value: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">__iter__(self) -&gt; Iterator[int]: ...</span>
+    <span class="s0">def </span><span class="s1">__add__(self</span><span class="s0">, </span><span class="s1">other: Color) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">__sub__(self</span><span class="s0">, </span><span class="s1">other: Color) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">__mul__(self</span><span class="s0">, </span><span class="s1">other: Color) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">__floordiv__(self</span><span class="s0">, </span><span class="s1">other: Color) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">__mod__(self</span><span class="s0">, </span><span class="s1">other: Color) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">__int__(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">__float__(self) -&gt; float: ...</span>
+    <span class="s0">def </span><span class="s1">__len__(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">__index__(self) -&gt; int: ...</span>
+    <span class="s0">def </span><span class="s1">__invert__(self) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">__contains__(self</span><span class="s0">, </span><span class="s1">other: int) -&gt; bool: ...  </span><span class="s3"># type: ignore[override]</span>
+    <span class="s0">def </span><span class="s1">normalize(self) -&gt; Tuple[float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float</span><span class="s0">, </span><span class="s1">float]: ...</span>
+    <span class="s0">def </span><span class="s1">correct_gamma(self</span><span class="s0">, </span><span class="s1">gamma: float) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">set_length(self</span><span class="s0">, </span><span class="s1">length: int) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s0">def </span><span class="s1">lerp(self</span><span class="s0">, </span><span class="s1">color: ColorValue</span><span class="s0">, </span><span class="s1">amount: float) -&gt; Color: ...</span>
+    <span class="s0">def </span><span class="s1">premul_alpha(self) -&gt; Color: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">r: int</span><span class="s0">, </span><span class="s1">g: int</span><span class="s0">, </span><span class="s1">b: int</span><span class="s0">, </span><span class="s1">a: int = </span><span class="s2">255</span><span class="s1">) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+    <span class="s1">@overload</span>
+    <span class="s0">def </span><span class="s1">update(self</span><span class="s0">, </span><span class="s1">rgbvalue: ColorValue) -&gt; </span><span class="s0">None</span><span class="s1">: ...</span>
+</pre>
+</body>
+</html>
