@@ -1,5 +1,6 @@
 import pygame
 from player import Player
+from projectile import ProjectileEvent, Asteroid
 
 # creer une classe qui va representer notre jeu
 class Game :
@@ -7,8 +8,8 @@ class Game :
     def __init__(self):
         # generer notre joueur
         self.player = Player()
+        self.projectile = ProjectileEvent()
         self.pressed = {}
-
         # savoir si le jeu est lancé ou non
         self.is_playing = False
 
@@ -42,3 +43,9 @@ class Game :
                 self.jumpCount -= 1
             else:
                 self.jump = False
+
+    def update_projectile(self, screen):
+        self.projectile.projectile_attempt()
+        for asteroid in self.projectile.all_asteroid:
+            asteroid.trajectoire()
+        self.projectile.all_asteroid.draw(screen)

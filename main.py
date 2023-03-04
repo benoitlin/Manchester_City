@@ -25,7 +25,7 @@ jumpMax = 15
 plateforme_liste_rect = [pygame.Rect(800, 300, 300, 50), pygame.Rect(0, 150, 300, 50)]
 
 while running:
-    pygame.time.Clock().tick(60)
+    pygame.time.Clock().tick(75)
 
     # appliquer le background dans la fenetre
     screen.blit(background, (0, 0))
@@ -33,7 +33,7 @@ while running:
     # appliquer l'image du player
     screen.blit(game.player.image, game.player.rect)
 
-    game.player.update()
+    game.update_projectile(screen)
 
     for p in plateforme_liste_rect:
         plat = Plateforme(p)

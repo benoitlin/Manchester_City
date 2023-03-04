@@ -7,3 +7,4 @@ class Plateforme(pygame.sprite.Sprite):
 
     def afficher(self, surface):
         pygame.draw.rect(surface, (0, 0, 0), self.rect)
+
