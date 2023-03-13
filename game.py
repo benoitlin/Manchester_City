@@ -1,28 +1,27 @@
 import pygame
 from player import Player
 from projectile import ProjectileEvent, Asteroid
+from plateforme import Plateforme
 
 # creer une classe qui va representer notre jeu
 class Game :
 
     def __init__(self):
         # generer notre joueur
+        self.asteroid = Asteroid()
         self.player = Player()
-        self.projectile = ProjectileEvent()
+        self.projectileEvent = ProjectileEvent()
         self.pressed = {}
         # savoir si le jeu est lancé ou non
         self.is_playing = False
-
         self.jump = False
         self.jumpCount = 0
         self.jumpMax = 15
-
+        self.plateforme_liste_rect = [pygame.Rect(800, 300, 300, 50), pygame.Rect(0, 150, 300, 50)]
 
     def update(self, screen):
         # appliquer l'image du player
         screen.blit(self.player.image, self.player.rect)
-
-        self.player.update()
 
         # verifier si le joueur souhaite aller a gauche ou a droite ou sauter
         keys = pygame.key.get_pressed()
@@ -44,8 +43,14 @@ class Game :
             else:
                 self.jump = False
 
+        for p in self.plateforme_liste_rect:
+            plat = Plateforme(p)
+            plat.afficher(screen)
+            if self.player.rect.midbottom[1] // 10 * 10 == plat.rect.top and self.player.rect.colliderect(p):
+                self.player.resistance = -10
+                jump = False
     def update_projectile(self, screen):
-        self.projectile.projectile_attempt()
-        for asteroid in self.projectile.all_asteroid:
-            asteroid.trajectoire()
-        self.projectile.all_asteroid.draw(screen)
+        self.projectileEvent.projectile_attempt()
+        for asteroid in self.projectileEvent.all_asteroid:
+            asteroid.trajectoire_type()
+        self.projectileEvent.all_asteroid.draw(screen)

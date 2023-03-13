@@ -3,9 +3,9 @@ import pygame
 
 # creation d'une classe pour le personnage
 class Player(pygame.sprite.Sprite) :
-
     def __init__(self):
         super().__init__()
+        self.possible = True
         self.health = 15
         self.max_health = 15
         self.velocity_x = 5
@@ -21,17 +21,10 @@ class Player(pygame.sprite.Sprite) :
         self.nombre_de_saut = 0
         self.a_sauter = False
         self.ground = True
-
-
     def move_right(self):
         self.rect.x += self.velocity_x
-
     def move_left(self):
         self.rect.x -= self.velocity_x
-
-
-
-
     def jump(self):
         if self.possible :
             if self.saut_montee >= 10 :
@@ -48,8 +41,6 @@ class Player(pygame.sprite.Sprite) :
                 self.possible = False
 
         self.rect.y -= (10 * (12 / 2))
-
-
     def gravite(self):
         if self.ground and self.rect.y < 400:
             self.rect.y += (10 * (8 / 2))
