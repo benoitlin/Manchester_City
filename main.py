@@ -18,7 +18,7 @@ running = True
 
 # permet de maintenir la fenetre ouverte
 while running:
-    pygame.time.Clock().tick(75)
+    pygame.time.Clock().tick(120)
 
     # appliquer le background dans la fenetre
     screen.blit(background, (0, 0))

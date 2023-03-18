@@ -8,7 +8,7 @@ class Game :
 
     def __init__(self):
         # generer notre joueur
-        self.asteroid = Asteroid()
+        self.asteroid = Asteroid(ProjectileEvent)
         self.player = Player()
         self.projectileEvent = ProjectileEvent()
         self.pressed = {}
@@ -52,5 +52,5 @@ class Game :
     def update_projectile(self, screen):
         self.projectileEvent.projectile_attempt()
         for asteroid in self.projectileEvent.all_asteroid:
-            asteroid.trajectoire_type()
+            asteroid.verif_collision()
         self.projectileEvent.all_asteroid.draw(screen)
