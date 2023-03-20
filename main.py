@@ -2,7 +2,7 @@ import pygame, sys
 from game import Game
 
 pygame.init()
-
+pygame.font.init()
 # Fenetre du jeu
 pygame.display.set_caption("Dodge Game")
 screen = pygame.display.set_mode((1280, 600))
@@ -25,6 +25,8 @@ while running:
 
     game.update(screen)
     game.update_projectile(screen)
+    game.update_score(screen)
+    game.player.update(0.5)
 
     # mettre à jour la fenetre
     pygame.display.flip()
@@ -39,5 +41,7 @@ while running:
         # detecter si un joueur lache une touche du clavier
         elif event.type == pygame.KEYDOWN:
             game.pressed[event.key] = True
+            game.player.attack_animation = True
         elif event.type == pygame.KEYUP:
             game.pressed[event.key] = False
+            game.player.attack_animation = False

@@ -2,6 +2,7 @@ import pygame
 from player import Player
 from projectile import ProjectileEvent, Asteroid
 from plateforme import Plateforme
+from score import Score
 
 # creer une classe qui va representer notre jeu
 class Game :
@@ -11,6 +12,7 @@ class Game :
         self.asteroid = Asteroid(ProjectileEvent)
         self.player = Player()
         self.projectileEvent = ProjectileEvent()
+        self.score = Score()
         self.pressed = {}
         # savoir si le jeu est lancé ou non
         self.is_playing = False
@@ -54,3 +56,11 @@ class Game :
         for asteroid in self.projectileEvent.all_asteroid:
             asteroid.verif_collision()
         self.projectileEvent.all_asteroid.draw(screen)
+    def update_score(self, screen):
+        screen.blit(self.score.print_time, (500, 0))
+        self.score.affichage_time()
+        for self.asteroid in self.projectileEvent.all_asteroid:
+            if self.player.rect.colliderect(self.asteroid.rect):
+                self.player.health -= 1
+                self.asteroid.suppr_asteroid()
+                print(self.player.health)
