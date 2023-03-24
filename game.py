@@ -29,6 +29,14 @@ class Game :
         keys = pygame.key.get_pressed()
         if self.player.rect.x >= 0 and self.player.rect.x + self.player.rect.width < screen.get_width():
             self.player.rect.x = (self.player.rect.x + (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 5)
+            if keys[pygame.K_RIGHT]:
+                self.player.attack_animation_right = True
+
+            elif keys[pygame.K_LEFT]:
+                self.player.attack_animation = True
+            else:
+                self.player.attack_animation = False
+                self.player.attack_animation = False
         elif self.player.rect.x > 800:
             self.player.rect.x = self.player.rect.x - 1
         else:
@@ -57,8 +65,10 @@ class Game :
             asteroid.verif_collision()
         self.projectileEvent.all_asteroid.draw(screen)
     def update_score(self, screen):
+        # affichage du temps
         screen.blit(self.score.print_time, (500, 0))
         self.score.affichage_time()
+        # collision
         for self.asteroid in self.projectileEvent.all_asteroid:
             if self.player.rect.colliderect(self.asteroid.rect):
                 self.player.health -= 1

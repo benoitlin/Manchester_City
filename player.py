@@ -9,13 +9,19 @@ class Player(pygame.sprite.Sprite) :
         self.health = 5
         self.max_health = 5
         self.attack_animation = False
+        self.attack_animation_right = False
         self.current_sprite = 0
-        self.sprites = []
+        self.sprites_right = []
         # path = "assets/running/original_scale/"
-        self.sprites.append(pygame.transform.scale(pygame.image.load('assets/running2.png'), (100, 100)))
-        self.sprites.append(pygame.transform.scale(pygame.image.load('assets/running3.png'), (100, 100)))
-        self.sprites.append(pygame.transform.scale(pygame.image.load('assets/running4.png'), (100, 100)))
-        self.image = self.sprites[self.current_sprite]
+        self.sprites_right.append(pygame.transform.scale(pygame.image.load('assets/running2.png'), (100, 100)))
+        self.sprites_right.append(pygame.transform.scale(pygame.image.load('assets/running3.png'), (100, 100)))
+        self.sprites_right.append(pygame.transform.scale(pygame.image.load('assets/running4.png'), (100, 100)))
+        self.sprites_left = []
+        # path = "assets/running/original_scale/"
+        self.sprites_left.append(pygame.transform.scale(pygame.image.load('assets/running2_left.png'), (100, 100)))
+        self.sprites_left.append(pygame.transform.scale(pygame.image.load('assets/running3_left.png'), (100, 100)))
+        self.sprites_left.append(pygame.transform.scale(pygame.image.load('assets/running4_left.png'), (100, 100)))
+        self.image = pygame.transform.scale(pygame.image.load('assets/running1.png'), (100, 100))
         self.rect = self.image.get_rect()
         self.velocity_x = 5
         self.velocity_y = 1
@@ -53,11 +59,20 @@ class Player(pygame.sprite.Sprite) :
             if self.rect.y > 400:
                 self.ground = False
             self.ground = True
-    def update(self, speed):
+    def update_right(self, speed):
+        if self.attack_animation_right is True:
+            self.current_sprite += speed
+            if int(self.current_sprite) >= len(self.sprites_right):
+                self.current_sprite = 0
+            self.image = self.sprites_right[int(self.current_sprite)]
+        else:
+            self.image = pygame.transform.scale(pygame.image.load('assets/running1.png'), (100, 100))
+
+    def update_left(self, speed):
         if self.attack_animation is True:
             self.current_sprite += speed
-            if int(self.current_sprite) >= len(self.sprites):
+            if int(self.current_sprite) >= len(self.sprites_left):
                 self.current_sprite = 0
-            self.image = self.sprites[int(self.current_sprite)]
+            self.image = self.sprites_left[int(self.current_sprite)]
         else:
             self.image = pygame.transform.scale(pygame.image.load('assets/running1.png'), (100, 100))
