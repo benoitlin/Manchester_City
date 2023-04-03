@@ -4,6 +4,8 @@ from projectile import ProjectileEvent, Asteroid
 from plateforme import Plateforme
 from score import Score
 
+
+
 # creer une classe qui va representer notre jeu
 class Game :
 
@@ -14,12 +16,12 @@ class Game :
         self.projectileEvent = ProjectileEvent()
         self.score = Score()
         self.pressed = {}
-        # savoir si le jeu est lancé ou non
+        # savoir si le jeu est lancÃ© ou non
         self.is_playing = False
         self.jump = False
         self.jumpCount = 0
         self.jumpMax = 15
-        self.plateforme_liste_rect = [pygame.Rect(800, 300, 300, 50), pygame.Rect(0, 150, 300, 50)]
+        self.plateforme_liste_rect = [pygame.Rect(800, 385, 300, 50), pygame.Rect(0, 150, 300, 50)]
 
     def update(self, screen):
         # appliquer l'image du player
@@ -29,14 +31,6 @@ class Game :
         keys = pygame.key.get_pressed()
         if self.player.rect.x >= 0 and self.player.rect.x + self.player.rect.width < screen.get_width():
             self.player.rect.x = (self.player.rect.x + (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 5)
-            if keys[pygame.K_RIGHT]:
-                self.player.attack_animation_right = True
-
-            elif keys[pygame.K_LEFT]:
-                self.player.attack_animation = True
-            else:
-                self.player.attack_animation = False
-                self.player.attack_animation = False
         elif self.player.rect.x > 800:
             self.player.rect.x = self.player.rect.x - 1
         else:
@@ -59,16 +53,27 @@ class Game :
             if self.player.rect.midbottom[1] // 10 * 10 == plat.rect.top and self.player.rect.colliderect(p):
                 self.player.resistance = -10
                 jump = False
+
     def update_projectile(self, screen):
         self.projectileEvent.projectile_attempt()
         for asteroid in self.projectileEvent.all_asteroid:
             asteroid.verif_collision()
         self.projectileEvent.all_asteroid.draw(screen)
+
     def update_score(self, screen):
-        # affichage du temps
+        # afficher les vies
+        font = pygame.font.SysFont('Verdana', 25, 0)
+        score_text = font.render(f"{self.player.health}", 1, (255, 0, 0))
+        screen.blit(score_text, (60, 35))
+        screen.blit(self.player.image, self.player.rect)
+
         screen.blit(self.score.print_time, (500, 0))
         self.score.affichage_time()
-        # collision
+        icone = pygame.image.load('assets/score_icone.png')
+        icone = pygame.transform.scale(pygame.image.load('assets/score_icone.png'), (80, 80))
+        screen.blit(icone, (0, 0))
+
+
         for self.asteroid in self.projectileEvent.all_asteroid:
             if self.player.rect.colliderect(self.asteroid.rect):
                 self.player.health -= 1

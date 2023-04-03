@@ -79,6 +79,14 @@ def start():
                 if mode_2_button_rect.collidepoint(event.pos):
                     mode_2()
 
+            # verifier si envent est fermeture de la fenetre
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            # verifier si on click bien sur le bouton back
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if back_button_rect.collidepoint(event.pos):
+                    main_menu()
         # mettre à jour la fenetre
         pygame.display.flip()
 def rules():
@@ -107,7 +115,7 @@ def rules():
 
 
 def mode_1():
-        print("mode 1")
+    import main
 
 def mode_2():
     print("mode 2")
@@ -157,4 +165,3 @@ def main_menu():
 
 
 main_menu()
-

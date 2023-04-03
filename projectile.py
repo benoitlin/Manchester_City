@@ -21,7 +21,7 @@ class ProjectileEvent:
 class Asteroid(pygame.sprite.Sprite):
     def __init__(self, ProjectileEvent):
         super().__init__()
-        self.image = pygame.image.load('assets/asteroid.png')
+        self.image = pygame.image.load('assets/projectile_rouge.png')
         self.image = pygame.transform.scale(self.image,(50,50))
         self.rect = self.image.get_rect()
         self.rect.x = 1280
@@ -45,7 +45,7 @@ class Asteroid(pygame.sprite.Sprite):
     def trajectoire_type(self):
         # choix du type de trajectoire
         if self.var_trajectoire_type == 1:
-            self.image = pygame.image.load('assets/asteroid2.png')
+            self.image = pygame.image.load("assets/projectile_bleu.png")
             self.image = pygame.transform.scale(self.image, (50, 50))
             self.trajectoire_parabolique()
         else:
