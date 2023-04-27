@@ -5,7 +5,7 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        self.health = 50
+        self.health = 0
         self.max_health = 50
         self.attack_animation = False
         self.attack_animation_right = False

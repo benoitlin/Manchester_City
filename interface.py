@@ -63,6 +63,7 @@ def menu_start():
                     main_menu()
                 # verifier mode de jeu 1 ou 2
                 if mode_1_button_rect.collidepoint(event.pos):
+                    game.score.time_init = pygame.time.get_ticks() / 1000
                     mode_1()
                 if mode_2_button_rect.collidepoint(event.pos):
                     mode_2()

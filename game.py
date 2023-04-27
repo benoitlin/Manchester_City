@@ -137,6 +137,7 @@ class Game :
                 print(self.player.health)
     def pause(self):
         paused = True
+        self.score.time_pause_tmp = pygame.time.get_ticks() / 1000
         self.screen.blit(self.bg_pause, (0, 0))
         self.screen.blit(self.resume, self.resume_rect)
         self.screen.blit(self.exit, self.exit_rect)
@@ -153,6 +154,7 @@ class Game :
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.resume_rect.collidepoint(event.pos):
                         paused = False
+                        self.score.time_pause += (pygame.time.get_ticks() / 1000) - self.score.time_pause_tmp
                     # elif rules_rect.collidepoint(event.pos):
                     # rules()
                     elif self.exit_rect.collidepoint(event.pos):
