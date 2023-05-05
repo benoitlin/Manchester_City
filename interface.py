@@ -3,6 +3,9 @@ from game import Game
 
 game = Game()
 
+# Fenetre du jeu
+pygame.display.set_caption("Dodge Game")
+game.screen = pygame.display.set_mode((1280, 720))
 # import du menu 1
 menu = pygame.image.load('assets/menu_1.png')
 
@@ -35,14 +38,20 @@ back_button_rect.y = game.screen.get_width()/2
 mode_1_button = pygame.image.load("assets/mode_1_button.png")
 mode_1_button = pygame.transform.scale(mode_1_button,(250, 350))
 mode_1_button_rect = mode_1_button.get_rect()
-mode_1_button_rect.x = game.screen.get_width()/3.8
+mode_1_button_rect.x = game.screen.get_width()/7
 mode_1_button_rect.y = game.screen.get_width()/5
 
 mode_2_button = pygame.image.load("assets/mode_2_button.png")
 mode_2_button = pygame.transform.scale(mode_2_button,(250, 350))
 mode_2_button_rect = mode_2_button.get_rect()
-mode_2_button_rect.x = game.screen.get_width()/1.9
+mode_2_button_rect.x = game.screen.get_width()/2.6
 mode_2_button_rect.y = game.screen.get_width()/5
+
+mode_3_button = pygame.image.load("assets/mode_3_button.png")
+mode_3_button = pygame.transform.scale(mode_3_button,(250, 350))
+mode_3_button_rect = mode_2_button.get_rect()
+mode_3_button_rect.x = game.screen.get_width()/1.6
+mode_3_button_rect.y = game.screen.get_width()/5
 def menu_start():
     while not game.is_playing:
         # import du menu
@@ -52,6 +61,7 @@ def menu_start():
         game.screen.blit(game_mode, (0, 0))
         game.screen.blit(mode_1_button, mode_1_button_rect)
         game.screen.blit(mode_2_button, mode_2_button_rect)
+        game.screen.blit(mode_3_button, mode_3_button_rect)
         game.screen.blit(back_button, back_button_rect)
 
         # appliquer le fond 'game mode' dans la fenetre avec le choix des 2 modes
@@ -61,13 +71,16 @@ def menu_start():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button_rect.collidepoint(event.pos):
                     main_menu()
-                # verifier mode de jeu 1 ou 2
+                # verifier mode de jeu 1 ou 2 ou 3
                 if mode_1_button_rect.collidepoint(event.pos):
-                    game.score.time_init = pygame.time.get_ticks() / 1000
-                    mode_1()
+                    game.mode = 1
+                    start()
                 if mode_2_button_rect.collidepoint(event.pos):
-                    mode_2()
-
+                    game.mode = 2
+                    start()
+                if mode_3_button_rect.collidepoint(event.pos):
+                    game.mode = 3
+                    start()
             # verifier si event est fermeture de la fenetre
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -76,6 +89,7 @@ def menu_start():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button_rect.collidepoint(event.pos):
                     main_menu()
+                    return
         pygame.display.flip()
 def rules():
     while not game.is_playing:
@@ -95,19 +109,19 @@ def rules():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button_rect.collidepoint(event.pos):
                     main_menu()
+                    return
         pygame.display.flip()
-def mode_1():
+def start():
     game.update()
     game.player.update(0.5)
     game.player.update_right(1)
     game.player.update_left(1)
-def mode_2():
-    print("mode 2")
+
 def main_menu():
     # verifier si notre jeu a commencer ou pas
     if game.is_playing:
         # declencher les intructions de la partie
-        mode_1()
+        start()
 
     # verifier si notre jeu n'a pas commencé
     else:

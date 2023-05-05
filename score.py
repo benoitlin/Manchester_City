@@ -10,6 +10,7 @@ class Score:
         self.time_sec = 0
         self.time_min = 0
         self.print_time = pygame.font.Font.render(self.time_font, "00:00,000", True, (0, 0, 0))
+        self.print_vie = pygame.font.Font.render(self.score_font, "0", True, (255, 255, 255))
         self.icone = pygame.image.load('assets/score_icone.png')
         self.icone = pygame.transform.scale(pygame.image.load('assets/score_icone.png'), (80, 80))
     def affichage_time(self):

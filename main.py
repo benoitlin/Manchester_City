@@ -6,6 +6,7 @@ pygame.init()
 
 # charger notre jeu
 running = True
+is_playing = False
 game = Game()
 # permet de maintenir la fenetre ouverte
 while running:

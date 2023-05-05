@@ -5,21 +5,22 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        self.health = 0
+        self.health = 5
         self.max_health = 50
+        self.hearth = 0
         self.attack_animation = False
         self.attack_animation_right = False
         self.current_sprite = 0
         self.sprites_right = []
         # path = "assets/running/original_scale/"
-        self.sprites_right.append(pygame.transform.scale(pygame.image.load('assets/running2.png'),(40,60)))
-        self.sprites_right.append(pygame.transform.scale(pygame.image.load('assets/running3.png'),(40,60)))
-        self.sprites_right.append(pygame.transform.scale(pygame.image.load('assets/running4.png'),(40,60)))
+        self.sprites_right.append(pygame.transform.scale(pygame.image.load('assets/running2.png'),(30,47)))
+        self.sprites_right.append(pygame.transform.scale(pygame.image.load('assets/running3.png'),(30,47)))
+        self.sprites_right.append(pygame.transform.scale(pygame.image.load('assets/running4.png'),(30,47)))
         self.sprites_left = []
         # path = "assets/running/original_scale/"
         self.sprites_left = self.sprites_right
 
-        self.image = pygame.transform.scale(pygame.image.load('assets/running1.png'),(40,60))
+        self.image = pygame.transform.scale(pygame.image.load('assets/running1.png'),(30,47))
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
@@ -36,7 +37,7 @@ class Player(pygame.sprite.Sprite):
                 self.current_sprite = 0
             self.image = self.sprites_right[int(self.current_sprite)]
         elif not self.attack_animation_right and not self.attack_animation:
-            self.image = pygame.transform.scale(pygame.image.load('assets/running1.png'),(40,60))
+            self.image = pygame.transform.scale(pygame.image.load('assets/running1.png'),(30,47))
 
     def update_left(self, speed):
         if self.attack_animation is True:
@@ -45,4 +46,4 @@ class Player(pygame.sprite.Sprite):
                 self.current_sprite = 0
             self.image = pygame.transform.flip(self.sprites_left[int(self.current_sprite)], True, False)
         elif not self.attack_animation_right and not self.attack_animation:
-            self.image = pygame.transform.scale(pygame.image.load('assets/running1.png'),(40,60))
+            self.image = pygame.transform.scale(pygame.image.load('assets/running1.png'),(30,47))
