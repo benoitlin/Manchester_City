@@ -8,6 +8,7 @@ class Player(pygame.sprite.Sprite):
         self.health = 5
         self.max_health = 50
         self.hearth = 0
+        self.player_speed = 5
         self.attack_animation = False
         self.attack_animation_right = False
         self.current_sprite = 0
@@ -19,7 +20,6 @@ class Player(pygame.sprite.Sprite):
         self.sprites_left = []
         # path = "assets/running/original_scale/"
         self.sprites_left = self.sprites_right
-
         self.image = pygame.transform.scale(pygame.image.load('assets/running1.png'),(30,47))
         self.rect = self.image.get_rect()
         self.rect.x = 0

@@ -9,6 +9,8 @@ class Score:
         self.time_pause = 0
         self.time_sec = 0
         self.time_min = 0
+        self.time_fin_sec = 0
+        self.time_fin_min = 0
         self.print_time = pygame.font.Font.render(self.time_font, "00:00,000", True, (0, 0, 0))
         self.print_vie = pygame.font.Font.render(self.score_font, "0", True, (255, 255, 255))
         self.icone = pygame.image.load('assets/score_icone.png')
@@ -22,4 +24,6 @@ class Score:
         self.print_vie = pygame.font.Font.render(self.score_font,"{}".format(player_health), True, (255, 255, 255))
 
     def affichage_time_fin(self):
-        self.print_time = pygame.font.Font.render(self.time_font, "{:0>2.0f}:{:4.3f}".format(self.time_min, self.time_sec - 60 * self.time_min), True, (255, 255, 255))
+        self.time_fin_sec = self.time_sec
+        self.time_fin_min = self.time_min
+        self.print_time = pygame.font.Font.render(self.time_font, "TIME : {:0>2.0f}:{:4.3f}".format(self.time_fin_min, self.time_fin_sec - 60 * self.time_fin_min), True, (255, 255, 255))

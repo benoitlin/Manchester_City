@@ -73,13 +73,25 @@ def menu_start():
                     main_menu()
                 # verifier mode de jeu 1 ou 2 ou 3
                 if mode_1_button_rect.collidepoint(event.pos):
+                    game.song_click.play()
+                    game.song_game_theme.play()
                     game.mode = 1
+                    # initialisation du temps
+                    game.score.time_init = pygame.time.get_ticks()/1000
                     start()
                 if mode_2_button_rect.collidepoint(event.pos):
+                    game.song_click.play()
+                    game.song_game_theme.play()
                     game.mode = 2
+                    # initialisation du temps
+                    game.score.time_init = pygame.time.get_ticks()/1000
                     start()
                 if mode_3_button_rect.collidepoint(event.pos):
+                    game.song_click.play()
+                    game.song_game_theme.play()
                     game.mode = 3
+                    # initialisation du temps
+                    game.score.time_init = pygame.time.get_ticks()/1000
                     start()
             # verifier si event est fermeture de la fenetre
             if event.type == pygame.QUIT:
@@ -88,6 +100,7 @@ def menu_start():
             # verifier si on click bien sur le bouton back
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button_rect.collidepoint(event.pos):
+                    game.song_click.play()
                     main_menu()
                     return
         pygame.display.flip()
@@ -108,6 +121,7 @@ def rules():
             # verifier si on click bien sur le bouton back
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button_rect.collidepoint(event.pos):
+                    game.song_click.play()
                     main_menu()
                     return
         pygame.display.flip()
@@ -145,12 +159,16 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # verrifier si on click bien sur le boutton start, rules, exit ou back
                 if start_button_rect.collidepoint(event.pos):
+                    game.song_click.play()
                     menu_start()
                 if rules_button_rect.collidepoint(event.pos):
+                    game.song_click.play()
                     rules()
                 if exit_button_rect.collidepoint(event.pos):
+                    game.song_click.play()
                     pygame.quit()
                     sys.exit()
                 if back_button_rect.collidepoint(event.pos):
                     # revenir sur le menu 1
+                    game.song_click.play()
                     main_menu()

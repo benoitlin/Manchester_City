@@ -4,6 +4,8 @@ from projectile import ProjectileEvent, Asteroid
 from plateforme import Plateforme
 from score import Score
 
+pygame.mixer.init()
+
 # creer une classe qui va representer notre jeu
 class Game :
     def __init__(self):
@@ -14,6 +16,11 @@ class Game :
         self.player = Player()
         self.projectileEvent = ProjectileEvent(self.mode)
         self.score = Score()
+        # importer les sons collisions et des clicks
+        self.song_click = pygame.mixer.Sound("assets/son_click.mp3")
+        self.song_collision = pygame.mixer.Sound("assets/son_snap.mp3")
+        self.song_game_theme = pygame.mixer.Sound("assets/son_game_theme.mp3")
+        self.song_game_theme.set_volume(0.1)
         self.plateforme_liste_rect = [pygame.Rect(0, 500, 1300, 10), pygame.Rect(10, 400, 100, 10),
                                 pygame.Rect(500, 400, 300, 10), pygame.Rect(1000, 400, 100, 10),
                                 pygame.Rect(300, 420, 100, 10)]
@@ -51,22 +58,25 @@ class Game :
         self.resume = pygame.transform.scale(self.resume, (400, 150))
         self.resume_rect = self.resume.get_rect()
         self.resume_rect.x = self.screen.get_width() / 3
-        self.resume_rect.y = 70
+        self.resume_rect.y = 180
 
         self.exit = pygame.image.load('assets/exit.png')
         self.exit = pygame.transform.scale(self.exit, (400, 150))
         self.exit_rect = self.exit.get_rect()
         self.exit_rect.x = self.screen.get_width() / 3
-        self.exit_rect.y = 380
+        self.exit_rect.y = 500
 
         self.rules = pygame.image.load('assets/rules.png')
         self.rules = pygame.transform.scale(self.rules, (400, 150))
         self.rules_rect = self.rules.get_rect()
         self.rules_rect.x = self.screen.get_width() / 3
-        self.rules_rect.y = 225
+        self.rules_rect.y = 335
 
         self.game_over = pygame.image.load('assets/game_over.png')
         self.game_over = pygame.transform.scale(self.game_over, (1280, 720))
+
+        self.your_score = pygame.image.load('assets/your_score.png')
+        self.your_score = pygame.transform.scale(self.your_score, (1280, 720))
 
     def update(self):
         self.is_playing=True
@@ -74,7 +84,8 @@ class Game :
         self.screen.blit(self.background, (0, 0))
         # appliquer l'image du player
         self.screen.blit(self.player.image, self.player.rect)
-        for p in self.plateforme_liste_rect:  # Permet de savoir si un joueur touche une plateforme et les afficher
+        # Permet de savoir si un joueur touche une plateforme et les afficher
+        for p in self.plateforme_liste_rect:
             plat = Plateforme(p)
             plat.afficher(self.screen)
             if (self.player.rect.midbottom[1] // 10 * 10 == plat.rect.top) and self.player.rect.colliderect(p):
@@ -85,10 +96,13 @@ class Game :
                 self.player.resistance = 0
             else:
                 self.counting -= 1
+        # règle la vitesse du joueur en fonction du mode de jeu
+        if self.mode == 2:
+            self.player.player_speed = 15
         # verifier si le joueur souhaite aller a gauche ou a droite ou sauter
         keys = pygame.key.get_pressed()
         if self.player.rect.x >= 0 and self.player.rect.x + self.player.rect.width < self.screen.get_width():
-            self.player.rect.x = (self.player.rect.x + (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 5)
+            self.player.rect.x = (self.player.rect.x + (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * self.player.player_speed)
             if keys[pygame.K_RIGHT]:
                 self.player.attack_animation = False
                 self.player.attack_animation_right = True
@@ -144,6 +158,7 @@ class Game :
             for self.asteroid in self.projectileEvent.all_asteroid:
                 if self.player.rect.colliderect(self.asteroid.rect):
                     self.player.health -= 1
+                    self.song_collision.play()
                     self.asteroid.suppr_asteroid()
                     print(self.player.health)
             # afficher les vies
@@ -154,12 +169,14 @@ class Game :
             for self.asteroid in self.projectileEvent.all_asteroid:
                 if self.player.rect.colliderect(self.asteroid.rect):
                     self.player.hearth += 1
+                    self.song_collision.play()
                     self.asteroid.suppr_asteroid()
                     print(self.player.hearth)
             # afficher les coeurs
             self.score.affichage_vie(self.player.hearth)
             self.screen.blit(self.score.icone, (0, 0))
             self.screen.blit(self.score.print_vie, (65, 35))
+        # afficher le temps
         self.score.affichage_time()
         self.screen.blit(self.score.print_time, (500, 0))
     def pause(self):
@@ -180,6 +197,7 @@ class Game :
                         paused = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.resume_rect.collidepoint(event.pos):
+                        self.song_click.play()
                         paused = False
                         self.score.time_pause += (pygame.time.get_ticks() / 1000) - self.score.time_pause_tmp
                     # elif rules_rect.collidepoint(event.pos):
@@ -199,7 +217,15 @@ class Game :
                         if self.exit_rect.collidepoint(event.pos):
                             pygame.quit()
                             sys.exit()
-                self.screen.blit(self.game_over, (0, 0))
+                        # if replay_rect.collidepoint(event.pos):
+                        # pygame.quit()
+                        # import interface
+                self.screen.blit(self.exit, self.exit_rect)
+                # screen.blit(replay, replay_rect)
+                self.score.affichage_time_fin()
+                self.screen.blit(self.your_score, (0, 0))
+                self.screen.blit(self.exit, self.exit_rect)
+                self.screen.blit(self.score.print_time, (400, 300))
                 pygame.display.update()
         elif self.player.hearth == 10:
             fin = True
@@ -209,8 +235,17 @@ class Game :
                         pygame.quit()
                         sys.exit()
                     if event.type == pygame.MOUSEBUTTONDOWN:
+                        self.song_click.play()
                         if self.exit_rect.collidepoint(event.pos):
                             pygame.quit()
                             sys.exit()
+                        # if replay_rect.collidepoint(event.pos):
+                        # pygame.quit()
+                        # import interface
+                self.screen.blit(self.your_score, (0, 0))
+                # screen.blit(replay, replay_rect)
+                self.score.affichage_time_fin()
                 self.screen.blit(self.game_over, (0, 0))
+                self.screen.blit(self.exit, (400, 500))
+                self.screen.blit(self.score.print_time, (400, 300))
                 pygame.display.update()
